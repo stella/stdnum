@@ -36,3 +36,33 @@ describe("nl.vat", () => {
     expect(nl.vat.country).toBe("NL");
   });
 });
+
+// ─── BSN (Citizen Service Number) ──────────
+
+describe("nl.bsn", () => {
+  test("valid BSN", () => {
+    const r = nl.bsn.validate("111222333");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid BSN checksum", () => {
+    const r = nl.bsn.validate("111252333");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = nl.bsn.validate("12345678901");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("metadata", () => {
+    expect(nl.bsn.country).toBe("NL");
+    expect(nl.bsn.entityType).toBe("person");
+  });
+});

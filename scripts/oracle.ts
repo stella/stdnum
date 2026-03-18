@@ -47,6 +47,7 @@ import {
 } from "jsvat";
 import luhnLib from "luhn";
 import { execSync } from "node:child_process";
+import { validatePerson as stdnumValidatePerson } from "stdnum";
 import { validatePolish } from "validate-polish";
 
 import {
@@ -537,6 +538,108 @@ const SPECS: OracleSpec[] = [
     tsValidate: (v) => si.vat.validate(v).valid,
     arb: digs(8),
   },
+  // ── Phase 2: EU Personal IDs ──────────────
+  {
+    name: "BE NN",
+    pyModule: "be.nn",
+    tsValidate: (v) => be.nn.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "BG EGN",
+    pyModule: "bg.egn",
+    tsValidate: (v) => bg.egn.validate(v).valid,
+    arb: digs(10),
+  },
+  {
+    name: "DK CPR",
+    pyModule: "dk.cpr",
+    tsValidate: (v) => dk.cpr.validate(v).valid,
+    arb: digs(10),
+  },
+  {
+    name: "EE IK",
+    pyModule: "ee.ik",
+    tsValidate: (v) => ee.ik.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "ES DNI",
+    pyModule: "es.dni",
+    tsValidate: (v) => es.dni.validate(v).valid,
+    arb: fc
+      .tuple(
+        digs(8),
+        fc.constantFrom(
+          ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
+        ),
+      )
+      .map(([d, l]) => `${d}${l}`),
+  },
+  {
+    name: "FI HETU",
+    pyModule: "fi.hetu",
+    tsValidate: (v) => fi.hetu.validate(v).valid,
+    arb: fc
+      .tuple(
+        digs(6),
+        fc.constantFrom("-", "A"),
+        digs(3),
+        fc.constantFrom(
+          ..."0123456789ABCDEFHJKLMNPRSTUVWXY".split(""),
+        ),
+      )
+      .map(([d, s, c, x]) => `${d}${s}${c}${x}`),
+  },
+  {
+    name: "GR AMKA",
+    pyModule: "gr.amka",
+    tsValidate: (v) => gr.amka.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "IE PPS",
+    pyModule: "ie.pps",
+    tsValidate: (v) => ie.pps.validate(v).valid,
+    arb: fc
+      .tuple(
+        digs(7),
+        fc.constantFrom(
+          ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
+        ),
+      )
+      .map(([d, l]) => `${d}${l}`),
+  },
+  {
+    name: "LT Asmens",
+    pyModule: "lt.asmens",
+    tsValidate: (v) => lt.asmens.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "NL BSN",
+    pyModule: "nl.bsn",
+    tsValidate: (v) => nl.bsn.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "RO CNP",
+    pyModule: "ro.cnp",
+    tsValidate: (v) => ro.cnp.validate(v).valid,
+    arb: digs(13),
+  },
+  {
+    name: "SE Personnummer",
+    pyModule: "se.personnummer",
+    tsValidate: (v) => se.personnummer.validate(v).valid,
+    arb: digs(10),
+  },
+  {
+    name: "SI EMSO",
+    pyModule: "si.emso",
+    tsValidate: (v) => si.emso.validate(v).valid,
+    arb: digs(13),
+  },
 ];
 
 // ─── JS oracle specs ─────────────────────────
@@ -853,6 +956,121 @@ const JS_SPECS: JsOracleSpec[] = [
     oracleValidate: (v) =>
       checkVAT(`SI${v}`, [slovenia]).isValid,
     arb: digs(8),
+  },
+  // ── Personal IDs via stdnum-js ─────────────
+  {
+    name: "BE NN (vs stdnum-js)",
+    tsValidate: (v) => be.nn.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("BE", v).isValid,
+    arb: digs(11),
+  },
+  {
+    name: "BG EGN (vs stdnum-js)",
+    tsValidate: (v) => bg.egn.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("BG", v).isValid,
+    arb: digs(10),
+  },
+  {
+    name: "DK CPR (vs stdnum-js)",
+    tsValidate: (v) => dk.cpr.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("DK", v).isValid,
+    arb: digs(10),
+  },
+  {
+    name: "EE IK (vs stdnum-js)",
+    tsValidate: (v) => ee.ik.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("EE", v).isValid,
+    arb: digs(11),
+  },
+  {
+    name: "ES DNI (vs stdnum-js)",
+    tsValidate: (v) => es.dni.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("ES", v).isValid,
+    arb: fc
+      .tuple(
+        digs(8),
+        fc.constantFrom(
+          ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
+        ),
+      )
+      .map(([d, l]) => `${d}${l}`),
+  },
+  {
+    name: "FI HETU (vs stdnum-js)",
+    tsValidate: (v) => fi.hetu.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("FI", v).isValid,
+    arb: fc
+      .tuple(
+        digs(6),
+        fc.constantFrom("-", "A"),
+        digs(3),
+        fc.constantFrom(
+          ..."0123456789ABCDEFHJKLMNPRSTUVWXY".split(""),
+        ),
+      )
+      .map(([d, s, c, x]) => `${d}${s}${c}${x}`),
+  },
+  {
+    name: "GR AMKA (vs stdnum-js)",
+    tsValidate: (v) => gr.amka.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("GR", v).isValid,
+    arb: digs(11),
+  },
+  {
+    name: "IE PPS (vs stdnum-js)",
+    tsValidate: (v) => ie.pps.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("IE", v).isValid,
+    arb: fc
+      .tuple(
+        digs(7),
+        fc.constantFrom(
+          ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
+        ),
+      )
+      .map(([d, l]) => `${d}${l}`),
+  },
+  {
+    name: "LT Asmens (vs stdnum-js)",
+    tsValidate: (v) => lt.asmens.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("LT", v).isValid,
+    arb: digs(11),
+  },
+  {
+    name: "NL BSN (vs stdnum-js)",
+    tsValidate: (v) => nl.bsn.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("NL", v).isValid,
+    arb: digs(9),
+  },
+  {
+    name: "RO CNP (vs stdnum-js)",
+    tsValidate: (v) => ro.cnp.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("RO", v).isValid,
+    arb: digs(13),
+  },
+  {
+    name: "SE Personnummer (vs stdnum-js)",
+    tsValidate: (v) => se.personnummer.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("SE", v).isValid,
+    arb: digs(10),
+  },
+  {
+    name: "SI EMSO (vs stdnum-js)",
+    tsValidate: (v) => si.emso.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("SI", v).isValid,
+    arb: digs(13),
   },
 ];
 

@@ -1,0 +1,113 @@
+/**
+ * EGN (Единен граждански номер).
+ *
+ * Bulgarian personal identification number.
+ * 10 digits encoding date of birth, serial number,
+ * and a check digit.
+ *
+ * @see https://en.wikipedia.org/wiki/Unique_citizenship_number
+ */
+
+import { weightedSum } from "#checksums/weighted-sum";
+import { clean } from "#util/clean";
+import { isdigits } from "#util/strings";
+
+import type {
+  StdnumError,
+  ValidateResult,
+  Validator,
+} from "../types";
+
+const WEIGHTS = [2, 4, 8, 5, 10, 9, 7, 3, 6] as const;
+
+const err = (
+  code: StdnumError["code"],
+  message: string,
+): ValidateResult => ({
+  valid: false,
+  error: { code, message },
+});
+
+const isValidDate = (
+  year: number,
+  month: number,
+  day: number,
+): boolean => {
+  const d = new Date(year, month - 1, day);
+  return (
+    d.getFullYear() === year &&
+    d.getMonth() === month - 1 &&
+    d.getDate() === day
+  );
+};
+
+const compact = (value: string): string =>
+  clean(value, " -");
+
+const validate = (value: string): ValidateResult => {
+  const v = compact(value);
+  if (v.length !== 10) {
+    return err(
+      "INVALID_LENGTH",
+      "EGN must be exactly 10 digits",
+    );
+  }
+  if (!isdigits(v)) {
+    return err(
+      "INVALID_FORMAT",
+      "EGN must contain only digits",
+    );
+  }
+
+  const yy = Number(v.slice(0, 2));
+  const mm = Number(v.slice(2, 4));
+  const dd = Number(v.slice(4, 6));
+
+  let year: number;
+  let month: number;
+  if (mm > 40) {
+    year = 2000 + yy;
+    month = mm - 40;
+  } else if (mm > 20) {
+    year = 1800 + yy;
+    month = mm - 20;
+  } else {
+    year = 1900 + yy;
+    month = mm;
+  }
+
+  if (!isValidDate(year, month, dd)) {
+    return err(
+      "INVALID_COMPONENT",
+      "EGN contains an invalid date",
+    );
+  }
+
+  const sum = weightedSum(v.slice(0, 9), WEIGHTS, 11);
+  const check = sum % 10;
+  if (check !== Number(v[9])) {
+    return err(
+      "INVALID_CHECKSUM",
+      "EGN check digit does not match",
+    );
+  }
+
+  return { valid: true, compact: v };
+};
+
+const format = (value: string): string => compact(value);
+
+/** Bulgarian Personal Identification Number. */
+const egn: Validator = {
+  name: "Bulgarian Personal ID",
+  localName: "Единен граждански номер",
+  abbreviation: "ЕГН",
+  country: "BG",
+  entityType: "person",
+  compact,
+  format,
+  validate,
+};
+
+export default egn;
+export { compact, format, validate };

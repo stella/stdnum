@@ -28,3 +28,37 @@ describe("dk.vat", () => {
     expect(dk.vat.country).toBe("DK");
   });
 });
+
+// ─── CPR (Personal ID) ─────────────────────
+
+describe("dk.cpr", () => {
+  test("valid CPR", () => {
+    const r = dk.cpr.validate("2110625629");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid CPR (bad date)", () => {
+    const r = dk.cpr.validate("0000000000");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = dk.cpr.validate("123456789");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("format adds dash", () => {
+    expect(dk.cpr.format("2110625629")).toBe("211062-5629");
+  });
+
+  test("metadata", () => {
+    expect(dk.cpr.country).toBe("DK");
+    expect(dk.cpr.entityType).toBe("person");
+  });
+});
