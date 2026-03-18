@@ -117,7 +117,15 @@ const validate = (value: string): ValidateResult => {
       "UK VAT must be 9 or 12 digits",
     );
   }
-  return validateStandard(v.slice(0, 9));
+  if (!isdigits(v)) {
+    return err(
+      "INVALID_FORMAT",
+      "UK VAT must contain only digits",
+    );
+  }
+  const result = validateStandard(v.slice(0, 9));
+  if (!result.valid) return result;
+  return { valid: true, compact: v };
 };
 
 const format = (value: string): string => {
