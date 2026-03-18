@@ -1,16 +1,23 @@
 /**
  * Oracle tests: cross-check @stll/stdnum against
- * python-stdnum on random inputs.
+ * independent implementations.
  *
- * Requires: python3 venv with python-stdnum
- *   python3 -m venv .venv
- *   .venv/bin/pip install python-stdnum
+ * JS oracles (always run):
+ *   - validate-polish: PL NIP, PESEL, REGON
+ *   - ibantools: IBAN (with BBAN format)
+ *
+ * Python oracle (optional, run if .venv exists):
+ *   - python-stdnum: all formats
+ *   Setup: python3 -m venv .venv
+ *          .venv/bin/pip install python-stdnum
  *
  * Run: bun run oracle
  */
 
 import fc from "fast-check";
+import { isValidIBAN } from "ibantools";
 import { execSync } from "node:child_process";
+import { validatePolish } from "validate-polish";
 
 import { cz, de, pl, sk } from "../src";
 import ibanValidator from "../src/iban";
@@ -169,67 +176,161 @@ const SPECS: OracleSpec[] = [
   },
 ];
 
+// ─── JS oracle specs ─────────────────────────
+
+type JsOracleSpec = {
+  name: string;
+  tsValidate: (v: string) => boolean;
+  oracleValidate: (v: string) => boolean;
+  arb: fc.Arbitrary<string>;
+};
+
+const { nip, pesel, regon } = validatePolish;
+
+const JS_SPECS: JsOracleSpec[] = [
+  {
+    name: "PL NIP (vs validate-polish)",
+    tsValidate: (v) => pl.nip.validate(v).valid,
+    oracleValidate: (v) => nip(v),
+    arb: digs(10),
+  },
+  {
+    name: "PL PESEL (vs validate-polish)",
+    tsValidate: (v) => pl.pesel.validate(v).valid,
+    oracleValidate: (v) => pesel(v),
+    arb: digs(11),
+  },
+  {
+    name: "PL REGON (vs validate-polish)",
+    tsValidate: (v) => pl.regon.validate(v).valid,
+    oracleValidate: (v) => regon(v),
+    arb: fc.oneof(digs(9), digs(14)),
+  },
+  {
+    name: "IBAN (vs ibantools)",
+    tsValidate: (v) => ibanValidator.validate(v).valid,
+    oracleValidate: (v) => isValidIBAN(v),
+    arb: fc
+      .tuple(
+        fc.constantFrom(
+          "CZ",
+          "DE",
+          "SK",
+          "PL",
+          "GB",
+          "FR",
+          "AT",
+          "NL",
+          "IT",
+          "ES",
+        ),
+        digs(2),
+        fc
+          .array(
+            fc.constantFrom(
+              ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+                "",
+              ),
+            ),
+            { minLength: 12, maxLength: 26 },
+          )
+          .map((chars: string[]) => chars.join("")),
+      )
+      .map(([cc, check, bban]) => `${cc}${check}${bban}`),
+  },
+];
+
 // ─── Runner ──────────────────────────────────
 
 const NUM_SAMPLES = 2000;
 
-const run = () => {
-  if (!hasPython()) {
-    console.error("python-stdnum not found in .venv");
-    console.error("Setup:");
-    console.error("  python3 -m venv .venv");
-    console.error("  .venv/bin/pip install python-stdnum");
-    process.exit(1);
+const compare = (
+  label: string,
+  values: readonly string[],
+  tsResults: readonly boolean[],
+  oracleResults: readonly boolean[],
+  oracleName: string,
+): number => {
+  let disagreements = 0;
+  const examples: string[] = [];
+  for (let i = 0; i < values.length; i++) {
+    if (tsResults[i] !== oracleResults[i]) {
+      disagreements++;
+      if (examples.length < 3) {
+        examples.push(
+          `    "${String(values[i])}"` +
+            ` ts=${String(tsResults[i])}` +
+            ` ${oracleName}=${String(oracleResults[i])}`,
+        );
+      }
+    }
   }
-
+  const valid = tsResults.filter(Boolean).length;
+  const icon = disagreements === 0 ? "✓" : "✗";
   console.log(
-    `Oracle: ${String(NUM_SAMPLES)} random` +
-      ` samples per format vs python-stdnum\n`,
+    `  ${icon} ${label}:` +
+      ` ${String(disagreements)} disagreements` +
+      ` (${String(valid)}/${String(values.length)} valid)`,
   );
+  for (const ex of examples) {
+    console.log(ex);
+  }
+  return disagreements;
+};
 
+const run = () => {
   let total = 0;
   let failures = 0;
 
-  for (const spec of SPECS) {
+  // ── JS oracles (always run) ──────────────
+  console.log(
+    `JS oracles: ${String(NUM_SAMPLES)} samples` +
+      ` per format\n`,
+  );
+
+  for (const spec of JS_SPECS) {
     const values = fc.sample(spec.arb, NUM_SAMPLES);
     const tsResults = values.map(spec.tsValidate);
-
-    let pyResults: boolean[];
-    try {
-      pyResults = pyBatch(spec.pyModule, values);
-    } catch {
-      console.log(`  SKIP ${spec.name}`);
-      continue;
-    }
-
-    let disagreements = 0;
-    const examples: string[] = [];
-    for (let i = 0; i < values.length; i++) {
-      if (tsResults[i] !== pyResults[i]) {
-        disagreements++;
-        if (examples.length < 3) {
-          examples.push(
-            `    "${String(values[i])}"` +
-              ` ts=${String(tsResults[i])}` +
-              ` py=${String(pyResults[i])}`,
-          );
-        }
-      }
-    }
-
-    const valid = tsResults.filter(Boolean).length;
-    const icon = disagreements === 0 ? "✓" : "✗";
-    console.log(
-      `  ${icon} ${spec.name}:` +
-        ` ${String(disagreements)} disagreements` +
-        ` (${String(valid)}/${String(values.length)} valid)`,
+    const oracleResults = values.map(spec.oracleValidate);
+    failures += compare(
+      spec.name,
+      values,
+      tsResults,
+      oracleResults,
+      "oracle",
     );
-    for (const ex of examples) {
-      console.log(ex);
-    }
-
     total += values.length;
-    failures += disagreements;
+  }
+
+  // ── Python oracle (optional) ─────────────
+  const pyAvailable = hasPython();
+  if (pyAvailable) {
+    console.log(
+      `\nPython oracle: ${String(NUM_SAMPLES)}` +
+        ` samples per format\n`,
+    );
+
+    for (const spec of SPECS) {
+      const values = fc.sample(spec.arb, NUM_SAMPLES);
+      const tsResults = values.map(spec.tsValidate);
+      let pyResults: boolean[];
+      try {
+        pyResults = pyBatch(spec.pyModule, values);
+      } catch {
+        console.log(`  SKIP ${spec.name}`);
+        continue;
+      }
+      failures += compare(
+        spec.name,
+        values,
+        tsResults,
+        pyResults,
+        "py",
+      );
+      total += values.length;
+    }
+  } else {
+    console.log("\nPython oracle: skipped (no .venv)");
   }
 
   console.log(

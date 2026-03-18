@@ -16,7 +16,93 @@ import type {
   Validator,
 } from "./types";
 
-/** Minimum and maximum BBAN lengths by country. */
+/**
+ * BBAN format regex by country code.
+ * Sourced from SWIFT IBAN Registry.
+ */
+const BBAN_FORMAT: Record<string, RegExp> = {
+  AD: /^\d{8}[A-Z0-9]{12}$/,
+  AE: /^\d{19}$/,
+  AL: /^\d{8}[A-Z0-9]{16}$/,
+  AT: /^\d{16}$/,
+  AZ: /^[A-Z]{4}[A-Z0-9]{20}$/,
+  BA: /^\d{16}$/,
+  BE: /^\d{12}$/,
+  BG: /^[A-Z]{4}\d{6}[A-Z0-9]{8}$/,
+  BH: /^[A-Z]{4}[A-Z0-9]{14}$/,
+  BR: /^\d{23}[A-Z]{1}[A-Z0-9]{1}$/,
+  BY: /^[A-Z0-9]{4}\d{20}$/,
+  CH: /^\d{17}$/,
+  CR: /^0\d{17}$/,
+  CY: /^\d{8}[A-Z0-9]{16}$/,
+  CZ: /^\d{20}$/,
+  DE: /^\d{18}$/,
+  DK: /^\d{14}$/,
+  DO: /^[A-Z0-9]{4}\d{20}$/,
+  EE: /^\d{16}$/,
+  EG: /^\d{25}$/,
+  ES: /^\d{20}$/,
+  FI: /^\d{14}$/,
+  FO: /^\d{14}$/,
+  FR: /^\d{10}[A-Z0-9]{11}\d{2}$/,
+  GB: /^[A-Z]{4}\d{14}$/,
+  GE: /^[A-Z]{2}\d{16}$/,
+  GI: /^[A-Z]{4}[A-Z0-9]{15}$/,
+  GL: /^\d{14}$/,
+  GR: /^\d{7}[A-Z0-9]{16}$/,
+  GT: /^[A-Z0-9]{24}$/,
+  HR: /^\d{17}$/,
+  HU: /^\d{24}$/,
+  IE: /^[A-Z]{4}\d{14}$/,
+  IL: /^\d{19}$/,
+  IQ: /^[A-Z]{4}\d{15}$/,
+  IS: /^\d{22}$/,
+  IT: /^[A-Z]\d{10}[A-Z0-9]{12}$/,
+  JO: /^[A-Z]{4}\d{22}$/,
+  KW: /^[A-Z]{4}[A-Z0-9]{22}$/,
+  KZ: /^\d{16}$/,
+  LB: /^\d{4}[A-Z0-9]{20}$/,
+  LC: /^[A-Z]{4}[A-Z0-9]{24}$/,
+  LI: /^\d{17}$/,
+  LT: /^\d{16}$/,
+  LU: /^\d{16}$/,
+  LV: /^[A-Z]{4}[A-Z0-9]{13}$/,
+  MC: /^\d{10}[A-Z0-9]{11}\d{2}$/,
+  MD: /^[A-Z0-9]{20}$/,
+  ME: /^\d{18}$/,
+  MK: /^\d{3}[A-Z0-9]{10}\d{2}$/,
+  MR: /^\d{23}$/,
+  MT: /^[A-Z]{4}\d{5}[A-Z0-9]{18}$/,
+  MU: /^[A-Z]{4}\d{19}[A-Z]{3}$/,
+  NI: /^[A-Z]{4}\d{24}$/,
+  NL: /^[A-Z]{4}\d{10}$/,
+  NO: /^\d{11}$/,
+  PK: /^[A-Z]{4}[A-Z0-9]{16}$/,
+  PL: /^\d{24}$/,
+  PS: /^[A-Z]{4}[A-Z0-9]{21}$/,
+  PT: /^\d{21}$/,
+  QA: /^[A-Z]{4}[A-Z0-9]{21}$/,
+  RO: /^[A-Z]{4}[A-Z0-9]{16}$/,
+  RS: /^\d{18}$/,
+  SA: /^\d{20}$/,
+  SC: /^[A-Z]{4}\d{20}[A-Z]{3}$/,
+  SD: /^\d{14}$/,
+  SE: /^\d{20}$/,
+  SI: /^\d{15}$/,
+  SK: /^\d{20}$/,
+  SM: /^[A-Z]\d{10}[A-Z0-9]{12}$/,
+  ST: /^\d{21}$/,
+  SV: /^[A-Z]{4}\d{20}$/,
+  TL: /^\d{19}$/,
+  TN: /^\d{20}$/,
+  TR: /^\d{6}[A-Z0-9]{16}$/,
+  UA: /^\d{6}[A-Z0-9]{19}$/,
+  VA: /^\d{18}$/,
+  VG: /^[A-Z]{4}\d{16}$/,
+  XK: /^\d{16}$/,
+};
+
+/** IBAN total length by country code. */
 const LENGTHS: Record<string, number> = {
   AD: 24,
   AE: 23,
@@ -159,6 +245,15 @@ const validate = (value: string): ValidateResult => {
     return err(
       "INVALID_LENGTH",
       `IBAN for ${cc} must be ${String(expectedLen)} characters`,
+    );
+  }
+  // Validate BBAN format (country-specific)
+  const bban = v.slice(4);
+  const bbanRegex = BBAN_FORMAT[cc];
+  if (bbanRegex !== undefined && !bbanRegex.test(bban)) {
+    return err(
+      "INVALID_FORMAT",
+      `IBAN BBAN format is invalid for ${cc}`,
     );
   }
   const numeric = toNumeric(v);
