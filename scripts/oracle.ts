@@ -15,7 +15,16 @@
  */
 
 import fc from "fast-check";
+import fastLuhn from "fast-luhn";
+import IBAN from "iban";
 import { isValidIBAN } from "ibantools";
+import {
+  checkVAT,
+  czechRepublic,
+  germany,
+  poland,
+} from "jsvat";
+import luhnLib from "luhn";
 import { execSync } from "node:child_process";
 import { validatePolish } from "validate-polish";
 
@@ -237,6 +246,77 @@ const JS_SPECS: JsOracleSpec[] = [
           .map((chars: string[]) => chars.join("")),
       )
       .map(([cc, check, bban]) => `${cc}${check}${bban}`),
+  },
+  {
+    name: "IBAN (vs iban.js)",
+    tsValidate: (v) => ibanValidator.validate(v).valid,
+    oracleValidate: (v) => IBAN.isValid(v) as boolean,
+    arb: fc
+      .tuple(
+        fc.constantFrom(
+          "CZ",
+          "DE",
+          "SK",
+          "PL",
+          "GB",
+          "FR",
+          "AT",
+          "NL",
+          "IT",
+          "ES",
+        ),
+        digs(2),
+        fc
+          .array(
+            fc.constantFrom(
+              ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+                "",
+              ),
+            ),
+            { minLength: 12, maxLength: 26 },
+          )
+          .map((chars: string[]) => chars.join("")),
+      )
+      .map(([cc, check, bban]) => `${cc}${check}${bban}`),
+  },
+  {
+    name: "Luhn (vs luhn npm)",
+    tsValidate: (v) => luhnValidator.validate(v).valid,
+    oracleValidate: (v) =>
+      v.length >= 13 &&
+      v.length <= 19 &&
+      (luhnLib.validate(v) as boolean),
+    arb: digsRange(13, 19),
+  },
+  {
+    name: "Luhn (vs fast-luhn)",
+    tsValidate: (v) => luhnValidator.validate(v).valid,
+    oracleValidate: (v) =>
+      v.length >= 13 && v.length <= 19 && fastLuhn(v),
+    arb: digsRange(13, 19),
+  },
+  {
+    name: "CZ DIČ (vs jsvat)",
+    tsValidate: (v) => cz.dic.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`CZ${v}`, [czechRepublic]).isValid,
+    arb: digsRange(8, 10),
+  },
+  {
+    name: "DE VAT (vs jsvat)",
+    tsValidate: (v) => de.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`DE${v}`, [germany]).isValid,
+    arb: fc
+      .tuple(fc.integer({ min: 1, max: 9 }), digs(8))
+      .map(([first, rest]) => `${String(first)}${rest}`),
+  },
+  {
+    name: "PL NIP (vs jsvat)",
+    tsValidate: (v) => pl.nip.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`PL${v}`, [poland]).isValid,
+    arb: digs(10),
   },
 ];
 
