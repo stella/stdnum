@@ -1,0 +1,77 @@
+/**
+ * NIP (Numer Identyfikacji Podatkowej).
+ *
+ * Polish VAT number. 10 digits with a weighted
+ * checksum. The last digit is the check digit.
+ */
+
+import { weightedSum } from "#checksums/weighted-sum";
+import { clean } from "#util/clean";
+import { isdigits } from "#util/strings";
+
+import type {
+  StdnumError,
+  ValidateResult,
+  Validator,
+} from "../types";
+
+const WEIGHTS = [6, 5, 7, 2, 3, 4, 5, 6, 7] as const;
+
+const err = (
+  code: StdnumError["code"],
+  message: string,
+): ValidateResult => ({
+  valid: false,
+  error: { code, message },
+});
+
+const compact = (value: string): string => {
+  const v = clean(value, " -");
+  if (v.startsWith("PL") || v.startsWith("pl")) {
+    return v.slice(2);
+  }
+  return v;
+};
+
+const validate = (value: string): ValidateResult => {
+  const v = compact(value);
+  if (v.length !== 10) {
+    return err(
+      "INVALID_LENGTH",
+      "NIP must be exactly 10 digits",
+    );
+  }
+  if (!isdigits(v)) {
+    return err(
+      "INVALID_FORMAT",
+      "NIP must contain only digits",
+    );
+  }
+  const sum = weightedSum(v.slice(0, 9), WEIGHTS, 11);
+  // If remainder is 10, no valid check digit exists
+  if (sum >= 10 || sum !== Number(v[9])) {
+    return err(
+      "INVALID_CHECKSUM",
+      "NIP check digit does not match",
+    );
+  }
+  return { valid: true, compact: v };
+};
+
+const format = (value: string): string =>
+  `PL${compact(value)}`;
+
+/** Polish VAT Number. */
+const nip: Validator = {
+  name: "Polish VAT Number",
+  localName: "Numer Identyfikacji Podatkowej",
+  abbreviation: "NIP",
+  country: "PL",
+  entityType: "company",
+  compact,
+  format,
+  validate,
+};
+
+export default nip;
+export { compact, format, validate };

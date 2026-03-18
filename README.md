@@ -1,3 +1,7 @@
+<p align="center">
+  <img src=".github/assets/banner.png" alt="Stella" width="100%" />
+</p>
+
 # @stll/stdnum
 
 Validate, compact, and format standard
@@ -43,33 +47,41 @@ iban.validate("CZ65 0800 0000 1920 0014 5399");
 
 ### Czech Republic
 
-| Identifier | Module | Type |
-| --- | --- | --- |
-| IČO (Company ID) | `cz/ico` | company |
-| DIČ (VAT Number) | `cz/dic` | any |
-| RČ (Birth Number) | `cz/rc` | person |
+| Identifier        | Module   | Type    |
+| ----------------- | -------- | ------- |
+| IČO (Company ID)  | `cz/ico` | company |
+| DIČ (VAT Number)  | `cz/dic` | any     |
+| RČ (Birth Number) | `cz/rc`  | person  |
 
 ### Slovakia
 
-| Identifier | Module | Type |
-| --- | --- | --- |
-| RČ (Birth Number) | `sk/rc` | person |
+| Identifier          | Module   | Type    |
+| ------------------- | -------- | ------- |
+| RČ (Birth Number)   | `sk/rc`  | person  |
 | IČ DPH (VAT Number) | `sk/dic` | company |
 
 ### Germany
 
-| Identifier | Module | Type |
-| --- | --- | --- |
-| USt-IdNr. (VAT ID) | `de/vat` | company |
-| IdNr (Tax ID) | `de/idnr` | person |
+| Identifier         | Module    | Type    |
+| ------------------ | --------- | ------- |
+| USt-IdNr. (VAT ID) | `de/vat`  | company |
+| IdNr (Tax ID)      | `de/idnr` | person  |
+
+### Poland
+
+| Identifier                | Module     | Type    |
+| ------------------------- | ---------- | ------- |
+| NIP (VAT Number)          | `pl/nip`   | company |
+| PESEL (National ID)       | `pl/pesel` | person  |
+| REGON (Business Register) | `pl/regon` | company |
 
 ### International
 
-| Identifier | Module | Type |
-| --- | --- | --- |
-| IBAN | `iban` | any |
-| Credit Card (Luhn) | `luhn` | any |
-| LEI | `lei` | company |
+| Identifier         | Module | Type    |
+| ------------------ | ------ | ------- |
+| IBAN               | `iban` | any     |
+| Credit Card (Luhn) | `luhn` | any     |
+| LEI                | `lei`  | company |
 
 ## API
 

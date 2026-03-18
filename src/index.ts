@@ -11,5 +11,6 @@ export { default as luhn } from "./luhn";
 export { default as lei } from "./lei";
 
 export * as cz from "./cz/mod";
-export * as sk from "./sk/mod";
 export * as de from "./de/mod";
+export * as pl from "./pl/mod";
+export * as sk from "./sk/mod";

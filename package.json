@@ -43,6 +43,9 @@
     "./sk/dic": "./src/sk/dic.ts",
     "./de/vat": "./src/de/vat.ts",
     "./de/idnr": "./src/de/idnr.ts",
+    "./pl/nip": "./src/pl/nip.ts",
+    "./pl/pesel": "./src/pl/pesel.ts",
+    "./pl/regon": "./src/pl/regon.ts",
     "./iban": "./src/iban.ts",
     "./luhn": "./src/luhn.ts",
     "./lei": "./src/lei.ts"

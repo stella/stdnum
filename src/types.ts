@@ -2,7 +2,7 @@
  * ISO 3166-1 alpha-2 country codes for countries
  * with at least one validator in this package.
  */
-export type CountryCode = "AT" | "CZ" | "DE" | "SK";
+export type CountryCode = "AT" | "CZ" | "DE" | "PL" | "SK";
 
 export type ErrorCode =
   | "INVALID_FORMAT"

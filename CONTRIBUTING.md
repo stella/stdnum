@@ -31,6 +31,7 @@ bun run format      # oxfmt
    (add to `CountryCode` union).
 
 Each validator must export:
+
 - `compact(value: string): string`
 - `format(value: string): string`
 - `validate(value: string): ValidateResult`
