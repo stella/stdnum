@@ -54,13 +54,6 @@ const validate = (value: string): ValidateResult => {
       "French NIF must start with 0-3",
     );
   }
-  // All zeros is invalid
-  if (/^0+$/.test(v)) {
-    return err(
-      "INVALID_COMPONENT",
-      "French NIF cannot be all zeros",
-    );
-  }
   const front = Number(v.slice(0, 10));
   const check = Number(v.slice(10));
   if (front % 511 !== check) {

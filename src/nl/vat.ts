@@ -31,7 +31,13 @@ const compact = (value: string): string => {
   if (v.startsWith("NL") || v.startsWith("nl")) {
     v = v.slice(2);
   }
-  return v.toUpperCase();
+  v = v.toUpperCase();
+  // Zero-pad numeric part to 9 digits if B is found
+  const bIdx = v.indexOf("B");
+  if (bIdx > 0 && bIdx < 9) {
+    v = v.slice(0, bIdx).padStart(9, "0") + v.slice(bIdx);
+  }
+  return v;
 };
 
 /**

@@ -47,6 +47,12 @@ const validate = (value: string): ValidateResult => {
       "Belgian VAT number must contain only digits",
     );
   }
+  if (Number(v) === 0) {
+    return err(
+      "INVALID_FORMAT",
+      "Belgian VAT number cannot be all zeros",
+    );
+  }
   if (v[0] !== "0" && v[0] !== "1") {
     return err(
       "INVALID_COMPONENT",

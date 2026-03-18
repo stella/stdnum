@@ -208,13 +208,41 @@ type OracleSpec = {
   arb: fc.Arbitrary<string>;
 };
 
-const digs = (n: number): fc.Arbitrary<string> =>
+const rawDigs = (n: number): fc.Arbitrary<string> =>
   fc
     .array(fc.integer({ min: 0, max: 9 }), {
       minLength: n,
       maxLength: n,
     })
     .map((ds: number[]) => ds.join(""));
+
+/**
+ * Generate n-digit strings with edge cases mixed
+ * in (Hypothesis-style). 70% random, 30% targeted
+ * boundary values: all-zeros, all-nines, repeated
+ * digits, off-by-one lengths.
+ */
+const digs = (n: number): fc.Arbitrary<string> => {
+  const edges: fc.Arbitrary<string>[] = [
+    fc.constant("0".repeat(n)),
+    fc.constant("9".repeat(n)),
+    fc.constant(
+      "0123456789".repeat(Math.ceil(n / 10)).slice(0, n),
+    ),
+  ];
+  for (let d = 1; d < 9; d++) {
+    edges.push(fc.constant(String(d).repeat(n)));
+  }
+  if (n > 1) edges.push(rawDigs(n - 1));
+  edges.push(rawDigs(n + 1));
+  return fc.oneof(
+    { weight: 70, arbitrary: rawDigs(n) },
+    ...edges.map((e) => ({
+      weight: Math.max(1, Math.floor(30 / edges.length)),
+      arbitrary: e,
+    })),
+  );
+};
 
 const digsRange = (
   min: number,
