@@ -45,6 +45,10 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
+  if (Number(v) === 0) {
+    return err("INVALID_FORMAT", "BSN cannot be all zeros");
+  }
+
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     sum += Number(v[i]) * WEIGHTS[i];

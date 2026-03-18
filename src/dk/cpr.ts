@@ -81,15 +81,6 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  // Reject birth dates in the future
-  const birthDate = new Date(year, mm - 1, dd);
-  if (birthDate > new Date()) {
-    return err(
-      "INVALID_COMPONENT",
-      "CPR birth date is in the future",
-    );
-  }
-
   return { valid: true, compact: v };
 };
 

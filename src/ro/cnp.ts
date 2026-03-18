@@ -69,7 +69,7 @@ const validate = (value: string): ValidateResult => {
   }
 
   const g = Number(v[0]);
-  if (g < 1 || g > 8) {
+  if (g < 1 || g > 9) {
     return err(
       "INVALID_COMPONENT",
       "CNP gender/century digit is invalid",
