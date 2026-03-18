@@ -5,6 +5,8 @@
  * Slovak VAT number. Format: "SK" + 10 digits.
  * The 10-digit number must be divisible by 11.
  * First digit is 1-9.
+ *
+ * @see https://www.financnasprava.sk/
  */
 
 import { clean } from "#util/clean";

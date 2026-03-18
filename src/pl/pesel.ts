@@ -5,6 +5,8 @@
  * Polish national identification number.
  * 11 digits encoding date of birth, serial
  * number, gender, and a check digit.
+ *
+ * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/poland-tin.pdf
  */
 
 import { weightedSum } from "#checksums/weighted-sum";

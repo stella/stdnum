@@ -3,6 +3,9 @@
  *
  * Polish VAT number. 10 digits with a weighted
  * checksum. The last digit is the check digit.
+ *
+ * @see https://www.biznes.gov.pl/en/portal/004124
+ * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/poland-tin.pdf
  */
 
 import { weightedSum } from "#checksums/weighted-sum";

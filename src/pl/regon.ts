@@ -5,6 +5,8 @@
  * businesses. 9 digits for national entities,
  * 14 digits for local units (9 + 5 extension).
  * Both have weighted checksums.
+ *
+ * @see https://bip.stat.gov.pl/en/regon/
  */
 
 import { weightedSum } from "#checksums/weighted-sum";

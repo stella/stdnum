@@ -9,6 +9,9 @@
  * Women have 50 added to the month. Since 2004,
  * an extra +20 offset is used when the serial
  * range is exhausted.
+ *
+ * @see https://www.mvcr.cz/mvcren/docDetail.aspx?docid=21975362&doctype=ART
+ * @see Law 133/2000 Sb.
  */
 
 import { clean } from "#util/clean";

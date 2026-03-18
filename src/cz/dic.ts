@@ -7,6 +7,8 @@
  *   but first digit cannot be 9)
  * - 9 digits starting with 6: special entity
  * - 9-10 digits: individual (birth number)
+ *
+ * @see https://adisspr.mfcr.cz/dpr/DphReg
  */
 
 import { weightedSum } from "#checksums/weighted-sum";

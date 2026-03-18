@@ -6,6 +6,8 @@
  * (ISO 7064 Mod 11,10). Exactly one digit
  * appears twice or three times; the rest are
  * unique. The first digit cannot be 0.
+ *
+ * @see https://www.bzst.de/DE/Privatpersonen/SteuerlicheIdentifikationsnummer/steuerlicheidentifikationsnummer_node.html
  */
 
 import { clean } from "../_util/clean";

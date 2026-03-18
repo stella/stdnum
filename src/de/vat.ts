@@ -4,6 +4,9 @@
  * German VAT identification number. Format:
  * "DE" + 9 digits. The last digit is a check
  * digit computed using ISO 7064 Mod 11,10.
+ *
+ * @see https://www.bzst.de/DE/Unternehmen/Identifikationsnummern/Umsatzsteuer-Identifikationsnummer/umsatzsteuer-identifikationsnummer_node.html
+ * @see https://www.bzst.de/SharedDocs/Downloads/DE/Merkblaetter/ust_idnr_aufbau.pdf
  */
 
 import { clean } from "../_util/clean";

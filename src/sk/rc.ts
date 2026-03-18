@@ -3,6 +3,8 @@
  *
  * Slovak birth number. Identical algorithm to
  * the Czech birth number.
+ *
+ * @see https://www.mvcr.cz/mvcren/docDetail.aspx?docid=21975362&doctype=ART
  */
 
 import { compact, format, parse, validate } from "../cz/rc";
