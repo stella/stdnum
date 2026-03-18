@@ -50,12 +50,15 @@ const checkLegal = (value: string): boolean => {
 };
 
 const checkSpecial = (value: string): boolean => {
+  // Skip the leading "6"; check digits 1..7
   const sum = weightedSum(
-    value.slice(0, 8),
-    [8, 7, 6, 5, 4, 3, 2, 1],
+    value.slice(1, 8),
+    [8, 7, 6, 5, 4, 3, 2],
     11,
   );
-  const check = (8 - ((10 - sum) % 11)) % 10;
+  const check =
+    (((8 - ((((10 - sum) % 11) + 11) % 11)) % 10) + 10) %
+    10;
   return check === Number(value[8]);
 };
 

@@ -10,6 +10,7 @@
 import { clean } from "#util/clean";
 import { isdigits } from "#util/strings";
 
+import { validate as validateRc } from "../cz/rc";
 import type {
   StdnumError,
   ValidateResult,
@@ -46,10 +47,29 @@ const validate = (value: string): ValidateResult => {
       "Slovak VAT number must contain only digits",
     );
   }
+  // A valid birth number is also accepted as DPH
+  if (validateRc(v).valid) {
+    return { valid: true, compact: v };
+  }
   if (v[0] === "0") {
     return err(
       "INVALID_COMPONENT",
       "Slovak VAT number cannot start with 0",
+    );
+  }
+  // Third digit must be 2, 3, 4, 7, 8, or 9
+  const d3 = Number(v[2]);
+  if (
+    d3 !== 2 &&
+    d3 !== 3 &&
+    d3 !== 4 &&
+    d3 !== 7 &&
+    d3 !== 8 &&
+    d3 !== 9
+  ) {
+    return err(
+      "INVALID_FORMAT",
+      "Slovak VAT number has invalid third digit",
     );
   }
   if (Number(v) % 11 !== 0) {

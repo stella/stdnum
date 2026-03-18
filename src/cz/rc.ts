@@ -68,24 +68,9 @@ const validate = (value: string): ValidateResult => {
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
 
-  // Strip gender and overflow offsets from month
+  // Strip gender (+50) and overflow (+20) offsets
   const month = (mm % 50) % 20 || mm % 50;
   if (month < 1 || month > 12) {
-    return err(
-      "INVALID_COMPONENT",
-      "Birth number contains an invalid month",
-    );
-  }
-
-  // Validate month encoding:
-  // Male: 01-12, Female: 51-62
-  // Since 2004: Male: 21-32, Female: 71-82
-  const validMonth =
-    (mm >= 1 && mm <= 12) ||
-    (mm >= 21 && mm <= 32) ||
-    (mm >= 51 && mm <= 62) ||
-    (mm >= 71 && mm <= 82);
-  if (!validMonth) {
     return err(
       "INVALID_COMPONENT",
       "Birth number contains an invalid month",
@@ -103,7 +88,7 @@ const validate = (value: string): ValidateResult => {
   let year = yy + 1900;
   if (v.length === 9) {
     // 9-digit: pre-1954 only
-    if (year > 1980) year -= 100;
+    if (year >= 1980) year -= 100;
     if (year > 1953) {
       return err(
         "INVALID_COMPONENT",
@@ -123,13 +108,12 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  // 10-digit numbers must be divisible by 11
+  // 10-digit: check digit is first 9 digits
+  // mod 11 mod 10
   if (v.length === 10) {
-    // Exception: numbers issued before 1985
-    // where remainder is 10 are valid with
-    // check digit 0.
-    const num = Number(v);
-    if (num % 11 !== 0) {
+    const front = Number(v.slice(0, 9));
+    const check = (front % 11) % 10;
+    if (String(check) !== v[9]) {
       return err(
         "INVALID_CHECKSUM",
         "Birth number is not divisible by 11",
@@ -160,7 +144,7 @@ const parse = (value: string): BirthNumberInfo => {
 
   let year = yy + 1900;
   if (v.length === 10 && year < 1954) year += 100;
-  if (v.length === 9 && year > 1980) year -= 100;
+  if (v.length === 9 && year >= 1980) year -= 100;
 
   return {
     birthDate: new Date(year, month - 1, dd),
