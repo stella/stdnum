@@ -78,7 +78,7 @@ const validate = (value: string): ValidateResult => {
   if (rawMonth > 12) {
     return err(
       "INVALID_COMPONENT",
-      "Month must be in 1..12",
+      "Month must be in 0..12",
     );
   }
 

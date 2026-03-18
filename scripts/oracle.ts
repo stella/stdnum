@@ -577,6 +577,20 @@ const SPECS: OracleSpec[] = [
       .map(([d, l]) => `${d}${l}`),
   },
   {
+    name: "ES NIE",
+    pyModule: "es.nie",
+    tsValidate: (v) => es.nie.validate(v).valid,
+    arb: fc
+      .tuple(
+        fc.constantFrom("X", "Y", "Z"),
+        digs(7),
+        fc.constantFrom(
+          ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
+        ),
+      )
+      .map(([p, d, l]) => `${p}${d}${l}`),
+  },
+  {
     name: "FI HETU",
     pyModule: "fi.hetu",
     tsValidate: (v) => fi.hetu.validate(v).valid,

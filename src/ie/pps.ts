@@ -33,7 +33,7 @@ const compact = (value: string): string =>
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
-  if (v.length < 8 || v.length > 10) {
+  if (v.length < 8 || v.length > 9) {
     return err(
       "INVALID_LENGTH",
       "PPS must be 8 or 9 characters",
