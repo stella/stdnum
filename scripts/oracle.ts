@@ -20,9 +20,30 @@ import IBAN from "iban";
 import { isValidIBAN } from "ibantools";
 import {
   checkVAT,
+  belgium,
+  bulgaria,
+  croatia,
+  cyprus,
   czechRepublic,
+  denmark,
+  estonia,
+  finland,
   germany,
+  greece,
+  hungary,
+  ireland,
+  italy,
+  latvia,
+  lithuania,
+  luxembourg,
+  malta,
+  netherlands,
   poland,
+  portugal,
+  romania,
+  slovenia,
+  spain,
+  sweden,
 } from "jsvat";
 import luhnLib from "luhn";
 import { execSync } from "node:child_process";
@@ -650,6 +671,188 @@ const JS_SPECS: JsOracleSpec[] = [
     oracleValidate: (v) =>
       checkVAT(`PL${v}`, [poland]).isValid,
     arb: digs(10),
+  },
+  // ── EU VAT via jsvat ──────────────────────
+  {
+    name: "BE VAT (vs jsvat)",
+    tsValidate: (v) => be.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`BE${v}`, [belgium]).isValid,
+    arb: digs(10),
+  },
+  {
+    name: "BG VAT (vs jsvat)",
+    tsValidate: (v) => bg.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`BG${v}`, [bulgaria]).isValid,
+    arb: fc.oneof(digs(9), digs(10)),
+  },
+  {
+    name: "CY VAT (vs jsvat)",
+    tsValidate: (v) => cy.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`CY${v}`, [cyprus]).isValid,
+    arb: fc
+      .tuple(
+        digs(8),
+        fc.constantFrom(
+          ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+        ),
+      )
+      .map(([d, l]) => `${d}${l}`),
+  },
+  {
+    name: "DK VAT (vs jsvat)",
+    tsValidate: (v) => dk.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`DK${v}`, [denmark]).isValid,
+    arb: digs(8),
+  },
+  {
+    name: "EE VAT (vs jsvat)",
+    tsValidate: (v) => ee.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`EE${v}`, [estonia]).isValid,
+    arb: digs(9),
+  },
+  {
+    name: "ES VAT (vs jsvat)",
+    tsValidate: (v) => es.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`ES${v}`, [spain]).isValid,
+    arb: fc.oneof(
+      fc
+        .tuple(
+          digs(8),
+          fc.constantFrom(
+            ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
+          ),
+        )
+        .map(([d, l]) => `${d}${l}`),
+      fc
+        .tuple(
+          fc.constantFrom(..."ABCDEFGHJNPQRSUVW".split("")),
+          digs(7),
+          fc.constantFrom(
+            ..."0123456789JABCDEFGHI".split(""),
+          ),
+        )
+        .map(([p, d, c]) => `${p}${d}${c}`),
+    ),
+  },
+  {
+    name: "FI VAT (vs jsvat)",
+    tsValidate: (v) => fi.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`FI${v}`, [finland]).isValid,
+    arb: digs(8),
+  },
+  {
+    name: "GR VAT (vs jsvat)",
+    tsValidate: (v) => gr.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`EL${v}`, [greece]).isValid,
+    arb: digs(9),
+  },
+  {
+    name: "HR VAT (vs jsvat)",
+    tsValidate: (v) => hr.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`HR${v}`, [croatia]).isValid,
+    arb: digs(11),
+  },
+  {
+    name: "HU VAT (vs jsvat)",
+    tsValidate: (v) => hu.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`HU${v}`, [hungary]).isValid,
+    arb: digs(8),
+  },
+  {
+    name: "IE VAT (vs jsvat)",
+    tsValidate: (v) => ie.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`IE${v}`, [ireland]).isValid,
+    arb: fc
+      .tuple(
+        digs(7),
+        fc.constantFrom(
+          ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
+        ),
+      )
+      .map(([d, l]) => `${d}${l}`),
+  },
+  {
+    name: "IT IVA (vs jsvat)",
+    tsValidate: (v) => it.iva.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`IT${v}`, [italy]).isValid,
+    arb: digs(11),
+  },
+  {
+    name: "LT VAT (vs jsvat)",
+    tsValidate: (v) => lt.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`LT${v}`, [lithuania]).isValid,
+    arb: fc.oneof(digs(9), digs(12)),
+  },
+  {
+    name: "LU VAT (vs jsvat)",
+    tsValidate: (v) => lu.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`LU${v}`, [luxembourg]).isValid,
+    arb: digs(8),
+  },
+  {
+    name: "LV VAT (vs jsvat)",
+    tsValidate: (v) => lv.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`LV${v}`, [latvia]).isValid,
+    arb: digs(11),
+  },
+  {
+    name: "MT VAT (vs jsvat)",
+    tsValidate: (v) => mt.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`MT${v}`, [malta]).isValid,
+    arb: digs(8),
+  },
+  {
+    name: "NL VAT (vs jsvat)",
+    tsValidate: (v) => nl.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`NL${v}`, [netherlands]).isValid,
+    arb: fc
+      .tuple(digs(9), digs(2))
+      .map(([d, s]) => `${d}B${s}`),
+  },
+  {
+    name: "PT VAT (vs jsvat)",
+    tsValidate: (v) => pt.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`PT${v}`, [portugal]).isValid,
+    arb: digs(9),
+  },
+  {
+    name: "RO VAT (vs jsvat)",
+    tsValidate: (v) => ro.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`RO${v}`, [romania]).isValid,
+    arb: digsRange(2, 10),
+  },
+  {
+    name: "SE VAT (vs jsvat)",
+    tsValidate: (v) => se.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`SE${v}`, [sweden]).isValid,
+    arb: digs(12),
+  },
+  {
+    name: "SI VAT (vs jsvat)",
+    tsValidate: (v) => si.vat.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`SI${v}`, [slovenia]).isValid,
+    arb: digs(8),
   },
 ];
 
