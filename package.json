@@ -1,0 +1,63 @@
+{
+  "name": "@stll/stdnum",
+  "version": "0.1.0",
+  "description": "Validate, compact, and format standard identifiers (IČO, IBAN, VAT, birth numbers, credit cards). Pure TypeScript, zero dependencies.",
+  "keywords": [
+    "credit-card",
+    "czech",
+    "german",
+    "iban",
+    "ico",
+    "identifier",
+    "luhn",
+    "stdnum",
+    "validation",
+    "vat"
+  ],
+  "homepage": "https://github.com/stella/stdnum#readme",
+  "bugs": {
+    "url": "https://github.com/stella/stdnum/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stella/stdnum"
+  },
+  "files": [
+    "src/"
+  ],
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "imports": {
+    "#checksums/*": "./src/_checksums/*.ts",
+    "#util/*": "./src/_util/*.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts",
+    "./cz/ico": "./src/cz/ico.ts",
+    "./cz/dic": "./src/cz/dic.ts",
+    "./cz/rc": "./src/cz/rc.ts",
+    "./sk/rc": "./src/sk/rc.ts",
+    "./sk/dic": "./src/sk/dic.ts",
+    "./de/vat": "./src/de/vat.ts",
+    "./de/idnr": "./src/de/idnr.ts",
+    "./iban": "./src/iban.ts",
+    "./luhn": "./src/luhn.ts",
+    "./lei": "./src/lei.ts"
+  },
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint .",
+    "format": "oxfmt ."
+  },
+  "devDependencies": {
+    "bun-types": "^1.3.10",
+    "oxfmt": "^0.40.0",
+    "oxlint": "^1.55.0"
+  },
+  "engines": {
+    "node": ">= 18"
+  }
+}

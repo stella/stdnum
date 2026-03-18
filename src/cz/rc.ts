@@ -1,0 +1,184 @@
+/**
+ * RČ (Rodné číslo).
+ *
+ * Czech and Slovak national identifier (birth
+ * number). 9 or 10 digits encoding date of birth
+ * and gender. 10-digit numbers (post-1954) must
+ * be divisible by 11.
+ *
+ * Women have 50 added to the month. Since 2004,
+ * an extra +20 offset is used when the serial
+ * range is exhausted.
+ */
+
+import { clean } from "#util/clean";
+import { isdigits } from "#util/strings";
+
+import type {
+  StdnumError,
+  ValidateResult,
+  Validator,
+} from "../types";
+
+export type BirthNumberInfo = {
+  birthDate: Date;
+  gender: "male" | "female";
+};
+
+const err = (
+  code: StdnumError["code"],
+  message: string,
+): ValidateResult => ({
+  valid: false,
+  error: { code, message },
+});
+
+const compact = (value: string): string =>
+  clean(value, " /");
+
+const isValidDate = (
+  year: number,
+  month: number,
+  day: number,
+): boolean => {
+  const d = new Date(year, month - 1, day);
+  return (
+    d.getFullYear() === year &&
+    d.getMonth() === month - 1 &&
+    d.getDate() === day
+  );
+};
+
+const validate = (value: string): ValidateResult => {
+  const v = compact(value);
+  if (v.length !== 9 && v.length !== 10) {
+    return err(
+      "INVALID_LENGTH",
+      "Birth number must be 9 or 10 digits",
+    );
+  }
+  if (!isdigits(v)) {
+    return err(
+      "INVALID_FORMAT",
+      "Birth number must contain only digits",
+    );
+  }
+
+  const yy = Number(v.slice(0, 2));
+  const mm = Number(v.slice(2, 4));
+  const dd = Number(v.slice(4, 6));
+
+  // Strip gender and overflow offsets from month
+  const month = (mm % 50) % 20 || mm % 50;
+  if (month < 1 || month > 12) {
+    return err(
+      "INVALID_COMPONENT",
+      "Birth number contains an invalid month",
+    );
+  }
+
+  // Validate month encoding:
+  // Male: 01-12, Female: 51-62
+  // Since 2004: Male: 21-32, Female: 71-82
+  const validMonth =
+    (mm >= 1 && mm <= 12) ||
+    (mm >= 21 && mm <= 32) ||
+    (mm >= 51 && mm <= 62) ||
+    (mm >= 71 && mm <= 82);
+  if (!validMonth) {
+    return err(
+      "INVALID_COMPONENT",
+      "Birth number contains an invalid month",
+    );
+  }
+
+  if (dd < 1 || dd > 31) {
+    return err(
+      "INVALID_COMPONENT",
+      "Birth number contains an invalid day",
+    );
+  }
+
+  // Resolve full year
+  let year = yy + 1900;
+  if (v.length === 9) {
+    // 9-digit: pre-1954 only
+    if (year > 1980) year -= 100;
+    if (year > 1953) {
+      return err(
+        "INVALID_COMPONENT",
+        "9-digit birth numbers are pre-1954 only",
+      );
+    }
+  } else {
+    // 10-digit: if year < 1954, it's 2000s
+    if (year < 1954) year += 100;
+  }
+
+  // Validate the actual date
+  if (!isValidDate(year, month, dd)) {
+    return err(
+      "INVALID_COMPONENT",
+      "Birth number contains an invalid date",
+    );
+  }
+
+  // 10-digit numbers must be divisible by 11
+  if (v.length === 10) {
+    // Exception: numbers issued before 1985
+    // where remainder is 10 are valid with
+    // check digit 0.
+    const num = Number(v);
+    if (num % 11 !== 0) {
+      return err(
+        "INVALID_CHECKSUM",
+        "Birth number is not divisible by 11",
+      );
+    }
+  }
+
+  return { valid: true, compact: v };
+};
+
+const format = (value: string): string => {
+  const v = compact(value);
+  return `${v.slice(0, 6)}/${v.slice(6)}`;
+};
+
+/**
+ * Extract birth date and gender from a validated
+ * birth number.
+ */
+const parse = (value: string): BirthNumberInfo => {
+  const v = compact(value);
+  const yy = Number(v.slice(0, 2));
+  const mm = Number(v.slice(2, 4));
+  const dd = Number(v.slice(4, 6));
+
+  const gender = mm > 50 ? "female" : "male";
+  const month = (mm % 50) % 20 || mm % 50;
+
+  let year = yy + 1900;
+  if (v.length === 10 && year < 1954) year += 100;
+  if (v.length === 9 && year > 1980) year -= 100;
+
+  return {
+    birthDate: new Date(year, month - 1, dd),
+    gender,
+  };
+};
+
+/** Czech/Slovak Birth Number. */
+const rc: Validator = {
+  name: "Czech Birth Number",
+  localName: "Rodné číslo",
+  abbreviation: "RČ",
+  country: "CZ",
+  entityType: "person",
+  compact,
+  format,
+  validate,
+};
+
+export default rc;
+export { compact, format, parse, validate };
