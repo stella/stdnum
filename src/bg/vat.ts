@@ -99,7 +99,7 @@ const validatePnf = (v: string): boolean => {
 
 /**
  * Validate a 10-digit "other" VAT number.
- * Weights [4,3,2,7,6,5,4,3,2], (11 - sum%11) % 10.
+ * Weights [4,3,2,7,6,5,4,3,2], (11 - sum%11) % 11.
  */
 const validateOther = (v: string): boolean => {
   const weights = [4, 3, 2, 7, 6, 5, 4, 3, 2];
