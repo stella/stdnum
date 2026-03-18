@@ -128,35 +128,17 @@ const validate = (value: string): ValidateResult => {
       );
     }
     const check = cifChecksum(v.slice(1, 8));
-    // Some prefixes require letter check,
-    // some digit, some accept either
-    const LETTER_ONLY = "NPQRSW";
-    const DIGIT_ONLY = "ABEH";
-    if (LETTER_ONLY.includes(first)) {
-      if (last !== CIF_LETTERS[check]) {
-        return err(
-          "INVALID_CHECKSUM",
-          "Spanish CIF check letter mismatch",
-        );
-      }
-    } else if (DIGIT_ONLY.includes(first)) {
-      if (last !== String(check)) {
-        return err(
-          "INVALID_CHECKSUM",
-          "Spanish CIF check digit mismatch",
-        );
-      }
-    } else {
-      // Accept either
-      if (
-        last !== String(check) &&
-        last !== CIF_LETTERS[check]
-      ) {
-        return err(
-          "INVALID_CHECKSUM",
-          "Spanish CIF check digit/letter mismatch",
-        );
-      }
+    // Accept either numeric or alphabetic check digit
+    // for all CIF prefixes (sources conflict on which
+    // prefixes require which type)
+    if (
+      last !== String(check) &&
+      last !== CIF_LETTERS[check]
+    ) {
+      return err(
+        "INVALID_CHECKSUM",
+        "Spanish CIF check digit/letter mismatch",
+      );
     }
     return { valid: true, compact: v };
   }

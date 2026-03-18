@@ -53,6 +53,22 @@ const mod97 = (value: string): number => {
   return remainder;
 };
 
+/**
+ * Check if a 9-digit string is a valid BSN (Dutch citizen
+ * identification number). Weights [9,8,7,6,5,4,3,2,-1],
+ * sum % 11 === 0.
+ */
+const bsnValid = (num: string): boolean => {
+  if (!isdigits(num) || num.length !== 9) return false;
+  if (Number.parseInt(num, 10) <= 0) return false;
+  let sum = 0;
+  for (let i = 0; i < 8; i++) {
+    sum += (9 - i) * Number(num[i]);
+  }
+  sum -= Number(num[8]);
+  return sum % 11 === 0;
+};
+
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
   if (v.length !== 12) {
@@ -79,11 +95,23 @@ const validate = (value: string): ValidateResult => {
       "Dutch VAT number must end with 2 digits",
     );
   }
-  // Mod 97 check: "NL" + v must mod 97 === 1
-  if (mod97(`NL${v}`) !== 1) {
+  if (Number.parseInt(v.slice(0, 9), 10) <= 0) {
+    return err(
+      "INVALID_FORMAT",
+      "Dutch VAT number first 9 digits must be > 0",
+    );
+  }
+  if (Number.parseInt(v.slice(10, 12), 10) <= 0) {
+    return err(
+      "INVALID_FORMAT",
+      "Dutch VAT number last 2 digits must be > 0",
+    );
+  }
+  // Valid if BSN check passes OR mod 97 check passes
+  if (!bsnValid(v.slice(0, 9)) && mod97(`NL${v}`) !== 1) {
     return err(
       "INVALID_CHECKSUM",
-      "Dutch VAT number mod 97 check failed",
+      "Dutch VAT number checksum failed",
     );
   }
   return { valid: true, compact: v };

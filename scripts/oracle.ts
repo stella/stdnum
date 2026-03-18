@@ -28,7 +28,36 @@ import luhnLib from "luhn";
 import { execSync } from "node:child_process";
 import { validatePolish } from "validate-polish";
 
-import { at, cz, de, fr, gb, it, pl, sk } from "../src";
+import {
+  at,
+  be,
+  bg,
+  cy,
+  cz,
+  de,
+  dk,
+  ee,
+  es,
+  fi,
+  fr,
+  gb,
+  gr,
+  hr,
+  hu,
+  ie,
+  it,
+  lt,
+  lu,
+  lv,
+  mt,
+  nl,
+  pl,
+  pt,
+  ro,
+  se,
+  si,
+  sk,
+} from "../src";
 import ibanValidator from "../src/iban";
 import luhnValidator from "../src/luhn";
 
@@ -329,6 +358,163 @@ const SPECS: OracleSpec[] = [
         ),
       )
       .map(([front, check]) => `${front}${check}`),
+  },
+  // ── Phase 1: EU-27 VAT ────────────────────
+  {
+    name: "BE VAT",
+    pyModule: "be.vat",
+    tsValidate: (v) => be.vat.validate(v).valid,
+    arb: digs(10),
+  },
+  {
+    name: "BG VAT",
+    pyModule: "bg.vat",
+    tsValidate: (v) => bg.vat.validate(v).valid,
+    arb: fc.oneof(digs(9), digs(10)),
+  },
+  {
+    name: "CY VAT",
+    pyModule: "cy.vat",
+    tsValidate: (v) => cy.vat.validate(v).valid,
+    arb: fc
+      .tuple(
+        digs(8),
+        fc.constantFrom(
+          ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+        ),
+      )
+      .map(([d, l]) => `${d}${l}`),
+  },
+  {
+    name: "DK VAT",
+    pyModule: "dk.cvr",
+    tsValidate: (v) => dk.vat.validate(v).valid,
+    arb: digs(8),
+  },
+  {
+    name: "EE VAT",
+    pyModule: "ee.kmkr",
+    tsValidate: (v) => ee.vat.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "ES VAT",
+    pyModule: "es.nif",
+    tsValidate: (v) => es.vat.validate(v).valid,
+    arb: fc.oneof(
+      // DNI: 8 digits + letter
+      fc
+        .tuple(
+          digs(8),
+          fc.constantFrom(
+            ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
+          ),
+        )
+        .map(([d, l]) => `${d}${l}`),
+      // CIF: letter + 7 digits + check
+      fc
+        .tuple(
+          fc.constantFrom(..."ABCDEFGHJNPQRSUVW".split("")),
+          digs(7),
+          fc.constantFrom(
+            ..."0123456789JABCDEFGHI".split(""),
+          ),
+        )
+        .map(([p, d, c]) => `${p}${d}${c}`),
+    ),
+  },
+  {
+    name: "FI VAT",
+    pyModule: "fi.alv",
+    tsValidate: (v) => fi.vat.validate(v).valid,
+    arb: digs(8),
+  },
+  {
+    name: "GR VAT",
+    pyModule: "gr.vat",
+    tsValidate: (v) => gr.vat.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "HR VAT",
+    pyModule: "hr.oib",
+    tsValidate: (v) => hr.vat.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "HU VAT",
+    pyModule: "hu.anum",
+    tsValidate: (v) => hu.vat.validate(v).valid,
+    arb: digs(8),
+  },
+  {
+    name: "IE VAT",
+    pyModule: "ie.vat",
+    tsValidate: (v) => ie.vat.validate(v).valid,
+    arb: fc
+      .tuple(
+        digs(7),
+        fc.constantFrom(
+          ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
+        ),
+      )
+      .map(([d, l]) => `${d}${l}`),
+  },
+  {
+    name: "LT VAT",
+    pyModule: "lt.pvm",
+    tsValidate: (v) => lt.vat.validate(v).valid,
+    arb: fc.oneof(digs(9), digs(12)),
+  },
+  {
+    name: "LU VAT",
+    pyModule: "lu.tva",
+    tsValidate: (v) => lu.vat.validate(v).valid,
+    arb: digs(8),
+  },
+  {
+    name: "LV VAT",
+    pyModule: "lv.pvn",
+    tsValidate: (v) => lv.vat.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "MT VAT",
+    pyModule: "mt.vat",
+    tsValidate: (v) => mt.vat.validate(v).valid,
+    arb: digs(8),
+  },
+  {
+    name: "NL VAT",
+    pyModule: "nl.btw",
+    tsValidate: (v) => nl.vat.validate(v).valid,
+    arb: fc
+      .tuple(digs(9), digs(2))
+      .map(([d, s]) => `${d}B${s}`),
+  },
+  {
+    name: "PT VAT",
+    pyModule: "pt.nif",
+    tsValidate: (v) => pt.vat.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "RO VAT",
+    pyModule: "ro.cf",
+    tsValidate: (v) => ro.vat.validate(v).valid,
+    arb: digsRange(2, 10),
+  },
+  {
+    name: "SE VAT",
+    pyModule: "se.vat",
+    tsValidate: (v) => se.vat.validate(v).valid,
+    arb: digs(12),
+  },
+  {
+    name: "SI VAT",
+    pyModule: "si.ddv",
+    tsValidate: (v) => si.vat.validate(v).valid,
+    arb: digs(8),
   },
 ];
 

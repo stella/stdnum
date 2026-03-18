@@ -35,6 +35,30 @@ const compact = (value: string): string => {
   return v;
 };
 
+const PERS_WEIGHTS = [10, 5, 8, 4, 2, 1, 6, 3, 7, 9];
+
+const checkPersonal = (v: string): boolean => {
+  let sum = 1;
+  for (let i = 0; i < 10; i++) {
+    sum += PERS_WEIGHTS[i] * Number(v[i]);
+  }
+  return (sum % 11) % 10 === Number(v[10]);
+};
+
+const validateBirthDate = (v: string): boolean => {
+  const day = Number(v.slice(0, 2));
+  const month = Number(v.slice(2, 4));
+  const year2 = Number(v.slice(4, 6));
+  const century = Number(v[6]);
+  const fullYear = 1800 + century * 100 + year2;
+  const date = new Date(fullYear, month - 1, day);
+  return (
+    date.getFullYear() === fullYear &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+};
+
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
   if (v.length !== 11) {
@@ -62,9 +86,31 @@ const validate = (value: string): ValidateResult => {
         "Latvian VAT number check digit mismatch",
       );
     }
+  } else if (v.startsWith("32")) {
+    // New-format personal code (from July 2017),
+    // no birth date; checksum only
+    if (!checkPersonal(v)) {
+      return err(
+        "INVALID_CHECKSUM",
+        "Latvian personal code check digit mismatch",
+      );
+    }
+  } else {
+    // Old-format personal code: first 6 digits encode
+    // birth date as DDMMYY, digit 7 encodes century
+    if (!validateBirthDate(v)) {
+      return err(
+        "INVALID_COMPONENT",
+        "Latvian personal code has invalid birth date",
+      );
+    }
+    if (!checkPersonal(v)) {
+      return err(
+        "INVALID_CHECKSUM",
+        "Latvian personal code check digit mismatch",
+      );
+    }
   }
-  // Personal numbers (first digit <= 3):
-  // just validate length/format (done above)
   return { valid: true, compact: v };
 };
 

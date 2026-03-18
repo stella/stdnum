@@ -49,17 +49,69 @@ const validate9 = (v: string): boolean => {
   return check % 10 === d(v, 8);
 };
 
-const validate10 = (v: string): boolean => {
+/**
+ * Validate a 10-digit EGN (personal code).
+ * First 6 digits encode birth date (YYMMDD with month
+ * offsets: +20 for 1800s, +40 for 2000s). Check digit
+ * uses weights [2,4,8,5,10,9,7,3,6], sum % 11 % 10.
+ */
+const validateEgn = (v: string): boolean => {
+  const year = d(v, 0) * 10 + d(v, 1);
+  let month = d(v, 2) * 10 + d(v, 3);
+  const day = d(v, 4) * 10 + d(v, 5);
+  let fullYear = year + 1900;
+  if (month > 40) {
+    fullYear += 100;
+    month -= 40;
+  } else if (month > 20) {
+    fullYear -= 100;
+    month -= 20;
+  }
+  // Validate the birth date
+  const date = new Date(fullYear, month - 1, day);
+  if (
+    date.getFullYear() !== fullYear ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return false;
+  }
   const weights = [2, 4, 8, 5, 10, 9, 7, 3, 6];
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     sum += weights[i] * d(v, i);
   }
-  const check = 11 - (sum % 11);
-  if (check === 10) return false;
-  const expected = check === 11 ? 0 : check;
-  return expected === d(v, 9);
+  return (sum % 11) % 10 === d(v, 9);
 };
+
+/**
+ * Validate a 10-digit PNF (foreigner personal number).
+ * Weights [21,19,17,13,11,9,7,3,1], sum % 10.
+ */
+const validatePnf = (v: string): boolean => {
+  const weights = [21, 19, 17, 13, 11, 9, 7, 3, 1];
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += weights[i] * d(v, i);
+  }
+  return sum % 10 === d(v, 9);
+};
+
+/**
+ * Validate a 10-digit "other" VAT number.
+ * Weights [4,3,2,7,6,5,4,3,2], (11 - sum%11) % 10.
+ */
+const validateOther = (v: string): boolean => {
+  const weights = [4, 3, 2, 7, 6, 5, 4, 3, 2];
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += weights[i] * d(v, i);
+  }
+  return (11 - (sum % 11)) % 11 === d(v, 9);
+};
+
+const validate10 = (v: string): boolean =>
+  validateEgn(v) || validatePnf(v) || validateOther(v);
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);

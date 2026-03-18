@@ -81,7 +81,7 @@ describe("bg.vat", () => {
   });
 
   test("valid 10-digit Bulgarian VAT", () => {
-    const r = bg.vat.validate("BG7523169268");
+    const r = bg.vat.validate("BG7523169263");
     expect(r.valid).toBe(true);
   });
 

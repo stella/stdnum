@@ -43,10 +43,11 @@ const validate = (value: string): ValidateResult => {
       "Romanian VAT number must be 2 to 10 digits",
     );
   }
-  if (!isdigits(v)) {
+  if (!isdigits(v) || v[0] === "0") {
     return err(
       "INVALID_FORMAT",
-      "Romanian VAT number must contain only digits",
+      "Romanian VAT number must contain only digits " +
+        "and must not start with 0",
     );
   }
   // Pad to 10 digits
