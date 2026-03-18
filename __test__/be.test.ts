@@ -29,12 +29,20 @@ describe("be.vat", () => {
     }
   });
 
-  test("wrong length", () => {
-    const r = be.vat.validate("BE077609195");
+  test("wrong length (too short)", () => {
+    const r = be.vat.validate("BE07760919");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_LENGTH");
     }
+  });
+
+  test("9-digit zero-padded", () => {
+    // Old 9-digit format gets 0-prepended
+    const r = be.vat.validate("BE776091951");
+    expect(r.valid).toBe(
+      be.vat.validate("BE0776091951").valid,
+    );
   });
 
   test("format adds prefix", () => {

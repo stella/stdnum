@@ -30,6 +30,10 @@ const compact = (value: string): string => {
   if (v.startsWith("BE") || v.startsWith("be")) {
     v = v.slice(2);
   }
+  // Old 9-digit format: zero-pad to 10
+  if (v.length === 9) {
+    v = `0${v}`;
+  }
   return v;
 };
 
