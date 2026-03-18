@@ -28,7 +28,7 @@ import luhnLib from "luhn";
 import { execSync } from "node:child_process";
 import { validatePolish } from "validate-polish";
 
-import { cz, de, pl, sk } from "../src";
+import { at, cz, de, fr, gb, it, pl, sk } from "../src";
 import ibanValidator from "../src/iban";
 import luhnValidator from "../src/luhn";
 
@@ -256,6 +256,79 @@ const SPECS: OracleSpec[] = [
     pyModule: "luhn",
     tsValidate: (v) => luhnValidator.validate(v).valid,
     arb: digsRange(13, 19),
+  },
+  // ── Wave 2 countries ──────────────────────
+  {
+    name: "AT UID",
+    pyModule: "at.uid",
+    tsValidate: (v) => at.uid.validate(v).valid,
+    arb: digs(8).map((d) => `U${d}`),
+  },
+  {
+    name: "GB VAT",
+    pyModule: "gb.vat",
+    tsValidate: (v) => gb.vat.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "GB UTR",
+    pyModule: "gb.utr",
+    tsValidate: (v) => gb.utr.validate(v).valid,
+    arb: digs(10),
+  },
+  {
+    name: "FR SIREN",
+    pyModule: "fr.siren",
+    tsValidate: (v) => fr.siren.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "FR SIRET",
+    pyModule: "fr.siret",
+    tsValidate: (v) => fr.siret.validate(v).valid,
+    arb: digs(14),
+  },
+  {
+    name: "FR NIF",
+    pyModule: "fr.nif",
+    tsValidate: (v) => fr.nif.validate(v).valid,
+    arb: digs(13),
+  },
+  {
+    name: "FR TVA",
+    pyModule: "fr.tva",
+    tsValidate: (v) => fr.tva.validate(v).valid,
+    arb: fc
+      .tuple(digs(2), digs(9))
+      .map(([prefix, siren]) => `${prefix}${siren}`),
+  },
+  {
+    name: "IT Partita IVA",
+    pyModule: "it.iva",
+    tsValidate: (v) => it.iva.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "IT Codice Fiscale",
+    pyModule: "it.codicefiscale",
+    tsValidate: (v) => it.codiceFiscale.validate(v).valid,
+    arb: fc
+      .tuple(
+        fc
+          .array(
+            fc.constantFrom(
+              ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split(
+                "",
+              ),
+            ),
+            { minLength: 15, maxLength: 15 },
+          )
+          .map((c: string[]) => c.join("")),
+        fc.constantFrom(
+          ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+        ),
+      )
+      .map(([front, check]) => `${front}${check}`),
   },
 ];
 

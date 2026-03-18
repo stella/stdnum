@@ -1,0 +1,78 @@
+/**
+ * UTR (Unique Taxpayer Reference).
+ *
+ * UK 10-digit tax reference number. The first
+ * digit is a check digit computed using a
+ * weighted sum with lookup table.
+ *
+ * @see https://www.gov.uk/find-utr-number
+ */
+
+import { weightedSum } from "#checksums/weighted-sum";
+import { clean } from "#util/clean";
+import { isdigits } from "#util/strings";
+
+import type {
+  StdnumError,
+  ValidateResult,
+  Validator,
+} from "../types";
+
+const WEIGHTS = [6, 7, 8, 9, 10, 5, 4, 3, 2] as const;
+const CHECK_LOOKUP = "21987654321";
+
+const err = (
+  code: StdnumError["code"],
+  message: string,
+): ValidateResult => ({
+  valid: false,
+  error: { code, message },
+});
+
+const compact = (value: string): string =>
+  clean(value, " -");
+
+const validate = (value: string): ValidateResult => {
+  const v = compact(value);
+  if (v.length !== 10) {
+    return err(
+      "INVALID_LENGTH",
+      "UK UTR must be exactly 10 digits",
+    );
+  }
+  if (!isdigits(v)) {
+    return err(
+      "INVALID_FORMAT",
+      "UK UTR must contain only digits",
+    );
+  }
+  const sum = weightedSum(v.slice(1), WEIGHTS, 11);
+  const expected = CHECK_LOOKUP[sum];
+  if (expected !== v[0]) {
+    return err(
+      "INVALID_CHECKSUM",
+      "UK UTR check digit mismatch",
+    );
+  }
+  return { valid: true, compact: v };
+};
+
+const format = (value: string): string => {
+  const v = compact(value);
+  return `${v.slice(0, 5)} ${v.slice(5)}`;
+};
+
+/** UK Unique Taxpayer Reference. */
+const utr: Validator = {
+  name: "UK Unique Taxpayer Reference",
+  localName: "Unique Taxpayer Reference",
+  abbreviation: "UTR",
+  country: "GB",
+  entityType: "any",
+  compact,
+  format,
+  validate,
+};
+
+export default utr;
+export { compact, format, validate };
