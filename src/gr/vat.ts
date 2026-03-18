@@ -6,6 +6,7 @@
  * cs = cs*2 + d; check = (cs*2) % 11 % 10 == d[8].
  *
  * @see https://www.vatify.eu/greece-vat-number.html
+ * @see https://www.aade.gr/
  */
 
 import { clean } from "#util/clean";

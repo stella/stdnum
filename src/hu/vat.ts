@@ -5,6 +5,7 @@
  * sum % 10 === 0.
  *
  * @see https://www.vatify.eu/hungary-vat-number.html
+ * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/hungary-tin.pdf
  */
 
 import { clean } from "#util/clean";

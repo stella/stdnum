@@ -5,6 +5,7 @@
  * sum % 11 === 0.
  *
  * @see https://www.vatify.eu/finland-vat-number.html
+ * @see https://www.ytj.fi/en/index/businessid.html
  */
 
 import { clean } from "#util/clean";

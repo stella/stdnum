@@ -6,6 +6,7 @@
  * with fallback weights.
  *
  * @see https://www.vatify.eu/lithuania-vat-number.html
+ * @see https://www.vmi.lt/
  */
 
 import { clean } from "#util/clean";

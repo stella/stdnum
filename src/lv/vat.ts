@@ -6,6 +6,7 @@
  * Personal (first digit <= 3): 11-digit format only.
  *
  * @see https://www.vatify.eu/latvia-vat-number.html
+ * @see https://www.vid.gov.lv/en
  */
 
 import { clean } from "#util/clean";

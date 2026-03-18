@@ -5,6 +5,7 @@
  * Weights [3,4,6,7,8,9,10,1], sum % 37 === 0.
  *
  * @see https://www.vatify.eu/malta-vat-number.html
+ * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/malta-tin.pdf
  */
 
 import { clean } from "#util/clean";

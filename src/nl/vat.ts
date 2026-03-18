@@ -6,6 +6,7 @@
  * (N=23, L=21, B=11), mod 97 === 1.
  *
  * @see https://www.vatify.eu/netherlands-vat-number.html
+ * @see https://business.gov.nl/regulations/using-checking-vat-numbers/
  */
 
 import { clean } from "#util/clean";

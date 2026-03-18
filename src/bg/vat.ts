@@ -4,6 +4,7 @@
  * 9 or 10 digits with weighted checksum.
  *
  * @see https://www.vatify.eu/bulgaria-vat-number.html
+ * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/bulgaria-tin.pdf
  */
 
 import { clean } from "#util/clean";

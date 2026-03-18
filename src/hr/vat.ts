@@ -4,6 +4,7 @@
  * 11 digits. ISO 7064 Mod 11,10 checksum.
  *
  * @see https://www.vatify.eu/croatia-vat-number.html
+ * @see https://www.porezna-uprava.hr/
  */
 
 import { clean } from "#util/clean";

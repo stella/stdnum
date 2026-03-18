@@ -6,6 +6,7 @@
  * check = (11 - sum) % 11 % 10 === d[8].
  *
  * @see https://www.vatify.eu/portugal-vat-number.html
+ * @see https://www.portaldasfinancas.gov.pt/
  */
 
 import { clean } from "#util/clean";

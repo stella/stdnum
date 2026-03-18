@@ -5,6 +5,7 @@
  * Luhn check on first 10 digits.
  *
  * @see https://www.vatify.eu/sweden-vat-number.html
+ * @see https://www.skatteverket.se/
  */
 
 import { luhnValidate } from "#checksums/luhn";

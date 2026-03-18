@@ -5,6 +5,7 @@
  * sum % 10 === 0.
  *
  * @see https://www.vatify.eu/estonia-vat-number.html
+ * @see https://www.emta.ee/en
  */
 
 import { clean } from "#util/clean";

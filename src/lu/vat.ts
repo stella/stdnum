@@ -4,6 +4,7 @@
  * 8 digits. First 6 digits mod 89 === last 2 digits.
  *
  * @see https://www.vatify.eu/luxembourg-vat-number.html
+ * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/luxembourg-tin.pdf
  */
 
 import { clean } from "#util/clean";

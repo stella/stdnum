@@ -4,6 +4,7 @@
  * 8 digits + 1 check letter. Cannot start with "12".
  *
  * @see https://www.vatify.eu/cyprus-vat-number.html
+ * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/cyprus-tin.pdf
  */
 
 import { clean } from "#util/clean";

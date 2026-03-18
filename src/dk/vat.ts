@@ -5,6 +5,10 @@
  * Weights [2,7,6,5,4,3,2,1], sum % 11 === 0.
  *
  * @see https://www.vatify.eu/denmark-vat-number.html
+ * @see https://erhvervsstyrelsen.dk/det-centrale-virksomhedsregister-cvr
+ *
+ * Denmark dropped mod-11 for CPR in 2007; unconfirmed
+ * for CVR.
  */
 
 import { clean } from "#util/clean";

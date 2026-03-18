@@ -7,6 +7,7 @@
  * invalid (spec says no valid number yields 11).
  *
  * @see https://www.vatify.eu/slovenia-vat-number.html
+ * @see https://spot.gov.si/en/info/taxes/value-added-tax-vat
  */
 
 import { clean } from "#util/clean";

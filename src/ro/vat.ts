@@ -6,6 +6,7 @@
  * (10 * sum) % 11 % 10 === last digit.
  *
  * @see https://www.vatify.eu/romania-vat-number.html
+ * @see https://www.anaf.ro/
  */
 
 import { clean } from "#util/clean";

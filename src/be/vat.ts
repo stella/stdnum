@@ -5,6 +5,7 @@
  * Checksum: (first 8 digits + last 2) % 97 === 0.
  *
  * @see https://www.vatify.eu/belgium-vat-number.html
+ * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/belgium-tin.pdf
  */
 
 import { clean } from "#util/clean";
