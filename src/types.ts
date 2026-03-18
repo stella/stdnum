@@ -2,7 +2,35 @@
  * ISO 3166-1 alpha-2 country codes for countries
  * with at least one validator in this package.
  */
-export type CountryCode = "AT" | "CZ" | "DE" | "PL" | "SK";
+export type CountryCode =
+  | "AT"
+  | "BE"
+  | "BG"
+  | "CY"
+  | "CZ"
+  | "DE"
+  | "DK"
+  | "EE"
+  | "ES"
+  | "FI"
+  | "FR"
+  | "GB"
+  | "GR"
+  | "HR"
+  | "HU"
+  | "IE"
+  | "IT"
+  | "LT"
+  | "LU"
+  | "LV"
+  | "MT"
+  | "NL"
+  | "PL"
+  | "PT"
+  | "RO"
+  | "SE"
+  | "SI"
+  | "SK";
 
 export type ErrorCode =
   | "INVALID_FORMAT"

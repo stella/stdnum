@@ -1,0 +1,203 @@
+/**
+ * Codice Fiscale (Italian tax code).
+ *
+ * 16-character alphanumeric code encoding name,
+ * birth date, gender, and birthplace. The last
+ * character is a check letter computed using
+ * odd/even position value tables.
+ *
+ * Also accepts 11-digit numbers (delegates to
+ * Partita IVA validation).
+ *
+ * @see https://www.agenziaentrate.gov.it/
+ */
+
+import { clean } from "#util/clean";
+import { isdigits } from "#util/strings";
+
+import type {
+  StdnumError,
+  ValidateResult,
+  Validator,
+} from "../types";
+import { validate as validateIva } from "./iva";
+
+// Values for odd-positioned characters (0-based
+// index 0, 2, 4, ...)
+const ODD: Record<string, number> = {
+  "0": 1,
+  "1": 0,
+  "2": 5,
+  "3": 7,
+  "4": 9,
+  "5": 13,
+  "6": 15,
+  "7": 17,
+  "8": 19,
+  "9": 21,
+  A: 1,
+  B: 0,
+  C: 5,
+  D: 7,
+  E: 9,
+  F: 13,
+  G: 15,
+  H: 17,
+  I: 19,
+  J: 21,
+  K: 2,
+  L: 4,
+  M: 18,
+  N: 20,
+  O: 11,
+  P: 3,
+  Q: 6,
+  R: 8,
+  S: 12,
+  T: 14,
+  U: 16,
+  V: 10,
+  W: 22,
+  X: 25,
+  Y: 24,
+  Z: 23,
+};
+
+// Values for even-positioned characters (0-based
+// index 1, 3, 5, ...)
+const EVEN: Record<string, number> = {
+  "0": 0,
+  "1": 1,
+  "2": 2,
+  "3": 3,
+  "4": 4,
+  "5": 5,
+  "6": 6,
+  "7": 7,
+  "8": 8,
+  "9": 9,
+  A: 0,
+  B: 1,
+  C: 2,
+  D: 3,
+  E: 4,
+  F: 5,
+  G: 6,
+  H: 7,
+  I: 8,
+  J: 9,
+  K: 10,
+  L: 11,
+  M: 12,
+  N: 13,
+  O: 14,
+  P: 15,
+  Q: 16,
+  R: 17,
+  S: 18,
+  T: 19,
+  U: 20,
+  V: 21,
+  W: 22,
+  X: 23,
+  Y: 24,
+  Z: 25,
+};
+
+const CHECK_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+const err = (
+  code: StdnumError["code"],
+  message: string,
+): ValidateResult => ({
+  valid: false,
+  error: { code, message },
+});
+
+const compact = (value: string): string =>
+  clean(value, " -").toUpperCase();
+
+const validate = (value: string): ValidateResult => {
+  const v = compact(value);
+
+  // 11-digit: delegate to Partita IVA
+  if (v.length === 11 && isdigits(v)) {
+    return validateIva(v);
+  }
+
+  if (v.length !== 16) {
+    return err(
+      "INVALID_LENGTH",
+      "Codice Fiscale must be 16 characters",
+    );
+  }
+  // Structural format: 6 letters + 2 alphanumeric
+  // + 1 letter (month) + 2 alphanumeric + 1 letter
+  // (municipality) + 3 alphanumeric + 1 check letter
+  // The "alphanumeric" positions accept omocodia
+  // substitution letters (LMNPQRSTUV for 0-9)
+  if (
+    !/^[A-Z]{6}[A-Z0-9]{2}[A-Z][A-Z0-9]{2}[A-Z][A-Z0-9]{3}[A-Z]$/.test(
+      v,
+    )
+  ) {
+    return err(
+      "INVALID_FORMAT",
+      "Codice Fiscale format is invalid",
+    );
+  }
+
+  // Compute check letter
+  let sum = 0;
+  for (let i = 0; i < 15; i++) {
+    const ch = v[i];
+    if (ch === undefined) continue;
+    if (i % 2 === 0) {
+      // Odd position (1-based) = even index
+      const val = ODD[ch];
+      if (val === undefined) {
+        return err(
+          "INVALID_FORMAT",
+          "Codice Fiscale contains invalid char",
+        );
+      }
+      sum += val;
+    } else {
+      const val = EVEN[ch];
+      if (val === undefined) {
+        return err(
+          "INVALID_FORMAT",
+          "Codice Fiscale contains invalid char",
+        );
+      }
+      sum += val;
+    }
+  }
+
+  const expected = CHECK_LETTERS[sum % 26];
+  if (expected !== v[15]) {
+    return err(
+      "INVALID_CHECKSUM",
+      "Codice Fiscale check letter mismatch",
+    );
+  }
+
+  return { valid: true, compact: v };
+};
+
+const format = (value: string): string => compact(value);
+
+/** Italian Tax Code. */
+const codiceFiscale: Validator = {
+  name: "Italian Tax Code",
+  localName: "Codice Fiscale",
+  abbreviation: "CF",
+  country: "IT",
+  entityType: "person",
+  compact,
+  format,
+  validate,
+};
+
+export default codiceFiscale;
+export { compact, format, validate };
