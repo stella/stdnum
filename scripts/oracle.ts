@@ -32,9 +32,20 @@ import { cz, de, pl, sk } from "../src";
 import ibanValidator from "../src/iban";
 import luhnValidator from "../src/luhn";
 
-// ─── Python bridge ───────────────────────────
+// ─── Subprocess bridges ──────────────────────
 
 const PYTHON = ".venv/bin/python3";
+const RUST_ORACLE =
+  "scripts/rust-oracle/target/release/stdnum-oracle";
+const RUBY_GEM_DIR = (() => {
+  try {
+    return execSync("ruby -e 'puts Gem.user_dir'", {
+      encoding: "utf-8",
+    }).trim();
+  } catch {
+    return "";
+  }
+})();
 
 const hasPython = (): boolean => {
   try {
@@ -69,6 +80,69 @@ for v in vals:
   writeFileSync(tmpScript, script);
   const result = execSync(
     `echo '${json}' | ${PYTHON} ${tmpScript}`,
+    { encoding: "utf-8", timeout: 60_000 },
+  ).trim();
+  return result.split("\n").map((l) => l === "1");
+};
+
+// ─── Rust bridge ─────────────────────────────
+
+const hasRust = (): boolean => {
+  try {
+    execSync(`test -f ${RUST_ORACLE}`, {
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const rustBatch = (
+  format: string,
+  values: readonly string[],
+): boolean[] => {
+  const json = JSON.stringify(values);
+  const result = execSync(
+    `echo '${json}' | ${RUST_ORACLE} ${format}`,
+    { encoding: "utf-8", timeout: 60_000 },
+  ).trim();
+  return result.split("\n").map((l) => l === "1");
+};
+
+// ─── Ruby bridge ─────────────────────────────
+
+const hasRuby = (): boolean => {
+  try {
+    execSync(
+      `GEM_HOME=${RUBY_GEM_DIR} ruby -e "require 'valvat'"`,
+      { stdio: "ignore" },
+    );
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const rubyBatch = (
+  values: readonly string[],
+  countryPrefix: string,
+): boolean[] => {
+  const json = JSON.stringify(values);
+  const { writeFileSync } = require("node:fs");
+  const tmpScript = "/tmp/_stdnum_oracle.rb";
+  writeFileSync(
+    tmpScript,
+    `require 'json'
+require 'valvat'
+vals = JSON.parse(STDIN.read)
+vals.each do |v|
+  vat = Valvat.new("${countryPrefix}" + v)
+  puts vat.valid_checksum? ? "1" : "0"
+end`,
+  );
+  const result = execSync(
+    `echo '${json}' | GEM_HOME=${RUBY_GEM_DIR} ruby ${tmpScript}`,
     { encoding: "utf-8", timeout: 60_000 },
   ).trim();
   return result.split("\n").map((l) => l === "1");
@@ -411,6 +485,143 @@ const run = () => {
     }
   } else {
     console.log("\nPython oracle: skipped (no .venv)");
+  }
+
+  // ── Rust oracle (optional) ────────────────
+  if (hasRust()) {
+    console.log(
+      `\nRust oracle: ${String(NUM_SAMPLES)}` +
+        ` samples per format\n`,
+    );
+
+    // IBAN via iban_validate crate
+    const ibanVals = fc.sample(
+      fc
+        .tuple(
+          fc.constantFrom(
+            "CZ",
+            "DE",
+            "SK",
+            "PL",
+            "GB",
+            "FR",
+            "AT",
+            "NL",
+            "IT",
+            "ES",
+          ),
+          digs(2),
+          fc
+            .array(
+              fc.constantFrom(
+                ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+                  "",
+                ),
+              ),
+              { minLength: 12, maxLength: 26 },
+            )
+            .map((c: string[]) => c.join("")),
+        )
+        .map(([cc, check, bban]) => `${cc}${check}${bban}`),
+      NUM_SAMPLES,
+    );
+    const ibanTs = ibanVals.map(
+      (v) => ibanValidator.validate(v).valid,
+    );
+    const ibanRust = rustBatch("iban", ibanVals);
+    failures += compare(
+      "IBAN (vs Rust iban_validate)",
+      ibanVals,
+      ibanTs,
+      ibanRust,
+      "rust",
+    );
+    total += ibanVals.length;
+
+    // Luhn via Rust luhn crate
+    const luhnVals = fc.sample(
+      digsRange(13, 19),
+      NUM_SAMPLES,
+    );
+    const luhnTs = luhnVals.map(
+      (v) => luhnValidator.validate(v).valid,
+    );
+    const luhnRust = rustBatch("luhn", luhnVals);
+    failures += compare(
+      "Luhn (vs Rust luhn crate)",
+      luhnVals,
+      luhnTs,
+      luhnRust,
+      "rust",
+    );
+    total += luhnVals.length;
+  } else {
+    console.log(
+      "\nRust oracle: skipped" +
+        " (build: cd scripts/rust-oracle" +
+        " && cargo build --release)",
+    );
+  }
+
+  // ── Ruby oracle (optional) ────────────────
+  if (hasRuby()) {
+    console.log(
+      `\nRuby oracle (valvat): ` +
+        `${String(NUM_SAMPLES)} samples\n`,
+    );
+
+    const vatSpecs: Array<{
+      name: string;
+      prefix: string;
+      tsValidate: (v: string) => boolean;
+      arb: fc.Arbitrary<string>;
+    }> = [
+      {
+        name: "CZ DIČ (vs valvat)",
+        prefix: "CZ",
+        tsValidate: (v) => cz.dic.validate(v).valid,
+        arb: digsRange(8, 10),
+      },
+      {
+        name: "DE VAT (vs valvat)",
+        prefix: "DE",
+        tsValidate: (v) => de.vat.validate(v).valid,
+        arb: fc
+          .tuple(fc.integer({ min: 1, max: 9 }), digs(8))
+          .map(([f, r]) => `${String(f)}${r}`),
+      },
+      {
+        name: "PL NIP (vs valvat)",
+        prefix: "PL",
+        tsValidate: (v) => pl.nip.validate(v).valid,
+        arb: digs(10),
+      },
+    ];
+
+    for (const spec of vatSpecs) {
+      const values = fc.sample(spec.arb, NUM_SAMPLES);
+      const tsResults = values.map(spec.tsValidate);
+      let rubyResults: boolean[];
+      try {
+        rubyResults = rubyBatch(values, spec.prefix);
+      } catch {
+        console.log(`  SKIP ${spec.name}`);
+        continue;
+      }
+      failures += compare(
+        spec.name,
+        values,
+        tsResults,
+        rubyResults,
+        "ruby",
+      );
+      total += values.length;
+    }
+  } else {
+    console.log(
+      "\nRuby oracle: skipped" +
+        " (gem install --user-install valvat)",
+    );
   }
 
   console.log(
