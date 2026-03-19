@@ -2,7 +2,9 @@
  * Kennitala (Icelandic identification number).
  *
  * 10 digits: DDMMYY + 2 random + 1 check + 1 century.
- * Weights [3,2,7,6,5,4,3,2,1,0], sum % 11 === 0.
+ * Weights [3,2,7,6,5,4,3,2] on first 8 digits,
+ * check digit at position 9, century at position 10
+ * (weight 0, does not participate in checksum).
  * Organizations use day + 40. Century digit: 9 = 1900s,
  * 0 = 2000s.
  *

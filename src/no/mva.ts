@@ -14,11 +14,11 @@ import type { ValidateResult, Validator } from "../types";
 import { validate as validateOrgnr } from "./orgnr";
 
 const compact = (value: string): string => {
-  let v = clean(value, " -");
-  if (v.startsWith("NO") || v.startsWith("no")) {
+  let v = clean(value, " -").toUpperCase();
+  if (v.startsWith("NO")) {
     v = v.slice(2);
   }
-  return v.toUpperCase();
+  return v;
 };
 
 const validate = (value: string): ValidateResult => {

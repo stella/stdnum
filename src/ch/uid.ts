@@ -16,13 +16,8 @@ import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4] as const;
 
-const compact = (value: string): string => {
-  let v = clean(value, " -./");
-  if (v.startsWith("CHE") || v.startsWith("che")) {
-    v = "CHE" + v.slice(3);
-  }
-  return v.toUpperCase();
-};
+const compact = (value: string): string =>
+  clean(value, " -./").toUpperCase();
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
