@@ -16,11 +16,7 @@ const FN_RE = /^\d+[a-z]$/i;
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
-  if (
-    v.startsWith("FN") ||
-    v.startsWith("fn") ||
-    v.startsWith("Fn")
-  ) {
+  if (v.slice(0, 2).toUpperCase() === "FN") {
     v = v.slice(2);
   }
   return v;

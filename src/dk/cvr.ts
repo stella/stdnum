@@ -8,6 +8,9 @@
  * is the company register identifier.
  *
  * @see https://erhvervsstyrelsen.dk/
+ *
+ * Denmark dropped mod-11 for CPR in 2007; unconfirmed
+ * for CVR.
  */
 
 import { weightedSum } from "#checksums/weighted-sum";

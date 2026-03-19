@@ -14,24 +14,10 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { cifChecksum } from "./vat";
 
 const CIF_PREFIXES = "ABCDEFGHJNPQRSUVW";
 const CIF_LETTERS = "JABCDEFGHI";
-
-const cifChecksum = (digits: string): number => {
-  let even = 0;
-  let odd = 0;
-  for (let i = 0; i < 7; i++) {
-    const d = Number(digits[i]);
-    if (i % 2 === 0) {
-      const doubled = d * 2;
-      odd += Math.floor(doubled / 10) + (doubled % 10);
-    } else {
-      even += d;
-    }
-  }
-  return (10 - ((even + odd) % 10)) % 10;
-};
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
