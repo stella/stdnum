@@ -56,11 +56,16 @@ const validate = (value: string): ValidateResult => {
       "T.C. Kimlik number must be 11 digits",
     );
   }
-  if (!isdigits(v) || v[0] === "0") {
+  if (!isdigits(v)) {
     return err(
       "INVALID_FORMAT",
-      "T.C. Kimlik number must be 11 digits " +
-        "and cannot start with 0",
+      "T.C. Kimlik number must contain only digits",
+    );
+  }
+  if (v[0] === "0") {
+    return err(
+      "INVALID_FORMAT",
+      "T.C. Kimlik number cannot start with 0",
     );
   }
   if (calcCheckDigits(v) !== v.slice(9)) {
@@ -72,6 +77,7 @@ const validate = (value: string): ValidateResult => {
   return { valid: true, compact: v };
 };
 
+/** TR IDs are displayed without separators. */
 const format = (value: string): string => compact(value);
 
 /** Turkish Personal Identification Number. */

@@ -65,6 +65,7 @@ const validate = (value: string): ValidateResult => {
   return { valid: true, compact: v };
 };
 
+/** TR IDs are displayed without separators. */
 const format = (value: string): string => compact(value);
 
 /** Turkish Tax Identification Number. */
