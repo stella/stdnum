@@ -19,7 +19,7 @@ const compact = (value: string): string => {
   if (v.slice(0, 2).toUpperCase() === "FN") {
     v = v.slice(2);
   }
-  return v;
+  return v.toLowerCase();
 };
 
 const validate = (value: string): ValidateResult => {

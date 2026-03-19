@@ -81,6 +81,14 @@ describe("se.orgnr", () => {
     }
   });
 
+  test("rejects third digit < 2", () => {
+    const r = se.orgnr.validate("1104567897");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
   test("wrong length", () => {
     const r = se.orgnr.validate("123456789");
     expect(r.valid).toBe(false);

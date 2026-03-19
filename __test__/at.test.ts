@@ -58,6 +58,14 @@ describe("at.businessid", () => {
     expect(r.valid).toBe(true);
   });
 
+  test("normalizes trailing letter to lowercase", () => {
+    const r = at.businessid.validate("122119M");
+    expect(r.valid).toBe(true);
+    if (r.valid) {
+      expect(r.compact).toBe("122119m");
+    }
+  });
+
   test("invalid: letter before digits", () => {
     const r = at.businessid.validate("m123123");
     expect(r.valid).toBe(false);
