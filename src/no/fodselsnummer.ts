@@ -109,6 +109,14 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
+  // Reject future birth dates
+  if (new Date(year, mm - 1, dd) > new Date()) {
+    return err(
+      "INVALID_COMPONENT",
+      "Birth date is in the future",
+    );
+  }
+
   return { valid: true, compact: v };
 };
 

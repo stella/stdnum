@@ -1222,7 +1222,8 @@ const JS_SPECS: JsOracleSpec[] = [
     name: "IS Kennitala (vs stdnum-js)",
     tsValidate: (v) => is.kennitala.validate(v).valid,
     oracleValidate: (v) =>
-      stdnumValidatePerson("IS", v).isValid,
+      stdnumValidatePerson("IS", v).isValid ||
+      stdnumValidateEntity("IS", v).isValid,
     arb: digs(10),
   },
   // ── EEA/EFTA VAT via jsvat ───────────────
