@@ -62,6 +62,9 @@ const calcCheckDigits = (number: string): string => {
   for (let i = 0; i < 12; i++) {
     sum += w2[i] * charToValue(number[i]);
   }
+  // Use the computed d1 (not the stored digit at
+  // number[12]) so both check digits are derived
+  // from the base alone.
   sum += w2[12] * d1;
   const d2 = ((11 - (sum % 11)) % 11) % 10;
 
@@ -83,6 +86,10 @@ const validate = (value: string): ValidateResult => {
     );
   }
   // Reject all-zero base (first 12 chars).
+  // Unlike CPF, we do not reject all-same-digit CNPJs;
+  // python-stdnum only blocks the all-zero base, and
+  // there is no official Receita Federal list of
+  // blocked same-digit CNPJ sequences.
   if (v.startsWith("000000000000")) {
     return err(
       "INVALID_FORMAT",

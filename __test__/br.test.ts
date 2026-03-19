@@ -109,7 +109,7 @@ describe("br.cnpj", () => {
   });
 
   test("invalid checksum", () => {
-    const r = br.cnpj.validate("16.727.230.0001-98");
+    const r = br.cnpj.validate("16.727.230/0001-98");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_CHECKSUM");
@@ -133,9 +133,13 @@ describe("br.cnpj", () => {
   });
 
   test("invalid delimiter rejected", () => {
-    // '=' is not a valid separator
+    // '=' is not stripped by compact, so the result
+    // has 15 chars and fails the length check.
     const r = br.cnpj.validate("16.727.230/0001=97");
     expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
   });
 
   test("alphanumeric CNPJ (post-July 2026 format)", () => {
