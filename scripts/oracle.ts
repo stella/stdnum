@@ -57,9 +57,11 @@ import { validatePolish } from "validate-polish";
 
 import {
   at,
+  au,
   be,
   bg,
   br,
+  ca,
   cy,
   cz,
   de,
@@ -89,6 +91,7 @@ import {
   si,
   sk,
   tr,
+  us,
 } from "../src";
 import creditcardValidator from "../src/creditcard";
 import ibanValidator from "../src/iban";
@@ -983,6 +986,40 @@ const SPECS: OracleSpec[] = [
         ),
       )
       .map(([p, d, c]) => `${p}${d}${c}`),
+  // ── CA ──────────────────────────────────────
+    name: "CA SIN",
+    pyModule: "ca.sin",
+    tsValidate: (v) => ca.sin.validate(v).valid,
+    arb: digs(9),
+    name: "CA BN",
+    pyModule: "ca.bn",
+    tsValidate: (v) => ca.bn.validate(v).valid,
+      digs(9),
+          digs(9),
+          fc.constantFrom("RC", "RM", "RP", "RT"),
+          digs(4),
+        .map(([root, prog, ref]) => `${root}${prog}${ref}`),
+  // ── AU ──────────────────────────────────────
+    name: "AU ABN",
+    pyModule: "au.abn",
+    tsValidate: (v) => au.abn.validate(v).valid,
+    name: "AU TFN",
+    pyModule: "au.tfn",
+    tsValidate: (v) => au.tfn.validate(v).valid,
+    arb: fc.oneof(digs(8), digs(9)),
+    name: "AU ACN",
+    pyModule: "au.acn",
+    tsValidate: (v) => au.acn.validate(v).valid,
+    arb: digs(9),
+  // ── US ──────────────────────────────────────
+    name: "US SSN",
+    pyModule: "us.ssn",
+    tsValidate: (v) => us.ssn.validate(v).valid,
+    arb: digs(9),
+    name: "US EIN",
+    pyModule: "us.ein",
+    tsValidate: (v) => us.ein.validate(v).valid,
+    arb: digs(9),
   },
 ];
 
@@ -1580,6 +1617,31 @@ const MUTANT_SPECS: MutantSpec[] = [
     name: "GB UTR",
     tsValidate: (v) => gb.utr.validate(v).valid,
     arb: digs(10),
+  },
+  {
+    name: "CA SIN",
+    tsValidate: (v) => ca.sin.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "CA BN",
+    tsValidate: (v) => ca.bn.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "AU ABN",
+    tsValidate: (v) => au.abn.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "AU TFN",
+    tsValidate: (v) => au.tfn.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "AU ACN",
+    tsValidate: (v) => au.acn.validate(v).valid,
+    arb: digs(9),
   },
 ];
 
