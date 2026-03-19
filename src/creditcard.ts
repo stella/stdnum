@@ -150,9 +150,8 @@ const CARD_PREFIXES = [
  */
 const generate = (): string => {
   const idx = randomInt(0, CARD_PREFIXES.length - 1);
-  // SAFETY: idx is bounded by CARD_PREFIXES.length
-  // eslint-disable-next-line no-non-null-assertion
-  const [prefix, length] = CARD_PREFIXES[idx]!;
+  const [prefix, length] = CARD_PREFIXES[idx] as
+    (typeof CARD_PREFIXES)[number];
   const remaining = length - prefix.length - 1;
   const payload = `${prefix}${randomDigits(remaining)}`;
   const partial = `${payload}0`;

@@ -49,7 +49,6 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
-
 /** Generate a random valid ICO. */
 const generate = (): string => {
   const payload = randomDigits(7);

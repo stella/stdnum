@@ -17,7 +17,6 @@
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { randomInt } from "#util/generate";
-import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -138,7 +137,6 @@ const parse = (
   };
 };
 
-
 /**
  * Generate a random valid 10-digit birth number.
  * Uses a random date between 1954 and 2024.
@@ -166,7 +164,9 @@ const generate = (): string => {
     }
   }
 
-  return "7103192745";
+  throw new Error(
+    "Failed to generate valid birth number",
+  );
 };
 
 /** Czech/Slovak Birth Number. */

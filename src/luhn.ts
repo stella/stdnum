@@ -43,7 +43,6 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
-
 /**
  * Generate a random Luhn-valid number of the
  * given length (default 16).

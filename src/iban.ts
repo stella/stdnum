@@ -265,15 +265,17 @@ const format = (value: string): string => {
   return groups.join(" ");
 };
 
-
 /**
  * Countries supported by generate(). All have
  * all-digit BBANs for simplicity.
  */
 const GENERATE_COUNTRIES = ["CZ", "DE", "SK"] as const;
 
+type GenerateCountry =
+  (typeof GENERATE_COUNTRIES)[number];
+
 /** BBAN lengths for generate()-supported countries. */
-const BBAN_LENGTHS: Record<string, number> = {
+const BBAN_LENGTHS: Record<GenerateCountry, number> = {
   CZ: 20,
   DE: 18,
   SK: 20,
@@ -308,12 +310,8 @@ const generate = (): string => {
     0,
     GENERATE_COUNTRIES.length - 1,
   );
-  // SAFETY: idx is bounded by GENERATE_COUNTRIES.length
-  // eslint-disable-next-line no-non-null-assertion
-  const cc = GENERATE_COUNTRIES[idx]!;
-  // SAFETY: cc is always in BBAN_LENGTHS
-  // eslint-disable-next-line no-non-null-assertion
-  const bbanLen = BBAN_LENGTHS[cc]!;
+  const cc = GENERATE_COUNTRIES[idx] as GenerateCountry;
+  const bbanLen = BBAN_LENGTHS[cc];
   const bban = randomDigits(bbanLen);
   const checkDigits = computeCheckDigits(cc, bban);
   return `${cc}${checkDigits}${bban}`;
