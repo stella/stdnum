@@ -6,8 +6,10 @@ export type {
   Validator,
 } from "./types";
 
+export { default as bic } from "./bic";
 export { default as creditcard } from "./creditcard";
 export { default as iban } from "./iban";
+export { default as isin } from "./isin";
 export { default as lei } from "./lei";
 export { default as luhn } from "./luhn";
 
@@ -21,6 +23,7 @@ export * as de from "./de/mod";
 export * as dk from "./dk/mod";
 export * as ee from "./ee/mod";
 export * as es from "./es/mod";
+export * as eu from "./eu/mod";
 export * as fi from "./fi/mod";
 export * as fr from "./fr/mod";
 export * as gb from "./gb/mod";

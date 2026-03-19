@@ -90,6 +90,7 @@ import {
 } from "../src";
 import creditcardValidator from "../src/creditcard";
 import ibanValidator from "../src/iban";
+import isinValidator from "../src/isin";
 import luhnValidator from "../src/luhn";
 
 // ─── Subprocess bridges ──────────────────────
@@ -864,6 +865,39 @@ const SPECS: OracleSpec[] = [
     pyModule: "is_.kennitala",
     tsValidate: (v) => is.kennitala.validate(v).valid,
     arb: dateDigs(10),
+  },
+  // ── International financial ─────────────────
+  {
+    name: "ISIN",
+    pyModule: "isin",
+    tsValidate: (v) => isinValidator.validate(v).valid,
+    arb: fc
+      .tuple(
+        fc.constantFrom(
+          "US",
+          "DE",
+          "GB",
+          "FR",
+          "JP",
+          "CH",
+          "NL",
+          "IT",
+          "ES",
+          "CA",
+        ),
+        fc
+          .array(
+            fc.constantFrom(
+              ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+                "",
+              ),
+            ),
+            { minLength: 9, maxLength: 9 },
+          )
+          .map((chars: string[]) => chars.join("")),
+        fc.integer({ min: 0, max: 9 }).map(String),
+      )
+      .map(([cc, id, check]) => `${cc}${id}${check}`),
   },
 ];
 
