@@ -99,6 +99,9 @@
     "./si/emso": "./src/si/emso.ts",
     "./si/vat": "./src/si/vat.ts",
     "./iban": "./src/iban.ts",
+    "./bic": "./src/bic.ts",
+    "./isin": "./src/isin.ts",
+    "./eu/vat": "./src/eu/vat.ts",
     "./creditcard": "./src/creditcard.ts",
     "./luhn": "./src/luhn.ts",
     "./lei": "./src/lei.ts"

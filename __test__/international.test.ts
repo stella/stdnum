@@ -1,6 +1,13 @@
 import { describe, expect, test } from "bun:test";
 
-import { creditcard, iban, lei, luhn } from "../src";
+import {
+  bic,
+  creditcard,
+  iban,
+  isin,
+  lei,
+  luhn,
+} from "../src";
 
 // ─── IBAN ────────────────────────────────────
 
@@ -185,5 +192,152 @@ describe("lei", () => {
   test("metadata", () => {
     expect(lei.abbreviation).toBe("LEI");
     expect(lei.entityType).toBe("company");
+  });
+});
+
+// ─── BIC ─────────────────────────────────────
+
+describe("bic", () => {
+  const valid = [
+    "DEUTDEFF",
+    "COBADEFFXXX",
+    "BNPAFRPP",
+    "GEBABEBB",
+    "BOFAUS3N",
+    "CHASUS33XXX",
+  ];
+
+  for (const v of valid) {
+    test(`valid: ${v}`, () => {
+      const r = bic.validate(v);
+      expect(r.valid).toBe(true);
+    });
+  }
+
+  test("valid with spaces", () => {
+    const r = bic.validate("DEUT DE FF");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid lowercase normalised", () => {
+    const r = bic.validate("deutdeff");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid length (9 chars)", () => {
+    const r = bic.validate("AGRIFRPP8");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("invalid format (digits in institution)", () => {
+    const r = bic.validate("12345678");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("invalid country code", () => {
+    const r = bic.validate("DEUTXXFF");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("compact strips separators", () => {
+    expect(bic.compact("DEUT DE FF XXX")).toBe(
+      "DEUTDEFFXXX",
+    );
+  });
+
+  test("format 8-char BIC", () => {
+    expect(bic.format("DEUTDEFF")).toBe("DEUT DE FF");
+  });
+
+  test("format 11-char BIC", () => {
+    expect(bic.format("COBADEFFXXX")).toBe(
+      "COBA DE FF XXX",
+    );
+  });
+
+  test("metadata", () => {
+    expect(bic.abbreviation).toBe("BIC");
+    expect(bic.entityType).toBe("company");
+    expect(bic.country).toBeUndefined();
+  });
+});
+
+// ─── ISIN ────────────────────────────────────
+
+describe("isin", () => {
+  const valid = [
+    "US0378331005", // Apple
+    "DE000BAY0017", // Bayer
+    "GB0002634946", // BAE Systems
+    "JP3435000009", // Sony
+    "FR0000120271", // TotalEnergies
+  ];
+
+  for (const v of valid) {
+    test(`valid: ${v}`, () => {
+      const r = isin.validate(v);
+      expect(r.valid).toBe(true);
+    });
+  }
+
+  test("valid with spaces", () => {
+    const r = isin.validate("US 0378 3310 05");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid lowercase normalised", () => {
+    const r = isin.validate("us0378331005");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid checksum", () => {
+    const r = isin.validate("US0378331003");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = isin.validate("US037833100");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("invalid format (no country prefix)", () => {
+    const r = isin.validate("000378331005");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("compact strips separators", () => {
+    expect(isin.compact("US 0378-3310-05")).toBe(
+      "US0378331005",
+    );
+  });
+
+  test("format groups correctly", () => {
+    expect(isin.format("US0378331005")).toBe(
+      "US 0378 3310 05",
+    );
+  });
+
+  test("metadata", () => {
+    expect(isin.abbreviation).toBe("ISIN");
+    expect(isin.entityType).toBe("any");
+    expect(isin.country).toBeUndefined();
   });
 });
