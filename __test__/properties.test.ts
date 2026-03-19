@@ -120,6 +120,9 @@ for (const [name, v] of validators) {
         for (const seed of seeds) {
           const compacted = v.compact(seed);
           const result = v.validate(compacted);
+          // Examples must be valid — if not, the
+          // example itself is wrong
+          expect(result.valid).toBe(true);
           if (result.valid) {
             expect(result.compact).toBe(compacted);
           }
