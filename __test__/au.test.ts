@@ -61,6 +61,12 @@ describe("au.tfn", () => {
     if (r.valid) expect(r.compact).toBe("123456782");
   });
 
+  test("valid TFN (8 digits)", () => {
+    const r = au.tfn.validate("87 650 006");
+    expect(r.valid).toBe(true);
+    if (r.valid) expect(r.compact).toBe("87650006");
+  });
+
   test("valid TFN without spaces", () => {
     const r = au.tfn.validate("123456782");
     expect(r.valid).toBe(true);

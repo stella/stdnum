@@ -1636,7 +1636,7 @@ const MUTANT_SPECS: MutantSpec[] = [
   {
     name: "AU TFN",
     tsValidate: (v) => au.tfn.validate(v).valid,
-    arb: digs(9),
+    arb: fc.oneof(digs(8), digs(9)),
   },
   {
     name: "AU ACN",

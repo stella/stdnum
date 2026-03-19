@@ -61,7 +61,7 @@ const tfn: Validator = {
   abbreviation: "TFN",
   country: "AU",
   entityType: "person",
-  examples: ["123456782"] as const,
+  examples: ["87650006", "123456782"] as const,
   compact,
   format,
   validate,
