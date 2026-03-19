@@ -20,14 +20,14 @@ const compact = (value: string): string =>
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
-  if (v.length !== 9) {
-    return err("INVALID_LENGTH", "SIN must be 9 digits");
-  }
   if (!isdigits(v)) {
     return err(
       "INVALID_FORMAT",
       "SIN must contain only digits",
     );
+  }
+  if (v.length !== 9) {
+    return err("INVALID_LENGTH", "SIN must be 9 digits");
   }
   if (v[0] === "0" || v[0] === "8") {
     return err(

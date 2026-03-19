@@ -48,10 +48,7 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => {
   const v = compact(value);
-  if (v.length === 9) {
-    return `${v.slice(0, 3)} ${v.slice(3, 6)} ${v.slice(6)}`;
-  }
-  if (v.length === 8) {
+  if (v.length === 8 || v.length === 9) {
     return `${v.slice(0, 3)} ${v.slice(3, 6)} ${v.slice(6)}`;
   }
   return v;

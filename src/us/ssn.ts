@@ -16,9 +16,6 @@ import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 
-const SSN_RE =
-  /^(?<area>\d{3})-?(?<group>\d{2})-?(?<serial>\d{4})$/;
-
 /** Known-invalid SSNs used in advertisements. */
 const BLACKLIST = new Set([
   "078051120",
@@ -39,14 +36,6 @@ const validate = (value: string): ValidateResult => {
   }
   if (v.length !== 9) {
     return err("INVALID_LENGTH", "SSN must be 9 digits");
-  }
-
-  const match = SSN_RE.exec(v);
-  if (!match) {
-    return err(
-      "INVALID_FORMAT",
-      "SSN must match NNN-NN-NNNN pattern",
-    );
   }
 
   const area = v.slice(0, 3);
