@@ -58,6 +58,7 @@ const utr: Validator = {
   abbreviation: "UTR",
   country: "GB",
   entityType: "any",
+  examples: ["1955839661"] as const,
   compact,
   format,
   validate,

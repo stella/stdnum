@@ -54,6 +54,7 @@ const siren: Validator = {
   abbreviation: "SIREN",
   country: "FR",
   entityType: "company",
+  examples: ["552008443"] as const,
   compact,
   format,
   validate,

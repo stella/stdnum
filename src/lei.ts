@@ -68,6 +68,7 @@ const lei: Validator = {
   localName: "Legal Entity Identifier",
   abbreviation: "LEI",
   entityType: "company",
+  examples: ["5493006MHB84DD0ZWV18"] as const,
   compact,
   format,
   validate,

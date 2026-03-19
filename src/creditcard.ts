@@ -60,6 +60,10 @@ const creditCard: Validator = {
   localName: "Credit Card Number",
   abbreviation: "CC",
   entityType: "any",
+  examples: [
+    "4111111111111111",
+    "5500000000000004",
+  ] as const,
   compact,
   format,
   validate,

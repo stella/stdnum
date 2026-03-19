@@ -60,6 +60,7 @@ const nip: Validator = {
   abbreviation: "NIP",
   country: "PL",
   entityType: "company",
+  examples: ["2234567895"] as const,
   compact,
   format,
   validate,

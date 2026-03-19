@@ -95,6 +95,7 @@ const kennitala: Validator = {
   abbreviation: "kt.",
   country: "IS",
   entityType: "any",
+  examples: ["4504013150", "1201743399"] as const,
   compact,
   format,
   validate,

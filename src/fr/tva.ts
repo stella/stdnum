@@ -113,6 +113,7 @@ const tva: Validator = {
   abbreviation: "TVA",
   country: "FR",
   entityType: "company",
+  examples: ["40303265045", "K7399859412"] as const,
   compact,
   format,
   validate,

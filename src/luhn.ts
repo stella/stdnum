@@ -45,6 +45,7 @@ const luhn: Validator = {
   localName: "Luhn",
   abbreviation: "Luhn",
   entityType: "any",
+  examples: ["4111111111111111", "18"] as const,
   compact,
   format,
   validate,

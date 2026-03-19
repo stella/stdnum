@@ -80,4 +80,12 @@ export type Validator = {
    * with a code and message on failure.
    */
   validate: (value: string) => ValidateResult;
+
+  /**
+   * Known-valid compact values. Useful as test
+   * seeds, form placeholders, API schema examples,
+   * and documentation. Sourced from official
+   * government specs where available.
+   */
+  examples?: readonly string[];
 };

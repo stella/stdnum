@@ -63,6 +63,7 @@ const vat: Validator = {
   abbreviation: "USt-IdNr.",
   country: "DE",
   entityType: "company",
+  examples: ["136695976"] as const,
   compact,
   format,
   validate,
