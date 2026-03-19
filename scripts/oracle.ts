@@ -209,6 +209,106 @@ end`,
 
 // ─── Spec definitions ────────────────────────
 
+// ─── Date-aware generation ──────────────────
+//
+// For validators that encode birth dates, inject
+// values with dates at temporal boundaries:
+// today, tomorrow, yesterday, century edges, etc.
+// This catches time-dependent validation bugs
+// that random generation almost never hits.
+
+const dateBoundaries = (): string[] => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const pad2 = (n: number) => String(n).padStart(2, "0");
+
+  const dates: Array<[number, number, number]> = [
+    [y, m, d], // today
+    [y, m, d + 1], // tomorrow
+    [y, m, d - 1], // yesterday
+    [y, 1, 1], // start of year
+    [y, 12, 31], // end of year
+    [y + 1, 1, 1], // start of next year
+    [y - 1, 12, 31], // end of last year
+    [2000, 1, 1], // century boundary
+    [1999, 12, 31], // century boundary
+    [1900, 1, 1], // century boundary
+  ];
+
+  return dates.map(
+    ([yr, mo, dy]) =>
+      `${pad2(dy)}${pad2(mo)}${String(yr).slice(-2)}`,
+  );
+};
+
+/**
+ * Generate date-prefix strings (DDMMYY) at
+ * temporal boundaries + random suffix.
+ */
+const dateDigs = (
+  totalLen: number,
+): fc.Arbitrary<string> => {
+  const boundaries = dateBoundaries();
+  const suffixLen = totalLen - 6;
+  if (suffixLen < 0) return digs(totalLen);
+  return fc.oneof(
+    { weight: 70, arbitrary: digs(totalLen) },
+    ...boundaries.map((prefix) => ({
+      weight: Math.max(
+        1,
+        Math.floor(30 / boundaries.length),
+      ),
+      arbitrary: rawDigs(suffixLen).map(
+        (s) => `${prefix}${s}`,
+      ),
+    })),
+  );
+};
+
+/**
+ * Like dateDigs but with YYMMDD order (used by
+ * CZ RČ, BE NN, BG EGN, etc.)
+ */
+const dateDigsYMD = (
+  totalLen: number,
+): fc.Arbitrary<string> => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const pad2 = (n: number) => String(n).padStart(2, "0");
+
+  const dates: Array<[number, number, number]> = [
+    [y, m, d],
+    [y, m, d + 1],
+    [y, m, d - 1],
+    [y + 1, 1, 1],
+    [y - 1, 12, 31],
+    [2000, 1, 1],
+    [1999, 12, 31],
+    [1900, 1, 1],
+  ];
+
+  const prefixes = dates.map(
+    ([yr, mo, dy]) =>
+      `${String(yr).slice(-2)}${pad2(mo)}${pad2(dy)}`,
+  );
+
+  const suffixLen = totalLen - 6;
+  if (suffixLen < 0) return digs(totalLen);
+  return fc.oneof(
+    { weight: 70, arbitrary: digs(totalLen) },
+    ...prefixes.map((prefix) => ({
+      weight: Math.max(1, Math.floor(30 / prefixes.length)),
+      arbitrary: rawDigs(suffixLen).map(
+        (s) => `${prefix}${s}`,
+      ),
+    })),
+  );
+};
+
 type OracleSpec = {
   name: string;
   pyModule: string;
@@ -271,7 +371,7 @@ const SPECS: OracleSpec[] = [
     name: "CZ RČ",
     pyModule: "cz.rc",
     tsValidate: (v) => cz.rc.validate(v).valid,
-    arb: fc.oneof(digs(9), digs(10)),
+    arb: fc.oneof(dateDigsYMD(9), dateDigsYMD(10)),
   },
   {
     name: "SK IČ DPH",
@@ -295,7 +395,7 @@ const SPECS: OracleSpec[] = [
     name: "PL PESEL",
     pyModule: "pl.pesel",
     tsValidate: (v) => pl.pesel.validate(v).valid,
-    arb: digs(11),
+    arb: dateDigsYMD(11),
   },
   {
     name: "PL REGON",
@@ -579,25 +679,25 @@ const SPECS: OracleSpec[] = [
     name: "BE NN",
     pyModule: "be.nn",
     tsValidate: (v) => be.nn.validate(v).valid,
-    arb: digs(11),
+    arb: dateDigsYMD(11),
   },
   {
     name: "BG EGN",
     pyModule: "bg.egn",
     tsValidate: (v) => bg.egn.validate(v).valid,
-    arb: digs(10),
+    arb: dateDigsYMD(10),
   },
   {
     name: "DK CPR",
     pyModule: "dk.cpr",
     tsValidate: (v) => dk.cpr.validate(v).valid,
-    arb: digs(10),
+    arb: dateDigs(10),
   },
   {
     name: "EE IK",
     pyModule: "ee.ik",
     tsValidate: (v) => ee.ik.validate(v).valid,
-    arb: digs(11),
+    arb: dateDigsYMD(11),
   },
   {
     name: "ES DNI",
@@ -659,7 +759,7 @@ const SPECS: OracleSpec[] = [
     name: "GR AMKA",
     pyModule: "gr.amka",
     tsValidate: (v) => gr.amka.validate(v).valid,
-    arb: digs(11),
+    arb: dateDigs(11),
   },
   {
     name: "IE PPS",
@@ -691,7 +791,7 @@ const SPECS: OracleSpec[] = [
     name: "LT Asmens",
     pyModule: "lt.asmens",
     tsValidate: (v) => lt.asmens.validate(v).valid,
-    arb: digs(11),
+    arb: dateDigsYMD(11),
   },
   {
     name: "NL BSN",
@@ -724,7 +824,7 @@ const SPECS: OracleSpec[] = [
     name: "SI EMSO",
     pyModule: "si.emso",
     tsValidate: (v) => si.emso.validate(v).valid,
-    arb: digs(13),
+    arb: dateDigs(13),
   },
   // ── EEA/EFTA ──────────────────────────────
   {
@@ -749,13 +849,13 @@ const SPECS: OracleSpec[] = [
     name: "NO Fødselsnummer",
     pyModule: "no.fodselsnummer",
     tsValidate: (v) => no.fodselsnummer.validate(v).valid,
-    arb: digs(11),
+    arb: dateDigs(11),
   },
   {
     name: "IS Kennitala",
     pyModule: "is_.kennitala",
     tsValidate: (v) => is.kennitala.validate(v).valid,
-    arb: digs(10),
+    arb: dateDigs(10),
   },
 ];
 
