@@ -139,7 +139,7 @@ const rc: Validator = {
   abbreviation: "RČ",
   country: "CZ",
   entityType: "person",
-  examples: ["7103192745", "710319/2745"] as const,
+  examples: ["7103192745"] as const,
   compact,
   format,
   validate,

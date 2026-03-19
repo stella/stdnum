@@ -110,7 +110,7 @@ const dic: Validator = {
   abbreviation: "DIČ",
   country: "CZ",
   entityType: "any",
-  examples: ["CZ25123891", "CZ7103192745"] as const,
+  examples: ["25123891", "7103192745"] as const,
   compact,
   format,
   validate,
