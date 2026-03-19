@@ -64,3 +64,44 @@ describe("se.personnummer", () => {
     expect(se.personnummer.entityType).toBe("person");
   });
 });
+
+// ─── Organisationsnummer (Org Number) ─────────
+
+describe("se.orgnr", () => {
+  test("valid Organisationsnummer", () => {
+    const r = se.orgnr.validate("1234567897");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid Luhn", () => {
+    const r = se.orgnr.validate("1234567891");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = se.orgnr.validate("123456789");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("format adds dash", () => {
+    expect(se.orgnr.format("1234567897")).toBe(
+      "123456-7897",
+    );
+  });
+
+  test("accepts dash-separated input", () => {
+    const r = se.orgnr.validate("123456-7897");
+    expect(r.valid).toBe(true);
+  });
+
+  test("metadata", () => {
+    expect(se.orgnr.country).toBe("SE");
+    expect(se.orgnr.entityType).toBe("company");
+  });
+});

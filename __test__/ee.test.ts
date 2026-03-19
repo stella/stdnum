@@ -66,3 +66,41 @@ describe("ee.ik", () => {
     expect(ee.ik.entityType).toBe("person");
   });
 });
+
+// ─── Registrikood (Company Register) ─────────
+
+describe("ee.registrikood", () => {
+  test("valid Registrikood", () => {
+    const r = ee.registrikood.validate("12345678");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid checksum", () => {
+    const r = ee.registrikood.validate("12345679");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("invalid first digit", () => {
+    const r = ee.registrikood.validate("22345678");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = ee.registrikood.validate("1234567");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("metadata", () => {
+    expect(ee.registrikood.country).toBe("EE");
+    expect(ee.registrikood.entityType).toBe("company");
+  });
+});

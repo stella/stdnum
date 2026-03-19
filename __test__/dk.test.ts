@@ -62,3 +62,46 @@ describe("dk.cpr", () => {
     expect(dk.cpr.entityType).toBe("person");
   });
 });
+
+// ─── CVR (Business Register) ─────────────────
+
+describe("dk.cvr", () => {
+  test("valid CVR", () => {
+    const r = dk.cvr.validate("13585628");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid checksum", () => {
+    const r = dk.cvr.validate("13585627");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("cannot start with 0", () => {
+    const r = dk.cvr.validate("01234567");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = dk.cvr.validate("1358562");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("strips separators", () => {
+    const r = dk.cvr.validate("13 58 56 28");
+    expect(r.valid).toBe(true);
+  });
+
+  test("metadata", () => {
+    expect(dk.cvr.country).toBe("DK");
+    expect(dk.cvr.entityType).toBe("company");
+  });
+});

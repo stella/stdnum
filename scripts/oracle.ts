@@ -899,6 +899,45 @@ const SPECS: OracleSpec[] = [
       )
       .map(([cc, id, check]) => `${cc}${id}${check}`),
   },
+  // ── Company registers ─────────────────────
+  {
+    name: "DK CVR",
+    pyModule: "dk.cvr",
+    tsValidate: (v) => dk.cvr.validate(v).valid,
+    arb: digs(8),
+  },
+  {
+    name: "EE Registrikood",
+    pyModule: "ee.registrikood",
+    tsValidate: (v) => ee.registrikood.validate(v).valid,
+    arb: digs(8),
+  },
+  {
+    name: "FI Y-tunnus",
+    pyModule: "fi.ytunnus",
+    tsValidate: (v) => fi.ytunnus.validate(v).valid,
+    arb: digs(8),
+  },
+  {
+    name: "SE Orgnr",
+    pyModule: "se.orgnr",
+    tsValidate: (v) => se.orgnr.validate(v).valid,
+    arb: digs(10),
+  },
+  {
+    name: "ES CIF",
+    pyModule: "es.cif",
+    tsValidate: (v) => es.cif.validate(v).valid,
+    arb: fc
+      .tuple(
+        fc.constantFrom(..."ABCDEFGHJNPQRSUVW".split("")),
+        digs(7),
+        fc.constantFrom(
+          ..."0123456789JABCDEFGHI".split(""),
+        ),
+      )
+      .map(([p, d, c]) => `${p}${d}${c}`),
+  },
 ];
 
 // ─── JS oracle specs ─────────────────────────

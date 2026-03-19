@@ -66,3 +66,41 @@ describe("nl.bsn", () => {
     expect(nl.bsn.entityType).toBe("person");
   });
 });
+
+// ─── KvK (Chamber of Commerce) ───────────────
+
+describe("nl.kvk", () => {
+  test("valid KvK number", () => {
+    const r = nl.kvk.validate("12345678");
+    expect(r.valid).toBe(true);
+  });
+
+  test("too short", () => {
+    const r = nl.kvk.validate("1234567");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("too long", () => {
+    const r = nl.kvk.validate("123456789");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("non-digit characters", () => {
+    const r = nl.kvk.validate("1234567A");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("metadata", () => {
+    expect(nl.kvk.country).toBe("NL");
+    expect(nl.kvk.entityType).toBe("company");
+  });
+});
