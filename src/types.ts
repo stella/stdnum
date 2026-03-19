@@ -55,6 +55,16 @@ export type ValidateResult =
   | { valid: true; compact: string }
   | { valid: false; error: StdnumError };
 
+/**
+ * Structured data extracted from a personal ID number.
+ * Returned by `parse()` on validators that encode
+ * birth date and gender.
+ */
+export type ParsedPersonId = {
+  birthDate: Date;
+  gender: "male" | "female";
+};
+
 export type Validator = {
   /** English name. */
   name: string;

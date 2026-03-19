@@ -14,7 +14,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 /**
  * Match python-stdnum's compact: preserve the '-' or '+'
@@ -103,6 +107,32 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/**
+ * Extract birth date and gender from a Personnummer.
+ * Returns null if the value is not valid.
+ */
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
+  const birthDate = getBirthDate(v);
+  if (birthDate === null) return null;
+
+  const genderDigit = Number(v[v.length - 2]);
+
+  return {
+    birthDate: new Date(
+      birthDate.year,
+      birthDate.month - 1,
+      birthDate.day,
+    ),
+    gender: genderDigit % 2 === 0 ? "female" : "male",
+  };
+};
+
 /** Swedish Personal Identity Number. */
 const personnummer: Validator = {
   name: "Swedish Personal ID",
@@ -116,4 +146,4 @@ const personnummer: Validator = {
 };
 
 export default personnummer;
-export { compact, format, validate };
+export { compact, format, parse, validate };

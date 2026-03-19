@@ -15,12 +15,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
-
-export type PeselInfo = {
-  birthDate: Date;
-  gender: "male" | "female";
-};
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 const WEIGHTS = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3] as const;
 
@@ -89,11 +88,16 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /**
- * Extract birth date and gender from a validated
- * PESEL number.
+ * Extract birth date and gender from a PESEL number.
+ * Returns null if the value is not valid.
  */
-const parse = (value: string): PeselInfo => {
-  const v = compact(value);
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
   const yy = Number(v.slice(0, 2));
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));

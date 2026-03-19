@@ -21,12 +21,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
-
-export type BirthNumberInfo = {
-  birthDate: Date;
-  gender: "male" | "female";
-};
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 const compact = (value: string): string =>
   clean(value, " /");
@@ -112,11 +111,16 @@ const format = (value: string): string => {
 };
 
 /**
- * Extract birth date and gender from a validated
- * birth number.
+ * Extract birth date and gender from a birth number.
+ * Returns null if the value is not valid.
  */
-const parse = (value: string): BirthNumberInfo => {
-  const v = compact(value);
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
   const yy = Number(v.slice(0, 2));
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));

@@ -14,7 +14,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 const WEIGHTS = [
   7, 6, 5, 4, 3, 2, 7, 6, 5, 4, 3, 2,
@@ -82,6 +86,34 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/**
+ * Extract birth date and gender from an EMSO.
+ * Returns null if the value is not valid.
+ */
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
+  const dd = Number(v.slice(0, 2));
+  const mm = Number(v.slice(2, 4));
+  let yyyy = Number(v.slice(4, 7));
+  if (yyyy < 900) {
+    yyyy += 2000;
+  } else {
+    yyyy += 1000;
+  }
+
+  const serial = Number(v.slice(9, 12));
+
+  return {
+    birthDate: new Date(yyyy, mm - 1, dd),
+    gender: serial < 500 ? "male" : "female",
+  };
+};
+
 /** Slovenian Unique Master Citizen Number. */
 const emso: Validator = {
   name: "Slovenian Personal ID",
@@ -95,4 +127,4 @@ const emso: Validator = {
 };
 
 export default emso;
-export { compact, format, validate };
+export { compact, format, parse, validate };

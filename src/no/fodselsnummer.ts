@@ -13,7 +13,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 const WEIGHTS_D1 = [3, 7, 6, 1, 8, 9, 4, 5, 2] as const;
 const WEIGHTS_D2 = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2] as const;
@@ -125,6 +129,37 @@ const format = (value: string): string => {
   return `${v.slice(0, 6)} ${v.slice(6)}`;
 };
 
+/**
+ * Extract birth date and gender from a Norwegian
+ * birth number. Returns null if the value is not
+ * valid.
+ */
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
+  let dd = Number(v.slice(0, 2));
+  let mm = Number(v.slice(2, 4));
+  const yy = Number(v.slice(4, 6));
+  const individual = Number(v.slice(6, 9));
+
+  if (dd > 40) dd -= 40;
+  if (mm > 40) mm -= 40;
+
+  const century = getCentury(yy, individual);
+  if (century === undefined) return null;
+
+  const year = century + yy;
+
+  return {
+    birthDate: new Date(year, mm - 1, dd),
+    gender: individual % 2 === 0 ? "female" : "male",
+  };
+};
+
 /** Norwegian Birth Number. */
 const fodselsnummer: Validator = {
   name: "Norwegian Birth Number",
@@ -138,4 +173,4 @@ const fodselsnummer: Validator = {
 };
 
 export default fodselsnummer;
-export { compact, format, validate };
+export { compact, format, parse, validate };
