@@ -32,7 +32,7 @@ const validate = (value: string): ValidateResult => {
   if (!BIC_RE.test(v)) {
     return err(
       "INVALID_FORMAT",
-      "BIC must match [A-Z]{4}[A-Z]{2}[0-9A-Z]{2,5}",
+      "BIC must be 8 or 11 alphanumeric characters",
     );
   }
   // Country code at positions 4-5 is already
