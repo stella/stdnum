@@ -34,7 +34,8 @@ export type CountryCode =
   | "RO"
   | "SE"
   | "SI"
-  | "SK";
+  | "SK"
+  | "TR";
 
 export type ErrorCode =
   | "INVALID_FORMAT"

@@ -46,3 +46,4 @@ export * as ro from "./ro/mod";
 export * as se from "./se/mod";
 export * as si from "./si/mod";
 export * as sk from "./sk/mod";
+export * as tr from "./tr/mod";

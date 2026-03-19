@@ -88,6 +88,7 @@ import {
   se,
   si,
   sk,
+  tr,
 } from "../src";
 import creditcardValidator from "../src/creditcard";
 import ibanValidator from "../src/iban";
@@ -866,6 +867,24 @@ const SPECS: OracleSpec[] = [
     pyModule: "is_.kennitala",
     tsValidate: (v) => is.kennitala.validate(v).valid,
     arb: dateDigs(10),
+  },
+  // ── Turkey ──────────────────────────────────
+  {
+    name: "TR T.C. Kimlik",
+    pyModule: "tr.tckimlik",
+    tsValidate: (v) => tr.tckimlik.validate(v).valid,
+    arb: fc
+      .tuple(
+        fc.integer({ min: 1, max: 9 }).map(String),
+        digs(10),
+      )
+      .map(([first, rest]) => `${first}${rest}`),
+  },
+  {
+    name: "TR VKN",
+    pyModule: "tr.vkn",
+    tsValidate: (v) => tr.vkn.validate(v).valid,
+    arb: digs(10),
   },
   // ── International financial ─────────────────
   {
