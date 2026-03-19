@@ -44,10 +44,15 @@ import {
   slovenia,
   spain,
   sweden,
+  switzerland,
+  norway,
 } from "jsvat";
 import luhnLib from "luhn";
 import { execSync } from "node:child_process";
-import { validatePerson as stdnumValidatePerson } from "stdnum";
+import {
+  validateEntity as stdnumValidateEntity,
+  validatePerson as stdnumValidatePerson,
+} from "stdnum";
 import { validatePolish } from "validate-polish";
 
 import {
@@ -1183,6 +1188,57 @@ const JS_SPECS: JsOracleSpec[] = [
     oracleValidate: (v) =>
       stdnumValidatePerson("SI", v).isValid,
     arb: digs(13),
+  },
+  // ── EEA/EFTA via stdnum-js ────────────────
+  {
+    name: "CH UID (vs stdnum-js)",
+    tsValidate: (v) => chMod.uid.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidateEntity("CH", v).isValid,
+    arb: digs(9).map((d) => `CHE${d}`),
+  },
+  {
+    name: "CH SSN (vs stdnum-js)",
+    tsValidate: (v) => chMod.ssn.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("CH", v).isValid,
+    arb: digs(10).map((d) => `756${d}`),
+  },
+  {
+    name: "NO Orgnr (vs stdnum-js)",
+    tsValidate: (v) => no.orgnr.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidateEntity("NO", v).isValid,
+    arb: digs(9),
+  },
+  {
+    name: "NO Fødselsnr (vs stdnum-js)",
+    tsValidate: (v) => no.fodselsnummer.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("NO", v).isValid,
+    arb: digs(11),
+  },
+  {
+    name: "IS Kennitala (vs stdnum-js)",
+    tsValidate: (v) => is.kennitala.validate(v).valid,
+    oracleValidate: (v) =>
+      stdnumValidatePerson("IS", v).isValid,
+    arb: digs(10),
+  },
+  // ── EEA/EFTA VAT via jsvat ───────────────
+  {
+    name: "CH VAT (vs jsvat)",
+    tsValidate: (v) => chMod.uid.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`${v}MWST`, [switzerland]).isValid,
+    arb: digs(9).map((d) => `CHE${d}`),
+  },
+  {
+    name: "NO VAT (vs jsvat)",
+    tsValidate: (v) => no.orgnr.validate(v).valid,
+    oracleValidate: (v) =>
+      checkVAT(`NO${v}MVA`, [norway]).isValid,
+    arb: digs(9),
   },
 ];
 
