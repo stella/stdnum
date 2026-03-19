@@ -100,4 +100,12 @@ export type Validator = {
    * government specs where available.
    */
   examples?: readonly string[];
+
+  /**
+   * Generate a random valid identifier in compact
+   * form. Available on validators with checksum
+   * algorithms. Useful for testing, demos, and
+   * form placeholders. NOT cryptographically secure.
+   */
+  generate?: () => string;
 };
