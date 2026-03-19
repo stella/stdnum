@@ -42,7 +42,7 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => {
   const v = compact(value);
-  const digits = v.slice(0, -3);
+  const digits = v.endsWith("MVA") ? v.slice(0, -3) : v;
   return `NO ${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)} MVA`;
 };
 
