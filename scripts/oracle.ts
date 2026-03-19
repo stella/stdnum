@@ -88,6 +88,7 @@ import {
   si,
   sk,
 } from "../src";
+import creditcardValidator from "../src/creditcard";
 import ibanValidator from "../src/iban";
 import luhnValidator from "../src/luhn";
 
@@ -439,9 +440,16 @@ const SPECS: OracleSpec[] = [
       .map(([cc, check, bban]) => `${cc}${check}${bban}`),
   },
   {
-    name: "Credit Card (Luhn)",
+    name: "Luhn (generic)",
     pyModule: "luhn",
     tsValidate: (v) => luhnValidator.validate(v).valid,
+    arb: digsRange(1, 20),
+  },
+  {
+    name: "Credit Card",
+    pyModule: "luhn",
+    tsValidate: (v) =>
+      creditcardValidator.validate(v).valid,
     arb: digsRange(13, 19),
   },
   // ── Wave 2 countries ──────────────────────
