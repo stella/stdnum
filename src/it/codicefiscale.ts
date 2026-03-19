@@ -6,10 +6,18 @@
  * character is a check letter computed using
  * odd/even position value tables.
  *
+ * Supports omocodia: when two people share the
+ * same code, the tax office replaces digit
+ * positions with letters from the set LMNPQRSTUV
+ * (L=0, M=1, N=2, P=3, Q=4, R=5, S=6, T=7,
+ * U=8, V=9). Only these 10 letters are valid
+ * substitutes at digit positions.
+ *
  * Also accepts 11-digit numbers (delegates to
  * Partita IVA validation).
  *
  * @see https://www.agenziaentrate.gov.it/
+ * @see https://it.wikipedia.org/wiki/Codice_fiscale#Omocodia
  */
 
 import { clean } from "#util/clean";
@@ -126,7 +134,9 @@ const validate = (value: string): ValidateResult => {
   // The "alphanumeric" positions accept omocodia
   // substitution letters (LMNPQRSTUV for 0-9)
   if (
-    !/^[A-Z]{6}[A-Z0-9]{2}[A-Z][A-Z0-9]{2}[A-Z][A-Z0-9]{3}[A-Z]$/.test(
+    // Omocodia: digits can be replaced with
+    // LMNPQRSTUV only (not arbitrary letters)
+    !/^[A-Z]{6}[0-9LMNPQRSTUV]{2}[ABCDEHLMPRST][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]$/.test(
       v,
     )
   ) {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { iban, lei, luhn } from "../src";
+import { creditcard, iban, lei, luhn } from "../src";
 
 // ─── IBAN ────────────────────────────────────
 
@@ -73,9 +73,38 @@ describe("iban", () => {
   });
 });
 
-// ─── Credit Card (Luhn) ─────────────────────
+// ─── Luhn (generic) ─────────────────────────
 
 describe("luhn", () => {
+  test("valid any length", () => {
+    expect(luhn.validate("0").valid).toBe(true);
+    expect(luhn.validate("18").valid).toBe(true);
+    expect(luhn.validate("4111111111111111").valid).toBe(
+      true,
+    );
+  });
+
+  test("invalid checksum", () => {
+    const r = luhn.validate("19");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("empty rejected", () => {
+    const r = luhn.validate("");
+    expect(r.valid).toBe(false);
+  });
+
+  test("metadata", () => {
+    expect(luhn.abbreviation).toBe("Luhn");
+  });
+});
+
+// ─── Credit Card ────────────────────────────
+
+describe("creditcard", () => {
   const valid = [
     "4111 1111 1111 1111", // Visa test
     "5500 0000 0000 0004", // Mastercard test
@@ -85,21 +114,21 @@ describe("luhn", () => {
 
   for (const v of valid) {
     test(`valid: ${v}`, () => {
-      const r = luhn.validate(v);
+      const r = creditcard.validate(v);
       expect(r.valid).toBe(true);
     });
   }
 
   test("invalid Luhn", () => {
-    const r = luhn.validate("4111 1111 1111 1112");
+    const r = creditcard.validate("4111 1111 1111 1112");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_CHECKSUM");
     }
   });
 
-  test("too short", () => {
-    const r = luhn.validate("411111");
+  test("too short (12 digits)", () => {
+    const r = creditcard.validate("411111111111");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_LENGTH");
@@ -107,25 +136,25 @@ describe("luhn", () => {
   });
 
   test("compact strips separators", () => {
-    expect(luhn.compact("4111-1111-1111-1111")).toBe(
+    expect(creditcard.compact("4111-1111-1111-1111")).toBe(
       "4111111111111111",
     );
   });
 
   test("format Amex as 4-6-5", () => {
-    expect(luhn.format("340000000000009")).toBe(
+    expect(creditcard.format("340000000000009")).toBe(
       "3400 000000 00009",
     );
   });
 
   test("format Visa as 4-4-4-4", () => {
-    expect(luhn.format("4111111111111111")).toBe(
+    expect(creditcard.format("4111111111111111")).toBe(
       "4111 1111 1111 1111",
     );
   });
 
   test("metadata", () => {
-    expect(luhn.abbreviation).toBe("CC");
+    expect(creditcard.abbreviation).toBe("CC");
   });
 });
 

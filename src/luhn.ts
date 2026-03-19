@@ -1,10 +1,10 @@
 /**
- * Credit card number validation (Luhn algorithm).
+ * Generic Luhn checksum validation.
  *
- * Validates card numbers using the Luhn checksum
- * (ISO/IEC 7812-1). Supports Visa, Mastercard,
- * Amex, Discover, and other networks (13-19
- * digits).
+ * Validates any digit string using the Luhn
+ * algorithm (ISO/IEC 7812-1). No length
+ * restriction. For credit card validation
+ * (13-19 digits), use `creditcard` instead.
  */
 
 import { luhnValidate } from "#checksums/luhn";
@@ -19,51 +19,36 @@ const compact = (value: string): string =>
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
-  if (v.length < 13 || v.length > 19) {
-    return err(
-      "INVALID_LENGTH",
-      "Credit card number must be 13-19 digits",
-    );
+  if (v.length < 1) {
+    return err("INVALID_LENGTH", "Value must not be empty");
   }
   if (!isdigits(v)) {
     return err(
       "INVALID_FORMAT",
-      "Credit card number must contain only digits",
+      "Value must contain only digits",
     );
   }
   if (!luhnValidate(v)) {
     return err(
       "INVALID_CHECKSUM",
-      "Credit card number fails Luhn check",
+      "Luhn check digit does not match",
     );
   }
   return { valid: true, compact: v };
 };
 
-const format = (value: string): string => {
-  const v = compact(value);
-  // Amex: 4-6-5 grouping
-  if (v.length === 15 && v[0] === "3") {
-    return `${v.slice(0, 4)} ${v.slice(4, 10)} ${v.slice(10)}`;
-  }
-  // Standard: groups of 4
-  const groups: string[] = [];
-  for (let i = 0; i < v.length; i += 4) {
-    groups.push(v.slice(i, i + 4));
-  }
-  return groups.join(" ");
-};
+const format = (value: string): string => compact(value);
 
-/** Credit Card Number (Luhn). */
-const creditCard: Validator = {
-  name: "Credit Card Number",
-  localName: "Credit Card Number",
-  abbreviation: "CC",
+/** Generic Luhn Validator. */
+const luhn: Validator = {
+  name: "Luhn",
+  localName: "Luhn",
+  abbreviation: "Luhn",
   entityType: "any",
   compact,
   format,
   validate,
 };
 
-export default creditCard;
+export default luhn;
 export { compact, format, validate };
