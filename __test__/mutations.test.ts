@@ -154,19 +154,15 @@ for (const [name, v] of validators) {
           `${compacted}: no digit positions to mutate`,
         ).toBeGreaterThan(0);
 
-        // Count how many mutations are caught
-        // (invalid) vs escape (still valid).
-        // Some escapes are expected — checksum
+        // Count how many mutations are caught.
+        // Some escapes are expected; checksum
         // algorithms have a finite detection rate.
         // But at least SOME mutations must fail.
         let caught = 0;
-        let escaped = 0;
 
         for (const m of mutations) {
           const result = v.validate(m.mutated);
-          if (result.valid) {
-            escaped++;
-          } else {
+          if (!result.valid) {
             caught++;
           }
         }
