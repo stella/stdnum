@@ -120,7 +120,7 @@ const pesel: Validator = {
   abbreviation: "PESEL",
   country: "PL",
   entityType: "person",
-  examples: ["44051401359"] as const,
+  examples: ["02070803628"] as const,
   compact,
   format,
   validate,
