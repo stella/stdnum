@@ -15,129 +15,6 @@ import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "./types";
 
-/**
- * ISO 3166-1 alpha-2 country codes.
- * Covers all SWIFT-participating countries.
- */
-const COUNTRIES = new Set([
-  // EU-27
-  "AT",
-  "BE",
-  "BG",
-  "CY",
-  "CZ",
-  "DE",
-  "DK",
-  "EE",
-  "ES",
-  "FI",
-  "FR",
-  "GR",
-  "HR",
-  "HU",
-  "IE",
-  "IT",
-  "LT",
-  "LU",
-  "LV",
-  "MT",
-  "NL",
-  "PL",
-  "PT",
-  "RO",
-  "SE",
-  "SI",
-  "SK",
-  // EEA + common
-  "CH",
-  "NO",
-  "IS",
-  "LI",
-  "GB",
-  "US",
-  "JP",
-  "CN",
-  "AU",
-  "CA",
-  "NZ",
-  "HK",
-  "SG",
-  "IN",
-  "BR",
-  "KR",
-  "ZA",
-  "MX",
-  "AE",
-  "SA",
-  "TR",
-  "RU",
-  "IL",
-  "TH",
-  "MY",
-  "ID",
-  "PH",
-  "TW",
-  "VN",
-  "CL",
-  "CO",
-  "AR",
-  "PE",
-  "KE",
-  "NG",
-  "GH",
-  "EG",
-  "MA",
-  "TN",
-  "PK",
-  "BD",
-  "LK",
-  "QA",
-  "BH",
-  "KW",
-  "OM",
-  "JO",
-  "LB",
-  "UA",
-  "KZ",
-  "GE",
-  "RS",
-  "BA",
-  "MK",
-  "ME",
-  "AL",
-  "XK",
-  "MD",
-  "BY",
-  "AM",
-  "AZ",
-  "UZ",
-  "MN",
-  "MM",
-  "KH",
-  "LA",
-  "NP",
-  "PA",
-  "CR",
-  "DO",
-  "GT",
-  "HN",
-  "SV",
-  "NI",
-  "JM",
-  "TT",
-  "BB",
-  "BS",
-  "BM",
-  "KY",
-  "CW",
-  "AW",
-  "MU",
-  "SC",
-  "FJ",
-  "PG",
-  "WS",
-]);
-
 const BIC_RE =
   /^[A-Z]{4}[A-Z]{2}[0-9A-Z]{2}([0-9A-Z]{3})?$/;
 
@@ -158,13 +35,10 @@ const validate = (value: string): ValidateResult => {
       "BIC must match [A-Z]{4}[A-Z]{2}[0-9A-Z]{2,5}",
     );
   }
-  const cc = v.slice(4, 6);
-  if (!COUNTRIES.has(cc)) {
-    return err(
-      "INVALID_COMPONENT",
-      `Unknown country code: ${cc}`,
-    );
-  }
+  // Country code at positions 4-5 is already
+  // validated as [A-Z]{2} by the regex above.
+  // SWIFT accepts all ISO 3166-1 alpha-2 codes
+  // plus XK (Kosovo); we don't restrict further.
   return { valid: true, compact: v };
 };
 

@@ -66,7 +66,6 @@ const VALIDATORS: Record<string, CountryValidator> = {
   ES: esVat,
   FI: fiVat,
   FR: frTva,
-  GB: gbVat,
   GR: grVat,
   HR: hrVat,
   HU: huVat,
@@ -140,6 +139,9 @@ const format = (value: string): string => {
   if (parts === undefined) return value;
   const validator = VALIDATORS[parts.cc];
   if (validator === undefined) return value;
+  // Country format() methods prepend their own
+  // prefix, so we use compact() to get the bare
+  // number and prepend the EU prefix ourselves.
   return `${parts.cc}${validator.compact(parts.rest)}`;
 };
 

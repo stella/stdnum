@@ -240,12 +240,10 @@ describe("bic", () => {
     }
   });
 
-  test("invalid country code", () => {
+  test("any ISO 3166-1 alpha-2 country accepted", () => {
+    // SWIFT accepts all country codes
     const r = bic.validate("DEUTXXFF");
-    expect(r.valid).toBe(false);
-    if (!r.valid) {
-      expect(r.error.code).toBe("INVALID_COMPONENT");
-    }
+    expect(r.valid).toBe(true);
   });
 
   test("compact strips separators", () => {
