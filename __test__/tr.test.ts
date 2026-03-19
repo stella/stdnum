@@ -35,7 +35,7 @@ describe("tr.tckimlik", () => {
     const r = tr.tckimlik.validate("07291716092");
     expect(r.valid).toBe(false);
     if (!r.valid) {
-      expect(r.error.code).toBe("INVALID_FORMAT");
+      expect(r.error.code).toBe("INVALID_COMPONENT");
     }
   });
 

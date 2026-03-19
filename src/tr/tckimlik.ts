@@ -64,7 +64,7 @@ const validate = (value: string): ValidateResult => {
   }
   if (v[0] === "0") {
     return err(
-      "INVALID_FORMAT",
+      "INVALID_COMPONENT",
       "T.C. Kimlik number cannot start with 0",
     );
   }
