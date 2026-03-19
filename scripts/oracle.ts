@@ -625,7 +625,21 @@ const SPECS: OracleSpec[] = [
     arb: fc
       .tuple(
         digs(6),
-        fc.constantFrom("-", "A"),
+        fc.constantFrom(
+          "+",
+          "-",
+          "Y",
+          "X",
+          "W",
+          "V",
+          "U",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+        ),
         digs(3),
         fc.constantFrom(
           ..."0123456789ABCDEFHJKLMNPRSTUVWXY".split(""),
@@ -643,14 +657,27 @@ const SPECS: OracleSpec[] = [
     name: "IE PPS",
     pyModule: "ie.pps",
     tsValidate: (v) => ie.pps.validate(v).valid,
-    arb: fc
-      .tuple(
-        digs(7),
-        fc.constantFrom(
-          ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
-        ),
-      )
-      .map(([d, l]) => `${d}${l}`),
+    arb: fc.oneof(
+      // 8-char old format
+      fc
+        .tuple(
+          digs(7),
+          fc.constantFrom(
+            ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
+          ),
+        )
+        .map(([d, l]) => `${d}${l}`),
+      // 9-char new format (with 2nd letter)
+      fc
+        .tuple(
+          digs(7),
+          fc.constantFrom(
+            ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
+          ),
+          fc.constantFrom("A", "B", "H"),
+        )
+        .map(([d, l1, l2]) => `${d}${l1}${l2}`),
+    ),
   },
   {
     name: "LT Asmens",
@@ -674,7 +701,16 @@ const SPECS: OracleSpec[] = [
     name: "SE Personnummer",
     pyModule: "se.personnummer",
     tsValidate: (v) => se.personnummer.validate(v).valid,
-    arb: digs(10),
+    arb: fc.oneof(
+      // 10-digit with implicit - separator
+      digs(10),
+      // 10-digit with + separator (100+ years old)
+      fc
+        .tuple(digs(6), digs(4))
+        .map(([d, s]) => `${d}+${s}`),
+      // 12-digit YYYYMMDDNNNN
+      digs(12),
+    ),
   },
   {
     name: "SI EMSO",

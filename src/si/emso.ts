@@ -54,7 +54,11 @@ const validate = (value: string): ValidateResult => {
   const dd = Number(v.slice(0, 2));
   const mm = Number(v.slice(2, 4));
   let yyyy = Number(v.slice(4, 7));
-  if (yyyy < 800) {
+  // JMBG standard: 900-999 → 1900s, 000-899 → 2000s
+  // Note: python-stdnum uses 800 as threshold, but
+  // the official JMBG spec uses 900. No practical
+  // difference (800-899 range has no living citizens).
+  if (yyyy < 900) {
     yyyy += 2000;
   } else {
     yyyy += 1000;
