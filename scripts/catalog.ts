@@ -12,11 +12,14 @@
  */
 
 import * as all from "../src";
-import type { Validator } from "../src/types";
+import type {
+  CountryCode,
+  Validator,
+} from "../src/types";
 
 // ─── Country name lookup ────────────────────
 
-const COUNTRY_NAMES: Record<string, string> = {
+const COUNTRY_NAMES: Record<CountryCode, string> = {
   AT: "Austria",
   BE: "Belgium",
   BG: "Bulgaria",
@@ -27,7 +30,6 @@ const COUNTRY_NAMES: Record<string, string> = {
   DK: "Denmark",
   EE: "Estonia",
   ES: "Spain",
-  EU: "European Union",
   FI: "Finland",
   FR: "France",
   GB: "United Kingdom",
@@ -55,7 +57,7 @@ const COUNTRY_NAMES: Record<string, string> = {
 
 type CatalogEntry = {
   key: string;
-  country: string | undefined;
+  country: CountryCode | undefined;
   name: string;
   localName: string;
   abbreviation: string;
@@ -88,6 +90,8 @@ for (const [ns, mod] of Object.entries(all)) {
     });
   } else if (mod && typeof mod === "object") {
     for (const [key, v] of Object.entries(
+      // SAFETY: namespace re-exports are plain objects;
+      // Object.entries returns unknown values regardless.
       mod as Record<string, unknown>,
     )) {
       if (isValidator(v)) {
@@ -107,12 +111,14 @@ for (const [ns, mod] of Object.entries(all)) {
 
 // ─── Group by country ───────────────────────
 
-const INTERNATIONAL = "__intl__";
+const INTERNATIONAL = "__intl__" as const;
+type GroupKey = CountryCode | typeof INTERNATIONAL;
 
-const grouped = new Map<string, CatalogEntry[]>();
+const grouped = new Map<GroupKey, CatalogEntry[]>();
 
 for (const entry of entries) {
-  const group = entry.country ?? INTERNATIONAL;
+  const group: GroupKey =
+    entry.country ?? INTERNATIONAL;
   const list = grouped.get(group);
   if (list) {
     list.push(entry);
@@ -122,11 +128,13 @@ for (const entry of entries) {
 }
 
 // Sort groups: international first, then alphabetically
-const sortedGroups = [...grouped.keys()].sort((a, b) => {
-  if (a === INTERNATIONAL) return -1;
-  if (b === INTERNATIONAL) return 1;
-  return a.localeCompare(b);
-});
+const sortedGroups = [...grouped.keys()].sort(
+  (a, b) => {
+    if (a === INTERNATIONAL) return -1;
+    if (b === INTERNATIONAL) return 1;
+    return a.localeCompare(b);
+  },
+);
 
 // ─── Output ─────────────────────────────────
 
@@ -195,7 +203,7 @@ if (jsonMode) {
     if (group === INTERNATIONAL) {
       console.log("International");
     } else {
-      const label = COUNTRY_NAMES[group] ?? group;
+      const label = COUNTRY_NAMES[group];
       console.log(`${group} (${label})`);
     }
 
