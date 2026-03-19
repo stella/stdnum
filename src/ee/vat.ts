@@ -8,22 +8,12 @@
  * @see https://www.emta.ee/en
  */
 
+import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [3, 7, 1, 3, 7, 1, 3, 7, 1];
 
@@ -49,11 +39,8 @@ const validate = (value: string): ValidateResult => {
       "Estonian VAT number must contain only digits",
     );
   }
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += WEIGHTS[i] * Number(v[i]);
-  }
-  if (sum % 10 !== 0) {
+  const sum = weightedSum(v, WEIGHTS, 10);
+  if (sum !== 0) {
     return err(
       "INVALID_CHECKSUM",
       "Estonian VAT number check digit mismatch",

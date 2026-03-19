@@ -7,22 +7,12 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/bulgaria-tin.pdf
  */
 
+import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -34,18 +24,20 @@ const compact = (value: string): string => {
 
 const d = (v: string, i: number): number => Number(v[i]);
 
+const WEIGHTS_9_PASS1 = [1, 2, 3, 4, 5, 6, 7, 8];
+const WEIGHTS_9_PASS2 = [3, 4, 5, 6, 7, 8, 9, 10];
+const WEIGHTS_EGN = [2, 4, 8, 5, 10, 9, 7, 3, 6];
+const WEIGHTS_PNF = [21, 19, 17, 13, 11, 9, 7, 3, 1];
+const WEIGHTS_OTHER = [4, 3, 2, 7, 6, 5, 4, 3, 2];
+
 const validate9 = (v: string): boolean => {
-  let check = 0;
-  for (let i = 0; i < 8; i++) {
-    check += d(v, i) * (i + 1);
-  }
-  check %= 11;
+  let check = weightedSum(
+    v.slice(0, 8),
+    WEIGHTS_9_PASS1,
+    11,
+  );
   if (check === 10) {
-    check = 0;
-    for (let i = 0; i < 8; i++) {
-      check += d(v, i) * (i + 3);
-    }
-    check %= 11;
+    check = weightedSum(v.slice(0, 8), WEIGHTS_9_PASS2, 11);
   }
   return check % 10 === d(v, 8);
 };
@@ -77,12 +69,8 @@ const validateEgn = (v: string): boolean => {
   ) {
     return false;
   }
-  const weights = [2, 4, 8, 5, 10, 9, 7, 3, 6];
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += weights[i] * d(v, i);
-  }
-  return (sum % 11) % 10 === d(v, 9);
+  const sum = weightedSum(v.slice(0, 9), WEIGHTS_EGN, 11);
+  return sum % 10 === d(v, 9);
 };
 
 /**
@@ -90,12 +78,8 @@ const validateEgn = (v: string): boolean => {
  * Weights [21,19,17,13,11,9,7,3,1], sum % 10.
  */
 const validatePnf = (v: string): boolean => {
-  const weights = [21, 19, 17, 13, 11, 9, 7, 3, 1];
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += weights[i] * d(v, i);
-  }
-  return sum % 10 === d(v, 9);
+  const sum = weightedSum(v.slice(0, 9), WEIGHTS_PNF, 10);
+  return sum === d(v, 9);
 };
 
 /**
@@ -103,12 +87,8 @@ const validatePnf = (v: string): boolean => {
  * Weights [4,3,2,7,6,5,4,3,2], (11 - sum%11) % 11.
  */
 const validateOther = (v: string): boolean => {
-  const weights = [4, 3, 2, 7, 6, 5, 4, 3, 2];
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += weights[i] * d(v, i);
-  }
-  return (11 - (sum % 11)) % 11 === d(v, 9);
+  const sum = weightedSum(v.slice(0, 9), WEIGHTS_OTHER, 11);
+  return (11 - sum) % 11 === d(v, 9);
 };
 
 const validate10 = (v: string): boolean =>

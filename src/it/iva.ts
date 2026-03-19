@@ -9,13 +9,10 @@
 
 import { luhnValidate } from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
+import type { ValidateResult, Validator } from "../types";
 
 const VALID_PROVINCES = new Set([
   ...Array.from({ length: 100 }, (_, i) =>
@@ -26,14 +23,6 @@ const VALID_PROVINCES = new Set([
   "888",
   "999",
 ]);
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
 
 const compact = (value: string): string => {
   let v = clean(value, " -");

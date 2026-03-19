@@ -9,13 +9,10 @@
  */
 
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
+import type { ValidateResult, Validator } from "../types";
 import { CHECK_LETTERS } from "./dni";
 
 const PREFIX_MAP: Record<string, string> = {
@@ -23,14 +20,6 @@ const PREFIX_MAP: Record<string, string> = {
   Y: "1",
   Z: "2",
 };
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
 
 const compact = (value: string): string =>
   clean(value, " -").toUpperCase();

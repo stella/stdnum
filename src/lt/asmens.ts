@@ -10,35 +10,12 @@
  */
 
 import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import { twoPassCheck } from "../ee/ik";
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
-
-const isValidDate = (
-  year: number,
-  month: number,
-  day: number,
-): boolean => {
-  const d = new Date(year, month - 1, day);
-  return (
-    d.getFullYear() === year &&
-    d.getMonth() === month - 1 &&
-    d.getDate() === day
-  );
-};
+import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   clean(value, " -");

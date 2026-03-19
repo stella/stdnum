@@ -8,24 +8,14 @@
  * @see https://www.government.nl/topics/personal-data/citizen-service-number-bsn
  */
 
+import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [9, 8, 7, 6, 5, 4, 3, 2, -1] as const;
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
 
 const compact = (value: string): string =>
   clean(value, " -.").padStart(9, "0");
@@ -49,12 +39,8 @@ const validate = (value: string): ValidateResult => {
     return err("INVALID_FORMAT", "BSN cannot be all zeros");
   }
 
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += Number(v[i]) * WEIGHTS[i];
-  }
-
-  if (sum % 11 !== 0) {
+  const sum = weightedSum(v, WEIGHTS, 11);
+  if (sum !== 0) {
     return err(
       "INVALID_CHECKSUM",
       "BSN check does not match",

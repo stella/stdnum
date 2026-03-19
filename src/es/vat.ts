@@ -9,21 +9,10 @@
  */
 
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const DNI_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE";
 const CIF_LETTERS = "JABCDEFGHI";

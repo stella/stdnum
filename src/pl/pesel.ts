@@ -11,13 +11,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
+import type { ValidateResult, Validator } from "../types";
 
 export type PeselInfo = {
   birthDate: Date;
@@ -26,29 +24,8 @@ export type PeselInfo = {
 
 const WEIGHTS = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3] as const;
 
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
-
 const compact = (value: string): string =>
   clean(value, " -");
-
-const isValidDate = (
-  year: number,
-  month: number,
-  day: number,
-): boolean => {
-  const d = new Date(year, month - 1, day);
-  return (
-    d.getFullYear() === year &&
-    d.getMonth() === month - 1 &&
-    d.getDate() === day
-  );
-};
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);

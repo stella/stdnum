@@ -11,26 +11,15 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS_9 = [8, 9, 2, 3, 4, 5, 6, 7] as const;
 const WEIGHTS_14 = [
   2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8,
 ] as const;
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
 
 const compact = (value: string): string =>
   clean(value, " -");

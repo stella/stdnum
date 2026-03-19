@@ -12,23 +12,12 @@
 
 import { luhnValidate } from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
+import type { ValidateResult, Validator } from "../types";
 
 const ALPHABET = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
 
 const compact = (value: string): string => {
   let v = clean(value, " -.");

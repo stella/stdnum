@@ -9,13 +9,11 @@
  */
 
 import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
+import type { ValidateResult, Validator } from "../types";
 
 const CHECK_CHARS = "0123456789ABCDEFHJKLMNPRSTUVWXY";
 
@@ -36,27 +34,6 @@ const SEPARATORS_2000 = new Set([
   "E",
   "F",
 ]);
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
-
-const isValidDate = (
-  year: number,
-  month: number,
-  day: number,
-): boolean => {
-  const d = new Date(year, month - 1, day);
-  return (
-    d.getFullYear() === year &&
-    d.getMonth() === month - 1 &&
-    d.getDate() === day
-  );
-};
 
 const compact = (value: string): string =>
   clean(value, " ").toUpperCase();

@@ -8,39 +8,17 @@
  * @see https://en.wikipedia.org/wiki/Unique_Master_Citizen_Number
  */
 
+import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [
   7, 6, 5, 4, 3, 2, 7, 6, 5, 4, 3, 2,
 ] as const;
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
-
-const isValidDate = (
-  year: number,
-  month: number,
-  day: number,
-): boolean => {
-  const d = new Date(year, month - 1, day);
-  return (
-    d.getFullYear() === year &&
-    d.getMonth() === month - 1 &&
-    d.getDate() === day
-  );
-};
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -50,13 +28,11 @@ const compact = (value: string): string =>
  * `str(-total % 11 % 10)`.
  */
 const calcCheckDigit = (v: string): number => {
-  let total = 0;
-  for (let i = 0; i < 12; i++) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    total += Number(v[i]) * WEIGHTS[i]!;
-  }
+  const total = weightedSum(v.slice(0, 12), WEIGHTS, 11);
   // Python's (-total % 11 % 10) — always 0..9
-  return (((-total % 11) + 11) % 11) % 10;
+  // weightedSum already returns (sum % 11 + 11) % 11,
+  // so total is 0..10. Negate within mod 11:
+  return ((11 - total) % 11) % 10;
 };
 
 const validate = (value: string): ValidateResult => {

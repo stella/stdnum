@@ -8,22 +8,12 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/hungary-tin.pdf
  */
 
+import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [9, 7, 3, 1, 9, 7, 3, 1];
 
@@ -49,11 +39,8 @@ const validate = (value: string): ValidateResult => {
       "Hungarian VAT number must contain only digits",
     );
   }
-  let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += WEIGHTS[i] * Number(v[i]);
-  }
-  if (sum % 10 !== 0) {
+  const sum = weightedSum(v, WEIGHTS, 10);
+  if (sum !== 0) {
     return err(
       "INVALID_CHECKSUM",
       "Hungarian VAT number check digit mismatch",
