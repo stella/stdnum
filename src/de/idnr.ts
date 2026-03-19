@@ -91,6 +91,7 @@ const idnr: Validator = {
   abbreviation: "IdNr",
   country: "DE",
   entityType: "person",
+  examples: ["36574261809"] as const,
   compact,
   format,
   validate,

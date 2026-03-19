@@ -93,6 +93,7 @@ const siret: Validator = {
   abbreviation: "SIRET",
   country: "FR",
   entityType: "company",
+  examples: ["73282932000074"] as const,
   compact,
   format,
   validate,

@@ -65,6 +65,7 @@ const uid: Validator = {
   abbreviation: "UID",
   country: "AT",
   entityType: "company",
+  examples: ["U13585627"] as const,
   compact,
   format,
   validate,

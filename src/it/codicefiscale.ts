@@ -193,6 +193,7 @@ const codiceFiscale: Validator = {
   abbreviation: "CF",
   country: "IT",
   entityType: "person",
+  examples: ["RCCMNL83S18D969H"] as const,
   compact,
   format,
   validate,

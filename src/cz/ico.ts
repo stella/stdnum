@@ -55,6 +55,7 @@ const ico: Validator = {
   abbreviation: "IČO",
   country: "CZ",
   entityType: "company",
+  examples: ["25123891", "27074358"] as const,
   compact,
   format,
   validate,

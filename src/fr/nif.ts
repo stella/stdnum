@@ -66,6 +66,7 @@ const nif: Validator = {
   abbreviation: "NIF",
   country: "FR",
   entityType: "person",
+  examples: ["3023217600053"] as const,
   compact,
   format,
   validate,

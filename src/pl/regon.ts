@@ -75,6 +75,7 @@ const regon: Validator = {
   abbreviation: "REGON",
   country: "PL",
   entityType: "company",
+  examples: ["123456785", "12345678512347"] as const,
   compact,
   format,
   validate,

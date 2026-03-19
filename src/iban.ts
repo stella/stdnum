@@ -270,6 +270,10 @@ const iban: Validator = {
   localName: "IBAN",
   abbreviation: "IBAN",
   entityType: "any",
+  examples: [
+    "GB29NWBK60161331926819",
+    "DE89370400440532013000",
+  ] as const,
   compact,
   format,
   validate,
