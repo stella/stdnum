@@ -23,6 +23,15 @@ describe("tr.tckimlik", () => {
     }
   });
 
+  test("invalid checksum (11th digit)", () => {
+    // d10 is correct (6) but d11 is wrong (1 vs 0)
+    const r = tr.tckimlik.validate("17291716061");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
   test("wrong length", () => {
     const r = tr.tckimlik.validate("1729171606");
     expect(r.valid).toBe(false);
