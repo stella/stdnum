@@ -139,10 +139,20 @@ for (const [name, v] of validators) {
 
         // Confirm the example itself is valid
         const baseline = v.validate(compacted);
-        expect(baseline.valid).toBe(true);
+        expect(
+          baseline.valid,
+          `${compacted}: baseline should be valid`,
+        ).toBe(true);
 
         const mutations = mutate(compacted);
-        if (mutations.length === 0) continue;
+
+        // Every checksum example must have digit
+        // positions to mutate; digit-free examples
+        // would pass vacuously.
+        expect(
+          mutations.length,
+          `${compacted}: no digit positions to mutate`,
+        ).toBeGreaterThan(0);
 
         // Count how many mutations are caught
         // (invalid) vs escape (still valid).
@@ -164,13 +174,10 @@ for (const [name, v] of validators) {
         // At least one mutation must be detected.
         // If zero are caught, the checksum logic
         // is not actually being exercised.
-        expect(caught).toBeGreaterThan(0);
-
-        // Escape rate should be well below 100%.
-        // A checksum that catches nothing is broken.
-        const total = caught + escaped;
-        const escapeRate = escaped / total;
-        expect(escapeRate).toBeLessThan(1);
+        expect(
+          caught,
+          `${compacted}: no mutations were caught`,
+        ).toBeGreaterThan(0);
       }
     });
   });
