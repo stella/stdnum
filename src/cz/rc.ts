@@ -16,6 +16,8 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
+import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -132,6 +134,37 @@ const parse = (value: string): BirthNumberInfo => {
   };
 };
 
+
+/**
+ * Generate a random valid 10-digit birth number.
+ * Uses a random date between 1954 and 2024.
+ */
+const generate = (): string => {
+  const year = randomInt(1954, 2024);
+  const month = randomInt(1, 12);
+  const day = randomInt(1, 28);
+  const isFemale = Math.random() < 0.5;
+  const mm = isFemale ? month + 50 : month;
+
+  const yy = String(year % 100).padStart(2, "0");
+  const mmStr = String(mm).padStart(2, "0");
+  const dd = String(day).padStart(2, "0");
+
+  const datePart = `${yy}${mmStr}${dd}`;
+  for (let seq = 0; seq < 1000; seq++) {
+    const seqStr = String(seq).padStart(3, "0");
+    const front = `${datePart}${seqStr}`;
+    const num = Number(front);
+    const check = (num % 11) % 10;
+    const result = `${front}${String(check)}`;
+    if (validate(result).valid) {
+      return result;
+    }
+  }
+
+  return "7103192745";
+};
+
 /** Czech/Slovak Birth Number. */
 const rc: Validator = {
   name: "Czech Birth Number",
@@ -148,7 +181,8 @@ const rc: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default rc;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

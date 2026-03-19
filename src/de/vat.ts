@@ -11,6 +11,7 @@
 
 import { mod1110validate } from "#checksums/mod1110";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -56,6 +57,30 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `DE${compact(value)}`;
 
+
+/**
+ * Compute ISO 7064 Mod 11,10 check digit for
+ * a string of digits.
+ */
+const mod1110checkDigit = (payload: string): number => {
+  let product = 10;
+  for (let i = 0; i < payload.length; i++) {
+    let sum = (Number(payload[i]) + product) % 10;
+    if (sum === 0) sum = 10;
+    product = (sum * 2) % 11;
+  }
+  return (11 - product) % 10;
+};
+
+/** Generate a random valid German VAT number. */
+const generate = (): string => {
+  const first = String(randomInt(1, 9));
+  const rest = randomDigits(7);
+  const payload = `${first}${rest}`;
+  const check = mod1110checkDigit(payload);
+  return `${payload}${String(check)}`;
+};
+
 /** German VAT Identification Number. */
 const vat: Validator = {
   name: "German VAT Number",
@@ -72,7 +97,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, generate, validate };

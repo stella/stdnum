@@ -10,6 +10,7 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -48,6 +49,16 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+
+/** Generate a random valid ICO. */
+const generate = (): string => {
+  const payload = randomDigits(7);
+  const sum = weightedSum(payload, WEIGHTS, 11);
+  const v11 = (11 - sum) % 11;
+  const check = v11 === 0 ? 1 : v11 % 10;
+  return `${payload}${String(check)}`;
+};
+
 /** Czech Company Identification Number. */
 const ico: Validator = {
   name: "Czech Company ID",
@@ -63,7 +74,8 @@ const ico: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default ico;
-export { compact, format, validate };
+export { compact, format, generate, validate };
