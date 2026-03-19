@@ -40,6 +40,8 @@
     "./at/uid": "./src/at/uid.ts",
     "./be/nn": "./src/be/nn.ts",
     "./be/vat": "./src/be/vat.ts",
+    "./br/cpf": "./src/br/cpf.ts",
+    "./br/cnpj": "./src/br/cnpj.ts",
     "./bg/egn": "./src/bg/egn.ts",
     "./bg/vat": "./src/bg/vat.ts",
     "./ch/uid": "./src/ch/uid.ts",
