@@ -55,6 +55,10 @@ const ico: Validator = {
   abbreviation: "IČO",
   country: "CZ",
   entityType: "company",
+  description:
+    "8-digit company ID assigned by the Czech Statistical Office",
+  sourceUrl: "https://www.czso.cz/",
+  lengths: [8] as const,
   examples: ["25123891", "27074358"] as const,
   compact,
   format,

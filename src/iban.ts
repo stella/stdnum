@@ -270,6 +270,10 @@ const iban: Validator = {
   localName: "IBAN",
   abbreviation: "IBAN",
   entityType: "any",
+  description:
+    "International bank account number per ISO 13616",
+  sourceUrl:
+    "https://www.swift.com/standards/data-standards/iban-international-bank-account-number",
   examples: [
     "GB29NWBK60161331926819",
     "DE89370400440532013000",

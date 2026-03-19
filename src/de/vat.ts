@@ -63,6 +63,11 @@ const vat: Validator = {
   abbreviation: "USt-IdNr.",
   country: "DE",
   entityType: "company",
+  description:
+    "German VAT ID issued by the Federal Tax Office (BZSt)",
+  sourceUrl:
+    "https://www.bzst.de/DE/Unternehmen/Identifikationsnummern/Umsatzsteuer-Identifikationsnummer/umsatzsteuer-identifikationsnummer_node.html",
+  lengths: [9] as const,
   examples: ["136695976"] as const,
   compact,
   format,

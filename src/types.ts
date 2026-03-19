@@ -82,6 +82,13 @@ export type Validator = {
    */
   validate: (value: string) => ValidateResult;
 
+  /** One-liner describing the identifier. */
+  description?: string;
+  /** URL to official authority or spec page. */
+  sourceUrl?: string;
+  /** Valid lengths of the compact form. */
+  lengths?: readonly number[];
+
   /**
    * Known-valid compact values. Useful as test
    * seeds, form placeholders, API schema examples,
