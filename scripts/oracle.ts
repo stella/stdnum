@@ -911,7 +911,20 @@ const SPECS: OracleSpec[] = [
     name: "BR CNPJ",
     pyModule: "br.cnpj",
     tsValidate: (v) => br.cnpj.validate(v).valid,
-    arb: digs(14),
+    arb: fc.oneof(
+      digs(14),
+      fc
+        .array(
+          fc.oneof(
+            fc.integer({ min: 0, max: 9 }).map(String),
+            fc
+              .integer({ min: 65, max: 90 })
+              .map((c) => String.fromCharCode(c)),
+          ),
+          { minLength: 14, maxLength: 14 },
+        )
+        .map((chars) => chars.join("")),
+    ),
   },
   // ── Company registers ─────────────────────
   {
