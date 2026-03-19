@@ -15,8 +15,6 @@ import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 
-const EIN_RE = /^\d{2}-?\d{7}$/;
-
 /**
  * Valid EIN campus prefixes. Sourced from IRS
  * documentation and python-stdnum's numdb.
@@ -122,13 +120,6 @@ const validate = (value: string): ValidateResult => {
   if (v.length !== 9) {
     return err("INVALID_LENGTH", "EIN must be 9 digits");
   }
-  if (!EIN_RE.test(v)) {
-    return err(
-      "INVALID_FORMAT",
-      "EIN must match NN-NNNNNNN pattern",
-    );
-  }
-
   const prefix = v.slice(0, 2);
   if (!VALID_PREFIXES.has(prefix)) {
     return err(

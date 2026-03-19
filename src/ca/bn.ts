@@ -59,7 +59,16 @@ const validate = (value: string): ValidateResult => {
   return { valid: true, compact: v };
 };
 
-const format = (value: string): string => compact(value);
+const format = (value: string): string => {
+  const v = compact(value);
+  if (v.length === 15) {
+    return `${v.slice(0, 3)} ${v.slice(3, 6)} ${v.slice(6, 9)} ${v.slice(9, 11)} ${v.slice(11)}`;
+  }
+  if (v.length === 9) {
+    return `${v.slice(0, 3)} ${v.slice(3, 6)} ${v.slice(6)}`;
+  }
+  return v;
+};
 
 /** Canadian Business Number. */
 const bn: Validator = {
