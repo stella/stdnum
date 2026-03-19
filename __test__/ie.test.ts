@@ -38,3 +38,38 @@ describe("ie.vat", () => {
     expect(ie.vat.country).toBe("IE");
   });
 });
+
+// ─── PPS (Personal Public Service) ─────────
+
+describe("ie.pps", () => {
+  test("valid PPS (old format)", () => {
+    const r = ie.pps.validate("6433435F");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid PPS (new format with 2nd letter)", () => {
+    const r = ie.pps.validate("6433435OA");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid PPS check letter", () => {
+    const r = ie.pps.validate("6433435E");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = ie.pps.validate("64334F");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("metadata", () => {
+    expect(ie.pps.country).toBe("IE");
+    expect(ie.pps.entityType).toBe("person");
+  });
+});

@@ -91,9 +91,9 @@ describe("fr.nif", () => {
     }
   });
 
-  test("invalid: all zeros", () => {
+  test("all zeros is valid (0 % 511 == 0)", () => {
     const r = fr.nif.validate("0000000000000");
-    expect(r.valid).toBe(false);
+    expect(r.valid).toBe(true);
   });
 
   test("metadata", () => {

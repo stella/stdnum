@@ -9,22 +9,12 @@
  * @see https://www.portaldasfinancas.gov.pt/
  */
 
+import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [9, 8, 7, 6, 5, 4, 3, 2];
 
@@ -56,11 +46,8 @@ const validate = (value: string): ValidateResult => {
       "Portuguese VAT number cannot start with 0",
     );
   }
-  let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += WEIGHTS[i] * Number(v[i]);
-  }
-  const check = ((11 - (sum % 11)) % 11) % 10;
+  const sum = weightedSum(v.slice(0, 8), WEIGHTS, 11);
+  const check = ((11 - sum) % 11) % 10;
   if (check !== Number(v[8])) {
     return err(
       "INVALID_CHECKSUM",

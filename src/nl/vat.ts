@@ -10,28 +10,23 @@
  */
 
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
   if (v.startsWith("NL") || v.startsWith("nl")) {
     v = v.slice(2);
   }
-  return v.toUpperCase();
+  v = v.toUpperCase();
+  // Zero-pad numeric part to 9 digits if B is found
+  const bIdx = v.indexOf("B");
+  if (bIdx > 0 && bIdx < 9) {
+    v = v.slice(0, bIdx).padStart(9, "0") + v.slice(bIdx);
+  }
+  return v;
 };
 
 /**

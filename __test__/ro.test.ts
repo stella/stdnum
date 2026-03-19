@@ -29,3 +29,33 @@ describe("ro.vat", () => {
     expect(ro.vat.country).toBe("RO");
   });
 });
+
+// ─── CNP (Personal ID) ─────────────────────
+
+describe("ro.cnp", () => {
+  test("valid CNP", () => {
+    const r = ro.cnp.validate("1630615123457");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid CNP checksum", () => {
+    const r = ro.cnp.validate("1630615123458");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = ro.cnp.validate("163061512345");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("metadata", () => {
+    expect(ro.cnp.country).toBe("RO");
+    expect(ro.cnp.entityType).toBe("person");
+  });
+});

@@ -9,21 +9,10 @@
 
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "./types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "./types";
 
 const compact = (value: string): string =>
   clean(value, " -").toUpperCase();

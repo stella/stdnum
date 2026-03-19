@@ -28,3 +28,33 @@ describe("si.vat", () => {
     expect(si.vat.country).toBe("SI");
   });
 });
+
+// ─── EMŠO (Personal ID) ────────────────────
+
+describe("si.emso", () => {
+  test("valid EMŠO", () => {
+    const r = si.emso.validate("0101006500006");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid EMŠO checksum", () => {
+    const r = si.emso.validate("0101006500007");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = si.emso.validate("010100650000");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("metadata", () => {
+    expect(si.emso.country).toBe("SI");
+    expect(si.emso.entityType).toBe("person");
+  });
+});

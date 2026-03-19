@@ -9,26 +9,19 @@
  */
 
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
   if (v.startsWith("BE") || v.startsWith("be")) {
     v = v.slice(2);
+  }
+  // Old 9-digit format: zero-pad to 10
+  if (v.length === 9) {
+    v = `0${v}`;
   }
   return v;
 };
@@ -45,6 +38,12 @@ const validate = (value: string): ValidateResult => {
     return err(
       "INVALID_FORMAT",
       "Belgian VAT number must contain only digits",
+    );
+  }
+  if (Number(v) === 0) {
+    return err(
+      "INVALID_FORMAT",
+      "Belgian VAT number cannot be all zeros",
     );
   }
   if (v[0] !== "0" && v[0] !== "1") {

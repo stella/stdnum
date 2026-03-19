@@ -11,22 +11,12 @@
  * for CVR.
  */
 
+import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [2, 7, 6, 5, 4, 3, 2, 1];
 
@@ -58,11 +48,8 @@ const validate = (value: string): ValidateResult => {
       "Danish VAT number cannot start with 0",
     );
   }
-  let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += WEIGHTS[i] * Number(v[i]);
-  }
-  if (sum % 11 !== 0) {
+  const sum = weightedSum(v, WEIGHTS, 11);
+  if (sum !== 0) {
     return err(
       "INVALID_CHECKSUM",
       "Danish VAT number check digit mismatch",

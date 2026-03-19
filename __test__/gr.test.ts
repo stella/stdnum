@@ -30,3 +30,33 @@ describe("gr.vat", () => {
     expect(gr.vat.country).toBe("GR");
   });
 });
+
+// ─── AMKA (Social Security Number) ─────────
+
+describe("gr.amka", () => {
+  test("valid AMKA", () => {
+    const r = gr.amka.validate("01013099997");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid AMKA checksum", () => {
+    const r = gr.amka.validate("01013099999");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = gr.amka.validate("0101309999");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("metadata", () => {
+    expect(gr.amka.country).toBe("GR");
+    expect(gr.amka.entityType).toBe("person");
+  });
+});

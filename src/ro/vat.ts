@@ -9,22 +9,12 @@
  * @see https://www.anaf.ro/
  */
 
+import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [7, 5, 3, 2, 1, 7, 5, 3, 2];
 
@@ -53,10 +43,7 @@ const validate = (value: string): ValidateResult => {
   }
   // Pad to 10 digits
   const padded = v.padStart(10, "0");
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += WEIGHTS[i] * Number(padded[i]);
-  }
+  const sum = weightedSum(padded.slice(0, 9), WEIGHTS, 11);
   const check = ((sum * 10) % 11) % 10;
   if (check !== Number(padded[9])) {
     return err(

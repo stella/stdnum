@@ -9,22 +9,12 @@
  * @see https://www.vid.gov.lv/en
  */
 
+import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "../types";
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [9, 1, 4, 8, 3, 10, 2, 5, 7, 6, 1];
 
@@ -39,9 +29,13 @@ const compact = (value: string): string => {
 const PERS_WEIGHTS = [10, 5, 8, 4, 2, 1, 6, 3, 7, 9];
 
 const checkPersonal = (v: string): boolean => {
+  // Initial sum = 1 (not 0), so can't use
+  // weightedSum directly
   let sum = 1;
   for (let i = 0; i < 10; i++) {
-    sum += PERS_WEIGHTS[i] * Number(v[i]);
+    // SAFETY: both arrays are length 10+
+    // eslint-disable-next-line no-non-null-assertion
+    sum += PERS_WEIGHTS[i]! * Number(v[i]);
   }
   return (sum % 11) % 10 === Number(v[10]);
 };
@@ -77,11 +71,8 @@ const validate = (value: string): ValidateResult => {
   const first = Number(v[0]);
   // Legal entity: first digit > 3
   if (first > 3) {
-    let sum = 0;
-    for (let i = 0; i < 11; i++) {
-      sum += WEIGHTS[i] * Number(v[i]);
-    }
-    if (sum % 11 !== 3) {
+    const sum = weightedSum(v, WEIGHTS, 11);
+    if (sum !== 3) {
       return err(
         "INVALID_CHECKSUM",
         "Latvian VAT number check digit mismatch",

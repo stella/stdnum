@@ -8,13 +8,10 @@
 
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
+import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
 
-import type {
-  StdnumError,
-  ValidateResult,
-  Validator,
-} from "./types";
+import type { ValidateResult, Validator } from "./types";
 
 /**
  * BBAN format regex by country code.
@@ -191,14 +188,6 @@ const LENGTHS: Record<string, number> = {
   VG: 24,
   XK: 20,
 };
-
-const err = (
-  code: StdnumError["code"],
-  message: string,
-): ValidateResult => ({
-  valid: false,
-  error: { code, message },
-});
 
 const compact = (value: string): string =>
   clean(value, " -").toUpperCase();
