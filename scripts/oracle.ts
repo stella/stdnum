@@ -1116,9 +1116,124 @@ const JS_SPECS: JsOracleSpec[] = [
   },
 ];
 
+// ─── Mutant testing ─────────────────────────
+//
+// For each valid value found, generate "mutants"
+// by flipping single digits. If the checksum is
+// correct, every single-digit mutation should
+// produce an invalid result. Any mutant that
+// passes validation is a checksum weakness.
+
+type MutantSpec = {
+  name: string;
+  tsValidate: (v: string) => boolean;
+  arb: fc.Arbitrary<string>;
+};
+
+/**
+ * Generate single-digit mutants of a valid value.
+ * For each position, try replacing the digit with
+ * every other digit (0-9). Returns the mutant
+ * strings that should all be invalid.
+ */
+const mutate = (value: string): string[] => {
+  const mutants: string[] = [];
+  for (let i = 0; i < value.length; i++) {
+    const ch = value[i];
+    if (ch === undefined || ch < "0" || ch > "9") {
+      continue; // skip non-digit positions
+    }
+    for (let d = 0; d <= 9; d++) {
+      const replacement = String(d);
+      if (replacement === ch) continue;
+      mutants.push(
+        value.slice(0, i) +
+          replacement +
+          value.slice(i + 1),
+      );
+    }
+  }
+  return mutants;
+};
+
+const MUTANT_SPECS: MutantSpec[] = [
+  {
+    name: "CZ IČO",
+    tsValidate: (v) => cz.ico.validate(v).valid,
+    arb: digs(8),
+  },
+  {
+    name: "CZ RČ",
+    tsValidate: (v) => cz.rc.validate(v).valid,
+    arb: digs(10),
+  },
+  {
+    name: "PL NIP",
+    tsValidate: (v) => pl.nip.validate(v).valid,
+    arb: digs(10),
+  },
+  {
+    name: "IBAN",
+    tsValidate: (v) => ibanValidator.validate(v).valid,
+    arb: fc.constant("CZ6508000000192000145399"),
+  },
+  {
+    name: "Luhn",
+    tsValidate: (v) => luhnValidator.validate(v).valid,
+    arb: fc.constant("4111111111111111"),
+  },
+  {
+    name: "DE VAT",
+    tsValidate: (v) => de.vat.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "FR SIREN",
+    tsValidate: (v) => fr.siren.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "IT IVA",
+    tsValidate: (v) => it.iva.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "BE NN",
+    tsValidate: (v) => be.nn.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "NL BSN",
+    tsValidate: (v) => nl.bsn.validate(v).valid,
+    arb: digs(9),
+  },
+  {
+    name: "EE IK",
+    tsValidate: (v) => ee.ik.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "SI EMŠO",
+    tsValidate: (v) => si.emso.validate(v).valid,
+    arb: digs(13),
+  },
+  {
+    name: "HR OIB",
+    tsValidate: (v) => hr.vat.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "GB UTR",
+    tsValidate: (v) => gb.utr.validate(v).valid,
+    arb: digs(10),
+  },
+];
+
 // ─── Runner ──────────────────────────────────
 
-const NUM_SAMPLES = 2000;
+const NUM_SAMPLES = Number(
+  process.env["ORACLE_SAMPLES"] ?? "10000",
+);
 
 const compare = (
   label: string,
@@ -1346,10 +1461,72 @@ const run = () => {
     );
   }
 
+  // ── Mutant testing ─────────────────────────
   console.log(
-    `\n${String(total)} total,` +
+    `\nMutant testing: single-digit corruption\n`,
+  );
+
+  let mutantTotal = 0;
+  let mutantEscapes = 0;
+
+  for (const spec of MUTANT_SPECS) {
+    // Find valid values first
+    const candidates = fc.sample(
+      spec.arb,
+      Math.min(NUM_SAMPLES, 2000),
+    );
+    const validValues = candidates.filter(spec.tsValidate);
+
+    if (validValues.length === 0) {
+      console.log(
+        `  SKIP ${spec.name}: no valid values found`,
+      );
+      continue;
+    }
+
+    // Take up to 50 valid values and mutate each
+    const toTest = validValues.slice(0, 50);
+    let escapes = 0;
+    const escapeExamples: string[] = [];
+
+    for (const valid of toTest) {
+      const mutants = mutate(valid);
+      for (const m of mutants) {
+        mutantTotal++;
+        if (spec.tsValidate(m)) {
+          escapes++;
+          if (escapeExamples.length < 3) {
+            escapeExamples.push(
+              `    "${valid}" → "${m}" (still valid)`,
+            );
+          }
+        }
+      }
+    }
+
+    const icon = escapes === 0 ? "✓" : "✗";
+    console.log(
+      `  ${icon} ${spec.name}:` +
+        ` ${String(escapes)} escapes` +
+        ` (${String(toTest.length)} seeds,` +
+        ` ${String(toTest.length * mutate(toTest[0] ?? "").length)} mutants)`,
+    );
+    for (const ex of escapeExamples) {
+      console.log(ex);
+    }
+    mutantEscapes += escapes;
+  }
+
+  console.log(
+    `\n${String(total)} oracle total,` +
       ` ${String(failures)} disagreements`,
   );
+  console.log(
+    `${String(mutantTotal)} mutant total,` +
+      ` ${String(mutantEscapes)} escapes`,
+  );
+  // Mutant escapes are informational (inherent to
+  // checksum algorithms), not failures.
   process.exit(failures > 0 ? 1 : 0);
 };
 
