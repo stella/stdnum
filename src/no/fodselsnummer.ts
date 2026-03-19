@@ -1,0 +1,133 @@
+/**
+ * Fødselsnummer (Norwegian birth number).
+ *
+ * 11 digits: DDMMYY + 3-digit individual number + 2
+ * check digits. Supports D-numbers (day + 40) and
+ * H-numbers (month + 40).
+ *
+ * @see https://www.skatteetaten.no/
+ */
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
+
+import type { ValidateResult, Validator } from "../types";
+
+const WEIGHTS_D1 = [3, 7, 6, 1, 8, 9, 4, 5, 2] as const;
+const WEIGHTS_D2 = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2] as const;
+
+const compact = (value: string): string =>
+  clean(value, " -");
+
+const getCentury = (
+  yy: number,
+  individual: number,
+): number | undefined => {
+  if (individual >= 0 && individual <= 499) return 1900;
+  if (individual >= 500 && individual <= 749 && yy >= 54) {
+    return 1800;
+  }
+  if (individual >= 500 && individual <= 999 && yy < 40) {
+    return 2000;
+  }
+  if (individual >= 900 && individual <= 999 && yy >= 40) {
+    return 1900;
+  }
+  return undefined;
+};
+
+const checkDigit = (
+  v: string,
+  weights: readonly number[],
+): number | undefined => {
+  let sum = 0;
+  for (let i = 0; i < weights.length; i++) {
+    sum += Number(v[i]) * weights[i];
+  }
+  const remainder = (11 - (sum % 11)) % 11;
+  if (remainder === 10) return undefined;
+  return remainder;
+};
+
+const validate = (value: string): ValidateResult => {
+  const v = compact(value);
+  if (v.length !== 11) {
+    return err(
+      "INVALID_LENGTH",
+      "Norwegian birth number must be 11 digits",
+    );
+  }
+  if (!isdigits(v)) {
+    return err(
+      "INVALID_FORMAT",
+      "Norwegian birth number must contain only digits",
+    );
+  }
+
+  // Check digits
+  const d1 = checkDigit(v, WEIGHTS_D1);
+  if (d1 === undefined || d1 !== Number(v[9])) {
+    return err(
+      "INVALID_CHECKSUM",
+      "Norwegian birth number check digit 1 mismatch",
+    );
+  }
+  const d2 = checkDigit(v, WEIGHTS_D2);
+  if (d2 === undefined || d2 !== Number(v[10])) {
+    return err(
+      "INVALID_CHECKSUM",
+      "Norwegian birth number check digit 2 mismatch",
+    );
+  }
+
+  // Parse date components
+  let dd = Number(v.slice(0, 2));
+  let mm = Number(v.slice(2, 4));
+  const yy = Number(v.slice(4, 6));
+  const individual = Number(v.slice(6, 9));
+
+  // D-number: day > 40
+  if (dd > 40) dd -= 40;
+  // H-number: month > 40
+  if (mm > 40) mm -= 40;
+
+  const century = getCentury(yy, individual);
+  if (century === undefined) {
+    return err(
+      "INVALID_COMPONENT",
+      "Norwegian birth number has invalid individual/century combination",
+    );
+  }
+
+  const year = century + yy;
+  if (!isValidDate(year, mm, dd)) {
+    return err(
+      "INVALID_COMPONENT",
+      "Norwegian birth number contains an invalid date",
+    );
+  }
+
+  return { valid: true, compact: v };
+};
+
+const format = (value: string): string => {
+  const v = compact(value);
+  return `${v.slice(0, 6)} ${v.slice(6)}`;
+};
+
+/** Norwegian Birth Number. */
+const fodselsnummer: Validator = {
+  name: "Norwegian Birth Number",
+  localName: "Fødselsnummer",
+  abbreviation: "Fødselsnr",
+  country: "NO",
+  entityType: "person",
+  compact,
+  format,
+  validate,
+};
+
+export default fodselsnummer;
+export { compact, format, validate };
