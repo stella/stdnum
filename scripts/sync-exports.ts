@@ -5,11 +5,13 @@
  * (`_util/`, `_checksums/`, `mod.ts`), and writes a sorted
  * exports map back into package.json.
  *
- * Usage: bun scripts/sync-exports.ts
+ * Usage:
+ *   bun scripts/sync-exports.ts          # sync
+ *   bun scripts/sync-exports.ts --check  # CI guard
  */
 
 import { readdir } from "node:fs/promises";
-import { join, relative } from "node:path";
+import { join } from "node:path";
 
 const ROOT = import.meta.dir + "/..";
 const SRC = join(ROOT, "src");
@@ -77,6 +79,8 @@ const sortExports = (
   return Object.fromEntries([...pinnedEntries, ...rest]);
 };
 
+const isCheckMode = process.argv.includes("--check");
+
 const main = async () => {
   const pkgText = await Bun.file(PKG_PATH).text();
   const pkg = JSON.parse(pkgText);
@@ -85,29 +89,38 @@ const main = async () => {
     pkg.exports ?? {};
   const newExports = sortExports(await scanExports());
 
-  // Diff
+  // Diff keys and values
   const oldKeys = new Set(Object.keys(oldExports));
   const newKeys = new Set(Object.keys(newExports));
 
   const added: string[] = [];
   const removed: string[] = [];
+  const changed: string[] = [];
 
   for (const key of newKeys) {
-    if (!oldKeys.has(key)) added.push(key);
+    if (!oldKeys.has(key)) {
+      added.push(key);
+    } else if (oldExports[key] !== newExports[key]) {
+      changed.push(key);
+    }
   }
   for (const key of oldKeys) {
     if (!newKeys.has(key)) removed.push(key);
   }
 
-  pkg.exports = newExports;
-
-  await Bun.write(
-    PKG_PATH,
-    JSON.stringify(pkg, null, 2) + "\n",
-  );
+  const hasChanges =
+    added.length > 0 ||
+    removed.length > 0 ||
+    changed.length > 0;
 
   const total = Object.keys(newExports).length;
-  console.log(`Exports: ${total} entries written.`);
+
+  if (!hasChanges) {
+    console.log(
+      `Exports: ${total} entries, no changes.`,
+    );
+    return;
+  }
 
   if (added.length > 0) {
     console.log(`\nAdded (${added.length}):`);
@@ -123,9 +136,29 @@ const main = async () => {
     }
   }
 
-  if (added.length === 0 && removed.length === 0) {
-    console.log("No changes to exports map.");
+  if (changed.length > 0) {
+    console.log(`\nChanged (${changed.length}):`);
+    for (const key of changed) {
+      console.log(`  ~ ${key}`);
+    }
   }
+
+  if (isCheckMode) {
+    console.error(
+      "\nExports map is out of sync." +
+        " Run `bun run sync-exports` to fix.",
+    );
+    process.exit(1);
+  }
+
+  pkg.exports = newExports;
+
+  await Bun.write(
+    PKG_PATH,
+    JSON.stringify(pkg, null, 2) + "\n",
+  );
+
+  console.log(`\nExports: ${total} entries written.`);
 };
 
 main();
