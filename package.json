@@ -36,6 +36,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./types": "./src/types.ts",
+    "./ad/nrt": "./src/ad/nrt.ts",
+    "./al/nipt": "./src/al/nipt.ts",
     "./ar/cuit": "./src/ar/cuit.ts",
     "./at/businessid": "./src/at/businessid.ts",
     "./at/uid": "./src/at/uid.ts",
@@ -51,6 +53,7 @@
     "./bic": "./src/bic.ts",
     "./br/cnpj": "./src/br/cnpj.ts",
     "./br/cpf": "./src/br/cpf.ts",
+    "./by/unp": "./src/by/unp.ts",
     "./ca/bn": "./src/ca/bn.ts",
     "./ca/sin": "./src/ca/sin.ts",
     "./ch/ssn": "./src/ch/ssn.ts",
