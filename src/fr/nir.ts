@@ -50,10 +50,13 @@ const validate = (value: string): ValidateResult => {
   }
 
   const monthPart = v.slice(3, 5);
-  if (!/^\d{2}$/.test(monthPart)) {
+  if (
+    !/^\d{2}$/.test(monthPart) ||
+    monthPart === "00"
+  ) {
     return err(
       "INVALID_FORMAT",
-      "French NIR month must be 2 digits",
+      "French NIR month must be 01-99",
     );
   }
 
@@ -139,7 +142,10 @@ const parse = (
 
   if (mm < 1 || mm > 12) return null;
 
-  const year = yy >= 25 ? 1900 + yy : 2000 + yy;
+  const year = (() => {
+    const y = 2000 + yy;
+    return y > new Date().getFullYear() ? y - 100 : y;
+  })();
   const gender =
     genderDigit === "1" ? "male" : "female";
 

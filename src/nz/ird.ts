@@ -42,7 +42,8 @@ const calcCheckDigit = (payload: string): number => {
     sum += SECONDARY_WEIGHTS[i]! * Number(padded[i]);
   }
   remainder = (-sum % 11 + 11) % 11;
-  return remainder;
+  // remainder === 10 means no valid check digit exists
+  return remainder === 10 ? -1 : remainder;
 };
 
 const compact = (value: string): string => {
@@ -68,7 +69,7 @@ const validate = (value: string): ValidateResult => {
     );
   }
   const num = Number(v);
-  if (num <= 10_000_000 || num >= 150_000_000) {
+  if (num < 10_000_000 || num >= 150_000_000) {
     return err(
       "INVALID_COMPONENT",
       "IRD number out of valid range",
@@ -76,6 +77,12 @@ const validate = (value: string): ValidateResult => {
   }
   const payload = v.slice(0, -1);
   const expected = calcCheckDigit(payload);
+  if (expected === -1) {
+    return err(
+      "INVALID_COMPONENT",
+      "IRD number cannot have a valid check digit",
+    );
+  }
   if (expected !== Number(v[v.length - 1])) {
     return err(
       "INVALID_CHECKSUM",

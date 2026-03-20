@@ -50,16 +50,16 @@ const resolveBirthDate = (
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
-  if (!isdigits(v)) {
-    return err(
-      "INVALID_FORMAT",
-      "SA ID must contain only digits",
-    );
-  }
   if (v.length !== 13) {
     return err(
       "INVALID_LENGTH",
       "SA ID must be exactly 13 digits",
+    );
+  }
+  if (!isdigits(v)) {
+    return err(
+      "INVALID_FORMAT",
+      "SA ID must contain only digits",
     );
   }
   if (resolveBirthDate(v) === null) {

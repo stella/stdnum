@@ -39,7 +39,7 @@ const validate = (value: string): ValidateResult => {
   for (let i = 0; i < 9; i++) {
     const weighted = Number(v[i]) * WEIGHTS[i]!;
     sum += i === 8
-      ? weighted + Math.floor((weighted * 10) / 100)
+      ? weighted + Math.floor(weighted / 10)
       : weighted;
   }
   const check = (10 - (sum % 10)) % 10;
@@ -64,7 +64,7 @@ const generate = (): string => {
   for (let i = 0; i < 9; i++) {
     const weighted = Number(payload[i]) * WEIGHTS[i]!;
     sum += i === 8
-      ? weighted + Math.floor((weighted * 10) / 100)
+      ? weighted + Math.floor(weighted / 10)
       : weighted;
   }
   const check = (10 - (sum % 10)) % 10;

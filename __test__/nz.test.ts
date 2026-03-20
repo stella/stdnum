@@ -51,7 +51,7 @@ describe("nz.ird", () => {
   });
 
   test("out of range (too small)", () => {
-    const r = nz.ird.validate("10000000");
+    const r = nz.ird.validate("09999999");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_COMPONENT");

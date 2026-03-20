@@ -18,6 +18,11 @@ describe("ua.edrpou", () => {
     expect(r.valid).toBe(true);
   });
 
+  test("valid EDRPOU (first digit >= 6)", () => {
+    const r = ua.edrpou.validate("77777779");
+    expect(r.valid).toBe(true);
+  });
+
   test("invalid checksum", () => {
     const r = ua.edrpou.validate("14360571");
     expect(r.valid).toBe(false);

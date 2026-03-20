@@ -17,7 +17,7 @@ import {
 } from "#checksums/mod112";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -143,7 +143,8 @@ const generate = (): string => {
   const year = randomInt(1950, 2005);
   const month = randomInt(1, 12);
   const day = randomInt(1, 28);
-  const seq = randomDigits(3);
+  const seqNum = randomInt(1, 999);
+  const seq = String(seqNum).padStart(3, "0");
 
   const yStr = String(year);
   const mStr = String(month).padStart(2, "0");

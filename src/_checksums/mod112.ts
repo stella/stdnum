@@ -2,9 +2,11 @@
  * ISO 7064 Mod 11,2 check character algorithm.
  * Used by CN RIC (Resident Identity Card).
  *
- * Weights are powers of 2 modulo 11, applied
- * right-to-left. The check character is looked up
- * from "10X98765432".
+ * Weights are powers of 2 modulo 11
+ * (2^17 mod 11 ... 2^1 mod 11), applied
+ * left-to-right across the 17-character payload.
+ * The check character is looked up from
+ * "10X98765432".
  */
 
 const WEIGHTS = [
