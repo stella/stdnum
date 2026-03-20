@@ -26,8 +26,8 @@ describe("cl.rut", () => {
     }
   });
 
-  test("valid RUT with dashes and dots", () => {
-    const r = cl.rut.validate("76.086.428-5");
+  test("valid RUT with lowercase k", () => {
+    const r = cl.rut.validate("10.000.013-k");
     expect(r.valid).toBe(true);
   });
 
@@ -63,10 +63,30 @@ describe("cl.rut", () => {
     }
   });
 
+  test("valid RUT with CL prefix", () => {
+    const r = cl.rut.validate("CL 12531909-2");
+    expect(r.valid).toBe(true);
+    if (r.valid) {
+      expect(r.compact).toBe("125319092");
+    }
+  });
+
   test("format adds separators", () => {
     expect(cl.rut.format("760864285")).toBe(
       "76.086.428-5",
     );
+  });
+
+  test("format round-trips with compact (8-digit body)", () => {
+    const formatted = cl.rut.format("125319092");
+    expect(formatted).toBe("12.531.909-2");
+    expect(cl.rut.compact(formatted)).toBe("125319092");
+  });
+
+  test("format round-trips with compact (7-digit body)", () => {
+    const formatted = cl.rut.format("12345674");
+    expect(formatted).toBe("1.234.567-4");
+    expect(cl.rut.compact(formatted)).toBe("12345674");
   });
 
   test("compact strips separators", () => {
