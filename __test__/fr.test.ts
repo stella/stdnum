@@ -133,3 +133,87 @@ describe("fr.tva", () => {
     expect(fr.tva.country).toBe("FR");
   });
 });
+
+// --- NIR -----------------------------------------------
+
+describe("fr.nir", () => {
+  test("valid NIR", () => {
+    const r = fr.nir.validate("295117823456784");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid with spaces", () => {
+    const r = fr.nir.validate(
+      "2 95 11 78 234 567 84",
+    );
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid male NIR", () => {
+    const base = 1850578123456n;
+    const check = 97n - (base % 97n);
+    const full =
+      base.toString() +
+      check.toString().padStart(2, "0");
+    const r = fr.nir.validate(full);
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid Corsica 2A department", () => {
+    const numericBase = 2900319001002n;
+    const check = 97n - (numericBase % 97n);
+    const full =
+      "290032A001002" +
+      check.toString().padStart(2, "0");
+    const r = fr.nir.validate(full);
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid Corsica 2B department", () => {
+    const numericBase = 1880318010005n;
+    const check = 97n - (numericBase % 97n);
+    const full =
+      "188032B010005" +
+      check.toString().padStart(2, "0");
+    const r = fr.nir.validate(full);
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid checksum", () => {
+    const r = fr.nir.validate("295117823456785");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = fr.nir.validate("29511782345678");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("invalid gender digit", () => {
+    const r = fr.nir.validate("395117823456700");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe(
+        "INVALID_COMPONENT",
+      );
+    }
+  });
+
+  test("format adds spaces", () => {
+    expect(fr.nir.format("295117823456784")).toBe(
+      "2 95 11 78 234 567 84",
+    );
+  });
+
+  test("metadata", () => {
+    expect(fr.nir.abbreviation).toBe("NIR");
+    expect(fr.nir.country).toBe("FR");
+    expect(fr.nir.entityType).toBe("person");
+  });
+});

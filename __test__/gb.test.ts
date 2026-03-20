@@ -84,3 +84,99 @@ describe("gb.utr", () => {
     expect(gb.utr.country).toBe("GB");
   });
 });
+
+// --- NINO ----------------------------------------------
+
+describe("gb.nino", () => {
+  test("valid NINO", () => {
+    const r = gb.nino.validate("AB123456C");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid with spaces", () => {
+    const r = gb.nino.validate("AB 12 34 56 C");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid lowercase", () => {
+    const r = gb.nino.validate("ab123456c");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid suffix D", () => {
+    const r = gb.nino.validate("CE123456D");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid: first letter D", () => {
+    const r = gb.nino.validate("DA123456A");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("invalid: first letter Q", () => {
+    const r = gb.nino.validate("QA123456A");
+    expect(r.valid).toBe(false);
+  });
+
+  test("invalid: second letter O", () => {
+    const r = gb.nino.validate("AO123456A");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("invalid: prefix BG", () => {
+    const r = gb.nino.validate("BG123456A");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("invalid: prefix GB", () => {
+    const r = gb.nino.validate("GB123456A");
+    expect(r.valid).toBe(false);
+  });
+
+  test("invalid: prefix NK", () => {
+    const r = gb.nino.validate("NK123456A");
+    expect(r.valid).toBe(false);
+  });
+
+  test("invalid: prefix ZZ", () => {
+    const r = gb.nino.validate("ZZ123456A");
+    expect(r.valid).toBe(false);
+  });
+
+  test("invalid: suffix E", () => {
+    const r = gb.nino.validate("AB123456E");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = gb.nino.validate("AB12345C");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("format adds spaces", () => {
+    expect(gb.nino.format("AB123456C")).toBe(
+      "AB 12 34 56 C",
+    );
+  });
+
+  test("metadata", () => {
+    expect(gb.nino.abbreviation).toBe("NINO");
+    expect(gb.nino.country).toBe("GB");
+    expect(gb.nino.entityType).toBe("person");
+  });
+});
