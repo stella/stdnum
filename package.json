@@ -66,6 +66,7 @@
     "./dk/cpr": "./src/dk/cpr.ts",
     "./dk/cvr": "./src/dk/cvr.ts",
     "./dk/vat": "./src/dk/vat.ts",
+    "./do/rnc": "./src/do/rnc.ts",
     "./ec/ruc": "./src/ec/ruc.ts",
     "./ee/ik": "./src/ee/ik.ts",
     "./ee/registrikood": "./src/ee/registrikood.ts",
@@ -146,6 +147,8 @@
     "./ua/edrpou": "./src/ua/edrpou.ts",
     "./us/ein": "./src/us/ein.ts",
     "./us/ssn": "./src/us/ssn.ts",
+    "./uy/rut": "./src/uy/rut.ts",
+    "./ve/rif": "./src/ve/rif.ts",
     "./za/idnr": "./src/za/idnr.ts"
   },
   "scripts": {

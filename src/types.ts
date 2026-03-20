@@ -18,6 +18,7 @@ export type CountryCode =
   | "CZ"
   | "DE"
   | "DK"
+  | "DO"
   | "EC"
   | "EE"
   | "ES"
@@ -39,6 +40,7 @@ export type CountryCode =
   | "LT"
   | "LU"
   | "LV"
+  | "MY"
   | "MT"
   | "MX"
   | "NL"
@@ -52,12 +54,16 @@ export type CountryCode =
   | "RS"
   | "RU"
   | "SE"
+  | "SG"
   | "SI"
   | "SK"
+  | "TH"
   | "TR"
   | "TW"
   | "UA"
   | "US"
+  | "UY"
+  | "VE"
   | "ZA";
 
 export type ErrorCode =
