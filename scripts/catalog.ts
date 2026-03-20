@@ -82,6 +82,9 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   LI: "Liechtenstein",
   MC: "Monaco",
   MD: "Moldova",
+  BA: "Bosnia and Herzegovina",
+  ME: "Montenegro",
+  MK: "North Macedonia",
 };
 
 // ─── Validator entry ────────────────────────
