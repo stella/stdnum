@@ -7,7 +7,7 @@
  *
  * Entity type prefixes:
  *   F      — companies (digits <= 699999)
- *   A, L   — other entities (digits == 700000)
+ *   A, L   — other entities (digits 700000-799999)
  *   C, D, E, G, O, P, U — other types
  *
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Andorra-TIN.pdf
@@ -32,15 +32,9 @@ const validate = (value: string): ValidateResult => {
       "Andorra NRT must be 8 characters",
     );
   }
-  const prefix = v[0];
-  const tail = v[7];
+  const prefix = v[0]!;
+  const tail = v[7]!;
   const digits = v.slice(1, 7);
-  if (!prefix || !tail) {
-    return err(
-      "INVALID_FORMAT",
-      "Andorra NRT must start and end with a letter",
-    );
-  }
   if (!/^[A-Z]$/.test(prefix) || !/^[A-Z]$/.test(tail)) {
     return err(
       "INVALID_FORMAT",
@@ -71,7 +65,7 @@ const validate = (value: string): ValidateResult => {
   ) {
     return err(
       "INVALID_COMPONENT",
-      "Andorra NRT A/L-type digits must be 700000",
+      "Andorra NRT A/L-type digits must be 700000-799999",
     );
   }
   return { valid: true, compact: v };

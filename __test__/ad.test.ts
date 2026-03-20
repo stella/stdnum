@@ -31,7 +31,13 @@ describe("ad.nrt", () => {
     expect(r.valid).toBe(false);
     if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
   });
-  test("A-type must have digits 700000", () => {
+  test("A-type accepts digits in range 700000-799999", () => {
+    const r1 = ad.nrt.validate("A700000B");
+    expect(r1.valid).toBe(true);
+    const r2 = ad.nrt.validate("A799999B");
+    expect(r2.valid).toBe(true);
+  });
+  test("A-type rejects digits outside 700000-799999", () => {
     const r = ad.nrt.validate("A123456B");
     expect(r.valid).toBe(false);
     if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
