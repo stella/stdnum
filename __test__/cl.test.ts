@@ -77,10 +77,16 @@ describe("cl.rut", () => {
     );
   });
 
-  test("format round-trips with compact", () => {
+  test("format round-trips with compact (8-digit body)", () => {
     const formatted = cl.rut.format("125319092");
     expect(formatted).toBe("12.531.909-2");
     expect(cl.rut.compact(formatted)).toBe("125319092");
+  });
+
+  test("format round-trips with compact (7-digit body)", () => {
+    const formatted = cl.rut.format("12345674");
+    expect(formatted).toBe("1.234.567-4");
+    expect(cl.rut.compact(formatted)).toBe("12345674");
   });
 
   test("compact strips separators", () => {

@@ -60,6 +60,13 @@ describe("ar.cuit", () => {
     expect(r.valid).toBe(true);
   });
 
+  test("valid CUIT where sum % 11 === 1 (check digit 9)", () => {
+    // Body "2000000001": sum=12, 12%11=1, remainder=10 -> check=9.
+    // python-stdnum accepts this ('012345678990'[10] = '9').
+    const r = ar.cuit.validate("20000000019");
+    expect(r.valid).toBe(true);
+  });
+
   test("invalid type code", () => {
     const r = ar.cuit.validate("11267565393");
     expect(r.valid).toBe(false);
