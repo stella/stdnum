@@ -20,14 +20,8 @@ import type { ValidateResult, Validator } from "../types";
 
 const RUT_RE = /^\d{1,8}[\dK]$/;
 
-const compact = (value: string): string => {
-  const cleaned = clean(value, " -.").trim().toUpperCase();
-  if (cleaned.length < 2) return cleaned;
-  // Strip leading zeros from body, keep at least
-  // one body digit before the check character.
-  const body = cleaned.slice(0, -1).replace(/^0+/, "") || "0";
-  return body + cleaned.at(-1)!;
-};
+const compact = (value: string): string =>
+  clean(value, " -.").trim().toUpperCase();
 
 /**
  * Compute the RUT check digit using mod 11 with
@@ -103,7 +97,7 @@ const rut: Validator = {
   format,
   validate,
   sourceUrl: "https://www.sii.cl/",
-  examples: ["76086428-5", "12531909-2"] as const,
+  examples: ["760864285", "125319092"] as const,
 };
 
 export default rut;

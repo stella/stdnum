@@ -26,8 +26,8 @@ describe("cl.rut", () => {
     }
   });
 
-  test("valid RUT with dashes and dots", () => {
-    const r = cl.rut.validate("76.086.428-5");
+  test("valid RUT with lowercase k", () => {
+    const r = cl.rut.validate("10.000.013-k");
     expect(r.valid).toBe(true);
   });
 
