@@ -423,7 +423,6 @@ const phpBatch = (
 
 // python-stdnum module (key → py module path)
 const PY_REMAP: Record<string, string> = {
-  "cz.ico": "cz.dic", "sk.dic": "sk.dph",
   "dk.vat": "dk.cvr", "ee.vat": "ee.kmkr",
   "es.vat": "es.nif", "fi.vat": "fi.alv",
   "hr.vat": "hr.oib", "hu.vat": "hu.anum",
@@ -439,6 +438,7 @@ const PY_REMAP: Record<string, string> = {
 const PY_SKIP = new Set([
   "eu.vat", "bic", "ch.vat", "no.mva",
   "is_.vsk", "nl.kvk", "at.businessid", "lei",
+  "cz.ico", "sk.dic", "sk.ico",
 ]);
 
 // jsvat: key → [jsvat config, VAT prefix]
@@ -545,17 +545,11 @@ const RUBY_SSN: Record<string, string> = {
 };
 
 // PHP loophp/tin: key → country (TIN only)
+// loophp/tin validates EU TIN format specs.
+// Only map where our validator IS the TIN.
 const PHP_TIN: Record<string, string> = {
-  "at.uid": "AT", "be.vat": "BE", "bg.vat": "BG",
-  "hr.vat": "HR", "cy.vat": "CY", "cz.dic": "CZ",
-  "de.vat": "DE", "de.idnr": "DE", "dk.vat": "DK",
-  "ee.vat": "EE", "fi.vat": "FI", "fr.nif": "FR",
-  "gr.vat": "EL", "hu.vat": "HU", "ie.vat": "IE",
-  "it.iva": "IT", "lt.vat": "LT", "lu.vat": "LU",
-  "lv.vat": "LV", "mt.vat": "MT", "nl.vat": "NL",
-  "pl.nip": "PL", "pt.vat": "PT", "ro.vat": "RO",
-  "se.vat": "SE", "si.vat": "SI", "es.vat": "ES",
-  "sk.dic": "SK",
+  "de.idnr": "DE", "fr.nif": "FR",
+  "pl.nip": "PL", "pt.vat": "PT",
 };
 
 // ─── Oracle entry type ──────────────────────
