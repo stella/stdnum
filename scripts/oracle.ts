@@ -443,6 +443,7 @@ const PY_REMAP: Record<string, string> = {
   "pt.vat": "pt.nif", "ro.vat": "ro.cf",
   "si.vat": "si.ddv",
   "it.codiceFiscale": "it.codicefiscale",
+  "do_.rnc": "do.rnc",
 };
 // Keys to skip (no python-stdnum module exists)
 const PY_SKIP = new Set([
