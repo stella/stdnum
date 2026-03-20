@@ -49,6 +49,7 @@ export type CountryCode =
   | "MY"
   | "MT"
   | "MX"
+  | "MY"
   | "NL"
   | "NO"
   | "NZ"

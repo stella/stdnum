@@ -4,8 +4,10 @@ import { th } from "../src";
 
 describe("th.tin", () => {
   const valid = [
-    "1101700230708",
-    "3100600445015",
+    "1101700230708", // individual
+    "3100600445015", // individual
+    "0994000617721", // company (MOA, starts with 0)
+    "0105536112014", // company (MOA)
   ];
 
   for (const v of valid) {
@@ -27,18 +29,19 @@ describe("th.tin", () => {
     expect(r.valid).toBe(true);
   });
 
-  test("valid 10-digit company", () => {
-    const r = th.tin.validate("0123456789");
+  test("edge case: sum%11=0 (check digit 1)", () => {
+    // 0994000617721 has sum%11=0, check=(11-0)%10=1
+    const r = th.tin.validate("0994000617721");
     expect(r.valid).toBe(true);
   });
 
   const invalid = [
     "1101700230706", // bad checksum
-    "9101700230705", // first digit 9 (individual)
-    "0101700230705", // first digit 0 (individual)
+    "9101700230705", // first digit 9
     "12345", // too short
     "11017002307050", // too long
     "110170023070A", // non-digit
+    "0123456789", // 10 digits (not valid)
   ];
 
   for (const v of invalid) {
@@ -66,15 +69,23 @@ describe("th.tin", () => {
     }
   });
 
-  test("format 13-digit", () => {
+  test("10-digit number rejected", () => {
+    const r = th.tin.validate("0123456789");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("format", () => {
     expect(th.tin.format("1101700230708")).toBe(
       "1 1017 00230 70 8",
     );
   });
 
-  test("format 10-digit company", () => {
-    expect(th.tin.format("0123456789")).toBe(
-      "0123 45678 9",
+  test("format company TIN", () => {
+    expect(th.tin.format("0994000617721")).toBe(
+      "0 9940 00617 72 1",
     );
   });
 

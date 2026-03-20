@@ -26,8 +26,9 @@ import type {
 /**
  * Valid place-of-birth codes (2-digit).
  * Codes 01-16 are states, 21-59 are pre-2000
- * state codes, 60-70 born outside, 71-72/74-79
- * foreign nationals, 82-92 regions, 98-99 legacy.
+ * state codes, 60-68 born outside (ASEAN),
+ * 71-72/74-79 foreign nationals, 82-93 regions,
+ * 98-99 legacy.
  */
 const VALID_PB_CODES = new Set([
   "01", "02", "03", "04", "05", "06", "07", "08",
@@ -38,13 +39,25 @@ const VALID_PB_CODES = new Set([
   "45", "46", "47", "48", "49", "50", "51", "52",
   "53", "54", "55", "56", "57", "58", "59", "60",
   "61", "62", "63", "64", "65", "66", "67", "68",
-  "69", "70", "71", "72", "74", "75", "76", "77",
+  "71", "72", "74", "75", "76", "77",
   "78", "79", "82", "83", "84", "85", "86", "87",
   "88", "89", "90", "91", "92", "93", "98", "99",
 ]);
 
 const compact = (value: string): string =>
   clean(value, " -");
+
+/**
+ * Resolve the birth year from a 2-digit year.
+ * Years after the current year are assumed to be
+ * in the previous century.
+ */
+const resolveYear = (yy: number): number => {
+  const currentYear = new Date().getFullYear();
+  const century = Math.floor(currentYear / 100);
+  const year = century * 100 + yy;
+  return year > currentYear ? year - 100 : year;
+};
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
@@ -66,8 +79,7 @@ const validate = (value: string): ValidateResult => {
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
 
-  // YY < 30 is assumed 2000s; otherwise 1900s.
-  const year = yy < 30 ? 2000 + yy : 1900 + yy;
+  const year = resolveYear(yy);
 
   if (!isValidDate(year, mm, dd)) {
     return err(
@@ -111,7 +123,7 @@ const parse = (
   const yy = Number(v.slice(0, 2));
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
-  const year = yy < 30 ? 2000 + yy : 1900 + yy;
+  const year = resolveYear(yy);
 
   // Last digit: odd = male, even = female
   const lastDigit = Number(v[11]);
