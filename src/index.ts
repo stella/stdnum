@@ -41,6 +41,7 @@ export * as hr from "./hr/mod";
 export * as hu from "./hu/mod";
 export * as ie from "./ie/mod";
 export * as il from "./il/mod";
+export * as in_ from "./in/mod";
 export * as is_ from "./is/mod";
 export * as it from "./it/mod";
 export * as jp from "./jp/mod";

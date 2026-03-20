@@ -39,6 +39,7 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   HU: "Hungary",
   IE: "Ireland",
   IL: "Israel",
+  IN: "India",
   IS: "Iceland",
   IT: "Italy",
   JP: "Japan",

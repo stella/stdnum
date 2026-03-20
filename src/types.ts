@@ -25,6 +25,7 @@ export type CountryCode =
   | "HU"
   | "IE"
   | "IL"
+  | "IN"
   | "IS"
   | "IT"
   | "JP"
