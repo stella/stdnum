@@ -233,8 +233,8 @@ const parse = (
   if (dd > 40) dd -= 40;
 
   const currentYear = new Date().getFullYear();
-  let year = 1900 + yy;
-  if (year > currentYear + 5) year -= 100;
+  let year = 2000 + yy;
+  if (year > currentYear + 10) year -= 100;
 
   return {
     birthDate: new Date(year, month - 1, dd),

@@ -67,18 +67,45 @@ describe("bg.egn parse", () => {
 });
 
 describe("dk.cpr parse", () => {
+  test("extracts male born 1862-10-21", () => {
+    const result = parseDkCpr("2110625629");
+    expect(result).not.toBeNull();
+    expect(result!.gender).toBe("male");
+    expect(result!.birthDate.getFullYear()).toBe(1862);
+    expect(result!.birthDate.getMonth()).toBe(9);
+    expect(result!.birthDate.getDate()).toBe(21);
+  });
+
   test("returns null for invalid input", () => {
     expect(parseDkCpr("invalid")).toBeNull();
   });
 });
 
 describe("ee.ik parse", () => {
+  test("extracts male born 1968-05-28", () => {
+    const result = parseEeIk("36805280109");
+    expect(result).not.toBeNull();
+    expect(result!.gender).toBe("male");
+    expect(result!.birthDate.getFullYear()).toBe(1968);
+    expect(result!.birthDate.getMonth()).toBe(4);
+    expect(result!.birthDate.getDate()).toBe(28);
+  });
+
   test("returns null for invalid input", () => {
     expect(parseEeIk("invalid")).toBeNull();
   });
 });
 
 describe("fi.hetu parse", () => {
+  test("extracts female born 1952-10-13", () => {
+    const result = parseFiHetu("131052-308T");
+    expect(result).not.toBeNull();
+    expect(result!.gender).toBe("female");
+    expect(result!.birthDate.getFullYear()).toBe(1952);
+    expect(result!.birthDate.getMonth()).toBe(9);
+    expect(result!.birthDate.getDate()).toBe(13);
+  });
+
   test("returns null for invalid input", () => {
     expect(parseFiHetu("invalid")).toBeNull();
   });
@@ -104,6 +131,15 @@ describe("it.codicefiscale parse", () => {
 });
 
 describe("no.fodselsnummer parse", () => {
+  test("extracts female born 1986-10-15", () => {
+    const result = parseNoFnr("15108695088");
+    expect(result).not.toBeNull();
+    expect(result!.gender).toBe("female");
+    expect(result!.birthDate.getFullYear()).toBe(1986);
+    expect(result!.birthDate.getMonth()).toBe(9);
+    expect(result!.birthDate.getDate()).toBe(15);
+  });
+
   test("returns null for invalid input", () => {
     expect(parseNoFnr("invalid")).toBeNull();
   });
@@ -133,6 +169,15 @@ describe("pl.pesel parse", () => {
 });
 
 describe("ro.cnp parse", () => {
+  test("extracts male born 1963-06-15", () => {
+    const result = parseRoCnp("1630615123457");
+    expect(result).not.toBeNull();
+    expect(result!.gender).toBe("male");
+    expect(result!.birthDate.getFullYear()).toBe(1963);
+    expect(result!.birthDate.getMonth()).toBe(5);
+    expect(result!.birthDate.getDate()).toBe(15);
+  });
+
   test("returns null for invalid input", () => {
     expect(parseRoCnp("invalid")).toBeNull();
   });
@@ -154,6 +199,15 @@ describe("se.personnummer parse", () => {
 });
 
 describe("si.emso parse", () => {
+  test("extracts male born 2006-01-01", () => {
+    const result = parseSiEmso("0101006500006");
+    expect(result).not.toBeNull();
+    expect(result!.gender).toBe("male");
+    expect(result!.birthDate.getFullYear()).toBe(2006);
+    expect(result!.birthDate.getMonth()).toBe(0);
+    expect(result!.birthDate.getDate()).toBe(1);
+  });
+
   test("returns null for invalid input", () => {
     expect(parseSiEmso("invalid")).toBeNull();
   });
