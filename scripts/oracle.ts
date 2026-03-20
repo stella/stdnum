@@ -344,8 +344,8 @@ const pyBatch: SubBatch = (mod, vals) => {
   const s = `import json, sys\nfrom stdnum.${mod} import is_valid\nvals = json.loads(sys.stdin.read())\nfor v in vals:\n    print("1" if is_valid(v) else "0")`;
   writeFileSync("/tmp/_stdnum_oracle.py", s);
   return execSync(
-    `echo '${json}' | ${PYTHON} /tmp/_stdnum_oracle.py`,
-    { encoding: "utf-8", timeout: 60_000 },
+    `${PYTHON} /tmp/_stdnum_oracle.py`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
   ).trim().split("\n").map((l) => l === "1");
 };
 
@@ -355,16 +355,16 @@ const pyIdnBatch: SubBatch = (cls, vals) => {
   const s = `import json, sys\nfrom idnumbers.nationalid.${mod} import ${name}\nvals = json.loads(sys.stdin.read())\nfor v in vals:\n    print("1" if ${name}.validate(v) else "0")`;
   writeFileSync("/tmp/_stdnum_idn.py", s);
   return execSync(
-    `echo '${json}' | ${PYTHON} /tmp/_stdnum_idn.py`,
-    { encoding: "utf-8", timeout: 60_000 },
+    `${PYTHON} /tmp/_stdnum_idn.py`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
   ).trim().split("\n").map((l) => l === "1");
 };
 
 const rustBatch: SubBatch = (fmt, vals) => {
   const json = JSON.stringify(vals);
   return execSync(
-    `echo '${json}' | ${RUST_BIN} ${fmt}`,
-    { encoding: "utf-8", timeout: 60_000 },
+    `${RUST_BIN} ${fmt}`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
   ).trim().split("\n").map((l) => l === "1");
 };
 
@@ -380,8 +380,8 @@ const rubyScript = (
     `require 'json'\nrequire '${gem}'\nvals = JSON.parse(STDIN.read)\n${body}`,
   );
   return execSync(
-    `echo '${json}' | GEM_HOME=${RUBY_GEM} ruby ${tmp}`,
-    { encoding: "utf-8", timeout: 60_000 },
+    `GEM_HOME=${RUBY_GEM} ruby ${tmp}`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
   ).trim().split("\n").map((l) => l === "1");
 };
 
@@ -412,8 +412,8 @@ const phpBatch = (
     `<?php\nrequire 'scripts/vendor/autoload.php';\nuse loophp\\Tin\\TIN;\n$vals = json_decode(file_get_contents('php://stdin'), true);\nforeach ($vals as $v) {\n    try { $r = TIN::from($v, '${cc}')->isValid(); echo $r ? "1" : "0"; } catch (Exception $e) { echo "0"; }\n    echo "\\n";\n}`,
   );
   return execSync(
-    `echo '${json}' | php /tmp/_stdnum_oracle.php`,
-    { encoding: "utf-8", timeout: 60_000 },
+    `php /tmp/_stdnum_oracle.php`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
   ).trim().split("\n").map((l) => l === "1");
 };
 
@@ -437,7 +437,7 @@ const PY_REMAP: Record<string, string> = {
 // Keys to skip (no python-stdnum module exists)
 const PY_SKIP = new Set([
   "eu.vat", "bic", "ch.vat", "no.mva",
-  "is_.vsk", "nl.kvk", "at.businessid", "lei",
+  "is_.vsk", "nl.kvk", "lei", "creditcard",
   "cz.ico", "sk.dic", "sk.ico",
 ]);
 
