@@ -6,7 +6,8 @@
  * - Digit 3: type indicator
  *   - 0-5: natural person (CI + establishment)
  *   - 6: public entity (or natural person fallback)
- *   - 9: private company (or public entity fallback)
+ *   - 9: juridical entity (public checksum first,
+ *         then juridical fallback)
  *
  * Natural persons use a Luhn-like mod-10 checksum on
  * the first 10 digits. Public entities use a mod-11
@@ -136,7 +137,8 @@ const validate = (value: string): ValidateResult => {
   }
 
   if (typeDigit === 9) {
-    // Private company; fall back to public entity
+    // Juridical RUC; try public checksum first, fall
+    // back to juridical (matches python-stdnum).
     const pub = validatePublic(v);
     if (pub) return pub;
     const jur = validateJuridical(v);
