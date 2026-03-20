@@ -8,6 +8,7 @@ import {
   lei,
   luhn,
 } from "../src";
+import { detectNetwork } from "../src/creditcard";
 
 // ─── IBAN ────────────────────────────────────
 
@@ -337,5 +338,164 @@ describe("isin", () => {
     expect(isin.abbreviation).toBe("ISIN");
     expect(isin.entityType).toBe("any");
     expect(isin.country).toBeUndefined();
+  });
+});
+
+// ─── detectNetwork ──────────────────────────
+
+describe("detectNetwork", () => {
+  test("Visa: starts with 4", () => {
+    expect(detectNetwork("4111111111111111")).toBe("visa");
+  });
+
+  test("Visa: formatted input", () => {
+    expect(detectNetwork("4111 1111 1111 1111")).toBe(
+      "visa",
+    );
+  });
+
+  test("Mastercard: 51-55 range", () => {
+    expect(detectNetwork("5100000000000000")).toBe(
+      "mastercard",
+    );
+    expect(detectNetwork("5500000000000004")).toBe(
+      "mastercard",
+    );
+  });
+
+  test("Mastercard: 2221-2720 range", () => {
+    expect(detectNetwork("2221000000000000")).toBe(
+      "mastercard",
+    );
+    expect(detectNetwork("2720000000000000")).toBe(
+      "mastercard",
+    );
+  });
+
+  test("Mastercard: 2220 is not Mastercard", () => {
+    expect(detectNetwork("2220000000000000")).not.toBe(
+      "mastercard",
+    );
+  });
+
+  test("Mastercard: 2721 is not Mastercard", () => {
+    expect(
+      detectNetwork("2721000000000000"),
+    ).toBeNull();
+  });
+
+  test("Amex: 34", () => {
+    expect(detectNetwork("340000000000009")).toBe("amex");
+  });
+
+  test("Amex: 37", () => {
+    expect(detectNetwork("370000000000000")).toBe("amex");
+  });
+
+  test("Discover: 6011", () => {
+    expect(detectNetwork("6011000000000004")).toBe(
+      "discover",
+    );
+  });
+
+  test("Discover: 65", () => {
+    expect(detectNetwork("6500000000000000")).toBe(
+      "discover",
+    );
+  });
+
+  test("Discover: 644-649", () => {
+    expect(detectNetwork("6440000000000000")).toBe(
+      "discover",
+    );
+    expect(detectNetwork("6490000000000000")).toBe(
+      "discover",
+    );
+  });
+
+  test("Discover: 622126-622925", () => {
+    expect(detectNetwork("6221260000000000")).toBe(
+      "discover",
+    );
+    expect(detectNetwork("6229250000000000")).toBe(
+      "discover",
+    );
+  });
+
+  test("Diners Club: 300-305", () => {
+    expect(detectNetwork("30000000000000")).toBe("diners");
+    expect(detectNetwork("30500000000000")).toBe("diners");
+  });
+
+  test("Diners Club: 36", () => {
+    expect(detectNetwork("36000000000000")).toBe("diners");
+  });
+
+  test("Diners Club: 38", () => {
+    expect(detectNetwork("38000000000000")).toBe("diners");
+  });
+
+  test("JCB: 3528-3589", () => {
+    expect(detectNetwork("3528000000000000")).toBe("jcb");
+    expect(detectNetwork("3589000000000000")).toBe("jcb");
+  });
+
+  test("JCB: 3527 is not JCB", () => {
+    expect(detectNetwork("3527000000000000")).not.toBe(
+      "jcb",
+    );
+  });
+
+  test("UnionPay: 62 (non-Discover)", () => {
+    expect(detectNetwork("6200000000000000")).toBe(
+      "unionpay",
+    );
+  });
+
+  test("Maestro prefixes", () => {
+    expect(detectNetwork("5018000000000000")).toBe(
+      "maestro",
+    );
+    expect(detectNetwork("5020000000000000")).toBe(
+      "maestro",
+    );
+    expect(detectNetwork("5038000000000000")).toBe(
+      "maestro",
+    );
+    expect(detectNetwork("5893000000000000")).toBe(
+      "maestro",
+    );
+    expect(detectNetwork("6304000000000000")).toBe(
+      "maestro",
+    );
+    expect(detectNetwork("6759000000000000")).toBe(
+      "maestro",
+    );
+    expect(detectNetwork("6761000000000000")).toBe(
+      "maestro",
+    );
+    expect(detectNetwork("6762000000000000")).toBe(
+      "maestro",
+    );
+    expect(detectNetwork("6763000000000000")).toBe(
+      "maestro",
+    );
+  });
+
+  test("null for unrecognized prefix", () => {
+    expect(detectNetwork("9999999999999999")).toBeNull();
+  });
+
+  test("null for empty string", () => {
+    expect(detectNetwork("")).toBeNull();
+  });
+
+  test("handles dashes and dots", () => {
+    expect(
+      detectNetwork("4111-1111-1111-1111"),
+    ).toBe("visa");
+    expect(
+      detectNetwork("4111.1111.1111.1111"),
+    ).toBe("visa");
   });
 });
