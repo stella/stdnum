@@ -42,6 +42,8 @@
     "./be/vat": "./src/be/vat.ts",
     "./bg/egn": "./src/bg/egn.ts",
     "./bg/vat": "./src/bg/vat.ts",
+    "./br/cnpj": "./src/br/cnpj.ts",
+    "./br/cpf": "./src/br/cpf.ts",
     "./ch/uid": "./src/ch/uid.ts",
     "./ch/vat": "./src/ch/vat.ts",
     "./ch/ssn": "./src/ch/ssn.ts",

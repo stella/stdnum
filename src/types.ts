@@ -6,6 +6,7 @@ export type CountryCode =
   | "AT"
   | "BE"
   | "BG"
+  | "BR"
   | "CH"
   | "CY"
   | "CZ"

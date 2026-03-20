@@ -16,6 +16,7 @@ export { default as luhn } from "./luhn";
 export * as at from "./at/mod";
 export * as be from "./be/mod";
 export * as bg from "./bg/mod";
+export * as br from "./br/mod";
 export * as ch from "./ch/mod";
 export * as cy from "./cy/mod";
 export * as cz from "./cz/mod";

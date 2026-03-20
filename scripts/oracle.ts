@@ -59,6 +59,7 @@ import {
   at,
   be,
   bg,
+  br,
   cy,
   cz,
   de,
@@ -898,6 +899,32 @@ const SPECS: OracleSpec[] = [
         fc.integer({ min: 0, max: 9 }).map(String),
       )
       .map(([cc, id, check]) => `${cc}${id}${check}`),
+  },
+  // ── BR ──────────────────────────────────────
+  {
+    name: "BR CPF",
+    pyModule: "br.cpf",
+    tsValidate: (v) => br.cpf.validate(v).valid,
+    arb: digs(11),
+  },
+  {
+    name: "BR CNPJ",
+    pyModule: "br.cnpj",
+    tsValidate: (v) => br.cnpj.validate(v).valid,
+    arb: fc.oneof(
+      digs(14),
+      fc
+        .array(
+          fc.oneof(
+            fc.integer({ min: 0, max: 9 }).map(String),
+            fc
+              .integer({ min: 65, max: 90 })
+              .map((c) => String.fromCharCode(c)),
+          ),
+          { minLength: 14, maxLength: 14 },
+        )
+        .map((chars) => chars.join("")),
+    ),
   },
   // ── Company registers ─────────────────────
   {
