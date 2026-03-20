@@ -162,7 +162,10 @@ for (const [name, v] of validators) {
 
         for (const m of mutations) {
           const result = v.validate(m.mutated);
-          if (!result.valid) {
+          if (
+            result.valid === false &&
+            result.error.code === "INVALID_CHECKSUM"
+          ) {
             caught++;
           }
         }
