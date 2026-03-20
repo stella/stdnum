@@ -34,10 +34,13 @@ export type CountryCode =
   | "PL"
   | "PT"
   | "RO"
+  | "RS"
+  | "RU"
   | "SE"
   | "SI"
   | "SK"
   | "TR"
+  | "UA"
   | "US";
 
 export type ErrorCode =
