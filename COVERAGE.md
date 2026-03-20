@@ -2,17 +2,23 @@
 
 ## Libraries tracked
 
-| Key   | Library                | Language   | License | Countries        | Modules  | Oracle?           |
-|-------|------------------------|------------|---------|------------------|----------|-------------------|
-| py    | python-stdnum          | Python     | LGPL    | 67               | ~315     | Our gold standard |
-| js    | stdnum-js              | TypeScript | MIT     | 93               | ~235     | JS oracle         |
-| net   | CountryValidator       | C#/.NET    | MIT     | ~60              | ~120     | Not integrated    |
-| php   | loophp/tin             | PHP        | MIT     | EU-27            | 27       | Not integrated    |
-| rb    | social_security_number | Ruby       | MIT     | ~20              | ~25      | Not integrated    |
-| rs    | tax-ids                | Rust       | MIT     | EU+UK+CH+NO      | ~30      | Not integrated    |
-| jsvat | jsvat                  | TypeScript | MIT     | EU+UK+CH+NO      | ~30      | JS oracle         |
-| tid   | Tax ID Pro             | API        | Paid    | 100+             | 200+     | Not integrated    |
-| stll  | @stll/stdnum           | TypeScript | MIT     | 34               | 83       | All of the above  |
+| Key   | Library                | Language   | License | Countries        | Modules  | Oracle                    |
+|-------|------------------------|------------|---------|------------------|----------|---------------------------|
+| py    | python-stdnum          | Python     | LGPL    | 67               | ~315     | Gold standard             |
+| idn   | identique/idnumbers    | Python     | MIT     | 77               | ~80      | Python oracle             |
+| js    | stdnum-js              | TypeScript | MIT     | 93               | ~235     | JS oracle                 |
+| jsvat | jsvat                  | TypeScript | MIT     | EU+UK+CH+NO      | ~30      | JS oracle                 |
+| vp    | validate-polish        | TypeScript | MIT     | PL               | 3        | JS oracle                 |
+| it    | ibantools              | TypeScript | MIT     | Intl             | 1        | JS oracle                 |
+| ib    | iban.js                | JavaScript | ISC     | Intl             | 1        | JS oracle                 |
+| lu    | luhn / fast-luhn       | JavaScript | MIT     | Intl             | 1        | JS oracle                 |
+| php   | loophp/tin             | PHP        | MIT     | EU-27            | 27       | PHP oracle                |
+| rb    | social_security_number | Ruby       | MIT     | ~20              | ~25      | Ruby oracle               |
+| vv    | valvat                 | Ruby       | MIT     | EU+UK            | ~30      | Ruby oracle               |
+| rs    | tax-ids                | Rust       | MIT     | EU+UK+CH+NO      | ~30      | Covered by jsvat/valvat   |
+| net   | CountryValidator       | C#/.NET    | MIT     | ~60              | ~120     | Reference (no runtime)    |
+| tid   | Tax ID Pro             | API        | Paid    | 100+             | 200+     | Reference (paid API)      |
+| stll  | @stll/stdnum           | TypeScript | MIT     | 34               | 83       | All of the above          |
 
 ## Coverage by country
 
@@ -152,6 +158,41 @@
 | VE | RIF          | ✅ | ✅ | ✅  | —   | —  | —  | —     | ✅  | ❌   |
 | VN | MST          | ✅ | ✅ | —   | —   | —  | —  | —     | ✅  | ❌   |
 | ZA | ID/TIN       | ✅ | ✅ | ✅  | —   | —  | —  | —     | ✅  | ❌   |
+
+## Countries only in identique/idnumbers (not in python-stdnum)
+
+| CC | Identifier   | idn | stll |
+|----|--------------|-----|------|
+| AE | Emirates ID  | ✅  | ❌   |
+| AM | Personal Nr  | ✅  | ❌   |
+| BA | JMBG         | ✅  | ❌   |
+| BD | National ID  | ✅  | ❌   |
+| BH | Personal Nr  | ✅  | ❌   |
+| GE | Personal Nr  | ✅  | ❌   |
+| HK | HKID         | ✅  | ❌   |
+| IQ | National ID  | ✅  | ❌   |
+| IR | National ID  | ✅  | ❌   |
+| KW | Civil Nr     | ✅  | ❌   |
+| KZ | IIN/BIN      | ✅  | ❌   |
+| LK | NIC          | ✅  | ❌   |
+| MO | ARC/NID      | ✅  | ❌   |
+| NG | National ID  | ✅  | ❌   |
+| NP | National ID  | ✅  | ❌   |
+| PG | National ID  | ✅  | ❌   |
+| PH | PhilID       | ✅  | ❌   |
+| ZW | National ID  | ✅  | ❌   |
+
+## Identifiers only in stdnum-js (not in python-stdnum)
+
+| CC | Identifier   | js  | stll |
+|----|--------------|-----|------|
+| AI | TIN          | ✅  | ❌   |
+| BZ | TIN          | ✅  | ❌   |
+| CA | GST/PST/QST  | ✅  | ❌   |
+| DE | SVNR/Passport| ✅  | ❌   |
+| ES | NSS          | ✅  | ❌   |
+| GB | NINO         | ✅  | ❌   |
+| MX | CLABE        | ✅  | ❌   |
 
 ## International identifiers
 
