@@ -170,29 +170,29 @@
 | BH | Personal Nr  | ✅  | ❌   |
 | GE | Personal Nr  | ✅  | ❌   |
 | HK | HKID         | ✅  | ❌   |
-| IR | National ID  | ✅  | ❌   |
 | IQ | National ID  | ✅  | ❌   |
+| IR | National ID  | ✅  | ❌   |
 | KW | Civil Nr     | ✅  | ❌   |
 | KZ | IIN/BIN      | ✅  | ❌   |
 | LK | NIC          | ✅  | ❌   |
 | MO | ARC/NID      | ✅  | ❌   |
-| NP | National ID  | ✅  | ❌   |
 | NG | National ID  | ✅  | ❌   |
+| NP | National ID  | ✅  | ❌   |
 | PG | National ID  | ✅  | ❌   |
 | PH | PhilID       | ✅  | ❌   |
 | ZW | National ID  | ✅  | ❌   |
 
-## Countries only in stdnum-js (not in python-stdnum)
+## Identifiers only in stdnum-js (not in python-stdnum)
 
 | CC | Identifier   | js  | stll |
 |----|--------------|-----|------|
 | AI | TIN          | ✅  | ❌   |
 | BZ | TIN          | ✅  | ❌   |
-| GB | NINO         | ✅  | ❌   |
+| CA | GST/PST/QST  | ✅  | ❌   |
 | DE | SVNR/Passport| ✅  | ❌   |
 | ES | NSS          | ✅  | ❌   |
+| GB | NINO         | ✅  | ❌   |
 | MX | CLABE        | ✅  | ❌   |
-| CA | GST/PST/QST  | ✅  | ❌   |
 
 ## International identifiers
 
