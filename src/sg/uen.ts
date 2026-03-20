@@ -150,6 +150,12 @@ const validateOther = (
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     const idx = OTHER_ALPHA.indexOf(v[i]!);
+    if (idx === -1) {
+      return err(
+        "INVALID_FORMAT",
+        `Unexpected character at position ${i + 1}: ${v[i]}`,
+      );
+    }
     sum += idx * weights[i]!;
   }
   const expected =

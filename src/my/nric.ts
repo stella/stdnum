@@ -49,14 +49,17 @@ const compact = (value: string): string =>
 
 /**
  * Resolve the birth year from a 2-digit year.
- * Years after the current year are assumed to be
- * in the previous century.
+ * Years after the reference year are assumed to be
+ * in the previous century. Accepts an explicit
+ * reference year to avoid multiple clock reads.
  */
-const resolveYear = (yy: number): number => {
-  const currentYear = new Date().getFullYear();
-  const century = Math.floor(currentYear / 100);
+const resolveYear = (
+  yy: number,
+  referenceYear: number,
+): number => {
+  const century = Math.floor(referenceYear / 100);
   const year = century * 100 + yy;
-  return year > currentYear ? year - 100 : year;
+  return year > referenceYear ? year - 100 : year;
 };
 
 const validate = (value: string): ValidateResult => {
@@ -79,7 +82,8 @@ const validate = (value: string): ValidateResult => {
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
 
-  const year = resolveYear(yy);
+  const now = new Date().getFullYear();
+  const year = resolveYear(yy, now);
 
   if (!isValidDate(year, mm, dd)) {
     return err(
@@ -123,7 +127,8 @@ const parse = (
   const yy = Number(v.slice(0, 2));
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
-  const year = resolveYear(yy);
+  const now = new Date().getFullYear();
+  const year = resolveYear(yy, now);
 
   // Last digit: odd = male, even = female
   const lastDigit = Number(v[11]);

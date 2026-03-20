@@ -36,7 +36,7 @@ const validate = (value: string): ValidateResult => {
 
   // First digit: 1-8 for individuals, 0 for companies
   const first = Number(v[0]);
-  if (first < 0 || first > 8) {
+  if (first > 8) {
     return err(
       "INVALID_COMPONENT",
       "TIN first digit must be 0-8",
