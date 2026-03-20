@@ -109,3 +109,46 @@ describe("es.nie", () => {
     expect(es.nie.entityType).toBe("person");
   });
 });
+
+// ─── CIF (Company Tax ID) ───────────────────
+
+describe("es.cif", () => {
+  test("valid CIF", () => {
+    const r = es.cif.validate("A13585625");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid CIF", () => {
+    const r = es.cif.validate("J99216583");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = es.cif.validate("A1234567");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("invalid prefix", () => {
+    const r = es.cif.validate("X12345678");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("strips ES prefix", () => {
+    const r = es.cif.validate("ESA13585625");
+    expect(r.valid).toBe(true);
+  });
+
+  test("metadata", () => {
+    expect(es.cif.country).toBe("ES");
+    expect(es.cif.entityType).toBe("company");
+  });
+});

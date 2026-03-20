@@ -155,4 +155,4 @@ const vat: Validator = {
 };
 
 export default vat;
-export { compact, format, validate };
+export { cifChecksum, compact, format, validate };

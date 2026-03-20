@@ -44,3 +44,52 @@ describe("at.uid", () => {
     expect(at.uid.entityType).toBe("company");
   });
 });
+
+// ─── Firmenbuchnummer (Business ID) ──────────
+
+describe("at.businessid", () => {
+  test("valid with FN prefix", () => {
+    const r = at.businessid.validate("FN 122119m");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid without prefix", () => {
+    const r = at.businessid.validate("122119m");
+    expect(r.valid).toBe(true);
+  });
+
+  test("normalizes trailing letter to lowercase", () => {
+    const r = at.businessid.validate("122119M");
+    expect(r.valid).toBe(true);
+    if (r.valid) {
+      expect(r.compact).toBe("122119m");
+    }
+  });
+
+  test("invalid: letter before digits", () => {
+    const r = at.businessid.validate("m123123");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("too short", () => {
+    const r = at.businessid.validate("m");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("format adds FN prefix", () => {
+    expect(at.businessid.format("122119m")).toBe(
+      "FN 122119m",
+    );
+  });
+
+  test("metadata", () => {
+    expect(at.businessid.country).toBe("AT");
+    expect(at.businessid.entityType).toBe("company");
+  });
+});
