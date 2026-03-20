@@ -115,7 +115,14 @@
     "./eu/vat": "./src/eu/vat.ts",
     "./creditcard": "./src/creditcard.ts",
     "./luhn": "./src/luhn.ts",
-    "./lei": "./src/lei.ts"
+    "./lei": "./src/lei.ts",
+    "./au/abn": "./src/au/abn.ts",
+    "./au/acn": "./src/au/acn.ts",
+    "./au/tfn": "./src/au/tfn.ts",
+    "./ca/bn": "./src/ca/bn.ts",
+    "./ca/sin": "./src/ca/sin.ts",
+    "./us/ein": "./src/us/ein.ts",
+    "./us/ssn": "./src/us/ssn.ts"
   },
   "scripts": {
     "catalog": "bun scripts/catalog.ts",

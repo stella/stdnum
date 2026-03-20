@@ -14,9 +14,11 @@ export { default as lei } from "./lei";
 export { default as luhn } from "./luhn";
 
 export * as at from "./at/mod";
+export * as au from "./au/mod";
 export * as be from "./be/mod";
 export * as bg from "./bg/mod";
 export * as br from "./br/mod";
+export * as ca from "./ca/mod";
 export * as ch from "./ch/mod";
 export * as cy from "./cy/mod";
 export * as cz from "./cz/mod";
@@ -47,3 +49,4 @@ export * as se from "./se/mod";
 export * as si from "./si/mod";
 export * as sk from "./sk/mod";
 export * as tr from "./tr/mod";
+export * as us from "./us/mod";

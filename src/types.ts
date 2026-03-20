@@ -4,9 +4,11 @@
  */
 export type CountryCode =
   | "AT"
+  | "AU"
   | "BE"
   | "BG"
   | "BR"
+  | "CA"
   | "CH"
   | "CY"
   | "CZ"
@@ -35,7 +37,8 @@ export type CountryCode =
   | "SE"
   | "SI"
   | "SK"
-  | "TR";
+  | "TR"
+  | "US";
 
 export type ErrorCode =
   | "INVALID_FORMAT"
