@@ -195,6 +195,14 @@ describe("fr.nir", () => {
     }
   });
 
+  test("rejects month 00", () => {
+    const r = fr.nir.validate("100009901234500");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
   test("invalid gender digit", () => {
     const r = fr.nir.validate("395117823456700");
     expect(r.valid).toBe(false);

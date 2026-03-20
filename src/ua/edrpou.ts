@@ -4,7 +4,7 @@
  *
  * 8-digit company identification number with a
  * weighted checksum. Two sets of weights are used
- * depending on whether the first digit is < 3 or >= 3.
+ * depending on whether the first digit is 0-2/6-9 or 3-5.
  *
  * @see https://en.wikipedia.org/wiki/EDRPOU
  */
@@ -50,10 +50,12 @@ const validate = (value: string): ValidateResult => {
   }
 
   const firstDigit = Number(v[0]);
+  const useA =
+    firstDigit < 3 || firstDigit >= 6;
   const weightsFirst =
-    firstDigit < 3 ? WEIGHTS_A : WEIGHTS_B;
+    useA ? WEIGHTS_A : WEIGHTS_B;
   const weightsSecond =
-    firstDigit < 3 ? WEIGHTS_A2 : WEIGHTS_B2;
+    useA ? WEIGHTS_A2 : WEIGHTS_B2;
 
   let check = calcCheck(v, weightsFirst);
   if (check >= 10) {

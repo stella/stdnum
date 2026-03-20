@@ -62,6 +62,18 @@ const calcCheckDigit = (value: string): string => {
   return String((10 - (sum % 10)) % 10);
 };
 
+/**
+ * Resolve full year from 2-digit year and century
+ * discriminator: 0-9 = 1900s, letter = 2000s.
+ */
+const resolveCurpYear = (
+  yy: number,
+  centuryChar: string,
+): number =>
+  centuryChar >= "0" && centuryChar <= "9"
+    ? 1900 + yy
+    : 2000 + yy;
+
 const CURP_RE =
   /^[A-Z]{4}\d{6}[HM][A-Z]{2}[A-Z]{3}[0-9A-Z]\d$/;
 
@@ -87,13 +99,7 @@ const validate = (value: string): ValidateResult => {
   const mm = Number(v.slice(6, 8));
   const dd = Number(v.slice(8, 10));
 
-  // Century discriminator at position 16:
-  // 0-9 = 1900s, A or other letter = 2000s.
-  const centuryChar = v[16]!;
-  const year =
-    centuryChar >= "0" && centuryChar <= "9"
-      ? 1900 + yy
-      : 2000 + yy;
+  const year = resolveCurpYear(yy, v[16]!);
   if (!isValidDate(year, mm, dd)) {
     return err(
       "INVALID_COMPONENT",
@@ -139,11 +145,7 @@ const parse = (
   const mm = Number(v.slice(6, 8));
   const dd = Number(v.slice(8, 10));
 
-  const centuryChar = v[16]!;
-  const year =
-    centuryChar >= "0" && centuryChar <= "9"
-      ? 1900 + yy
-      : 2000 + yy;
+  const year = resolveCurpYear(yy, v[16]!);
 
   const genderChar = v[10];
   const gender: "male" | "female" =

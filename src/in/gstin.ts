@@ -67,13 +67,16 @@ const validate = (value: string): ValidateResult => {
     );
   }
   const stateCode = v.slice(0, 2);
-  if (
-    !VALID_STATE_CODES.has(stateCode) ||
-    v[12] === "0"
-  ) {
+  if (!VALID_STATE_CODES.has(stateCode)) {
     return err(
       "INVALID_COMPONENT",
-      "GSTIN state code or entity number is invalid",
+      "GSTIN state code is invalid",
+    );
+  }
+  if (v[12] === "0") {
+    return err(
+      "INVALID_COMPONENT",
+      "GSTIN entity number cannot be 0",
     );
   }
   if (luhn36Checksum(v) !== 0) {
