@@ -73,6 +73,9 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   HK: "Hong Kong",
   ID: "Indonesia",
   PK: "Pakistan",
+  CO: "Colombia",
+  EC: "Ecuador",
+  TW: "Taiwan",
 };
 
 // ─── Validator entry ────────────────────────
