@@ -36,6 +36,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./types": "./src/types.ts",
+    "./ar/cuit": "./src/ar/cuit.ts",
     "./at/businessid": "./src/at/businessid.ts",
     "./at/uid": "./src/at/uid.ts",
     "./au/abn": "./src/au/abn.ts",
@@ -54,6 +55,7 @@
     "./ch/ssn": "./src/ch/ssn.ts",
     "./ch/uid": "./src/ch/uid.ts",
     "./ch/vat": "./src/ch/vat.ts",
+    "./cl/rut": "./src/cl/rut.ts",
     "./cn/ric": "./src/cn/ric.ts",
     "./co/nit": "./src/co/nit.ts",
     "./creditcard": "./src/creditcard.ts",
@@ -130,6 +132,7 @@
     "./no/mva": "./src/no/mva.ts",
     "./no/orgnr": "./src/no/orgnr.ts",
     "./nz/ird": "./src/nz/ird.ts",
+    "./pe/ruc": "./src/pe/ruc.ts",
     "./pk/cnic": "./src/pk/cnic.ts",
     "./pl/nip": "./src/pl/nip.ts",
     "./pl/pesel": "./src/pl/pesel.ts",
