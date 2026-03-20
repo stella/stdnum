@@ -67,6 +67,12 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   CA: "Canada",
   AU: "Australia",
   BR: "Brazil",
+  AR: "Argentina",
+  CL: "Chile",
+  PE: "Peru",
+  HK: "Hong Kong",
+  ID: "Indonesia",
+  PK: "Pakistan",
 };
 
 // ─── Validator entry ────────────────────────
