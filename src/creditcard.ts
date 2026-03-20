@@ -85,6 +85,7 @@ const detectNetwork = (
 ): CardNetwork | null => {
   const v = compact(value);
   if (v.length === 0) return null;
+  if (!isdigits(v)) return null;
 
   const d2 = Number(v.slice(0, 2));
   const d3 = Number(v.slice(0, 3));

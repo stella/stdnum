@@ -378,6 +378,12 @@ describe("detectNetwork", () => {
     );
   });
 
+  test("Mastercard: 2721 is not Mastercard", () => {
+    expect(
+      detectNetwork("2721000000000000"),
+    ).toBeNull();
+  });
+
   test("Amex: 34", () => {
     expect(detectNetwork("340000000000009")).toBe("amex");
   });

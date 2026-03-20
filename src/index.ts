@@ -7,7 +7,11 @@ export type {
 } from "./types";
 
 export { default as bic } from "./bic";
-export { default as creditcard } from "./creditcard";
+export {
+  default as creditcard,
+  detectNetwork,
+} from "./creditcard";
+export type { CardNetwork } from "./creditcard";
 export { default as iban } from "./iban";
 export { default as isin } from "./isin";
 export { default as lei } from "./lei";
