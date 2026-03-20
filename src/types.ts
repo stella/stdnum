@@ -3,6 +3,7 @@
  * with at least one validator in this package.
  */
 export type CountryCode =
+  | "AR"
   | "AT"
   | "AU"
   | "BE"
@@ -10,11 +11,15 @@ export type CountryCode =
   | "BR"
   | "CA"
   | "CH"
+  | "CL"
   | "CN"
+  | "CO"
   | "CY"
   | "CZ"
   | "DE"
   | "DK"
+  | "DO"
+  | "EC"
   | "EE"
   | "ES"
   | "FI"
@@ -37,9 +42,11 @@ export type CountryCode =
   | "LV"
   | "MT"
   | "MX"
+  | "MY"
   | "NL"
   | "NO"
   | "NZ"
+  | "PE"
   | "PK"
   | "PL"
   | "PT"
@@ -47,11 +54,16 @@ export type CountryCode =
   | "RS"
   | "RU"
   | "SE"
+  | "SG"
   | "SI"
   | "SK"
+  | "TH"
   | "TR"
+  | "TW"
   | "UA"
   | "US"
+  | "UY"
+  | "VE"
   | "ZA";
 
 export type ErrorCode =
