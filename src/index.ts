@@ -18,6 +18,8 @@ export { default as isin } from "./isin";
 export { default as lei } from "./lei";
 export { default as luhn } from "./luhn";
 
+export * as ad from "./ad/mod";
+export * as al from "./al/mod";
 export * as ar from "./ar/mod";
 export * as at from "./at/mod";
 export * as au from "./au/mod";
@@ -26,6 +28,7 @@ export * as ba from "./ba/mod";
 export * as be from "./be/mod";
 export * as bg from "./bg/mod";
 export * as br from "./br/mod";
+export * as by from "./by/mod";
 export * as ca from "./ca/mod";
 export * as ch from "./ch/mod";
 export * as cl from "./cl/mod";

@@ -3,6 +3,8 @@
  * with at least one validator in this package.
  */
 export type CountryCode =
+  | "AD"
+  | "AL"
   | "AR"
   | "AT"
   | "AU"
@@ -11,6 +13,7 @@ export type CountryCode =
   | "BE"
   | "BG"
   | "BR"
+  | "BY"
   | "CA"
   | "CH"
   | "CL"
