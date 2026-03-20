@@ -36,12 +36,15 @@ const compact = (value: string): string => {
  * Calculate the check digit (position 8) using
  * weighted sum of the first 8 digits mod 11.
  */
-const calcCheckDigit = (value: string): string => {
+const calcCheckDigit = (
+  value: string,
+): string | null => {
   let sum = 0;
   for (let i = 0; i < 8; i++) {
     sum += WEIGHTS[i] * Number(value[i]);
   }
-  return String(sum % 11);
+  const result = sum % 11;
+  return result === 10 ? null : String(result);
 };
 
 const validate = (value: string): ValidateResult => {
@@ -70,7 +73,7 @@ const validate = (value: string): ValidateResult => {
   }
 
   const expected = calcCheckDigit(v);
-  if (v[8] !== expected) {
+  if (expected === null || v[8] !== expected) {
     return err(
       "INVALID_CHECKSUM",
       "VÖEN check digit does not match",
