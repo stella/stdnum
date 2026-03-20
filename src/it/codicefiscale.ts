@@ -234,7 +234,7 @@ const parse = (
 
   const currentYear = new Date().getFullYear();
   let year = 2000 + yy;
-  if (year > currentYear + 10) year -= 100;
+  if (year > currentYear) year -= 100;
 
   return {
     birthDate: new Date(year, month - 1, dd),
@@ -250,7 +250,7 @@ const codiceFiscale: Validator = {
   country: "IT",
   entityType: "person",
   description:
-    "16-char alphanumeric code encoding name, birth, and place",
+    "Personal/company tax code (16-char personal, 11-digit company)",
   sourceUrl: "https://www.agenziaentrate.gov.it/",
   lengths: [11, 16] as const,
   examples: ["RCCMNL83S18D969H"] as const,

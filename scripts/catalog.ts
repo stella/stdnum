@@ -51,6 +51,11 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   SE: "Sweden",
   SI: "Slovenia",
   SK: "Slovakia",
+  TR: "Turkey",
+  US: "United States",
+  CA: "Canada",
+  AU: "Australia",
+  BR: "Brazil",
 };
 
 // ─── Validator entry ────────────────────────

@@ -21,9 +21,6 @@ import type {
   Validator,
 } from "../types";
 
-/** @deprecated Use `ParsedPersonId` instead. */
-export type PeselInfo = ParsedPersonId;
-
 const WEIGHTS = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3] as const;
 
 const compact = (value: string): string =>
