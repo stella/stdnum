@@ -76,6 +76,9 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   CO: "Colombia",
   EC: "Ecuador",
   TW: "Taiwan",
+  DO: "Dominican Republic",
+  UY: "Uruguay",
+  VE: "Venezuela",
 };
 
 // ─── Validator entry ────────────────────────
