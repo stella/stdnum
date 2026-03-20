@@ -1,0 +1,54 @@
+/**
+ * PEID (Personenidentifikationsnummer).
+ *
+ * Liechtenstein tax code for individuals and entities.
+ * Numeric code of 4 to 12 digits, with leading zeros
+ * stripped during compaction.
+ *
+ * @see https://www.oera.li/
+ */
+
+import { clean } from "#util/clean";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
+
+import type { ValidateResult, Validator } from "../types";
+
+const compact = (value: string): string =>
+  clean(value, " .").replace(/^0+/, "");
+
+const validate = (value: string): ValidateResult => {
+  const v = compact(value);
+  if (v.length < 4 || v.length > 12) {
+    return err(
+      "INVALID_LENGTH",
+      "Liechtenstein PEID must be 4 to 12 digits",
+    );
+  }
+  if (!isdigits(v)) {
+    return err(
+      "INVALID_FORMAT",
+      "Liechtenstein PEID must contain only digits",
+    );
+  }
+  return { valid: true, compact: v };
+};
+
+const format = (value: string): string => compact(value);
+
+/** Liechtenstein Person Identification Number. */
+const peid: Validator = {
+  name: "Liechtenstein Person Identification Number",
+  localName: "Personenidentifikationsnummer",
+  abbreviation: "PEID",
+  country: "LI",
+  entityType: "any",
+  lengths: [4, 5, 6, 7, 8, 9, 10, 11, 12] as const,
+  examples: ["1234567"] as const,
+  compact,
+  format,
+  validate,
+};
+
+export default peid;
+export { compact, format, validate };
