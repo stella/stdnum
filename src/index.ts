@@ -50,6 +50,7 @@ export * as lt from "./lt/mod";
 export * as lu from "./lu/mod";
 export * as lv from "./lv/mod";
 export * as mt from "./mt/mod";
+export * as mx from "./mx/mod";
 export * as nl from "./nl/mod";
 export * as no from "./no/mod";
 export * as nz from "./nz/mod";

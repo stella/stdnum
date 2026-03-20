@@ -48,6 +48,7 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   LU: "Luxembourg",
   LV: "Latvia",
   MT: "Malta",
+  MX: "Mexico",
   NL: "Netherlands",
   NO: "Norway",
   NZ: "New Zealand",

@@ -34,6 +34,7 @@ export type CountryCode =
   | "LU"
   | "LV"
   | "MT"
+  | "MX"
   | "NL"
   | "NO"
   | "NZ"
