@@ -26,9 +26,6 @@ import type {
   Validator,
 } from "../types";
 
-/** @deprecated Use `ParsedPersonId` instead. */
-export type BirthNumberInfo = ParsedPersonId;
-
 const compact = (value: string): string =>
   clean(value, " /");
 

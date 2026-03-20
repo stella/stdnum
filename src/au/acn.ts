@@ -17,7 +17,7 @@ import type { ValidateResult, Validator } from "../types";
 const WEIGHTS = [8, 7, 6, 5, 4, 3, 2, 1] as const;
 
 const compact = (value: string): string =>
-  clean(value, " ");
+  clean(value, " -");
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);

@@ -20,7 +20,7 @@ const WEIGHTS = [
 ] as const;
 
 const compact = (value: string): string =>
-  clean(value, " ");
+  clean(value, " -");
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
