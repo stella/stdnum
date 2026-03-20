@@ -13,7 +13,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -74,6 +78,32 @@ const format = (value: string): string => {
   return `${v.slice(0, 6)}-${v.slice(6)}`;
 };
 
+/**
+ * Extract birth date and gender from a CPR number.
+ * Returns null if the value is not valid.
+ */
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
+  const dd = Number(v.slice(0, 2));
+  const mm = Number(v.slice(2, 4));
+  const yy = Number(v.slice(4, 6));
+  const s7 = Number(v[6]);
+  const lastDigit = Number(v[9]);
+
+  const century = getCentury(yy, s7);
+  const year = century + yy;
+
+  return {
+    birthDate: new Date(year, mm - 1, dd),
+    gender: lastDigit % 2 === 0 ? "female" : "male",
+  };
+};
+
 /** Danish Personal Identification Number. */
 const cpr: Validator = {
   name: "Danish Personal ID",
@@ -87,4 +117,4 @@ const cpr: Validator = {
 };
 
 export default cpr;
-export { compact, format, validate };
+export { compact, format, parse, validate };

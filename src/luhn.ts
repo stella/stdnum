@@ -7,8 +7,12 @@
  * (13-19 digits), use `creditcard` instead.
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import {
+  luhnChecksum,
+  luhnValidate,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -39,6 +43,18 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/**
+ * Generate a random Luhn-valid number of the
+ * given length (default 16).
+ */
+const generate = (length = 16): string => {
+  const payload = randomDigits(length - 1);
+  const partial = `${payload}0`;
+  const remainder = luhnChecksum(partial);
+  const check = (10 - remainder) % 10;
+  return `${payload}${String(check)}`;
+};
+
 /** Generic Luhn Validator. */
 const luhn: Validator = {
   name: "Luhn",
@@ -49,7 +65,8 @@ const luhn: Validator = {
   compact,
   format,
   validate,
+  generate: () => generate(),
 };
 
 export default luhn;
-export { compact, format, validate };
+export { compact, format, generate, validate };

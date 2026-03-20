@@ -14,7 +14,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 const WEIGHTS = [
   2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9,
@@ -99,6 +103,30 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/**
+ * Extract birth date and gender from a CNP.
+ * Returns null if the value is not valid.
+ */
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
+  const g = Number(v[0]);
+  const century = centuryMap[g] ?? 1900;
+  const yy = Number(v.slice(1, 3));
+  const mm = Number(v.slice(3, 5));
+  const dd = Number(v.slice(5, 7));
+  const year = century + yy;
+
+  return {
+    birthDate: new Date(year, mm - 1, dd),
+    gender: g % 2 === 1 ? "male" : "female",
+  };
+};
+
 /** Romanian Personal Identification Number. */
 const cnp: Validator = {
   name: "Romanian Personal ID",
@@ -112,4 +140,4 @@ const cnp: Validator = {
 };
 
 export default cnp;
-export { compact, format, validate };
+export { compact, format, parse, validate };

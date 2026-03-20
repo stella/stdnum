@@ -24,7 +24,11 @@ import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 import { validate as validateIva } from "./iva";
 
 // Values for odd-positioned characters (0-based
@@ -111,6 +115,24 @@ const EVEN: Record<string, number> = {
 
 const CHECK_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+/** Omocodia letter-to-digit mapping. */
+const OMOCODIA: Record<string, string> = {
+  L: "0", M: "1", N: "2", P: "3", Q: "4",
+  R: "5", S: "6", T: "7", U: "8", V: "9",
+};
+
+/** Month letter to 1-based month number. */
+const MONTH_LETTERS: Record<string, number> = {
+  A: 1, B: 2, C: 3, D: 4, E: 5, H: 6,
+  L: 7, M: 8, P: 9, R: 10, S: 11, T: 12,
+};
+
+const decodeCfDigit = (ch: string): number => {
+  const mapped = OMOCODIA[ch];
+  if (mapped !== undefined) return Number(mapped);
+  return Number(ch);
+};
+
 const compact = (value: string): string =>
   clean(value, " -").toUpperCase();
 
@@ -186,6 +208,40 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/**
+ * Extract birth date and gender from a Codice Fiscale.
+ * Returns null if the value is not valid or is an
+ * 11-digit Partita IVA (no personal data embedded).
+ */
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
+  if (v.length !== 16) return null;
+
+  const yy =
+    decodeCfDigit(v[6]) * 10 + decodeCfDigit(v[7]);
+  const month = MONTH_LETTERS[v[8]];
+  if (month === undefined) return null;
+  let dd =
+    decodeCfDigit(v[9]) * 10 + decodeCfDigit(v[10]);
+
+  const gender = dd > 40 ? "female" : "male";
+  if (dd > 40) dd -= 40;
+
+  const currentYear = new Date().getFullYear();
+  let year = 1900 + yy;
+  if (year > currentYear + 5) year -= 100;
+
+  return {
+    birthDate: new Date(year, month - 1, dd),
+    gender,
+  };
+};
+
 /** Italian Tax Code. */
 const codiceFiscale: Validator = {
   name: "Italian Tax Code",
@@ -204,4 +260,4 @@ const codiceFiscale: Validator = {
 };
 
 export default codiceFiscale;
-export { compact, format, validate };
+export { compact, format, parse, validate };

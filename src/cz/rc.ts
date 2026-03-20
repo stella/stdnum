@@ -16,15 +16,18 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
-export type BirthNumberInfo = {
-  birthDate: Date;
-  gender: "male" | "female";
-};
+/** @deprecated Use `ParsedPersonId` instead. */
+export type BirthNumberInfo = ParsedPersonId;
 
 const compact = (value: string): string =>
   clean(value, " /");
@@ -110,11 +113,16 @@ const format = (value: string): string => {
 };
 
 /**
- * Extract birth date and gender from a validated
- * birth number.
+ * Extract birth date and gender from a birth number.
+ * Returns null if the value is not valid.
  */
-const parse = (value: string): BirthNumberInfo => {
-  const v = compact(value);
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
   const yy = Number(v.slice(0, 2));
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
@@ -130,6 +138,38 @@ const parse = (value: string): BirthNumberInfo => {
     birthDate: new Date(year, month - 1, dd),
     gender,
   };
+};
+
+/**
+ * Generate a random valid 10-digit birth number.
+ * Uses a random date between 1954 and 2024.
+ */
+const generate = (): string => {
+  const year = randomInt(1954, 2024);
+  const month = randomInt(1, 12);
+  const day = randomInt(1, 28);
+  const isFemale = Math.random() < 0.5;
+  const mm = isFemale ? month + 50 : month;
+
+  const yy = String(year % 100).padStart(2, "0");
+  const mmStr = String(mm).padStart(2, "0");
+  const dd = String(day).padStart(2, "0");
+
+  const datePart = `${yy}${mmStr}${dd}`;
+  for (let seq = 0; seq < 1000; seq++) {
+    const seqStr = String(seq).padStart(3, "0");
+    const front = `${datePart}${seqStr}`;
+    const num = Number(front);
+    const check = (num % 11) % 10;
+    const result = `${front}${String(check)}`;
+    if (validate(result).valid) {
+      return result;
+    }
+  }
+
+  throw new Error(
+    "Failed to generate valid birth number",
+  );
 };
 
 /** Czech/Slovak Birth Number. */
@@ -148,7 +188,8 @@ const rc: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default rc;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

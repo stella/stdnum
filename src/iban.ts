@@ -8,6 +8,7 @@
 
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
 
@@ -264,6 +265,58 @@ const format = (value: string): string => {
   return groups.join(" ");
 };
 
+/**
+ * Countries supported by generate(). All have
+ * all-digit BBANs for simplicity.
+ */
+const GENERATE_COUNTRIES = ["CZ", "DE", "SK"] as const;
+
+type GenerateCountry =
+  (typeof GENERATE_COUNTRIES)[number];
+
+/** BBAN lengths for generate()-supported countries. */
+const BBAN_LENGTHS: Record<GenerateCountry, number> = {
+  CZ: 20,
+  DE: 18,
+  SK: 20,
+};
+
+/**
+ * Compute IBAN check digits for a country code
+ * and BBAN. Returns a 2-character string.
+ */
+const computeCheckDigits = (
+  cc: string,
+  bban: string,
+): string => {
+  const placeholder = `${bban}${cc}00`;
+  let numeric = "";
+  for (let i = 0; i < placeholder.length; i++) {
+    const ch = placeholder[i];
+    if (ch !== undefined) {
+      numeric += String(charValue(ch));
+    }
+  }
+  const remainder = mod97(numeric);
+  const check = 98 - remainder;
+  return String(check).padStart(2, "0");
+};
+
+/**
+ * Generate a random valid IBAN for CZ, DE, or SK.
+ */
+const generate = (): string => {
+  const idx = randomInt(
+    0,
+    GENERATE_COUNTRIES.length - 1,
+  );
+  const cc = GENERATE_COUNTRIES[idx] as GenerateCountry;
+  const bbanLen = BBAN_LENGTHS[cc];
+  const bban = randomDigits(bbanLen);
+  const checkDigits = computeCheckDigits(cc, bban);
+  return `${cc}${checkDigits}${bban}`;
+};
+
 /** International Bank Account Number. */
 const iban: Validator = {
   name: "IBAN",
@@ -281,7 +334,8 @@ const iban: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default iban;
-export { compact, format, validate };
+export { compact, format, generate, validate };

@@ -10,6 +10,7 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -53,6 +54,24 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `PL${compact(value)}`;
 
+const MAX_GENERATE_ATTEMPTS = 100;
+
+/**
+ * Generate a random valid NIP. Retries if the
+ * weighted sum mod 11 yields 10 (no valid check
+ * digit for that payload).
+ */
+const generate = (): string => {
+  for (let i = 0; i < MAX_GENERATE_ATTEMPTS; i++) {
+    const payload = randomDigits(9);
+    const sum = weightedSum(payload, WEIGHTS, 11);
+    if (sum < 10) {
+      return `${payload}${String(sum)}`;
+    }
+  }
+  throw new Error("Failed to generate valid NIP");
+};
+
 /** Polish VAT Number. */
 const nip: Validator = {
   name: "Polish VAT Number",
@@ -64,7 +83,8 @@ const nip: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nip;
-export { compact, format, validate };
+export { compact, format, generate, validate };

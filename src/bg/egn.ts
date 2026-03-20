@@ -14,7 +14,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 const WEIGHTS = [2, 4, 8, 5, 10, 9, 7, 3, 6] as const;
 
@@ -74,6 +78,41 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/**
+ * Extract birth date and gender from an EGN.
+ * Returns null if the value is not valid.
+ */
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
+  const yy = Number(v.slice(0, 2));
+  const mm = Number(v.slice(2, 4));
+  const dd = Number(v.slice(4, 6));
+  const serial = Number(v.slice(6, 9));
+
+  let year: number;
+  let month: number;
+  if (mm > 40) {
+    year = 2000 + yy;
+    month = mm - 40;
+  } else if (mm > 20) {
+    year = 1800 + yy;
+    month = mm - 20;
+  } else {
+    year = 1900 + yy;
+    month = mm;
+  }
+
+  return {
+    birthDate: new Date(year, month - 1, dd),
+    gender: serial % 2 === 0 ? "male" : "female",
+  };
+};
+
 /** Bulgarian Personal Identification Number. */
 const egn: Validator = {
   name: "Bulgarian Personal ID",
@@ -87,4 +126,4 @@ const egn: Validator = {
 };
 
 export default egn;
-export { compact, format, validate };
+export { compact, format, parse, validate };

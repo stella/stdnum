@@ -7,8 +7,12 @@
  * digits).
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import {
+  luhnChecksum,
+  luhnValidate,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -127,6 +131,35 @@ const detectNetwork = (
   return null;
 };
 
+/**
+ * Visa/Mastercard IIN prefixes. Each entry is
+ * [prefix, totalLength].
+ */
+const CARD_PREFIXES = [
+  ["4", 16], // Visa
+  ["51", 16], // Mastercard
+  ["52", 16], // Mastercard
+  ["53", 16], // Mastercard
+  ["54", 16], // Mastercard
+  ["55", 16], // Mastercard
+] as const;
+
+/**
+ * Generate a random valid Visa or Mastercard
+ * number (16 digits, Luhn-valid).
+ */
+const generate = (): string => {
+  const idx = randomInt(0, CARD_PREFIXES.length - 1);
+  const [prefix, length] = CARD_PREFIXES[idx] as
+    (typeof CARD_PREFIXES)[number];
+  const remaining = length - prefix.length - 1;
+  const payload = `${prefix}${randomDigits(remaining)}`;
+  const partial = `${payload}0`;
+  const remainder = luhnChecksum(partial);
+  const check = (10 - remainder) % 10;
+  return `${payload}${String(check)}`;
+};
+
 /** Credit Card Number (Luhn). */
 const creditCard: Validator = {
   name: "Credit Card Number",
@@ -140,6 +173,7 @@ const creditCard: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default creditCard;

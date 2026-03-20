@@ -9,8 +9,12 @@
  * @see https://www.bzst.de/SharedDocs/Downloads/DE/Merkblaetter/ust_idnr_aufbau.pdf
  */
 
-import { mod1110validate } from "#checksums/mod1110";
+import {
+  mod1110checkDigit,
+  mod1110validate,
+} from "#checksums/mod1110";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -56,6 +60,15 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `DE${compact(value)}`;
 
+/** Generate a random valid German VAT number. */
+const generate = (): string => {
+  const first = String(randomInt(1, 9));
+  const rest = randomDigits(7);
+  const payload = `${first}${rest}`;
+  const check = mod1110checkDigit(payload);
+  return `${payload}${String(check)}`;
+};
+
 /** German VAT Identification Number. */
 const vat: Validator = {
   name: "German VAT Number",
@@ -72,7 +85,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, generate, validate };

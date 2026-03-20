@@ -14,7 +14,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 const WEIGHTS_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1] as const;
 const WEIGHTS_2 = [3, 4, 5, 6, 7, 8, 9, 1, 2, 3] as const;
@@ -93,6 +97,30 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/**
+ * Extract birth date and gender from an Isikukood.
+ * Returns null if the value is not valid.
+ */
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
+  const g = Number(v[0]);
+  const century = centuryMap[g] ?? 1900;
+  const yy = Number(v.slice(1, 3));
+  const mm = Number(v.slice(3, 5));
+  const dd = Number(v.slice(5, 7));
+  const year = century + yy;
+
+  return {
+    birthDate: new Date(year, mm - 1, dd),
+    gender: g % 2 === 1 ? "male" : "female",
+  };
+};
+
 /** Estonian Personal Identification Code. */
 const ik: Validator = {
   name: "Estonian Personal ID",
@@ -106,4 +134,4 @@ const ik: Validator = {
 };
 
 export default ik;
-export { compact, format, validate };
+export { compact, format, parse, validate };

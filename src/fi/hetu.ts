@@ -13,7 +13,11 @@ import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
 
 const CHECK_CHARS = "0123456789ABCDEFHJKLMNPRSTUVWXY";
 
@@ -106,6 +110,40 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/**
+ * Extract birth date and gender from a HETU.
+ * Returns null if the value is not valid.
+ */
+const parse = (
+  value: string,
+): ParsedPersonId | null => {
+  const result = validate(value);
+  if (!result.valid) return null;
+
+  const v = result.compact;
+  const dd = Number(v.slice(0, 2));
+  const mm = Number(v.slice(2, 4));
+  const yy = Number(v.slice(4, 6));
+  const separator = v[6];
+  const serial = Number(v.slice(7, 10));
+
+  let century: number;
+  if (SEPARATORS_1800.has(separator)) {
+    century = 1800;
+  } else if (SEPARATORS_1900.has(separator)) {
+    century = 1900;
+  } else {
+    century = 2000;
+  }
+
+  const year = century + yy;
+
+  return {
+    birthDate: new Date(year, mm - 1, dd),
+    gender: serial % 2 === 0 ? "female" : "male",
+  };
+};
+
 /** Finnish Personal Identity Code. */
 const hetu: Validator = {
   name: "Finnish Personal ID",
@@ -119,4 +157,4 @@ const hetu: Validator = {
 };
 
 export default hetu;
-export { compact, format, validate };
+export { compact, format, parse, validate };

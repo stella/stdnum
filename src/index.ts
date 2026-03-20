@@ -1,6 +1,7 @@
 export type {
   CountryCode,
   ErrorCode,
+  ParsedPersonId,
   StdnumError,
   ValidateResult,
   Validator,
