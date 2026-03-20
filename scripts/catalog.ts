@@ -88,6 +88,9 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   MY: "Malaysia",
   SG: "Singapore",
   TH: "Thailand",
+  AZ: "Azerbaijan",
+  CR: "Costa Rica",
+  CU: "Cuba",
 };
 
 // ─── Validator entry ────────────────────────
