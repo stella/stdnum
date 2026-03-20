@@ -79,6 +79,9 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   DO: "Dominican Republic",
   UY: "Uruguay",
   VE: "Venezuela",
+  LI: "Liechtenstein",
+  MC: "Monaco",
+  MD: "Moldova",
 };
 
 // ─── Validator entry ────────────────────────
