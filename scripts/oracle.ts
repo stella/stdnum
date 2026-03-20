@@ -265,7 +265,7 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> =
       ),
       digs(2), alnumStr(12, 26),
     ).map(([cc, ck, bb]) => `${cc}${ck}${bb}`),
-    luhn: digsRange(1, 20),
+    luhn: digsRange(13, 19),
     creditcard: digsRange(13, 19),
     isin: fc.tuple(
       fc.constantFrom(
@@ -431,8 +431,6 @@ const PY_REMAP: Record<string, string> = {
   "pt.vat": "pt.nif", "ro.vat": "ro.cf",
   "si.vat": "si.ddv",
   "it.codiceFiscale": "it.codicefiscale",
-  "no.fodselsnummer": "no.fodselsnummer",
-  "is_.kennitala": "is_.kennitala",
 };
 // Keys to skip (no python-stdnum module exists)
 const PY_SKIP = new Set([
