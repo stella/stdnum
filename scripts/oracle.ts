@@ -2,14 +2,9 @@
  * Oracle tests: cross-check @stll/stdnum against
  * independent implementations.
  *
- * JS oracles (always run):
- *   - validate-polish: PL NIP, PESEL, REGON
- *   - ibantools: IBAN (with BBAN format)
- *
- * Python oracle (optional, run if .venv exists):
- *   - python-stdnum: all formats
- *   Setup: python3 -m venv .venv
- *          .venv/bin/pip install python-stdnum
+ * Auto-discovers ALL validators from ../src.
+ * Each oracle backend declares what it validates;
+ * matching is automatic via validator key.
  *
  * Run: bun run oracle
  */
@@ -20,334 +15,79 @@ import IBAN from "iban";
 import { isValidIBAN } from "ibantools";
 import {
   checkVAT,
-  belgium,
-  bulgaria,
-  croatia,
-  cyprus,
-  czechRepublic,
-  denmark,
-  estonia,
-  finland,
-  germany,
-  greece,
-  hungary,
-  ireland,
-  italy,
-  latvia,
-  lithuania,
-  luxembourg,
-  malta,
-  netherlands,
-  poland,
-  portugal,
-  romania,
-  slovenia,
-  spain,
-  sweden,
-  switzerland,
-  norway,
+  belgium, bulgaria, croatia, cyprus,
+  czechRepublic, denmark, estonia, finland,
+  germany, greece, hungary, ireland, italy,
+  latvia, lithuania, luxembourg, malta,
+  netherlands, poland, portugal, romania,
+  slovenia, spain, sweden, switzerland, norway,
 } from "jsvat";
 import luhnLib from "luhn";
 import { execSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
 import {
-  validateEntity as stdnumValidateEntity,
-  validatePerson as stdnumValidatePerson,
+  validateEntity as stdnumEntity,
+  validatePerson as stdnumPerson,
 } from "stdnum";
 import { validatePolish } from "validate-polish";
 
-import {
-  at,
-  au,
-  be,
-  bg,
-  br,
-  ca,
-  cy,
-  cz,
-  de,
-  ch as chMod,
-  dk,
-  ee,
-  es,
-  fi,
-  fr,
-  gb,
-  gr,
-  hr,
-  hu,
-  ie,
-  is_ as is,
-  it,
-  lt,
-  lu,
-  lv,
-  mt,
-  nl,
-  no,
-  pl,
-  pt,
-  ro,
-  se,
-  si,
-  sk,
-  tr,
-  us,
-} from "../src";
-import creditcardValidator from "../src/creditcard";
-import ibanValidator from "../src/iban";
-import isinValidator from "../src/isin";
-import luhnValidator from "../src/luhn";
+import * as all from "../src";
+import type { Validator } from "../src/types";
 
-// ─── Subprocess bridges ──────────────────────
+// ─── Auto-discover validators ───────────────
 
-const PYTHON = ".venv/bin/python3";
-const RUST_ORACLE =
-  "scripts/rust-oracle/target/release/stdnum-oracle";
-const RUBY_GEM_DIR = (() => {
-  try {
-    return execSync("ruby -e 'puts Gem.user_dir'", {
-      encoding: "utf-8",
-    }).trim();
-  } catch {
-    return "";
+type Discovered = {
+  key: string;
+  country?: string;
+  entityType: string;
+  validator: Validator;
+};
+
+const isValidator = (v: unknown): v is Validator =>
+  Boolean(
+    v && typeof v === "object" &&
+      "validate" in v && "compact" in v &&
+      "format" in v && "entityType" in v,
+  );
+
+const discover = (): Discovered[] => {
+  const result: Discovered[] = [];
+  for (const [ns, mod] of Object.entries(all)) {
+    if (isValidator(mod)) {
+      result.push({
+        key: ns, country: mod.country,
+        entityType: mod.entityType, validator: mod,
+      });
+    } else if (mod && typeof mod === "object") {
+      for (const [k, v] of Object.entries(
+        mod as Record<string, unknown>,
+      )) {
+        if (isValidator(v)) {
+          result.push({
+            key: `${ns}.${k}`, country: v.country,
+            entityType: v.entityType, validator: v,
+          });
+        }
+      }
+    }
   }
-})();
-
-const hasPython = (): boolean => {
-  try {
-    execSync(`${PYTHON} -c "import stdnum"`, {
-      stdio: "ignore",
-    });
-    return true;
-  } catch {
-    return false;
-  }
+  return result;
 };
 
-/**
- * Batch-validate values with python-stdnum.
- * Writes a temp Python script to avoid shell
- * escaping issues with -c.
- */
-const pyBatch = (
-  module: string,
-  values: readonly string[],
-): boolean[] => {
-  const json = JSON.stringify(values);
-  const script = `
-import json, sys
-from stdnum.${module} import is_valid
-vals = json.loads(sys.stdin.read())
-for v in vals:
-    print("1" if is_valid(v) else "0")
-`.trim();
-  const { writeFileSync } = require("node:fs");
-  const tmpScript = "/tmp/_stdnum_oracle.py";
-  writeFileSync(tmpScript, script);
-  const result = execSync(
-    `echo '${json}' | ${PYTHON} ${tmpScript}`,
-    { encoding: "utf-8", timeout: 60_000 },
-  ).trim();
-  return result.split("\n").map((l) => l === "1");
-};
-
-// ─── Rust bridge ─────────────────────────────
-
-const hasRust = (): boolean => {
-  try {
-    execSync(`test -f ${RUST_ORACLE}`, {
-      stdio: "ignore",
-    });
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const rustBatch = (
-  format: string,
-  values: readonly string[],
-): boolean[] => {
-  const json = JSON.stringify(values);
-  const result = execSync(
-    `echo '${json}' | ${RUST_ORACLE} ${format}`,
-    { encoding: "utf-8", timeout: 60_000 },
-  ).trim();
-  return result.split("\n").map((l) => l === "1");
-};
-
-// ─── Ruby bridge ─────────────────────────────
-
-const hasRuby = (): boolean => {
-  try {
-    execSync(
-      `GEM_HOME=${RUBY_GEM_DIR} ruby -e "require 'valvat'"`,
-      { stdio: "ignore" },
-    );
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const rubyBatch = (
-  values: readonly string[],
-  countryPrefix: string,
-): boolean[] => {
-  const json = JSON.stringify(values);
-  const { writeFileSync } = require("node:fs");
-  const tmpScript = "/tmp/_stdnum_oracle.rb";
-  writeFileSync(
-    tmpScript,
-    `require 'json'
-require 'valvat'
-vals = JSON.parse(STDIN.read)
-vals.each do |v|
-  vat = Valvat.new("${countryPrefix}" + v)
-  puts vat.valid_checksum? ? "1" : "0"
-end`,
-  );
-  const result = execSync(
-    `echo '${json}' | GEM_HOME=${RUBY_GEM_DIR} ruby ${tmpScript}`,
-    { encoding: "utf-8", timeout: 60_000 },
-  ).trim();
-  return result.split("\n").map((l) => l === "1");
-};
-
-// ─── Spec definitions ────────────────────────
-
-// ─── Date-aware generation ──────────────────
-//
-// For validators that encode birth dates, inject
-// values with dates at temporal boundaries:
-// today, tomorrow, yesterday, century edges, etc.
-// This catches time-dependent validation bugs
-// that random generation almost never hits.
-
-const dateBoundaries = (): string[] => {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth() + 1;
-  const d = now.getDate();
-  const pad2 = (n: number) => String(n).padStart(2, "0");
-
-  const dates: Array<[number, number, number]> = [
-    [y, m, d], // today
-    [y, m, d + 1], // tomorrow
-    [y, m, d - 1], // yesterday
-    [y, 1, 1], // start of year
-    [y, 12, 31], // end of year
-    [y + 1, 1, 1], // start of next year
-    [y - 1, 12, 31], // end of last year
-    [2000, 1, 1], // century boundary
-    [1999, 12, 31], // century boundary
-    [1900, 1, 1], // century boundary
-  ];
-
-  return dates.map(
-    ([yr, mo, dy]) =>
-      `${pad2(dy)}${pad2(mo)}${String(yr).slice(-2)}`,
-  );
-};
-
-/**
- * Generate date-prefix strings (DDMMYY) at
- * temporal boundaries + random suffix.
- */
-const dateDigs = (
-  totalLen: number,
-): fc.Arbitrary<string> => {
-  const boundaries = dateBoundaries();
-  const suffixLen = totalLen - 6;
-  if (suffixLen < 0) return digs(totalLen);
-  return fc.oneof(
-    { weight: 70, arbitrary: digs(totalLen) },
-    ...boundaries.map((prefix) => ({
-      weight: Math.max(
-        1,
-        Math.floor(30 / boundaries.length),
-      ),
-      arbitrary: rawDigs(suffixLen).map(
-        (s) => `${prefix}${s}`,
-      ),
-    })),
-  );
-};
-
-/**
- * Like dateDigs but with YYMMDD order (used by
- * CZ RČ, BE NN, BG EGN, etc.)
- */
-const dateDigsYMD = (
-  totalLen: number,
-): fc.Arbitrary<string> => {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth() + 1;
-  const d = now.getDate();
-  const pad2 = (n: number) => String(n).padStart(2, "0");
-
-  const dates: Array<[number, number, number]> = [
-    [y, m, d],
-    [y, m, d + 1],
-    [y, m, d - 1],
-    [y + 1, 1, 1],
-    [y - 1, 12, 31],
-    [2000, 1, 1],
-    [1999, 12, 31],
-    [1900, 1, 1],
-  ];
-
-  const prefixes = dates.map(
-    ([yr, mo, dy]) =>
-      `${String(yr).slice(-2)}${pad2(mo)}${pad2(dy)}`,
-  );
-
-  const suffixLen = totalLen - 6;
-  if (suffixLen < 0) return digs(totalLen);
-  return fc.oneof(
-    { weight: 70, arbitrary: digs(totalLen) },
-    ...prefixes.map((prefix) => ({
-      weight: Math.max(1, Math.floor(30 / prefixes.length)),
-      arbitrary: rawDigs(suffixLen).map(
-        (s) => `${prefix}${s}`,
-      ),
-    })),
-  );
-};
-
-type OracleSpec = {
-  name: string;
-  pyModule: string;
-  tsValidate: (v: string) => boolean;
-  arb: fc.Arbitrary<string>;
-};
+// ─── Arbitrary generators ───────────────────
 
 const rawDigs = (n: number): fc.Arbitrary<string> =>
-  fc
-    .array(fc.integer({ min: 0, max: 9 }), {
-      minLength: n,
-      maxLength: n,
-    })
-    .map((ds: number[]) => ds.join(""));
+  fc.array(fc.integer({ min: 0, max: 9 }), {
+    minLength: n, maxLength: n,
+  }).map((ds: number[]) => ds.join(""));
 
-/**
- * Generate n-digit strings with edge cases mixed
- * in (Hypothesis-style). 70% random, 30% targeted
- * boundary values: all-zeros, all-nines, repeated
- * digits, off-by-one lengths.
- */
 const digs = (n: number): fc.Arbitrary<string> => {
   const edges: fc.Arbitrary<string>[] = [
     fc.constant("0".repeat(n)),
     fc.constant("9".repeat(n)),
-    fc.constant(
-      "0123456789".repeat(Math.ceil(n / 10)).slice(0, n),
-    ),
   ];
-  for (let d = 1; d < 9; d++) {
+  for (let d = 1; d < 9; d++)
     edges.push(fc.constant(String(d).repeat(n)));
-  }
   if (n > 1) edges.push(rawDigs(n - 1));
   edges.push(rawDigs(n + 1));
   return fc.oneof(
@@ -359,1590 +99,782 @@ const digs = (n: number): fc.Arbitrary<string> => {
   );
 };
 
-const digsRange = (
-  min: number,
-  max: number,
-): fc.Arbitrary<string> =>
-  fc.integer({ min, max }).chain((n: number) => digs(n));
+const digsRange = (a: number, b: number) =>
+  fc.integer({ min: a, max: b }).chain((n) => digs(n));
 
-const SPECS: OracleSpec[] = [
-  // python-stdnum has no cz.ico; cz.dic covers
-  // 8-digit legal entities with the same checksum
-  {
-    name: "CZ DIČ (covers IČO)",
-    pyModule: "cz.dic",
-    tsValidate: (v) => cz.dic.validate(v).valid,
-    arb: digsRange(8, 10),
-  },
-  {
-    name: "CZ RČ",
-    pyModule: "cz.rc",
-    tsValidate: (v) => cz.rc.validate(v).valid,
-    arb: fc.oneof(dateDigsYMD(9), dateDigsYMD(10)),
-  },
-  {
-    name: "SK IČ DPH",
-    pyModule: "sk.dph",
-    tsValidate: (v) => sk.dic.validate(v).valid,
-    arb: digs(10),
-  },
-  {
-    name: "DE IdNr",
-    pyModule: "de.idnr",
-    tsValidate: (v) => de.idnr.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "PL NIP",
-    pyModule: "pl.nip",
-    tsValidate: (v) => pl.nip.validate(v).valid,
-    arb: digs(10),
-  },
-  {
-    name: "PL PESEL",
-    pyModule: "pl.pesel",
-    tsValidate: (v) => pl.pesel.validate(v).valid,
-    arb: dateDigsYMD(11),
-  },
-  {
-    name: "PL REGON",
-    pyModule: "pl.regon",
-    tsValidate: (v) => pl.regon.validate(v).valid,
-    arb: fc.oneof(digs(9), digs(14)),
-  },
-  {
-    // KNOWN: python-stdnum validates BBAN format
-    // (country-specific regex); we only check
-    // mod-97. A few false positives are expected.
-    name: "IBAN (mod-97 only, BBAN not checked)",
-    pyModule: "iban",
-    tsValidate: (v) => ibanValidator.validate(v).valid,
-    arb: fc
-      .tuple(
-        fc.constantFrom(
-          "CZ",
-          "DE",
-          "SK",
-          "PL",
-          "GB",
-          "FR",
-          "AT",
-          "NL",
-          "IT",
-          "ES",
-        ),
-        digs(2),
-        fc
-          .array(
-            fc.constantFrom(
-              ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
-                "",
-              ),
-            ),
-            { minLength: 12, maxLength: 26 },
-          )
-          .map((chars: string[]) => chars.join("")),
-      )
-      .map(([cc, check, bban]) => `${cc}${check}${bban}`),
-  },
-  {
-    name: "Luhn (generic)",
-    pyModule: "luhn",
-    tsValidate: (v) => luhnValidator.validate(v).valid,
-    arb: digsRange(1, 20),
-  },
-  {
-    name: "Credit Card",
-    pyModule: "luhn",
-    tsValidate: (v) =>
-      creditcardValidator.validate(v).valid,
-    arb: digsRange(13, 19),
-  },
-  // ── Wave 2 countries ──────────────────────
-  {
-    name: "AT UID",
-    pyModule: "at.uid",
-    tsValidate: (v) => at.uid.validate(v).valid,
-    arb: digs(8).map((d) => `U${d}`),
-  },
-  {
-    name: "GB VAT",
-    pyModule: "gb.vat",
-    tsValidate: (v) => gb.vat.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "GB UTR",
-    pyModule: "gb.utr",
-    tsValidate: (v) => gb.utr.validate(v).valid,
-    arb: digs(10),
-  },
-  {
-    name: "FR SIREN",
-    pyModule: "fr.siren",
-    tsValidate: (v) => fr.siren.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "FR SIRET",
-    pyModule: "fr.siret",
-    tsValidate: (v) => fr.siret.validate(v).valid,
-    arb: digs(14),
-  },
-  {
-    name: "FR NIF",
-    pyModule: "fr.nif",
-    tsValidate: (v) => fr.nif.validate(v).valid,
-    arb: digs(13),
-  },
-  {
-    name: "FR TVA",
-    pyModule: "fr.tva",
-    tsValidate: (v) => fr.tva.validate(v).valid,
-    arb: fc
-      .tuple(digs(2), digs(9))
-      .map(([prefix, siren]) => `${prefix}${siren}`),
-  },
-  {
-    name: "IT Partita IVA",
-    pyModule: "it.iva",
-    tsValidate: (v) => it.iva.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "IT Codice Fiscale",
-    pyModule: "it.codicefiscale",
-    tsValidate: (v) => it.codiceFiscale.validate(v).valid,
-    arb: fc
-      .tuple(
-        fc
-          .array(
-            fc.constantFrom(
-              ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split(
-                "",
-              ),
-            ),
-            { minLength: 15, maxLength: 15 },
-          )
-          .map((c: string[]) => c.join("")),
-        fc.constantFrom(
-          ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
-        ),
-      )
-      .map(([front, check]) => `${front}${check}`),
-  },
-  // ── Phase 1: EU-27 VAT ────────────────────
-  {
-    name: "BE VAT",
-    pyModule: "be.vat",
-    tsValidate: (v) => be.vat.validate(v).valid,
-    arb: digs(10),
-  },
-  {
-    name: "BG VAT",
-    pyModule: "bg.vat",
-    tsValidate: (v) => bg.vat.validate(v).valid,
-    arb: fc.oneof(digs(9), digs(10)),
-  },
-  {
-    name: "CY VAT",
-    pyModule: "cy.vat",
-    tsValidate: (v) => cy.vat.validate(v).valid,
-    arb: fc
-      .tuple(
-        digs(8),
-        fc.constantFrom(
-          ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
-        ),
-      )
-      .map(([d, l]) => `${d}${l}`),
-  },
-  {
-    name: "DK VAT",
-    pyModule: "dk.cvr",
-    tsValidate: (v) => dk.vat.validate(v).valid,
-    arb: digs(8),
-  },
-  {
-    name: "EE VAT",
-    pyModule: "ee.kmkr",
-    tsValidate: (v) => ee.vat.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "ES VAT",
-    pyModule: "es.nif",
-    tsValidate: (v) => es.vat.validate(v).valid,
-    arb: fc.oneof(
-      // DNI: 8 digits + letter
-      fc
-        .tuple(
-          digs(8),
-          fc.constantFrom(
-            ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
-          ),
-        )
-        .map(([d, l]) => `${d}${l}`),
-      // CIF: letter + 7 digits + check
-      fc
-        .tuple(
-          fc.constantFrom(..."ABCDEFGHJNPQRSUVW".split("")),
-          digs(7),
-          fc.constantFrom(
-            ..."0123456789JABCDEFGHI".split(""),
-          ),
-        )
-        .map(([p, d, c]) => `${p}${d}${c}`),
+const datePrefix = (
+  order: "ymd" | "dmy",
+): string[] => {
+  const now = new Date();
+  const [y, m, d] = [
+    now.getFullYear(), now.getMonth() + 1,
+    now.getDate(),
+  ];
+  const p2 = (n: number) =>
+    String(n).padStart(2, "0");
+  const dates: [number, number, number][] = [
+    [y, m, d], [y, m, d + 1], [y, m, d - 1],
+    [2000, 1, 1], [1999, 12, 31], [1900, 1, 1],
+  ];
+  return dates.map(([yr, mo, dy]) =>
+    order === "ymd"
+      ? `${String(yr).slice(-2)}${p2(mo)}${p2(dy)}`
+      : `${p2(dy)}${p2(mo)}${String(yr).slice(-2)}`,
+  );
+};
+
+const dateDigs = (
+  len: number, order: "ymd" | "dmy" = "dmy",
+) => {
+  const pfxs = datePrefix(order);
+  const sLen = len - 6;
+  if (sLen < 0) return digs(len);
+  return fc.oneof(
+    { weight: 70, arbitrary: digs(len) },
+    ...pfxs.map((pfx) => ({
+      weight: Math.max(1, Math.floor(30 / pfxs.length)),
+      arbitrary: rawDigs(sLen).map(
+        (s) => `${pfx}${s}`,
+      ),
+    })),
+  );
+};
+
+const alnumStr = (min: number, max: number) =>
+  fc.array(
+    fc.constantFrom(
+      ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        .split(""),
     ),
-  },
+    { minLength: min, maxLength: max },
+  ).map((c: string[]) => c.join(""));
+
+const letters = (chars: string) =>
+  fc.constantFrom(...chars.split(""));
+
+// ─── Custom arb overrides ───────────────────
+// Where inferArb (lengths-based) is insufficient.
+
+const L = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const HETU_SEP = [
+  "+", "-", "Y", "X", "W", "V",
+  "U", "A", "B", "C", "D", "E", "F",
+];
+const HETU_CHK = "0123456789ABCDEFHJKLMNPRSTUVWXY";
+const ES_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE";
+const IE_LETTERS = "WABCDEFGHIJKLMNOPQRSTUV";
+const CIF_PFX = "ABCDEFGHJNPQRSUVW";
+const CIF_CHK = "0123456789JABCDEFGHI";
+
+const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> =
   {
-    name: "FI VAT",
-    pyModule: "fi.alv",
-    tsValidate: (v) => fi.vat.validate(v).valid,
-    arb: digs(8),
-  },
-  {
-    name: "GR VAT",
-    pyModule: "gr.vat",
-    tsValidate: (v) => gr.vat.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "HR VAT",
-    pyModule: "hr.oib",
-    tsValidate: (v) => hr.vat.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "HU VAT",
-    pyModule: "hu.anum",
-    tsValidate: (v) => hu.vat.validate(v).valid,
-    arb: digs(8),
-  },
-  {
-    name: "IE VAT",
-    pyModule: "ie.vat",
-    tsValidate: (v) => ie.vat.validate(v).valid,
-    arb: fc
-      .tuple(
-        digs(7),
-        fc.constantFrom(
-          ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
-        ),
-      )
-      .map(([d, l]) => `${d}${l}`),
-  },
-  {
-    name: "LT VAT",
-    pyModule: "lt.pvm",
-    tsValidate: (v) => lt.vat.validate(v).valid,
-    arb: fc.oneof(digs(9), digs(12)),
-  },
-  {
-    name: "LU VAT",
-    pyModule: "lu.tva",
-    tsValidate: (v) => lu.vat.validate(v).valid,
-    arb: digs(8),
-  },
-  {
-    name: "LV VAT",
-    pyModule: "lv.pvn",
-    tsValidate: (v) => lv.vat.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "MT VAT",
-    pyModule: "mt.vat",
-    tsValidate: (v) => mt.vat.validate(v).valid,
-    arb: digs(8),
-  },
-  {
-    name: "NL VAT",
-    pyModule: "nl.btw",
-    tsValidate: (v) => nl.vat.validate(v).valid,
-    arb: fc
-      .tuple(digs(9), digs(2))
-      .map(([d, s]) => `${d}B${s}`),
-  },
-  {
-    name: "PT VAT",
-    pyModule: "pt.nif",
-    tsValidate: (v) => pt.vat.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "RO VAT",
-    pyModule: "ro.cf",
-    tsValidate: (v) => ro.vat.validate(v).valid,
-    arb: digsRange(2, 10),
-  },
-  {
-    name: "SE VAT",
-    pyModule: "se.vat",
-    tsValidate: (v) => se.vat.validate(v).valid,
-    arb: digs(12),
-  },
-  {
-    name: "SI VAT",
-    pyModule: "si.ddv",
-    tsValidate: (v) => si.vat.validate(v).valid,
-    arb: digs(8),
-  },
-  // ── Phase 2: EU Personal IDs ──────────────
-  {
-    name: "BE NN",
-    pyModule: "be.nn",
-    tsValidate: (v) => be.nn.validate(v).valid,
-    arb: dateDigsYMD(11),
-  },
-  {
-    name: "BG EGN",
-    pyModule: "bg.egn",
-    tsValidate: (v) => bg.egn.validate(v).valid,
-    arb: dateDigsYMD(10),
-  },
-  {
-    name: "DK CPR",
-    pyModule: "dk.cpr",
-    tsValidate: (v) => dk.cpr.validate(v).valid,
-    arb: dateDigs(10),
-  },
-  {
-    name: "EE IK",
-    pyModule: "ee.ik",
-    tsValidate: (v) => ee.ik.validate(v).valid,
-    arb: dateDigsYMD(11),
-  },
-  {
-    name: "ES DNI",
-    pyModule: "es.dni",
-    tsValidate: (v) => es.dni.validate(v).valid,
-    arb: fc
-      .tuple(
-        digs(8),
-        fc.constantFrom(
-          ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
-        ),
-      )
-      .map(([d, l]) => `${d}${l}`),
-  },
-  {
-    name: "ES NIE",
-    pyModule: "es.nie",
-    tsValidate: (v) => es.nie.validate(v).valid,
-    arb: fc
-      .tuple(
-        fc.constantFrom("X", "Y", "Z"),
-        digs(7),
-        fc.constantFrom(
-          ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
-        ),
-      )
-      .map(([p, d, l]) => `${p}${d}${l}`),
-  },
-  {
-    name: "FI HETU",
-    pyModule: "fi.hetu",
-    tsValidate: (v) => fi.hetu.validate(v).valid,
-    arb: fc
-      .tuple(
-        digs(6),
-        fc.constantFrom(
-          "+",
-          "-",
-          "Y",
-          "X",
-          "W",
-          "V",
-          "U",
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "F",
-        ),
-        digs(3),
-        fc.constantFrom(
-          ..."0123456789ABCDEFHJKLMNPRSTUVWXY".split(""),
-        ),
-      )
-      .map(([d, s, c, x]) => `${d}${s}${c}${x}`),
-  },
-  {
-    name: "GR AMKA",
-    pyModule: "gr.amka",
-    tsValidate: (v) => gr.amka.validate(v).valid,
-    arb: dateDigs(11),
-  },
-  {
-    name: "IE PPS",
-    pyModule: "ie.pps",
-    tsValidate: (v) => ie.pps.validate(v).valid,
-    arb: fc.oneof(
-      // 8-char old format
-      fc
-        .tuple(
-          digs(7),
-          fc.constantFrom(
-            ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
-          ),
-        )
-        .map(([d, l]) => `${d}${l}`),
-      // 9-char new format (with 2nd letter)
-      fc
-        .tuple(
-          digs(7),
-          fc.constantFrom(
-            ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
-          ),
-          fc.constantFrom("A", "B", "H"),
-        )
-        .map(([d, l1, l2]) => `${d}${l1}${l2}`),
+    "at.uid": digs(8).map((d) => `U${d}`),
+    "ch.uid": digs(9).map((d) => `CHE${d}`),
+    "ch.vat": digs(9).map((d) => `CHE${d}`),
+    "ch.ssn": digs(10).map((d) => `756${d}`),
+    "cz.dic": digsRange(8, 10),
+    "cz.rc": fc.oneof(
+      dateDigs(9, "ymd"), dateDigs(10, "ymd"),
     ),
-  },
-  {
-    name: "LT Asmens",
-    pyModule: "lt.asmens",
-    tsValidate: (v) => lt.asmens.validate(v).valid,
-    arb: dateDigsYMD(11),
-  },
-  {
-    name: "NL BSN",
-    pyModule: "nl.bsn",
-    tsValidate: (v) => nl.bsn.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "RO CNP",
-    pyModule: "ro.cnp",
-    tsValidate: (v) => ro.cnp.validate(v).valid,
-    arb: digs(13),
-  },
-  {
-    name: "SE Personnummer",
-    pyModule: "se.personnummer",
-    tsValidate: (v) => se.personnummer.validate(v).valid,
-    arb: fc.oneof(
-      // 10-digit with implicit - separator
+    "sk.rc": fc.oneof(
+      dateDigs(9, "ymd"), dateDigs(10, "ymd"),
+    ),
+    "pl.pesel": dateDigs(11, "ymd"),
+    "be.nn": dateDigs(11, "ymd"),
+    "bg.egn": dateDigs(10, "ymd"),
+    "dk.cpr": dateDigs(10),
+    "ee.ik": dateDigs(11, "ymd"),
+    "lt.asmens": dateDigs(11, "ymd"),
+    "gr.amka": dateDigs(11),
+    "si.emso": dateDigs(13),
+    "no.fodselsnummer": dateDigs(11),
+    "is_.kennitala": dateDigs(10),
+    "de.vat": fc.tuple(
+      fc.integer({ min: 1, max: 9 }), digs(8),
+    ).map(([f, r]) => `${String(f)}${r}`),
+    "tr.tckimlik": fc.tuple(
+      fc.integer({ min: 1, max: 9 }).map(String),
       digs(10),
-      // 10-digit with + separator (100+ years old)
-      fc
-        .tuple(digs(6), digs(4))
+    ).map(([f, r]) => `${f}${r}`),
+    "fr.tva": fc.tuple(digs(2), digs(9))
+      .map(([p, s]) => `${p}${s}`),
+    "cy.vat": fc.tuple(digs(8), letters(L))
+      .map(([d, l]) => `${d}${l}`),
+    "ie.vat": fc.tuple(digs(7), letters(IE_LETTERS))
+      .map(([d, l]) => `${d}${l}`),
+    "ie.pps": fc.oneof(
+      fc.tuple(digs(7), letters(IE_LETTERS))
+        .map(([d, l]) => `${d}${l}`),
+      fc.tuple(
+        digs(7), letters(IE_LETTERS),
+        fc.constantFrom("A", "B", "H"),
+      ).map(([d, l1, l2]) => `${d}${l1}${l2}`),
+    ),
+    "nl.vat": fc.tuple(digs(9), digs(2))
+      .map(([d, s]) => `${d}B${s}`),
+    "es.vat": fc.oneof(
+      fc.tuple(digs(8), letters(ES_LETTERS))
+        .map(([d, l]) => `${d}${l}`),
+      fc.tuple(
+        letters(CIF_PFX), digs(7), letters(CIF_CHK),
+      ).map(([p, d, c]) => `${p}${d}${c}`),
+    ),
+    "es.dni": fc.tuple(digs(8), letters(ES_LETTERS))
+      .map(([d, l]) => `${d}${l}`),
+    "es.nie": fc.tuple(
+      fc.constantFrom("X", "Y", "Z"),
+      digs(7), letters(ES_LETTERS),
+    ).map(([p, d, l]) => `${p}${d}${l}`),
+    "es.cif": fc.tuple(
+      letters(CIF_PFX), digs(7), letters(CIF_CHK),
+    ).map(([p, d, c]) => `${p}${d}${c}`),
+    "fi.hetu": fc.tuple(
+      digs(6), fc.constantFrom(...HETU_SEP),
+      digs(3), letters(HETU_CHK),
+    ).map(([d, s, c, x]) => `${d}${s}${c}${x}`),
+    "it.codiceFiscale": fc.tuple(
+      alnumStr(15, 15), letters(L),
+    ).map(([f, c]) => `${f}${c}`),
+    "se.personnummer": fc.oneof(
+      digs(10),
+      fc.tuple(digs(6), digs(4))
         .map(([d, s]) => `${d}+${s}`),
-      // 12-digit YYYYMMDDNNNN
       digs(12),
     ),
-  },
-  {
-    name: "SI EMSO",
-    pyModule: "si.emso",
-    tsValidate: (v) => si.emso.validate(v).valid,
-    arb: dateDigs(13),
-  },
-  // ── EEA/EFTA ──────────────────────────────
-  {
-    name: "CH UID",
-    pyModule: "ch.uid",
-    tsValidate: (v) => chMod.uid.validate(v).valid,
-    arb: digs(9).map((d) => `CHE${d}`),
-  },
-  {
-    name: "CH SSN",
-    pyModule: "ch.ssn",
-    tsValidate: (v) => chMod.ssn.validate(v).valid,
-    arb: digs(10).map((d) => `756${d}`),
-  },
-  {
-    name: "NO Orgnr",
-    pyModule: "no.orgnr",
-    tsValidate: (v) => no.orgnr.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "NO Fødselsnummer",
-    pyModule: "no.fodselsnummer",
-    tsValidate: (v) => no.fodselsnummer.validate(v).valid,
-    arb: dateDigs(11),
-  },
-  {
-    name: "IS Kennitala",
-    pyModule: "is_.kennitala",
-    tsValidate: (v) => is.kennitala.validate(v).valid,
-    arb: dateDigs(10),
-  },
-  // ── Turkey ──────────────────────────────────
-  {
-    name: "TR T.C. Kimlik",
-    pyModule: "tr.tckimlik",
-    tsValidate: (v) => tr.tckimlik.validate(v).valid,
-    arb: fc
-      .tuple(
-        fc.integer({ min: 1, max: 9 }).map(String),
-        digs(10),
-      )
-      .map(([first, rest]) => `${first}${rest}`),
-  },
-  {
-    name: "TR VKN",
-    pyModule: "tr.vkn",
-    tsValidate: (v) => tr.vkn.validate(v).valid,
-    arb: digs(10),
-  },
-  // ── International financial ─────────────────
-  {
-    name: "ISIN",
-    pyModule: "isin",
-    tsValidate: (v) => isinValidator.validate(v).valid,
-    arb: fc
-      .tuple(
-        fc.constantFrom(
-          "US",
-          "DE",
-          "GB",
-          "FR",
-          "JP",
-          "CH",
-          "NL",
-          "IT",
-          "ES",
-          "CA",
-        ),
-        fc
-          .array(
-            fc.constantFrom(
-              ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
-                "",
-              ),
-            ),
-            { minLength: 9, maxLength: 9 },
-          )
-          .map((chars: string[]) => chars.join("")),
-        fc.integer({ min: 0, max: 9 }).map(String),
-      )
-      .map(([cc, id, check]) => `${cc}${id}${check}`),
-  },
-  // ── BR ──────────────────────────────────────
-  {
-    name: "BR CPF",
-    pyModule: "br.cpf",
-    tsValidate: (v) => br.cpf.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "BR CNPJ",
-    pyModule: "br.cnpj",
-    tsValidate: (v) => br.cnpj.validate(v).valid,
-    arb: fc.oneof(
+    "br.cnpj": fc.oneof(
       digs(14),
-      fc
-        .array(
-          fc.oneof(
-            fc.integer({ min: 0, max: 9 }).map(String),
-            fc
-              .integer({ min: 65, max: 90 })
-              .map((c) => String.fromCharCode(c)),
-          ),
-          { minLength: 14, maxLength: 14 },
-        )
-        .map((chars) => chars.join("")),
+      fc.array(fc.oneof(
+        fc.integer({ min: 0, max: 9 }).map(String),
+        fc.integer({ min: 65, max: 90 })
+          .map((c) => String.fromCharCode(c)),
+      ), { minLength: 14, maxLength: 14 })
+        .map((ch) => ch.join("")),
     ),
-  },
-  // ── Company registers ─────────────────────
-  {
-    name: "DK CVR",
-    pyModule: "dk.cvr",
-    tsValidate: (v) => dk.cvr.validate(v).valid,
-    arb: digs(8),
-  },
-  {
-    name: "EE Registrikood",
-    pyModule: "ee.registrikood",
-    tsValidate: (v) => ee.registrikood.validate(v).valid,
-    arb: digs(8),
-  },
-  {
-    name: "FI Y-tunnus",
-    pyModule: "fi.ytunnus",
-    tsValidate: (v) => fi.ytunnus.validate(v).valid,
-    arb: digs(8),
-  },
-  {
-    name: "SE Orgnr",
-    pyModule: "se.orgnr",
-    tsValidate: (v) => se.orgnr.validate(v).valid,
-    arb: digs(10),
-  },
-  {
-    name: "ES CIF",
-    pyModule: "es.cif",
-    tsValidate: (v) => es.cif.validate(v).valid,
-    arb: fc
-      .tuple(
-        fc.constantFrom(..."ABCDEFGHJNPQRSUVW".split("")),
-        digs(7),
-        fc.constantFrom(
-          ..."0123456789JABCDEFGHI".split(""),
-        ),
-      )
-      .map(([p, d, c]) => `${p}${d}${c}`),
-  // ── CA ──────────────────────────────────────
-    name: "CA SIN",
-    pyModule: "ca.sin",
-    tsValidate: (v) => ca.sin.validate(v).valid,
-    arb: digs(9),
-    name: "CA BN",
-    pyModule: "ca.bn",
-    tsValidate: (v) => ca.bn.validate(v).valid,
+    "ca.bn": fc.oneof(
       digs(9),
-          digs(9),
-          fc.constantFrom("RC", "RM", "RP", "RT"),
-          digs(4),
-        .map(([root, prog, ref]) => `${root}${prog}${ref}`),
-  // ── AU ──────────────────────────────────────
-    name: "AU ABN",
-    pyModule: "au.abn",
-    tsValidate: (v) => au.abn.validate(v).valid,
-    name: "AU TFN",
-    pyModule: "au.tfn",
-    tsValidate: (v) => au.tfn.validate(v).valid,
-    arb: fc.oneof(digs(8), digs(9)),
-    name: "AU ACN",
-    pyModule: "au.acn",
-    tsValidate: (v) => au.acn.validate(v).valid,
-    arb: digs(9),
-  // ── US ──────────────────────────────────────
-    name: "US SSN",
-    pyModule: "us.ssn",
-    tsValidate: (v) => us.ssn.validate(v).valid,
-    arb: digs(9),
-    name: "US EIN",
-    pyModule: "us.ein",
-    tsValidate: (v) => us.ein.validate(v).valid,
-    arb: digs(9),
-  },
-];
-
-// ─── JS oracle specs ─────────────────────────
-
-type JsOracleSpec = {
-  name: string;
-  tsValidate: (v: string) => boolean;
-  oracleValidate: (v: string) => boolean;
-  arb: fc.Arbitrary<string>;
-};
-
-const { nip, pesel, regon } = validatePolish;
-
-const JS_SPECS: JsOracleSpec[] = [
-  {
-    name: "PL NIP (vs validate-polish)",
-    tsValidate: (v) => pl.nip.validate(v).valid,
-    oracleValidate: (v) => nip(v),
-    arb: digs(10),
-  },
-  {
-    name: "PL PESEL (vs validate-polish)",
-    tsValidate: (v) => pl.pesel.validate(v).valid,
-    oracleValidate: (v) => pesel(v),
-    arb: digs(11),
-  },
-  {
-    name: "PL REGON (vs validate-polish)",
-    tsValidate: (v) => pl.regon.validate(v).valid,
-    oracleValidate: (v) => regon(v),
-    arb: fc.oneof(digs(9), digs(14)),
-  },
-  {
-    name: "IBAN (vs ibantools)",
-    tsValidate: (v) => ibanValidator.validate(v).valid,
-    oracleValidate: (v) => isValidIBAN(v),
-    arb: fc
-      .tuple(
-        fc.constantFrom(
-          "CZ",
-          "DE",
-          "SK",
-          "PL",
-          "GB",
-          "FR",
-          "AT",
-          "NL",
-          "IT",
-          "ES",
-        ),
-        digs(2),
-        fc
-          .array(
-            fc.constantFrom(
-              ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
-                "",
-              ),
-            ),
-            { minLength: 12, maxLength: 26 },
-          )
-          .map((chars: string[]) => chars.join("")),
-      )
-      .map(([cc, check, bban]) => `${cc}${check}${bban}`),
-  },
-  {
-    name: "IBAN (vs iban.js)",
-    tsValidate: (v) => ibanValidator.validate(v).valid,
-    oracleValidate: (v) => IBAN.isValid(v) as boolean,
-    arb: fc
-      .tuple(
-        fc.constantFrom(
-          "CZ",
-          "DE",
-          "SK",
-          "PL",
-          "GB",
-          "FR",
-          "AT",
-          "NL",
-          "IT",
-          "ES",
-        ),
-        digs(2),
-        fc
-          .array(
-            fc.constantFrom(
-              ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
-                "",
-              ),
-            ),
-            { minLength: 12, maxLength: 26 },
-          )
-          .map((chars: string[]) => chars.join("")),
-      )
-      .map(([cc, check, bban]) => `${cc}${check}${bban}`),
-  },
-  {
-    name: "Luhn (vs luhn npm)",
-    tsValidate: (v) => luhnValidator.validate(v).valid,
-    oracleValidate: (v) =>
-      v.length >= 13 &&
-      v.length <= 19 &&
-      (luhnLib.validate(v) as boolean),
-    arb: digsRange(13, 19),
-  },
-  {
-    name: "Luhn (vs fast-luhn)",
-    tsValidate: (v) => luhnValidator.validate(v).valid,
-    oracleValidate: (v) =>
-      v.length >= 13 && v.length <= 19 && fastLuhn(v),
-    arb: digsRange(13, 19),
-  },
-  {
-    name: "CZ DIČ (vs jsvat)",
-    tsValidate: (v) => cz.dic.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`CZ${v}`, [czechRepublic]).isValid,
-    arb: digsRange(8, 10),
-  },
-  {
-    name: "DE VAT (vs jsvat)",
-    tsValidate: (v) => de.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`DE${v}`, [germany]).isValid,
-    arb: fc
-      .tuple(fc.integer({ min: 1, max: 9 }), digs(8))
-      .map(([first, rest]) => `${String(first)}${rest}`),
-  },
-  {
-    name: "PL NIP (vs jsvat)",
-    tsValidate: (v) => pl.nip.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`PL${v}`, [poland]).isValid,
-    arb: digs(10),
-  },
-  // ── EU VAT via jsvat ──────────────────────
-  {
-    name: "BE VAT (vs jsvat)",
-    tsValidate: (v) => be.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`BE${v}`, [belgium]).isValid,
-    arb: digs(10),
-  },
-  {
-    name: "BG VAT (vs jsvat)",
-    tsValidate: (v) => bg.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`BG${v}`, [bulgaria]).isValid,
-    arb: fc.oneof(digs(9), digs(10)),
-  },
-  {
-    name: "CY VAT (vs jsvat)",
-    tsValidate: (v) => cy.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`CY${v}`, [cyprus]).isValid,
-    arb: fc
-      .tuple(
-        digs(8),
-        fc.constantFrom(
-          ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
-        ),
-      )
-      .map(([d, l]) => `${d}${l}`),
-  },
-  {
-    name: "DK VAT (vs jsvat)",
-    tsValidate: (v) => dk.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`DK${v}`, [denmark]).isValid,
-    arb: digs(8),
-  },
-  {
-    name: "EE VAT (vs jsvat)",
-    tsValidate: (v) => ee.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`EE${v}`, [estonia]).isValid,
-    arb: digs(9),
-  },
-  {
-    name: "ES VAT (vs jsvat)",
-    tsValidate: (v) => es.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`ES${v}`, [spain]).isValid,
-    arb: fc.oneof(
-      fc
-        .tuple(
-          digs(8),
-          fc.constantFrom(
-            ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
-          ),
-        )
-        .map(([d, l]) => `${d}${l}`),
-      fc
-        .tuple(
-          fc.constantFrom(..."ABCDEFGHJNPQRSUVW".split("")),
-          digs(7),
-          fc.constantFrom(
-            ..."0123456789JABCDEFGHI".split(""),
-          ),
-        )
-        .map(([p, d, c]) => `${p}${d}${c}`),
+      fc.tuple(
+        digs(9),
+        fc.constantFrom("RC", "RM", "RP", "RT"),
+        digs(4),
+      ).map(([r, p, f]) => `${r}${p}${f}`),
     ),
-  },
-  {
-    name: "FI VAT (vs jsvat)",
-    tsValidate: (v) => fi.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`FI${v}`, [finland]).isValid,
-    arb: digs(8),
-  },
-  {
-    name: "GR VAT (vs jsvat)",
-    tsValidate: (v) => gr.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`EL${v}`, [greece]).isValid,
-    arb: digs(9),
-  },
-  {
-    name: "HR VAT (vs jsvat)",
-    tsValidate: (v) => hr.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`HR${v}`, [croatia]).isValid,
-    arb: digs(11),
-  },
-  {
-    name: "HU VAT (vs jsvat)",
-    tsValidate: (v) => hu.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`HU${v}`, [hungary]).isValid,
-    arb: digs(8),
-  },
-  {
-    name: "IE VAT (vs jsvat)",
-    tsValidate: (v) => ie.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`IE${v}`, [ireland]).isValid,
-    arb: fc
-      .tuple(
-        digs(7),
-        fc.constantFrom(
-          ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
-        ),
-      )
-      .map(([d, l]) => `${d}${l}`),
-  },
-  {
-    name: "IT IVA (vs jsvat)",
-    tsValidate: (v) => it.iva.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`IT${v}`, [italy]).isValid,
-    arb: digs(11),
-  },
-  {
-    name: "LT VAT (vs jsvat)",
-    tsValidate: (v) => lt.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`LT${v}`, [lithuania]).isValid,
-    arb: fc.oneof(digs(9), digs(12)),
-  },
-  {
-    name: "LU VAT (vs jsvat)",
-    tsValidate: (v) => lu.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`LU${v}`, [luxembourg]).isValid,
-    arb: digs(8),
-  },
-  {
-    name: "LV VAT (vs jsvat)",
-    tsValidate: (v) => lv.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`LV${v}`, [latvia]).isValid,
-    arb: digs(11),
-  },
-  {
-    name: "MT VAT (vs jsvat)",
-    tsValidate: (v) => mt.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`MT${v}`, [malta]).isValid,
-    arb: digs(8),
-  },
-  {
-    name: "NL VAT (vs jsvat)",
-    tsValidate: (v) => nl.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`NL${v}`, [netherlands]).isValid,
-    arb: fc
-      .tuple(digs(9), digs(2))
-      .map(([d, s]) => `${d}B${s}`),
-  },
-  {
-    name: "PT VAT (vs jsvat)",
-    tsValidate: (v) => pt.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`PT${v}`, [portugal]).isValid,
-    arb: digs(9),
-  },
-  {
-    name: "RO VAT (vs jsvat)",
-    tsValidate: (v) => ro.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`RO${v}`, [romania]).isValid,
-    arb: digsRange(2, 10),
-  },
-  {
-    name: "SE VAT (vs jsvat)",
-    tsValidate: (v) => se.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`SE${v}`, [sweden]).isValid,
-    arb: digs(12),
-  },
-  {
-    name: "SI VAT (vs jsvat)",
-    tsValidate: (v) => si.vat.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`SI${v}`, [slovenia]).isValid,
-    arb: digs(8),
-  },
-  // ── Personal IDs via stdnum-js ─────────────
-  {
-    name: "BE NN (vs stdnum-js)",
-    tsValidate: (v) => be.nn.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("BE", v).isValid,
-    arb: digs(11),
-  },
-  {
-    name: "BG EGN (vs stdnum-js)",
-    tsValidate: (v) => bg.egn.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("BG", v).isValid,
-    arb: digs(10),
-  },
-  {
-    name: "DK CPR (vs stdnum-js)",
-    tsValidate: (v) => dk.cpr.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("DK", v).isValid,
-    arb: digs(10),
-  },
-  {
-    name: "EE IK (vs stdnum-js)",
-    tsValidate: (v) => ee.ik.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("EE", v).isValid,
-    arb: digs(11),
-  },
-  {
-    name: "ES DNI (vs stdnum-js)",
-    tsValidate: (v) => es.dni.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("ES", v).isValid,
-    arb: fc
-      .tuple(
-        digs(8),
-        fc.constantFrom(
-          ..."TRWAGMYFPDXBNJZSQVHLCKE".split(""),
-        ),
-      )
-      .map(([d, l]) => `${d}${l}`),
-  },
-  {
-    name: "FI HETU (vs stdnum-js)",
-    tsValidate: (v) => fi.hetu.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("FI", v).isValid,
-    arb: fc
-      .tuple(
-        digs(6),
-        fc.constantFrom("-", "A"),
-        digs(3),
-        fc.constantFrom(
-          ..."0123456789ABCDEFHJKLMNPRSTUVWXY".split(""),
-        ),
-      )
-      .map(([d, s, c, x]) => `${d}${s}${c}${x}`),
-  },
-  {
-    name: "GR AMKA (vs stdnum-js)",
-    tsValidate: (v) => gr.amka.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("GR", v).isValid,
-    arb: digs(11),
-  },
-  {
-    name: "IE PPS (vs stdnum-js)",
-    tsValidate: (v) => ie.pps.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("IE", v).isValid,
-    arb: fc
-      .tuple(
-        digs(7),
-        fc.constantFrom(
-          ..."WABCDEFGHIJKLMNOPQRSTUV".split(""),
-        ),
-      )
-      .map(([d, l]) => `${d}${l}`),
-  },
-  {
-    name: "LT Asmens (vs stdnum-js)",
-    tsValidate: (v) => lt.asmens.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("LT", v).isValid,
-    arb: digs(11),
-  },
-  {
-    name: "NL BSN (vs stdnum-js)",
-    tsValidate: (v) => nl.bsn.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("NL", v).isValid,
-    arb: digs(9),
-  },
-  {
-    name: "RO CNP (vs stdnum-js)",
-    tsValidate: (v) => ro.cnp.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("RO", v).isValid,
-    arb: digs(13),
-  },
-  {
-    name: "SE Personnummer (vs stdnum-js)",
-    tsValidate: (v) => se.personnummer.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("SE", v).isValid,
-    arb: digs(10),
-  },
-  {
-    name: "SI EMSO (vs stdnum-js)",
-    tsValidate: (v) => si.emso.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("SI", v).isValid,
-    arb: digs(13),
-  },
-  // ── EEA/EFTA via stdnum-js ────────────────
-  {
-    name: "CH UID (vs stdnum-js)",
-    tsValidate: (v) => chMod.uid.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidateEntity("CH", v).isValid,
-    arb: digs(9).map((d) => `CHE${d}`),
-  },
-  {
-    name: "CH SSN (vs stdnum-js)",
-    tsValidate: (v) => chMod.ssn.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("CH", v).isValid,
-    arb: digs(10).map((d) => `756${d}`),
-  },
-  {
-    name: "NO Orgnr (vs stdnum-js)",
-    tsValidate: (v) => no.orgnr.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidateEntity("NO", v).isValid,
-    arb: digs(9),
-  },
-  {
-    name: "NO Fødselsnr (vs stdnum-js)",
-    tsValidate: (v) => no.fodselsnummer.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("NO", v).isValid,
-    arb: digs(11),
-  },
-  {
-    name: "IS Kennitala (vs stdnum-js)",
-    tsValidate: (v) => is.kennitala.validate(v).valid,
-    oracleValidate: (v) =>
-      stdnumValidatePerson("IS", v).isValid ||
-      stdnumValidateEntity("IS", v).isValid,
-    arb: digs(10),
-  },
-  // ── EEA/EFTA VAT via jsvat ───────────────
-  {
-    name: "CH VAT (vs jsvat)",
-    tsValidate: (v) => chMod.uid.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`${v}MWST`, [switzerland]).isValid,
-    arb: digs(9).map((d) => `CHE${d}`),
-  },
-  {
-    name: "NO VAT (vs jsvat)",
-    tsValidate: (v) => no.orgnr.validate(v).valid,
-    oracleValidate: (v) =>
-      checkVAT(`NO${v}MVA`, [norway]).isValid,
-    arb: digs(9),
-  },
-];
+    iban: fc.tuple(
+      fc.constantFrom(
+        "CZ", "DE", "SK", "PL", "GB",
+        "FR", "AT", "NL", "IT", "ES",
+      ),
+      digs(2), alnumStr(12, 26),
+    ).map(([cc, ck, bb]) => `${cc}${ck}${bb}`),
+    luhn: digsRange(13, 19),
+    creditcard: digsRange(13, 19),
+    isin: fc.tuple(
+      fc.constantFrom(
+        "US", "DE", "GB", "FR", "JP",
+        "CH", "NL", "IT", "ES", "CA",
+      ),
+      alnumStr(9, 9),
+      fc.integer({ min: 0, max: 9 }).map(String),
+    ).map(([cc, id, ck]) => `${cc}${id}${ck}`),
+    lei: fc.tuple(alnumStr(18, 18), digs(2))
+      .map(([p, c]) => `${p}${c}`),
+    bic: fc.tuple(
+      fc.array(letters(L), { minLength: 6, maxLength: 6 })
+        .map((c: string[]) => c.join("")),
+      alnumStr(2, 2),
+      fc.oneof(fc.constant(""), alnumStr(3, 3)),
+    ).map(([i, l, b]) => `${i}${l}${b}`),
+  };
 
-// ─── Mutant testing ─────────────────────────
-//
-// For each valid value found, generate "mutants"
-// by flipping single digits. If the checksum is
-// correct, every single-digit mutation should
-// produce an invalid result. Any mutant that
-// passes validation is a checksum weakness.
-
-type MutantSpec = {
-  name: string;
-  tsValidate: (v: string) => boolean;
-  arb: fc.Arbitrary<string>;
+const inferArb = (v: Validator): fc.Arbitrary<string> => {
+  const lens = v.lengths;
+  if (lens && lens.length > 0) {
+    if (lens.length === 1) return digs(lens[0]!);
+    return fc.oneof(...lens.map((l) => digs(l)));
+  }
+  return digs(10);
 };
 
-/**
- * Generate single-digit mutants of a valid value.
- * For each position, try replacing the digit with
- * every other digit (0-9). Returns the mutant
- * strings that should all be invalid.
- */
-const mutate = (value: string): string[] => {
-  const mutants: string[] = [];
-  for (let i = 0; i < value.length; i++) {
-    const ch = value[i];
-    if (ch === undefined || ch < "0" || ch > "9") {
-      continue; // skip non-digit positions
-    }
-    for (let d = 0; d <= 9; d++) {
-      const replacement = String(d);
-      if (replacement === ch) continue;
-      mutants.push(
-        value.slice(0, i) +
-          replacement +
-          value.slice(i + 1),
+const arbFor = (key: string, v: Validator) =>
+  CUSTOM_ARB[key] ?? inferArb(v);
+
+// ─── Subprocess bridges ─────────────────────
+
+const PYTHON = ".venv/bin/python3";
+const RUST_BIN =
+  "scripts/rust-oracle/target/release/stdnum-oracle";
+const RUBY_GEM = (() => {
+  try {
+    return execSync("ruby -e 'puts Gem.user_dir'", {
+      encoding: "utf-8",
+    }).trim();
+  } catch { return ""; }
+})();
+
+const probe = (cmd: string): boolean => {
+  try {
+    execSync(cmd, { stdio: "ignore" });
+    return true;
+  } catch { return false; }
+};
+
+const hasPython = () =>
+  probe(`${PYTHON} -c "import stdnum"`);
+const hasIdnumbers = () =>
+  probe(`${PYTHON} -c "import idnumbers"`);
+const hasRust = () =>
+  probe(`test -f ${RUST_BIN}`);
+const hasRubyValvat = () =>
+  probe(`GEM_HOME=${RUBY_GEM} ruby -e "require 'valvat'"`);
+const hasRubySsn = () =>
+  probe(
+    `GEM_HOME=${RUBY_GEM} ruby -e ` +
+      `"require 'social_security_number'"`,
+  );
+const hasPhp = () =>
+  probe(
+    `php -r "require 'scripts/vendor/autoload.php';"`,
+  );
+
+type SubBatch = (
+  arg: string, vals: readonly string[],
+) => boolean[];
+
+const pyBatch: SubBatch = (mod, vals) => {
+  const json = JSON.stringify(vals);
+  const s = `import json, sys\nfrom stdnum.${mod} import is_valid\nvals = json.loads(sys.stdin.read())\nfor v in vals:\n    print("1" if is_valid(v) else "0")`;
+  writeFileSync("/tmp/_stdnum_oracle.py", s);
+  return execSync(
+    `${PYTHON} /tmp/_stdnum_oracle.py`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
+  ).trim().split("\n").map((l) => l === "1");
+};
+
+const pyIdnBatch: SubBatch = (cls, vals) => {
+  const [mod, name] = cls.split(".");
+  const json = JSON.stringify(vals);
+  const s = `import json, sys\nfrom idnumbers.nationalid.${mod} import ${name}\nvals = json.loads(sys.stdin.read())\nfor v in vals:\n    print("1" if ${name}.validate(v) else "0")`;
+  writeFileSync("/tmp/_stdnum_idn.py", s);
+  return execSync(
+    `${PYTHON} /tmp/_stdnum_idn.py`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
+  ).trim().split("\n").map((l) => l === "1");
+};
+
+const rustBatch: SubBatch = (fmt, vals) => {
+  const json = JSON.stringify(vals);
+  return execSync(
+    `${RUST_BIN} ${fmt}`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
+  ).trim().split("\n").map((l) => l === "1");
+};
+
+const rubyScript = (
+  gem: string,
+  body: string,
+  vals: readonly string[],
+): boolean[] => {
+  const json = JSON.stringify(vals);
+  const tmp = `/tmp/_stdnum_${gem}.rb`;
+  writeFileSync(
+    tmp,
+    `require 'json'\nrequire '${gem}'\nvals = JSON.parse(STDIN.read)\n${body}`,
+  );
+  return execSync(
+    `GEM_HOME=${RUBY_GEM} ruby ${tmp}`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
+  ).trim().split("\n").map((l) => l === "1");
+};
+
+const valvatBatch = (
+  pfx: string, vals: readonly string[],
+) =>
+  rubyScript(
+    "valvat",
+    `vals.each do |v|\n  vat = Valvat.new("${pfx}" + v)\n  puts vat.valid_checksum? ? "1" : "0"\nend`,
+    vals,
+  );
+
+const ssnBatch = (
+  cc: string, vals: readonly string[],
+) =>
+  rubyScript(
+    "social_security_number",
+    `vals.each do |v|\n  begin\n    ssn = SocialSecurityNumber::Validator.new({number: v, country_code: '${cc}'})\n    puts ssn.valid? ? "1" : "0"\n  rescue\n    puts "0"\n  end\nend`,
+    vals,
+  );
+
+const phpBatch = (
+  cc: string, vals: readonly string[],
+): boolean[] => {
+  const json = JSON.stringify(vals);
+  writeFileSync(
+    "/tmp/_stdnum_oracle.php",
+    `<?php\nrequire 'scripts/vendor/autoload.php';\nuse loophp\\Tin\\TIN;\n$vals = json_decode(file_get_contents('php://stdin'), true);\nforeach ($vals as $v) {\n    try { $r = TIN::from($v, '${cc}')->isValid(); echo $r ? "1" : "0"; } catch (Exception $e) { echo "0"; }\n    echo "\\n";\n}`,
+  );
+  return execSync(
+    `php /tmp/_stdnum_oracle.php`,
+    { input: json, encoding: "utf-8", timeout: 60_000 },
+  ).trim().split("\n").map((l) => l === "1");
+};
+
+// ─── Oracle registry maps ───────────────────
+// Each map: our validator key → oracle argument.
+// ONLY correct same-identifier-type mappings.
+
+// python-stdnum module (key → py module path)
+const PY_REMAP: Record<string, string> = {
+  "dk.vat": "dk.cvr", "ee.vat": "ee.kmkr",
+  "es.vat": "es.nif", "fi.vat": "fi.alv",
+  "hr.vat": "hr.oib", "hu.vat": "hu.anum",
+  "lt.vat": "lt.pvm", "lu.vat": "lu.tva",
+  "lv.vat": "lv.pvn", "nl.vat": "nl.btw",
+  "pt.vat": "pt.nif", "ro.vat": "ro.cf",
+  "si.vat": "si.ddv",
+  "it.codiceFiscale": "it.codicefiscale",
+};
+// Keys to skip (no python-stdnum module exists)
+const PY_SKIP = new Set([
+  "eu.vat", "bic", "ch.vat", "no.mva",
+  "is_.vsk", "nl.kvk", "lei", "creditcard",
+  "cz.ico", "sk.dic", "sk.ico",
+]);
+
+// jsvat: key → [jsvat config, VAT prefix]
+const jc = (
+  cfg: typeof belgium, pfx: string,
+): [typeof belgium, string] => [cfg, pfx];
+
+const JSVAT: Record<
+  string, [typeof belgium, string]
+> = {
+  "be.vat": jc(belgium, "BE"),
+  "bg.vat": jc(bulgaria, "BG"),
+  "hr.vat": jc(croatia, "HR"),
+  "cy.vat": jc(cyprus, "CY"),
+  "cz.dic": jc(czechRepublic, "CZ"),
+  "dk.vat": jc(denmark, "DK"),
+  "ee.vat": jc(estonia, "EE"),
+  "fi.vat": jc(finland, "FI"),
+  "de.vat": jc(germany, "DE"),
+  "gr.vat": jc(greece, "EL"),
+  "hu.vat": jc(hungary, "HU"),
+  "ie.vat": jc(ireland, "IE"),
+  "it.iva": jc(italy, "IT"),
+  "lv.vat": jc(latvia, "LV"),
+  "lt.vat": jc(lithuania, "LT"),
+  "lu.vat": jc(luxembourg, "LU"),
+  "mt.vat": jc(malta, "MT"),
+  "nl.vat": jc(netherlands, "NL"),
+  "pl.nip": jc(poland, "PL"),
+  "pt.vat": jc(portugal, "PT"),
+  "ro.vat": jc(romania, "RO"),
+  "si.vat": jc(slovenia, "SI"),
+  "es.vat": jc(spain, "ES"),
+  "se.vat": jc(sweden, "SE"),
+};
+// jsvat special wrappers (CH/NO VAT suffixes)
+const JSVAT_SPECIAL: Record<
+  string,
+  [typeof belgium, (v: string) => string]
+> = {
+  "ch.uid": [switzerland, (v) => `${v}MWST`],
+  "no.orgnr": [norway, (v) => `NO${v}MVA`],
+};
+
+// stdnum-js: key → country code
+const STDNUM_PERSON: Record<string, string> = {
+  "be.nn": "BE", "bg.egn": "BG", "dk.cpr": "DK",
+  "ee.ik": "EE", "es.dni": "ES", "fi.hetu": "FI",
+  "gr.amka": "GR", "ie.pps": "IE",
+  "lt.asmens": "LT", "nl.bsn": "NL",
+  "ro.cnp": "RO", "se.personnummer": "SE",
+  "si.emso": "SI", "ch.ssn": "CH",
+  "no.fodselsnummer": "NO",
+};
+const STDNUM_ENTITY: Record<string, string> = {
+  "ch.uid": "CH", "no.orgnr": "NO",
+};
+const STDNUM_MIXED: Record<string, string> = {
+  "is_.kennitala": "IS",
+};
+
+// validate-polish
+const { nip, pesel, regon } = validatePolish;
+const POLISH: Record<string, (v: string) => boolean> = {
+  "pl.nip": nip, "pl.pesel": pesel, "pl.regon": regon,
+};
+
+// idnumbers: key → "Country.ClassName"
+const IDNUMBERS: Record<string, string> = {
+  "bg.egn": "BGR.UnifiedCivilNumber",
+  "cz.rc": "CZE.BirthNumber",
+  "ee.ik": "EST.PersonalIdentificationCode",
+  "fi.hetu": "FIN.PersonalIdentityCode",
+  "lt.asmens": "LTU.PersonalCode",
+  "nl.bsn": "NLD.CitizenServiceNumber",
+  "ro.cnp": "ROU.PersonalNumericalCode",
+  "se.personnummer": "SWE.PersonalIdentityNumber",
+  "sk.rc": "SVK.BirthNumber",
+  "tr.tckimlik": "TUR.PersonalID",
+};
+
+// valvat (Ruby): key → VAT prefix
+const VALVAT: Record<string, string> = {
+  "at.uid": "AT", "be.vat": "BE", "bg.vat": "BG",
+  "hr.vat": "HR", "cy.vat": "CY", "cz.dic": "CZ",
+  "de.vat": "DE", "dk.vat": "DK", "ee.vat": "EE",
+  "fi.vat": "FI", "gb.vat": "GB", "gr.vat": "EL",
+  "hu.vat": "HU", "ie.vat": "IE", "it.iva": "IT",
+  "lt.vat": "LT", "lu.vat": "LU", "lv.vat": "LV",
+  "mt.vat": "MT", "nl.vat": "NL", "pl.nip": "PL",
+  "pt.vat": "PT", "ro.vat": "RO", "se.vat": "SE",
+  "si.vat": "SI", "es.vat": "ES", "sk.dic": "SK",
+};
+
+// Ruby social_security_number: key → country
+const RUBY_SSN: Record<string, string> = {
+  "be.nn": "BE", "bg.egn": "BG", "dk.cpr": "DK",
+  "ee.ik": "EE", "es.dni": "ES", "fi.hetu": "FI",
+  "it.codiceFiscale": "IT", "lt.asmens": "LT",
+  "nl.bsn": "NL", "ro.cnp": "RO",
+  "se.personnummer": "SE", "si.emso": "SI",
+  "no.fodselsnummer": "NO", "cz.rc": "CZ",
+  "sk.rc": "SK",
+};
+
+// PHP loophp/tin: key → country (TIN only)
+// loophp/tin validates EU TIN format specs.
+// Only map where our validator IS the TIN.
+const PHP_TIN: Record<string, string> = {
+  "de.idnr": "DE", "fr.nif": "FR",
+  "pl.nip": "PL", "pt.vat": "PT",
+};
+
+// ─── Oracle entry type ──────────────────────
+
+type OracleEntry = {
+  name: string;
+  source: string;
+  key: string;
+  validate: (vals: string[]) => boolean[] | null;
+};
+
+// ─── Build all oracle entries ───────────────
+
+const buildOracles = (): OracleEntry[] => {
+  const e: OracleEntry[] = [];
+  const safe = (
+    name: string, source: string, key: string,
+    fn: (vals: string[]) => boolean[],
+  ) =>
+    e.push({
+      name, source, key,
+      validate: (vals) => {
+        try { return fn(vals); }
+        catch { return null; }
+      },
+    });
+
+  // python-stdnum
+  if (hasPython()) {
+    for (const d of discover()) {
+      if (PY_SKIP.has(d.key)) continue;
+      const mod = PY_REMAP[d.key] ?? d.key;
+      safe(
+        `${d.key} (vs python-stdnum)`,
+        "python-stdnum", d.key,
+        (v) => pyBatch(mod, v),
       );
     }
   }
-  return mutants;
+
+  // idnumbers
+  if (hasIdnumbers()) {
+    for (const [key, cls] of Object.entries(IDNUMBERS))
+      safe(
+        `${key} (vs idnumbers)`,
+        "idnumbers", key, (v) => pyIdnBatch(cls, v),
+      );
+  }
+
+  // jsvat (always available)
+  for (const [key, [cfg, pfx]] of Object.entries(JSVAT))
+    e.push({
+      name: `${key} (vs jsvat)`,
+      source: "jsvat", key,
+      validate: (v) =>
+        v.map((x) => checkVAT(`${pfx}${x}`, [cfg]).isValid),
+    });
+  for (const [key, [cfg, wrap]] of Object.entries(
+    JSVAT_SPECIAL,
+  ))
+    e.push({
+      name: `${key} (vs jsvat)`,
+      source: "jsvat", key,
+      validate: (v) =>
+        v.map((x) => checkVAT(wrap(x), [cfg]).isValid),
+    });
+
+  // stdnum-js
+  for (const [key, cc] of Object.entries(STDNUM_PERSON))
+    e.push({
+      name: `${key} (vs stdnum-js)`,
+      source: "stdnum-js", key,
+      validate: (v) =>
+        v.map((x) => stdnumPerson(cc, x).isValid),
+    });
+  for (const [key, cc] of Object.entries(STDNUM_ENTITY))
+    e.push({
+      name: `${key} (vs stdnum-js)`,
+      source: "stdnum-js", key,
+      validate: (v) =>
+        v.map((x) => stdnumEntity(cc, x).isValid),
+    });
+  for (const [key, cc] of Object.entries(STDNUM_MIXED))
+    e.push({
+      name: `${key} (vs stdnum-js)`,
+      source: "stdnum-js", key,
+      validate: (v) =>
+        v.map(
+          (x) =>
+            stdnumPerson(cc, x).isValid ||
+            stdnumEntity(cc, x).isValid,
+        ),
+    });
+
+  // validate-polish
+  for (const [key, fn] of Object.entries(POLISH))
+    e.push({
+      name: `${key} (vs validate-polish)`,
+      source: "validate-polish", key,
+      validate: (v) => v.map(fn),
+    });
+
+  // ibantools + iban.js
+  e.push({
+    name: "iban (vs ibantools)",
+    source: "ibantools", key: "iban",
+    validate: (v) => v.map(isValidIBAN),
+  });
+  e.push({
+    name: "iban (vs iban.js)",
+    source: "iban.js", key: "iban",
+    validate: (v) =>
+      v.map((x) => IBAN.isValid(x) as boolean),
+  });
+
+  // luhn / fast-luhn (length-gated)
+  const luhnGate = (
+    fn: (x: string) => boolean,
+  ) => (v: string) =>
+    v.length >= 13 && v.length <= 19 && fn(v);
+
+  e.push({
+    name: "luhn (vs luhn npm)",
+    source: "luhn", key: "luhn",
+    validate: (v) =>
+      v.map(luhnGate((x) => luhnLib.validate(x) as boolean)),
+  });
+  e.push({
+    name: "luhn (vs fast-luhn)",
+    source: "fast-luhn", key: "luhn",
+    validate: (v) => v.map(luhnGate(fastLuhn)),
+  });
+
+  // valvat (Ruby)
+  if (hasRubyValvat()) {
+    for (const [key, pfx] of Object.entries(VALVAT))
+      safe(
+        `${key} (vs valvat)`, "valvat", key,
+        (v) => valvatBatch(pfx, v),
+      );
+  }
+
+  // loophp/tin (PHP)
+  if (hasPhp()) {
+    for (const [key, cc] of Object.entries(PHP_TIN))
+      safe(
+        `${key} (vs loophp/tin)`, "loophp/tin", key,
+        (v) => phpBatch(cc, v),
+      );
+  }
+
+  // social_security_number (Ruby)
+  if (hasRubySsn()) {
+    for (const [key, cc] of Object.entries(RUBY_SSN))
+      safe(
+        `${key} (vs ruby-ssn)`, "ruby-ssn", key,
+        (v) => ssnBatch(cc, v),
+      );
+  }
+
+  // Rust
+  if (hasRust()) {
+    safe(
+      "iban (vs rust)", "rust", "iban",
+      (v) => rustBatch("iban", v),
+    );
+    safe(
+      "luhn (vs rust)", "rust", "luhn",
+      (v) => rustBatch("luhn", v),
+    );
+  }
+
+  return e;
 };
 
-const MUTANT_SPECS: MutantSpec[] = [
-  {
-    name: "CZ IČO",
-    tsValidate: (v) => cz.ico.validate(v).valid,
-    arb: digs(8),
-  },
-  {
-    name: "CZ RČ",
-    tsValidate: (v) => cz.rc.validate(v).valid,
-    arb: digs(10),
-  },
-  {
-    name: "PL NIP",
-    tsValidate: (v) => pl.nip.validate(v).valid,
-    arb: digs(10),
-  },
-  {
-    name: "IBAN",
-    tsValidate: (v) => ibanValidator.validate(v).valid,
-    arb: fc.constant("CZ6508000000192000145399"),
-  },
-  {
-    name: "Luhn",
-    tsValidate: (v) => luhnValidator.validate(v).valid,
-    arb: fc.constant("4111111111111111"),
-  },
-  {
-    name: "DE VAT",
-    tsValidate: (v) => de.vat.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "FR SIREN",
-    tsValidate: (v) => fr.siren.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "IT IVA",
-    tsValidate: (v) => it.iva.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "BE NN",
-    tsValidate: (v) => be.nn.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "NL BSN",
-    tsValidate: (v) => nl.bsn.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "EE IK",
-    tsValidate: (v) => ee.ik.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "SI EMŠO",
-    tsValidate: (v) => si.emso.validate(v).valid,
-    arb: digs(13),
-  },
-  {
-    name: "HR OIB",
-    tsValidate: (v) => hr.vat.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "GB UTR",
-    tsValidate: (v) => gb.utr.validate(v).valid,
-    arb: digs(10),
-  },
-  {
-    name: "CA SIN",
-    tsValidate: (v) => ca.sin.validate(v).valid,
-    arb: digs(9),
-  },
-  {
-    name: "CA BN",
-    tsValidate: (v) => ca.bn.validate(v).valid,
-    arb: fc.oneof(
-      digs(9),
-      fc
-        .tuple(
-          digs(9),
-          fc.constantFrom("RC", "RM", "RP", "RT"),
-          digs(4),
-        )
-        .map(
-          ([root, prog, ref]) =>
-            `${root}${prog}${ref}`,
-        ),
-    ),
-  },
-  {
-    name: "AU ABN",
-    tsValidate: (v) => au.abn.validate(v).valid,
-    arb: digs(11),
-  },
-  {
-    name: "AU TFN",
-    tsValidate: (v) => au.tfn.validate(v).valid,
-    arb: fc.oneof(digs(8), digs(9)),
-  },
-  {
-    name: "AU ACN",
-    tsValidate: (v) => au.acn.validate(v).valid,
-    arb: digs(9),
-  },
-];
+// ─── Mutant testing ─────────────────────────
 
-// ─── Runner ──────────────────────────────────
+const mutate = (value: string): string[] => {
+  const out: string[] = [];
+  for (let i = 0; i < value.length; i++) {
+    const ch = value[i];
+    if (ch === undefined || ch < "0" || ch > "9")
+      continue;
+    for (let d = 0; d <= 9; d++) {
+      const r = String(d);
+      if (r === ch) continue;
+      out.push(
+        value.slice(0, i) + r + value.slice(i + 1),
+      );
+    }
+  }
+  return out;
+};
 
-const NUM_SAMPLES = Number(
+const hasChecksum = (v: Validator): boolean => {
+  const ex = v.examples;
+  if (!ex || ex.length === 0) return false;
+  const c = v.compact(ex[0]!);
+  return mutate(c).some((m) => {
+    const r = v.validate(m);
+    return !r.valid && r.error.code === "INVALID_CHECKSUM";
+  });
+};
+
+// ─── Runner ─────────────────────────────────
+
+const NUM = Number(
   process.env["ORACLE_SAMPLES"] ?? "10000",
 );
 
 const compare = (
   label: string,
-  values: readonly string[],
-  tsResults: readonly boolean[],
-  oracleResults: readonly boolean[],
-  oracleName: string,
+  vals: readonly string[],
+  ts: readonly boolean[],
+  oracle: readonly boolean[],
 ): number => {
-  let disagreements = 0;
-  const examples: string[] = [];
-  for (let i = 0; i < values.length; i++) {
-    if (tsResults[i] !== oracleResults[i]) {
-      disagreements++;
-      if (examples.length < 3) {
-        examples.push(
-          `    "${String(values[i])}"` +
-            ` ts=${String(tsResults[i])}` +
-            ` ${oracleName}=${String(oracleResults[i])}`,
+  let dis = 0;
+  const ex: string[] = [];
+  for (let i = 0; i < vals.length; i++) {
+    if (ts[i] !== oracle[i]) {
+      dis++;
+      if (ex.length < 3)
+        ex.push(
+          `    "${String(vals[i])}"` +
+            ` ts=${String(ts[i])}` +
+            ` oracle=${String(oracle[i])}`,
         );
-      }
     }
   }
-  const valid = tsResults.filter(Boolean).length;
-  const icon = disagreements === 0 ? "✓" : "✗";
+  const v = ts.filter(Boolean).length;
+  const icon = dis === 0 ? "\u2713" : "\u2717";
   console.log(
-    `  ${icon} ${label}:` +
-      ` ${String(disagreements)} disagreements` +
-      ` (${String(valid)}/${String(values.length)} valid)`,
+    `  ${icon} ${label}: ${String(dis)} disagreements` +
+      ` (${String(v)}/${String(vals.length)} valid)`,
   );
-  for (const ex of examples) {
-    console.log(ex);
-  }
-  return disagreements;
+  for (const e of ex) console.log(e);
+  return dis;
 };
 
 const run = () => {
+  const validators = discover();
+  const byKey = new Map(validators.map((d) => [d.key, d]));
+  const oracles = buildOracles();
   let total = 0;
   let failures = 0;
 
-  // ── JS oracles (always run) ──────────────
   console.log(
-    `JS oracles: ${String(NUM_SAMPLES)} samples` +
-      ` per format\n`,
+    `Discovered ${String(validators.length)} validators,` +
+      ` ${String(oracles.length)} oracle entries\n`,
   );
 
-  for (const spec of JS_SPECS) {
-    const values = fc.sample(spec.arb, NUM_SAMPLES);
-    const tsResults = values.map(spec.tsValidate);
-    const oracleResults = values.map(spec.oracleValidate);
-    failures += compare(
-      spec.name,
-      values,
-      tsResults,
-      oracleResults,
-      "oracle",
-    );
-    total += values.length;
+  // Group by source
+  const bySource = new Map<string, OracleEntry[]>();
+  for (const o of oracles) {
+    const list = bySource.get(o.source) ?? [];
+    list.push(o);
+    bySource.set(o.source, list);
   }
 
-  // ── Python oracle (optional) ─────────────
-  const pyAvailable = hasPython();
-  if (pyAvailable) {
+  for (const [source, entries] of bySource) {
     console.log(
-      `\nPython oracle: ${String(NUM_SAMPLES)}` +
-        ` samples per format\n`,
+      `\n${source}: ${String(NUM)} samples per format\n`,
     );
-
-    for (const spec of SPECS) {
-      const values = fc.sample(spec.arb, NUM_SAMPLES);
-      const tsResults = values.map(spec.tsValidate);
-      let pyResults: boolean[];
-      try {
-        pyResults = pyBatch(spec.pyModule, values);
-      } catch {
-        console.log(`  SKIP ${spec.name}`);
+    for (const entry of entries) {
+      const d = byKey.get(entry.key);
+      if (!d) continue;
+      const arb = arbFor(d.key, d.validator);
+      const vals = fc.sample(arb, NUM);
+      const ts = vals.map(
+        (v) => d.validator.validate(v).valid,
+      );
+      const oracle = entry.validate(vals);
+      if (oracle === null) {
+        console.log(`  SKIP ${entry.name}`);
         continue;
       }
-      failures += compare(
-        spec.name,
-        values,
-        tsResults,
-        pyResults,
-        "py",
-      );
-      total += values.length;
+      failures += compare(entry.name, vals, ts, oracle);
+      total += vals.length;
     }
-  } else {
-    console.log("\nPython oracle: skipped (no .venv)");
   }
 
-  // ── Rust oracle (optional) ────────────────
-  if (hasRust()) {
-    console.log(
-      `\nRust oracle: ${String(NUM_SAMPLES)}` +
-        ` samples per format\n`,
-    );
-
-    // IBAN via iban_validate crate
-    const ibanVals = fc.sample(
-      fc
-        .tuple(
-          fc.constantFrom(
-            "CZ",
-            "DE",
-            "SK",
-            "PL",
-            "GB",
-            "FR",
-            "AT",
-            "NL",
-            "IT",
-            "ES",
-          ),
-          digs(2),
-          fc
-            .array(
-              fc.constantFrom(
-                ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
-                  "",
-                ),
-              ),
-              { minLength: 12, maxLength: 26 },
-            )
-            .map((c: string[]) => c.join("")),
-        )
-        .map(([cc, check, bban]) => `${cc}${check}${bban}`),
-      NUM_SAMPLES,
-    );
-    const ibanTs = ibanVals.map(
-      (v) => ibanValidator.validate(v).valid,
-    );
-    const ibanRust = rustBatch("iban", ibanVals);
-    failures += compare(
-      "IBAN (vs Rust iban_validate)",
-      ibanVals,
-      ibanTs,
-      ibanRust,
-      "rust",
-    );
-    total += ibanVals.length;
-
-    // Luhn via Rust luhn crate
-    const luhnVals = fc.sample(
-      digsRange(13, 19),
-      NUM_SAMPLES,
-    );
-    const luhnTs = luhnVals.map(
-      (v) => luhnValidator.validate(v).valid,
-    );
-    const luhnRust = rustBatch("luhn", luhnVals);
-    failures += compare(
-      "Luhn (vs Rust luhn crate)",
-      luhnVals,
-      luhnTs,
-      luhnRust,
-      "rust",
-    );
-    total += luhnVals.length;
-  } else {
-    console.log(
-      "\nRust oracle: skipped" +
-        " (build: cd scripts/rust-oracle" +
-        " && cargo build --release)",
-    );
-  }
-
-  // ── Ruby oracle (optional) ────────────────
-  if (hasRuby()) {
-    console.log(
-      `\nRuby oracle (valvat): ` +
-        `${String(NUM_SAMPLES)} samples\n`,
-    );
-
-    const vatSpecs: Array<{
-      name: string;
-      prefix: string;
-      tsValidate: (v: string) => boolean;
-      arb: fc.Arbitrary<string>;
-    }> = [
-      {
-        name: "CZ DIČ (vs valvat)",
-        prefix: "CZ",
-        tsValidate: (v) => cz.dic.validate(v).valid,
-        arb: digsRange(8, 10),
-      },
-      {
-        name: "DE VAT (vs valvat)",
-        prefix: "DE",
-        tsValidate: (v) => de.vat.validate(v).valid,
-        arb: fc
-          .tuple(fc.integer({ min: 1, max: 9 }), digs(8))
-          .map(([f, r]) => `${String(f)}${r}`),
-      },
-      {
-        name: "PL NIP (vs valvat)",
-        prefix: "PL",
-        tsValidate: (v) => pl.nip.validate(v).valid,
-        arb: digs(10),
-      },
-    ];
-
-    for (const spec of vatSpecs) {
-      const values = fc.sample(spec.arb, NUM_SAMPLES);
-      const tsResults = values.map(spec.tsValidate);
-      let rubyResults: boolean[];
-      try {
-        rubyResults = rubyBatch(values, spec.prefix);
-      } catch {
-        console.log(`  SKIP ${spec.name}`);
-        continue;
-      }
-      failures += compare(
-        spec.name,
-        values,
-        tsResults,
-        rubyResults,
-        "ruby",
-      );
-      total += values.length;
-    }
-  } else {
-    console.log(
-      "\nRuby oracle: skipped" +
-        " (gem install --user-install valvat)",
-    );
-  }
-
-  // ── Mutant testing ─────────────────────────
+  // Mutant testing
   console.log(
     `\nMutant testing: single-digit corruption\n`,
   );
+  let mutTotal = 0;
+  let mutEsc = 0;
 
-  let mutantTotal = 0;
-  let mutantEscapes = 0;
-
-  for (const spec of MUTANT_SPECS) {
-    // Find valid values first
-    const candidates = fc.sample(
-      spec.arb,
-      Math.min(NUM_SAMPLES, 2000),
+  for (const d of validators) {
+    if (!hasChecksum(d.validator)) continue;
+    const arb = arbFor(d.key, d.validator);
+    const cands = fc.sample(
+      arb, Math.min(NUM, 2000),
     );
-    const validValues = candidates.filter(spec.tsValidate);
-
-    if (validValues.length === 0) {
+    const valid = cands.filter(
+      (v) => d.validator.validate(v).valid,
+    );
+    if (valid.length === 0) {
       console.log(
-        `  SKIP ${spec.name}: no valid values found`,
+        `  SKIP ${d.key}: no valid values found`,
       );
       continue;
     }
-
-    // Take up to 50 valid values and mutate each
-    const toTest = validValues.slice(0, 50);
-    let escapes = 0;
-    const escapeExamples: string[] = [];
-
-    for (const valid of toTest) {
-      const mutants = mutate(valid);
-      for (const m of mutants) {
-        mutantTotal++;
-        if (spec.tsValidate(m)) {
-          escapes++;
-          if (escapeExamples.length < 3) {
-            escapeExamples.push(
-              `    "${valid}" → "${m}" (still valid)`,
+    const toTest = valid.slice(0, 50);
+    let esc = 0;
+    const escEx: string[] = [];
+    for (const v of toTest) {
+      for (const m of mutate(v)) {
+        mutTotal++;
+        if (d.validator.validate(m).valid) {
+          esc++;
+          if (escEx.length < 3)
+            escEx.push(
+              `    "${v}" -> "${m}" (still valid)`,
             );
-          }
         }
       }
     }
-
-    const icon = escapes === 0 ? "✓" : "✗";
+    const icon = esc === 0 ? "\u2713" : "\u2717";
+    const first = toTest[0] ?? "";
     console.log(
-      `  ${icon} ${spec.name}:` +
-        ` ${String(escapes)} escapes` +
+      `  ${icon} ${d.key}: ${String(esc)} escapes` +
         ` (${String(toTest.length)} seeds,` +
-        ` ${String(toTest.length * mutate(toTest[0] ?? "").length)} mutants)`,
+        ` ${String(toTest.length * mutate(first).length)} mutants)`,
     );
-    for (const ex of escapeExamples) {
-      console.log(ex);
-    }
-    mutantEscapes += escapes;
+    for (const ex of escEx) console.log(ex);
+    mutEsc += esc;
   }
 
   console.log(
@@ -1950,11 +882,9 @@ const run = () => {
       ` ${String(failures)} disagreements`,
   );
   console.log(
-    `${String(mutantTotal)} mutant total,` +
-      ` ${String(mutantEscapes)} escapes`,
+    `${String(mutTotal)} mutant total,` +
+      ` ${String(mutEsc)} escapes`,
   );
-  // Mutant escapes are informational (inherent to
-  // checksum algorithms), not failures.
   process.exit(failures > 0 ? 1 : 0);
 };
 
