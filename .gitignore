@@ -2,4 +2,8 @@ node_modules/
 dist/
 .venv/
 scripts/rust-oracle/target/
+scripts/vendor/
+scripts/composer
+scripts/composer.json
+scripts/composer.lock
 *.tgz

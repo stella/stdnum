@@ -5,11 +5,37 @@
  * JS oracles (always run):
  *   - validate-polish: PL NIP, PESEL, REGON
  *   - ibantools: IBAN (with BBAN format)
+ *   - jsvat: EU-27 + CH + NO VAT
+ *   - stdnum-js: personal IDs, entity IDs
+ *   - luhn / fast-luhn: Luhn checksum
  *
- * Python oracle (optional, run if .venv exists):
+ * Python oracles (optional):
  *   - python-stdnum: all formats
+ *   - idnumbers: ~77 countries' national IDs
  *   Setup: python3 -m venv .venv
  *          .venv/bin/pip install python-stdnum
+ *          .venv/bin/pip install idnumbers
+ *
+ * PHP oracle (optional):
+ *   - loophp/tin: EU-27 + GB TIN validation
+ *   Setup: (requires PHP 8+)
+ *     cd scripts
+ *     php composer require loophp/tin
+ *
+ * Ruby oracles (optional):
+ *   - valvat: EU VAT checksum
+ *   - social_security_number: ~23 countries SSN
+ *   Setup: gem install --user-install valvat
+ *          gem install --user-install \
+ *            social_security_number
+ *
+ * Rust oracle (optional):
+ *   - iban_validate + luhn crates
+ *   Setup: cd scripts/rust-oracle
+ *          cargo build --release
+ *
+ * All oracles are OPTIONAL. The script detects
+ * which are installed and skips the rest.
  *
  * Run: bun run oracle
  */
@@ -209,6 +235,147 @@ end`,
   );
   const result = execSync(
     `echo '${json}' | GEM_HOME=${RUBY_GEM_DIR} ruby ${tmpScript}`,
+    { encoding: "utf-8", timeout: 60_000 },
+  ).trim();
+  return result.split("\n").map((l) => l === "1");
+};
+
+// ─── Python idnumbers bridge ────────────────
+
+const hasIdnumbers = (): boolean => {
+  try {
+    execSync(`${PYTHON} -c "import idnumbers"`, {
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Batch-validate values with idnumbers library.
+ * classPath is e.g. "DEU.NationalID" or
+ * "BEL.NationalRegistrationNumber".
+ */
+const pyIdnumbersBatch = (
+  classPath: string,
+  values: readonly string[],
+): boolean[] => {
+  const json = JSON.stringify(values);
+  const script = `
+import json, sys
+from idnumbers.nationalid.${classPath.split(".")[0]} import ${classPath.split(".")[1]}
+vals = json.loads(sys.stdin.read())
+for v in vals:
+    print("1" if ${classPath.split(".")[1]}.validate(v) else "0")
+`.trim();
+  const { writeFileSync } = require("node:fs");
+  const tmpScript = "/tmp/_stdnum_idnumbers.py";
+  writeFileSync(tmpScript, script);
+  const result = execSync(
+    `echo '${json}' | ${PYTHON} ${tmpScript}`,
+    { encoding: "utf-8", timeout: 60_000 },
+  ).trim();
+  return result.split("\n").map((l) => l === "1");
+};
+
+// ─── PHP bridge (loophp/tin) ────────────────
+
+const PHP_AUTOLOAD =
+  "scripts/vendor/autoload.php";
+
+const hasPhp = (): boolean => {
+  try {
+    execSync(
+      `php -r "require '${PHP_AUTOLOAD}';"`,
+      { stdio: "ignore" },
+    );
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Batch-validate TIN values with loophp/tin.
+ * countryCode is ISO 3166-1 alpha-2 (e.g. "DE").
+ */
+const phpBatch = (
+  countryCode: string,
+  values: readonly string[],
+): boolean[] => {
+  const json = JSON.stringify(values);
+  const { writeFileSync } = require("node:fs");
+  const tmpScript = "/tmp/_stdnum_oracle.php";
+  writeFileSync(
+    tmpScript,
+    `<?php
+require '${PHP_AUTOLOAD}';
+use loophp\\Tin\\TIN;
+$vals = json_decode(file_get_contents('php://stdin'), true);
+foreach ($vals as $v) {
+    try {
+        $r = TIN::from($v, '${countryCode}')->isValid();
+        echo $r ? "1" : "0";
+    } catch (Exception $e) {
+        echo "0";
+    }
+    echo "\\n";
+}`,
+  );
+  const result = execSync(
+    `echo '${json}' | php ${tmpScript}`,
+    { encoding: "utf-8", timeout: 60_000 },
+  ).trim();
+  return result.split("\n").map((l) => l === "1");
+};
+
+// ─── Ruby SSN bridge ────────────────────────
+
+const hasRubySsn = (): boolean => {
+  try {
+    execSync(
+      `GEM_HOME=${RUBY_GEM_DIR} ruby -e ` +
+        `"require 'social_security_number'"`,
+      { stdio: "ignore" },
+    );
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Batch-validate SSN/personal ID values with the
+ * social_security_number Ruby gem.
+ */
+const rubySsnBatch = (
+  countryCode: string,
+  values: readonly string[],
+): boolean[] => {
+  const json = JSON.stringify(values);
+  const { writeFileSync } = require("node:fs");
+  const tmpScript = "/tmp/_stdnum_ssn.rb";
+  writeFileSync(
+    tmpScript,
+    `require 'json'
+require 'social_security_number'
+vals = JSON.parse(STDIN.read)
+vals.each do |v|
+  begin
+    ssn = SocialSecurityNumber::Validator.new(
+      {number: v, country_code: '${countryCode}'}
+    )
+    puts ssn.valid? ? "1" : "0"
+  rescue
+    puts "0"
+  end
+end`,
+  );
+  const result = execSync(
+    `echo '${json}' | ` +
+      `GEM_HOME=${RUBY_GEM_DIR} ruby ${tmpScript}`,
     { encoding: "utf-8", timeout: 60_000 },
   ).trim();
   return result.split("\n").map((l) => l === "1");
@@ -986,36 +1153,59 @@ const SPECS: OracleSpec[] = [
         ),
       )
       .map(([p, d, c]) => `${p}${d}${c}`),
+  },
   // ── CA ──────────────────────────────────────
+  {
     name: "CA SIN",
     pyModule: "ca.sin",
     tsValidate: (v) => ca.sin.validate(v).valid,
     arb: digs(9),
+  },
+  {
     name: "CA BN",
     pyModule: "ca.bn",
     tsValidate: (v) => ca.bn.validate(v).valid,
+    arb: fc.oneof(
       digs(9),
+      fc
+        .tuple(
           digs(9),
           fc.constantFrom("RC", "RM", "RP", "RT"),
           digs(4),
-        .map(([root, prog, ref]) => `${root}${prog}${ref}`),
+        )
+        .map(
+          ([root, prog, ref]) =>
+            `${root}${prog}${ref}`,
+        ),
+    ),
+  },
   // ── AU ──────────────────────────────────────
+  {
     name: "AU ABN",
     pyModule: "au.abn",
     tsValidate: (v) => au.abn.validate(v).valid,
+    arb: digs(11),
+  },
+  {
     name: "AU TFN",
     pyModule: "au.tfn",
     tsValidate: (v) => au.tfn.validate(v).valid,
     arb: fc.oneof(digs(8), digs(9)),
+  },
+  {
     name: "AU ACN",
     pyModule: "au.acn",
     tsValidate: (v) => au.acn.validate(v).valid,
     arb: digs(9),
+  },
   // ── US ──────────────────────────────────────
+  {
     name: "US SSN",
     pyModule: "us.ssn",
     tsValidate: (v) => us.ssn.validate(v).valid,
     arb: digs(9),
+  },
+  {
     name: "US EIN",
     pyModule: "us.ein",
     tsValidate: (v) => us.ein.validate(v).valid,
@@ -1886,6 +2076,942 @@ const run = () => {
     console.log(
       "\nRuby oracle: skipped" +
         " (gem install --user-install valvat)",
+    );
+  }
+
+  // ── Python idnumbers oracle (optional) ────
+  if (pyAvailable && hasIdnumbers()) {
+    console.log(
+      `\nPython idnumbers oracle:` +
+        ` ${String(NUM_SAMPLES)} samples\n`,
+    );
+
+    // Map: [name, idnumbers classPath,
+    //        tsValidate, arb]
+    const idnSpecs: Array<{
+      name: string;
+      classPath: string;
+      tsValidate: (v: string) => boolean;
+      arb: fc.Arbitrary<string>;
+    }> = [
+      {
+        name: "DE IdNr (vs idnumbers)",
+        classPath: "DEU.NationalID",
+        tsValidate: (v) =>
+          de.idnr.validate(v).valid,
+        arb: digs(11),
+      },
+      {
+        name: "AT TIN (vs idnumbers)",
+        classPath: "AUT.TaxIDNumber",
+        tsValidate: (v) =>
+          at.uid.validate(v).valid,
+        arb: digs(8).map((d) => `U${d}`),
+      },
+      {
+        name: "BE NN (vs idnumbers)",
+        classPath:
+          "BEL.NationalRegistrationNumber",
+        tsValidate: (v) =>
+          be.nn.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "BG EGN (vs idnumbers)",
+        classPath: "BGR.UniformCivilNumber",
+        tsValidate: (v) =>
+          bg.egn.validate(v).valid,
+        arb: dateDigsYMD(10),
+      },
+      {
+        name: "CZ RČ (vs idnumbers)",
+        classPath: "CZE.BirthNumber",
+        tsValidate: (v) =>
+          cz.rc.validate(v).valid,
+        arb: fc.oneof(
+          dateDigsYMD(9),
+          dateDigsYMD(10),
+        ),
+      },
+      {
+        name: "DK CPR (vs idnumbers)",
+        classPath: "DNK.PersonalIdentityNumber",
+        tsValidate: (v) =>
+          dk.cpr.validate(v).valid,
+        arb: dateDigs(10),
+      },
+      {
+        name: "ES DNI (vs idnumbers)",
+        classPath: "ESP.DNI",
+        tsValidate: (v) =>
+          es.dni.validate(v).valid,
+        arb: fc
+          .tuple(
+            digs(8),
+            fc.constantFrom(
+              ..."TRWAGMYFPDXBNJZSQVHLCKE".split(
+                "",
+              ),
+            ),
+          )
+          .map(([d, l]) => `${d}${l}`),
+      },
+      {
+        name: "EE IK (vs idnumbers)",
+        classPath: "EST.PersonalID",
+        tsValidate: (v) =>
+          ee.ik.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "FI HETU (vs idnumbers)",
+        classPath: "FIN.PersonalIdentityCode",
+        tsValidate: (v) =>
+          fi.hetu.validate(v).valid,
+        arb: fc
+          .tuple(
+            digs(6),
+            fc.constantFrom(
+              "+",
+              "-",
+              "Y",
+              "X",
+              "W",
+              "V",
+              "U",
+              "A",
+              "B",
+              "C",
+              "D",
+              "E",
+              "F",
+            ),
+            digs(3),
+            fc.constantFrom(
+              ..."0123456789ABCDEFHJKLMNPRSTUVWXY".split(
+                "",
+              ),
+            ),
+          )
+          .map(
+            ([d, s, c, x]) =>
+              `${d}${s}${c}${x}`,
+          ),
+      },
+      {
+        name: "FR INSEE (vs idnumbers)",
+        classPath: "FRA.INSEE",
+        tsValidate: (v) =>
+          fr.nif.validate(v).valid,
+        arb: digs(13),
+      },
+      {
+        name: "HR OIB (vs idnumbers)",
+        classPath: "HRV.OIB",
+        tsValidate: (v) =>
+          hr.vat.validate(v).valid,
+        arb: digs(11),
+      },
+      {
+        name: "HU Personal (vs idnumbers)",
+        classPath: "HUN.PersonalID",
+        tsValidate: (v) =>
+          hu.vat.validate(v).valid,
+        arb: digs(8),
+      },
+      {
+        name: "IE PPS (vs idnumbers)",
+        classPath:
+          "IRL.PersonalPublicServiceNumber",
+        tsValidate: (v) =>
+          ie.pps.validate(v).valid,
+        arb: fc.oneof(
+          fc
+            .tuple(
+              digs(7),
+              fc.constantFrom(
+                ..."WABCDEFGHIJKLMNOPQRSTUV".split(
+                  "",
+                ),
+              ),
+            )
+            .map(([d, l]) => `${d}${l}`),
+          fc
+            .tuple(
+              digs(7),
+              fc.constantFrom(
+                ..."WABCDEFGHIJKLMNOPQRSTUV".split(
+                  "",
+                ),
+              ),
+              fc.constantFrom("A", "B", "H"),
+            )
+            .map(
+              ([d, l1, l2]) =>
+                `${d}${l1}${l2}`,
+            ),
+        ),
+      },
+      {
+        name: "IS Kennitala (vs idnumbers)",
+        classPath: "ISL.IcelandicID",
+        tsValidate: (v) =>
+          is.kennitala.validate(v).valid,
+        arb: dateDigs(10),
+      },
+      {
+        name: "IT CF (vs idnumbers)",
+        classPath: "ITA.FiscalCode",
+        tsValidate: (v) =>
+          it.codiceFiscale.validate(v).valid,
+        arb: fc
+          .tuple(
+            fc
+              .array(
+                fc.constantFrom(
+                  ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split(
+                    "",
+                  ),
+                ),
+                { minLength: 15, maxLength: 15 },
+              )
+              .map((c: string[]) => c.join("")),
+            fc.constantFrom(
+              ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+                "",
+              ),
+            ),
+          )
+          .map(
+            ([front, check]) =>
+              `${front}${check}`,
+          ),
+      },
+      {
+        name: "LT Asmens (vs idnumbers)",
+        classPath: "LTU.PersonalCode",
+        tsValidate: (v) =>
+          lt.asmens.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "NL BSN (vs idnumbers)",
+        classPath: "NLD.BSN",
+        tsValidate: (v) =>
+          nl.bsn.validate(v).valid,
+        arb: digs(9),
+      },
+      {
+        name: "NO Fødselsnr (vs idnumbers)",
+        classPath: "NOR.NationalID",
+        tsValidate: (v) =>
+          no.fodselsnummer.validate(v).valid,
+        arb: dateDigs(11),
+      },
+      {
+        name: "PL PESEL (vs idnumbers)",
+        classPath: "POL.PESEL",
+        tsValidate: (v) =>
+          pl.pesel.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "PT NIF (vs idnumbers)",
+        classPath: "PRT.TaxIDNumber",
+        tsValidate: (v) =>
+          pt.vat.validate(v).valid,
+        arb: digs(9),
+      },
+      {
+        name: "RO CNP (vs idnumbers)",
+        classPath: "ROU.PersonalNumericalCode",
+        tsValidate: (v) =>
+          ro.cnp.validate(v).valid,
+        arb: digs(13),
+      },
+      {
+        name: "SK Birth Nr (vs idnumbers)",
+        classPath: "SVK.BirthNumber",
+        tsValidate: (v) =>
+          sk.dic.validate(v).valid,
+        arb: digs(10),
+      },
+      {
+        name: "SI EMSO (vs idnumbers)",
+        classPath: "SVN.UniqueMasterCitizenNumber",
+        tsValidate: (v) =>
+          si.emso.validate(v).valid,
+        arb: dateDigs(13),
+      },
+      {
+        name: "SE Personnr (vs idnumbers)",
+        classPath: "SWE.PersonalIdentityNumber",
+        tsValidate: (v) =>
+          se.personnummer.validate(v).valid,
+        arb: fc.oneof(digs(10), digs(12)),
+      },
+      {
+        name: "CH SSN (vs idnumbers)",
+        classPath: "CHE.SocialSecurityNumber",
+        tsValidate: (v) =>
+          chMod.ssn.validate(v).valid,
+        arb: digs(10).map((d) => `756${d}`),
+      },
+      {
+        name: "CH UID (vs idnumbers)",
+        classPath: "CHE.UID",
+        tsValidate: (v) =>
+          chMod.uid.validate(v).valid,
+        arb: digs(9).map((d) => `CHE${d}`),
+      },
+      {
+        name: "TR T.C. Kimlik (vs idnumbers)",
+        classPath: "TUR.NationalID",
+        tsValidate: (v) =>
+          tr.tckimlik.validate(v).valid,
+        arb: fc
+          .tuple(
+            fc.integer({ min: 1, max: 9 }).map(
+              String,
+            ),
+            digs(10),
+          )
+          .map(
+            ([first, rest]) =>
+              `${first}${rest}`,
+          ),
+      },
+      {
+        name: "BR CPF (vs idnumbers)",
+        classPath: "BRA.CPFNumber",
+        tsValidate: (v) =>
+          br.cpf.validate(v).valid,
+        arb: digs(11),
+      },
+      {
+        name: "CA SIN (vs idnumbers)",
+        classPath: "CAN.SocialInsuranceNumber",
+        tsValidate: (v) =>
+          ca.sin.validate(v).valid,
+        arb: digs(9),
+      },
+      {
+        name: "AU TFN (vs idnumbers)",
+        classPath: "AUS.TaxFileNumber",
+        tsValidate: (v) =>
+          au.tfn.validate(v).valid,
+        arb: fc.oneof(digs(8), digs(9)),
+      },
+      {
+        name: "US SSN (vs idnumbers)",
+        classPath: "USA.SocialSecurityNumber",
+        tsValidate: (v) =>
+          us.ssn.validate(v).valid,
+        arb: digs(9),
+      },
+    ];
+
+    for (const spec of idnSpecs) {
+      const values = fc.sample(
+        spec.arb,
+        NUM_SAMPLES,
+      );
+      const tsResults = values.map(spec.tsValidate);
+      let idnResults: boolean[];
+      try {
+        idnResults = pyIdnumbersBatch(
+          spec.classPath,
+          values,
+        );
+      } catch {
+        console.log(`  SKIP ${spec.name}`);
+        continue;
+      }
+      failures += compare(
+        spec.name,
+        values,
+        tsResults,
+        idnResults,
+        "idnumbers",
+      );
+      total += values.length;
+    }
+  } else if (pyAvailable) {
+    console.log(
+      "\nPython idnumbers: skipped" +
+        " (.venv/bin/pip install idnumbers)",
+    );
+  } else {
+    console.log(
+      "\nPython idnumbers: skipped (no .venv)",
+    );
+  }
+
+  // ── PHP oracle (loophp/tin, optional) ─────
+  if (hasPhp()) {
+    console.log(
+      `\nPHP oracle (loophp/tin):` +
+        ` ${String(NUM_SAMPLES)} samples\n`,
+    );
+
+    // EU-27 + GB TIN country codes mapped to
+    // our validators. loophp/tin validates TINs
+    // (personal tax IDs), not VATs.
+    const phpTinSpecs: Array<{
+      name: string;
+      cc: string;
+      tsValidate: (v: string) => boolean;
+      arb: fc.Arbitrary<string>;
+    }> = [
+      {
+        name: "AT TIN (vs loophp/tin)",
+        cc: "AT",
+        tsValidate: (v) =>
+          at.uid.validate(v).valid,
+        arb: digs(8).map((d) => `U${d}`),
+      },
+      {
+        name: "BE TIN (vs loophp/tin)",
+        cc: "BE",
+        tsValidate: (v) =>
+          be.nn.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "BG TIN (vs loophp/tin)",
+        cc: "BG",
+        tsValidate: (v) =>
+          bg.egn.validate(v).valid,
+        arb: dateDigsYMD(10),
+      },
+      {
+        name: "CY TIN (vs loophp/tin)",
+        cc: "CY",
+        tsValidate: (v) =>
+          cy.vat.validate(v).valid,
+        arb: fc
+          .tuple(
+            digs(8),
+            fc.constantFrom(
+              ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+                "",
+              ),
+            ),
+          )
+          .map(([d, l]) => `${d}${l}`),
+      },
+      {
+        name: "CZ TIN (vs loophp/tin)",
+        cc: "CZ",
+        tsValidate: (v) =>
+          cz.rc.validate(v).valid,
+        arb: fc.oneof(
+          dateDigsYMD(9),
+          dateDigsYMD(10),
+        ),
+      },
+      {
+        name: "DE TIN (vs loophp/tin)",
+        cc: "DE",
+        tsValidate: (v) =>
+          de.idnr.validate(v).valid,
+        arb: digs(11),
+      },
+      {
+        name: "DK TIN (vs loophp/tin)",
+        cc: "DK",
+        tsValidate: (v) =>
+          dk.cpr.validate(v).valid,
+        arb: dateDigs(10),
+      },
+      {
+        name: "EE TIN (vs loophp/tin)",
+        cc: "EE",
+        tsValidate: (v) =>
+          ee.ik.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "ES TIN (vs loophp/tin)",
+        cc: "ES",
+        tsValidate: (v) =>
+          es.dni.validate(v).valid,
+        arb: fc
+          .tuple(
+            digs(8),
+            fc.constantFrom(
+              ..."TRWAGMYFPDXBNJZSQVHLCKE".split(
+                "",
+              ),
+            ),
+          )
+          .map(([d, l]) => `${d}${l}`),
+      },
+      {
+        name: "FI TIN (vs loophp/tin)",
+        cc: "FI",
+        tsValidate: (v) =>
+          fi.hetu.validate(v).valid,
+        arb: fc
+          .tuple(
+            digs(6),
+            fc.constantFrom("+", "-", "A"),
+            digs(3),
+            fc.constantFrom(
+              ..."0123456789ABCDEFHJKLMNPRSTUVWXY".split(
+                "",
+              ),
+            ),
+          )
+          .map(
+            ([d, s, c, x]) =>
+              `${d}${s}${c}${x}`,
+          ),
+      },
+      {
+        name: "FR TIN (vs loophp/tin)",
+        cc: "FR",
+        tsValidate: (v) =>
+          fr.nif.validate(v).valid,
+        arb: digs(13),
+      },
+      {
+        name: "GB TIN (vs loophp/tin)",
+        cc: "GB",
+        tsValidate: (v) =>
+          gb.utr.validate(v).valid,
+        arb: digs(10),
+      },
+      {
+        name: "GR TIN (vs loophp/tin)",
+        cc: "GR",
+        tsValidate: (v) =>
+          gr.vat.validate(v).valid,
+        arb: digs(9),
+      },
+      {
+        name: "HR TIN (vs loophp/tin)",
+        cc: "HR",
+        tsValidate: (v) =>
+          hr.vat.validate(v).valid,
+        arb: digs(11),
+      },
+      {
+        name: "HU TIN (vs loophp/tin)",
+        cc: "HU",
+        tsValidate: (v) =>
+          hu.vat.validate(v).valid,
+        arb: digs(8),
+      },
+      {
+        name: "IE TIN (vs loophp/tin)",
+        cc: "IE",
+        tsValidate: (v) =>
+          ie.pps.validate(v).valid,
+        arb: fc
+          .tuple(
+            digs(7),
+            fc.constantFrom(
+              ..."WABCDEFGHIJKLMNOPQRSTUV".split(
+                "",
+              ),
+            ),
+          )
+          .map(([d, l]) => `${d}${l}`),
+      },
+      {
+        name: "IT TIN (vs loophp/tin)",
+        cc: "IT",
+        tsValidate: (v) =>
+          it.codiceFiscale.validate(v).valid,
+        arb: fc
+          .tuple(
+            fc
+              .array(
+                fc.constantFrom(
+                  ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split(
+                    "",
+                  ),
+                ),
+                {
+                  minLength: 15,
+                  maxLength: 15,
+                },
+              )
+              .map((c: string[]) => c.join("")),
+            fc.constantFrom(
+              ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+                "",
+              ),
+            ),
+          )
+          .map(
+            ([front, check]) =>
+              `${front}${check}`,
+          ),
+      },
+      {
+        name: "LT TIN (vs loophp/tin)",
+        cc: "LT",
+        tsValidate: (v) =>
+          lt.asmens.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "LU TIN (vs loophp/tin)",
+        cc: "LU",
+        tsValidate: (v) =>
+          lu.vat.validate(v).valid,
+        arb: digs(8),
+      },
+      {
+        name: "LV TIN (vs loophp/tin)",
+        cc: "LV",
+        tsValidate: (v) =>
+          lv.vat.validate(v).valid,
+        arb: digs(11),
+      },
+      {
+        name: "MT TIN (vs loophp/tin)",
+        cc: "MT",
+        tsValidate: (v) =>
+          mt.vat.validate(v).valid,
+        arb: digs(8),
+      },
+      {
+        name: "NL TIN (vs loophp/tin)",
+        cc: "NL",
+        tsValidate: (v) =>
+          nl.bsn.validate(v).valid,
+        arb: digs(9),
+      },
+      {
+        name: "PL TIN (vs loophp/tin)",
+        cc: "PL",
+        tsValidate: (v) =>
+          pl.pesel.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "PT TIN (vs loophp/tin)",
+        cc: "PT",
+        tsValidate: (v) =>
+          pt.vat.validate(v).valid,
+        arb: digs(9),
+      },
+      {
+        name: "RO TIN (vs loophp/tin)",
+        cc: "RO",
+        tsValidate: (v) =>
+          ro.cnp.validate(v).valid,
+        arb: digs(13),
+      },
+      {
+        name: "SE TIN (vs loophp/tin)",
+        cc: "SE",
+        tsValidate: (v) =>
+          se.personnummer.validate(v).valid,
+        arb: digs(10),
+      },
+      {
+        name: "SI TIN (vs loophp/tin)",
+        cc: "SI",
+        tsValidate: (v) =>
+          si.emso.validate(v).valid,
+        arb: digs(13),
+      },
+      {
+        name: "SK TIN (vs loophp/tin)",
+        cc: "SK",
+        tsValidate: (v) =>
+          sk.dic.validate(v).valid,
+        arb: digs(10),
+      },
+    ];
+
+    for (const spec of phpTinSpecs) {
+      const values = fc.sample(
+        spec.arb,
+        NUM_SAMPLES,
+      );
+      const tsResults = values.map(spec.tsValidate);
+      let phpResults: boolean[];
+      try {
+        phpResults = phpBatch(spec.cc, values);
+      } catch {
+        console.log(`  SKIP ${spec.name}`);
+        continue;
+      }
+      failures += compare(
+        spec.name,
+        values,
+        tsResults,
+        phpResults,
+        "php",
+      );
+      total += values.length;
+    }
+  } else {
+    console.log(
+      "\nPHP oracle: skipped" +
+        " (cd scripts && php composer" +
+        " require loophp/tin)",
+    );
+  }
+
+  // ── Ruby SSN oracle (optional) ─────────────
+  if (hasRubySsn()) {
+    console.log(
+      `\nRuby oracle (social_security_number):` +
+        ` ${String(NUM_SAMPLES)} samples\n`,
+    );
+
+    // Countries the gem supports that overlap
+    // with our validators
+    const ssnSpecs: Array<{
+      name: string;
+      cc: string;
+      tsValidate: (v: string) => boolean;
+      arb: fc.Arbitrary<string>;
+    }> = [
+      {
+        name: "BE NN (vs ruby SSN)",
+        cc: "BE",
+        tsValidate: (v) =>
+          be.nn.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "CZ RČ (vs ruby SSN)",
+        cc: "CZ",
+        tsValidate: (v) =>
+          cz.rc.validate(v).valid,
+        arb: fc.oneof(
+          dateDigsYMD(9),
+          dateDigsYMD(10),
+        ),
+      },
+      {
+        name: "DK CPR (vs ruby SSN)",
+        cc: "DK",
+        tsValidate: (v) =>
+          dk.cpr.validate(v).valid,
+        arb: dateDigs(10),
+      },
+      {
+        name: "EE IK (vs ruby SSN)",
+        cc: "EE",
+        tsValidate: (v) =>
+          ee.ik.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "ES DNI (vs ruby SSN)",
+        cc: "ES",
+        tsValidate: (v) =>
+          es.dni.validate(v).valid,
+        arb: fc
+          .tuple(
+            digs(8),
+            fc.constantFrom(
+              ..."TRWAGMYFPDXBNJZSQVHLCKE".split(
+                "",
+              ),
+            ),
+          )
+          .map(([d, l]) => `${d}${l}`),
+      },
+      {
+        name: "FI HETU (vs ruby SSN)",
+        cc: "FI",
+        tsValidate: (v) =>
+          fi.hetu.validate(v).valid,
+        arb: fc
+          .tuple(
+            digs(6),
+            fc.constantFrom("+", "-", "A"),
+            digs(3),
+            fc.constantFrom(
+              ..."0123456789ABCDEFHJKLMNPRSTUVWXY".split(
+                "",
+              ),
+            ),
+          )
+          .map(
+            ([d, s, c, x]) =>
+              `${d}${s}${c}${x}`,
+          ),
+      },
+      {
+        name: "FR NIF (vs ruby SSN)",
+        cc: "FR",
+        tsValidate: (v) =>
+          fr.nif.validate(v).valid,
+        arb: digs(13),
+      },
+      {
+        name: "IS Kennitala (vs ruby SSN)",
+        cc: "IS",
+        tsValidate: (v) =>
+          is.kennitala.validate(v).valid,
+        arb: dateDigs(10),
+      },
+      {
+        name: "IT CF (vs ruby SSN)",
+        cc: "IT",
+        tsValidate: (v) =>
+          it.codiceFiscale.validate(v).valid,
+        arb: fc
+          .tuple(
+            fc
+              .array(
+                fc.constantFrom(
+                  ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split(
+                    "",
+                  ),
+                ),
+                {
+                  minLength: 15,
+                  maxLength: 15,
+                },
+              )
+              .map((c: string[]) => c.join("")),
+            fc.constantFrom(
+              ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+                "",
+              ),
+            ),
+          )
+          .map(
+            ([front, check]) =>
+              `${front}${check}`,
+          ),
+      },
+      {
+        name: "LT Asmens (vs ruby SSN)",
+        cc: "LT",
+        tsValidate: (v) =>
+          lt.asmens.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "LV PK (vs ruby SSN)",
+        cc: "LV",
+        tsValidate: (v) =>
+          lv.vat.validate(v).valid,
+        arb: digs(11),
+      },
+      {
+        name: "NL BSN (vs ruby SSN)",
+        cc: "NL",
+        tsValidate: (v) =>
+          nl.bsn.validate(v).valid,
+        arb: digs(9),
+      },
+      {
+        name: "NO Fødselsnr (vs ruby SSN)",
+        cc: "NO",
+        tsValidate: (v) =>
+          no.fodselsnummer.validate(v).valid,
+        arb: dateDigs(11),
+      },
+      {
+        name: "PL PESEL (vs ruby SSN)",
+        cc: "PL",
+        tsValidate: (v) =>
+          pl.pesel.validate(v).valid,
+        arb: dateDigsYMD(11),
+      },
+      {
+        name: "SE Personnr (vs ruby SSN)",
+        cc: "SE",
+        tsValidate: (v) =>
+          se.personnummer.validate(v).valid,
+        arb: fc.oneof(digs(10), digs(12)),
+      },
+      {
+        name: "CH SSN (vs ruby SSN)",
+        cc: "CH",
+        tsValidate: (v) =>
+          chMod.ssn.validate(v).valid,
+        arb: digs(10).map((d) => `756${d}`),
+      },
+      {
+        name: "DE IdNr (vs ruby SSN)",
+        cc: "DE",
+        tsValidate: (v) =>
+          de.idnr.validate(v).valid,
+        arb: digs(11),
+      },
+      {
+        name: "GB NINO (vs ruby SSN)",
+        cc: "GB",
+        tsValidate: (v) =>
+          gb.utr.validate(v).valid,
+        arb: digs(10),
+      },
+      {
+        name: "IE PPS (vs ruby SSN)",
+        cc: "IE",
+        tsValidate: (v) =>
+          ie.pps.validate(v).valid,
+        arb: fc
+          .tuple(
+            digs(7),
+            fc.constantFrom(
+              ..."WABCDEFGHIJKLMNOPQRSTUV".split(
+                "",
+              ),
+            ),
+          )
+          .map(([d, l]) => `${d}${l}`),
+      },
+      {
+        name: "US SSN (vs ruby SSN)",
+        cc: "US",
+        tsValidate: (v) =>
+          us.ssn.validate(v).valid,
+        arb: digs(9),
+      },
+      {
+        name: "CA SIN (vs ruby SSN)",
+        cc: "CA",
+        tsValidate: (v) =>
+          ca.sin.validate(v).valid,
+        arb: digs(9),
+      },
+    ];
+
+    for (const spec of ssnSpecs) {
+      const values = fc.sample(
+        spec.arb,
+        NUM_SAMPLES,
+      );
+      const tsResults = values.map(spec.tsValidate);
+      let ssnResults: boolean[];
+      try {
+        ssnResults = rubySsnBatch(
+          spec.cc,
+          values,
+        );
+      } catch {
+        console.log(`  SKIP ${spec.name}`);
+        continue;
+      }
+      failures += compare(
+        spec.name,
+        values,
+        tsResults,
+        ssnResults,
+        "ruby-ssn",
+      );
+      total += values.length;
+    }
+  } else {
+    console.log(
+      "\nRuby SSN oracle: skipped" +
+        " (gem install --user-install" +
+        " social_security_number)",
     );
   }
 
