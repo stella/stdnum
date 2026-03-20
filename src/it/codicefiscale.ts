@@ -193,6 +193,10 @@ const codiceFiscale: Validator = {
   abbreviation: "CF",
   country: "IT",
   entityType: "person",
+  description:
+    "16-char alphanumeric code encoding name, birth, and place",
+  sourceUrl: "https://www.agenziaentrate.gov.it/",
+  lengths: [11, 16] as const,
   examples: ["RCCMNL83S18D969H"] as const,
   compact,
   format,

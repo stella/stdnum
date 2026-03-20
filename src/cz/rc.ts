@@ -139,6 +139,11 @@ const rc: Validator = {
   abbreviation: "RČ",
   country: "CZ",
   entityType: "person",
+  description:
+    "Czech/Slovak national identifier encoding birth date and gender",
+  sourceUrl:
+    "https://www.mvcr.cz/mvcren/docDetail.aspx?docid=21975362&doctype=ART",
+  lengths: [9, 10] as const,
   examples: ["7103192745"] as const,
   compact,
   format,
