@@ -7,7 +7,8 @@
  * an 8-digit DNI number, and a single check digit
  * computed using a weighted modulo 11 algorithm.
  *
- * Type codes: 20/23/24 = person, 30/33/34 = company.
+ * Type codes: 20/23/24/27 = person, 30/33/34 = company,
+ * 50/51/55 = international.
  *
  * Format: XX-XXXXXXXX-X (11 digits).
  *
@@ -24,6 +25,7 @@ import type { ValidateResult, Validator } from "../types";
 const VALID_TYPES = new Set([
   "20", "23", "24", "27",
   "30", "33", "34",
+  "50", "51", "55",
 ]);
 
 const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];

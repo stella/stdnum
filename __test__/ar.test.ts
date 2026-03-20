@@ -55,6 +55,11 @@ describe("ar.cuit", () => {
     }
   });
 
+  test("valid international CUIT (type 50)", () => {
+    const r = ar.cuit.validate("50000000016");
+    expect(r.valid).toBe(true);
+  });
+
   test("invalid type code", () => {
     const r = ar.cuit.validate("11267565393");
     expect(r.valid).toBe(false);
