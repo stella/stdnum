@@ -52,7 +52,13 @@ for await (const file of glob.scan(
   const name = file
     .replace("src/", "")
     .replace(".ts", "")
-    .replace("/", ".");
+    .replaceAll("/", ".");
+
+  if (!mod.default) {
+    throw new Error(
+      `${file} exports parse() but no default Validator`,
+    );
+  }
 
   discovered.push({
     path: file,
@@ -92,10 +98,9 @@ for (const { name, parse, validator } of discovered) {
 // ─── Specific date/gender assertions ────────────
 
 describe("cz.rc parse", () => {
-  let parse: (v: string) => ParsedPersonId | null;
   const mod = discovered.find((m) => m.name === "cz.rc");
   if (!mod) throw new Error("cz.rc not discovered");
-  parse = mod.parse;
+  const { parse } = mod;
 
   test("extracts male born 1971-03-19", () => {
     const result = parse("7103192745");
