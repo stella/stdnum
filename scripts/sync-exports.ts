@@ -108,10 +108,20 @@ const main = async () => {
     if (!newKeys.has(key)) removed.push(key);
   }
 
+  // Also detect order changes (keys same but
+  // different order in the JSON).
+  const orderChanged =
+    added.length === 0 &&
+    removed.length === 0 &&
+    changed.length === 0 &&
+    JSON.stringify(oldExports) !==
+      JSON.stringify(newExports);
+
   const hasChanges =
     added.length > 0 ||
     removed.length > 0 ||
-    changed.length > 0;
+    changed.length > 0 ||
+    orderChanged;
 
   const total = Object.keys(newExports).length;
 
@@ -143,6 +153,10 @@ const main = async () => {
     }
   }
 
+  if (orderChanged) {
+    console.log("\nOrder changed (keys reordered).");
+  }
+
   if (isCheckMode) {
     console.error(
       "\nExports map is out of sync." +
@@ -161,4 +175,7 @@ const main = async () => {
   console.log(`\nExports: ${total} entries written.`);
 };
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
