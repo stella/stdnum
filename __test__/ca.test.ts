@@ -115,6 +115,18 @@ describe("ca.bn", () => {
     }
   });
 
+  test("format BN9", () => {
+    expect(ca.bn.format("123026635")).toBe(
+      "123 026 635",
+    );
+  });
+
+  test("format BN15", () => {
+    expect(ca.bn.format("123026635RC0001")).toBe(
+      "123 026 635 RC 0001",
+    );
+  });
+
   test("metadata", () => {
     expect(ca.bn.country).toBe("CA");
     expect(ca.bn.entityType).toBe("company");

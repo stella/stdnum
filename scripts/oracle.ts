@@ -1626,7 +1626,19 @@ const MUTANT_SPECS: MutantSpec[] = [
   {
     name: "CA BN",
     tsValidate: (v) => ca.bn.validate(v).valid,
-    arb: digs(9),
+    arb: fc.oneof(
+      digs(9),
+      fc
+        .tuple(
+          digs(9),
+          fc.constantFrom("RC", "RM", "RP", "RT"),
+          digs(4),
+        )
+        .map(
+          ([root, prog, ref]) =>
+            `${root}${prog}${ref}`,
+        ),
+    ),
   },
   {
     name: "AU ABN",
