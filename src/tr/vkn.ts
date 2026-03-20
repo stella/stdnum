@@ -37,7 +37,7 @@ const calcCheckDigit = (number: string): string => {
     const pos = 9 - i; // position 1..9 from right
     const c1 = (Number(number[i]) + pos) % 10;
     if (c1 !== 0) {
-      const pow = Math.pow(2, pos);
+      const pow = 2 ** pos;
       const c2 = (c1 * pow) % 9 || 9;
       s += c2;
     }
