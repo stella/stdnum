@@ -1,7 +1,7 @@
 {
   "name": "@stll/stdnum",
   "version": "0.1.0",
-  "description": "Validate, compact, and format standard identifiers (IČO, IBAN, VAT, birth numbers, credit cards). Pure TypeScript, zero dependencies.",
+  "description": "Validate, compact, and format standard identifiers (I\u010cO, IBAN, VAT, birth numbers, credit cards). Pure TypeScript, zero dependencies.",
   "keywords": [
     "credit-card",
     "czech",
@@ -116,6 +116,7 @@
     "./lei": "./src/lei.ts"
   },
   "scripts": {
+    "catalog": "bun scripts/catalog.ts",
     "test": "bun test",
     "oracle": "bun scripts/oracle.ts",
     "lint": "oxlint .",
