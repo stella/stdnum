@@ -10,6 +10,7 @@ export type CountryCode =
   | "BR"
   | "CA"
   | "CH"
+  | "CN"
   | "CY"
   | "CZ"
   | "DE"
@@ -23,14 +24,18 @@ export type CountryCode =
   | "HR"
   | "HU"
   | "IE"
+  | "IL"
   | "IS"
   | "IT"
+  | "JP"
+  | "KR"
   | "LT"
   | "LU"
   | "LV"
   | "MT"
   | "NL"
   | "NO"
+  | "NZ"
   | "PL"
   | "PT"
   | "RO"
@@ -41,7 +46,8 @@ export type CountryCode =
   | "SK"
   | "TR"
   | "UA"
-  | "US";
+  | "US"
+  | "ZA";
 
 export type ErrorCode =
   | "INVALID_FORMAT"

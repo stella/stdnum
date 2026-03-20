@@ -258,6 +258,8 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> =
         digs(4),
       ).map(([r, p, f]) => `${r}${p}${f}`),
     ),
+    "za.idnr": dateDigs(13, "ymd"),
+    "nz.ird": fc.oneof(digs(8), digs(9)),
     iban: fc.tuple(
       fc.constantFrom(
         "CZ", "DE", "SK", "PL", "GB",
