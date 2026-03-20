@@ -86,6 +86,7 @@ const nn: Validator = {
   abbreviation: "NN",
   country: "BE",
   entityType: "person",
+  examples: ["93051822361"] as const,
   compact,
   format,
   validate,

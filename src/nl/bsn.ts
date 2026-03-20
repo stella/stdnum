@@ -59,6 +59,7 @@ const bsn: Validator = {
   abbreviation: "BSN",
   country: "NL",
   entityType: "person",
+  examples: ["111222333"] as const,
   compact,
   format,
   validate,

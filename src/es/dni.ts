@@ -58,6 +58,7 @@ const dni: Validator = {
   abbreviation: "DNI",
   country: "ES",
   entityType: "person",
+  examples: ["54362315K"] as const,
   compact,
   format,
   validate,

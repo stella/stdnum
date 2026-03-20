@@ -68,6 +68,7 @@ const amka: Validator = {
   abbreviation: "ΑΜΚΑ",
   country: "GR",
   entityType: "person",
+  examples: ["01013099997"] as const,
   compact,
   format,
   validate,

@@ -68,6 +68,7 @@ const vat: Validator = {
   abbreviation: "ΑΦΜ",
   country: "GR",
   entityType: "any",
+  examples: ["094259216"] as const,
   compact,
   format,
   validate,

@@ -82,6 +82,7 @@ const vat: Validator = {
   abbreviation: "DDV",
   country: "SI",
   entityType: "company",
+  examples: ["15012557"] as const,
   compact,
   format,
   validate,

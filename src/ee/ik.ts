@@ -128,6 +128,7 @@ const ik: Validator = {
   abbreviation: "IK",
   country: "EE",
   entityType: "person",
+  examples: ["36805280109"] as const,
   compact,
   format,
   validate,

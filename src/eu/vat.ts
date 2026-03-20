@@ -156,6 +156,10 @@ const euVat: Validator = {
   localName: "EU VAT Number",
   abbreviation: "EU VAT",
   entityType: "company",
+  examples: [
+    "ATU13585627",
+    "DE136695976",
+  ] as const,
   compact,
   format,
   validate,

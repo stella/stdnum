@@ -140,6 +140,7 @@ const personnummer: Validator = {
   abbreviation: "PN",
   country: "SE",
   entityType: "person",
+  examples: ["880320-0016"] as const,
   compact,
   format,
   validate,

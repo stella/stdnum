@@ -149,6 +149,7 @@ const vat: Validator = {
   abbreviation: "NIF",
   country: "ES",
   entityType: "any",
+  examples: ["12345678Z", "A78304516"] as const,
   compact,
   format,
   validate,

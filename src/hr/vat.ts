@@ -55,6 +55,7 @@ const vat: Validator = {
   abbreviation: "OIB",
   country: "HR",
   entityType: "any",
+  examples: ["33392005961"] as const,
   compact,
   format,
   validate,
