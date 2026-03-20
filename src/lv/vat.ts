@@ -116,6 +116,7 @@ const vat: Validator = {
   abbreviation: "PVN",
   country: "LV",
   entityType: "any",
+  examples: ["40003521600"] as const,
   compact,
   format,
   validate,

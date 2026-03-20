@@ -129,6 +129,7 @@ const vat: Validator = {
   abbreviation: "ИН по ДДС",
   country: "BG",
   entityType: "any",
+  examples: ["175074752"] as const,
   compact,
   format,
   validate,

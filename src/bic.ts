@@ -56,6 +56,7 @@ const bic: Validator = {
   localName: "Business Identifier Code",
   abbreviation: "BIC",
   entityType: "company",
+  examples: ["DEUTDEFF", "DEUTDEFF500"] as const,
   compact,
   format,
   validate,

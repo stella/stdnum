@@ -90,6 +90,7 @@ const asmens: Validator = {
   abbreviation: "AK",
   country: "LT",
   entityType: "person",
+  examples: ["33309240064"] as const,
   compact,
   format,
   validate,

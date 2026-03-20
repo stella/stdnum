@@ -62,6 +62,7 @@ const vat: Validator = {
   abbreviation: "Momsnr.",
   country: "SE",
   entityType: "company",
+  examples: ["556188840401"] as const,
   compact,
   format,
   validate,

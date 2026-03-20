@@ -72,6 +72,7 @@ const nie: Validator = {
   abbreviation: "NIE",
   country: "ES",
   entityType: "person",
+  examples: ["X5253868R"] as const,
   compact,
   format,
   validate,

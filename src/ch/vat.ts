@@ -63,6 +63,7 @@ const vat: Validator = {
   abbreviation: "MWST",
   country: "CH",
   entityType: "company",
+  examples: ["CHE107787577IVA"] as const,
   compact,
   format,
   validate,

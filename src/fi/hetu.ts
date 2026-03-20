@@ -151,6 +151,7 @@ const hetu: Validator = {
   abbreviation: "HETU",
   country: "FI",
   entityType: "person",
+  examples: ["131052-308T"] as const,
   compact,
   format,
   validate,

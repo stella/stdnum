@@ -111,6 +111,7 @@ const cpr: Validator = {
   abbreviation: "CPR",
   country: "DK",
   entityType: "person",
+  examples: ["2110625629"] as const,
   compact,
   format,
   validate,

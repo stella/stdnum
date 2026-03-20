@@ -134,6 +134,7 @@ const cnp: Validator = {
   abbreviation: "CNP",
   country: "RO",
   entityType: "person",
+  examples: ["1630615123457"] as const,
   compact,
   format,
   validate,

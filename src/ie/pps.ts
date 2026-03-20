@@ -79,6 +79,7 @@ const pps: Validator = {
   abbreviation: "PPS",
   country: "IE",
   entityType: "person",
+  examples: ["6433435F"] as const,
   compact,
   format,
   validate,

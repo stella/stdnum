@@ -96,6 +96,7 @@ const vat: Validator = {
   abbreviation: "ΦΠΑ",
   country: "CY",
   entityType: "company",
+  examples: ["10259033P"] as const,
   compact,
   format,
   validate,

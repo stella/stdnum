@@ -59,6 +59,7 @@ const vat: Validator = {
   abbreviation: "ANUM",
   country: "HU",
   entityType: "company",
+  examples: ["12892312"] as const,
   compact,
   format,
   validate,

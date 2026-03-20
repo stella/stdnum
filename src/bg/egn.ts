@@ -120,6 +120,7 @@ const egn: Validator = {
   abbreviation: "ЕГН",
   country: "BG",
   entityType: "person",
+  examples: ["7523169263"] as const,
   compact,
   format,
   validate,

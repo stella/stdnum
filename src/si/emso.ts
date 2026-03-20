@@ -121,6 +121,7 @@ const emso: Validator = {
   abbreviation: "EMŠO",
   country: "SI",
   entityType: "person",
+  examples: ["0101006500006"] as const,
   compact,
   format,
   validate,
