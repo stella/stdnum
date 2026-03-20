@@ -10,7 +10,10 @@
  */
 
 import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
+import {
+  isValidDate,
+  resolveTwoDigitYear,
+} from "#util/date";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -77,10 +80,7 @@ const validate = (value: string): ValidateResult => {
   const mm = Number(v.slice(4, 6));
   const yy = Number(v.slice(6, 8));
 
-  const year = (() => {
-    const y = 2000 + yy;
-    return y > new Date().getFullYear() ? y - 100 : y;
-  })();
+  const year = resolveTwoDigitYear(yy);
 
   if (!isValidDate(year, mm, dd)) {
     return err(

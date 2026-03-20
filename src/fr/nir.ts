@@ -13,6 +13,7 @@
  */
 
 import { clean } from "#util/clean";
+import { resolveTwoDigitYear } from "#util/date";
 import { err } from "#util/result";
 
 import type {
@@ -142,10 +143,7 @@ const parse = (
 
   if (mm < 1 || mm > 12) return null;
 
-  const year = (() => {
-    const y = 2000 + yy;
-    return y > new Date().getFullYear() ? y - 100 : y;
-  })();
+  const year = resolveTwoDigitYear(yy);
   const gender =
     genderDigit === "1" ? "male" : "female";
 

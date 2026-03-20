@@ -19,7 +19,9 @@ describe("ua.edrpou", () => {
   });
 
   test("valid EDRPOU (first digit >= 6)", () => {
-    const r = ua.edrpou.validate("77777779");
+    // Non-uniform digits: valid only under WEIGHTS_A,
+    // would fail under WEIGHTS_B (check=9, not 6).
+    const r = ua.edrpou.validate("60000006");
     expect(r.valid).toBe(true);
   });
 

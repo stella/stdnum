@@ -50,6 +50,17 @@ describe("nz.ird", () => {
     }
   });
 
+  test("accepts lower boundary (10,000,000)", () => {
+    // 10000000 is the minimum valid IRD number;
+    // may fail checksum but must not fail range check
+    const r = nz.ird.validate("10000000");
+    if (!r.valid) {
+      expect(r.error.code).not.toBe(
+        "INVALID_COMPONENT",
+      );
+    }
+  });
+
   test("out of range (too small)", () => {
     const r = nz.ird.validate("09999999");
     expect(r.valid).toBe(false);
