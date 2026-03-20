@@ -3,7 +3,7 @@
  *
  * Uruguayan tax identification number issued by the
  * DGI (Dirección General Impositiva). The number is
- * 12 digits: 2-digit document type (01-21), 6-digit
+ * 12 digits: 2-digit document type (01-22), 6-digit
  * sequence, fixed "001" suffix, and a check digit
  * computed via weighted sum mod 11 (Python-style
  * modulo of the negated sum).
@@ -36,12 +36,18 @@ const compact = (value: string): string => {
 const pymod = (a: number, b: number): number =>
   ((a % b) + b) % b;
 
-const calcCheckDigit = (value: string): string => {
+const calcCheckDigit = (
+  value: string,
+): string | null => {
   let sum = 0;
   for (let i = 0; i < 11; i++) {
     sum += Number(value[i]) * WEIGHTS[i]!;
   }
-  return String(pymod(-sum, 11));
+  const result = pymod(-sum, 11);
+  // A result of 10 means no valid single-digit check
+  // digit exists; the DGI does not issue such numbers.
+  if (result === 10) return null;
+  return String(result);
 };
 
 const validate = (value: string): ValidateResult => {
@@ -61,12 +67,12 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  // First 2 digits: document type (01-21)
+  // First 2 digits: document type (01-22)
   const docType = Number.parseInt(v.slice(0, 2), 10);
-  if (docType < 1 || docType > 21) {
+  if (docType < 1 || docType > 22) {
     return err(
       "INVALID_COMPONENT",
-      "RUT document type must be between 01 and 21",
+      "RUT document type must be between 01 and 22",
     );
   }
 
@@ -87,7 +93,7 @@ const validate = (value: string): ValidateResult => {
   }
 
   const expected = calcCheckDigit(v);
-  if (v.at(-1) !== expected) {
+  if (expected === null || v.at(-1) !== expected) {
     return err(
       "INVALID_CHECKSUM",
       "RUT check digit does not match",

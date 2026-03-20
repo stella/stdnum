@@ -15,6 +15,10 @@ describe("uy.rut", () => {
     const r = uy.rut.validate("210000010014");
     expect(r.valid).toBe(true);
   });
+  test("valid RUT (doc type 22)", () => {
+    const r = uy.rut.validate("220100010013");
+    expect(r.valid).toBe(true);
+  });
   test("valid with dashes", () => {
     const r = uy.rut.validate("01-010001-001-3");
     expect(r.valid).toBe(true);
@@ -43,10 +47,17 @@ describe("uy.rut", () => {
     expect(r.valid).toBe(false);
     if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
   });
-  test("invalid document type (> 21)", () => {
-    const r = uy.rut.validate("220100010013");
+  test("invalid document type (> 22)", () => {
+    const r = uy.rut.validate("230100010010");
     expect(r.valid).toBe(false);
     if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
+  });
+  test("rejects number whose check formula yields 10", () => {
+    // 01-000008-001-0: weighted sum produces check digit 10,
+    // which cannot fit in a single digit position.
+    const r = uy.rut.validate("010000080010");
+    expect(r.valid).toBe(false);
+    if (!r.valid) expect(r.error.code).toBe("INVALID_CHECKSUM");
   });
   test("all-zero sequence", () => {
     const r = uy.rut.validate("010000000013");
