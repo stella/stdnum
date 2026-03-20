@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import { de } from "../src";
 
-// ─── USt-IdNr. ───────────────────────────────
+// --- USt-IdNr. -----------------------------------------
 
 describe("de.vat", () => {
   test("valid German VAT", () => {
@@ -42,7 +42,7 @@ describe("de.vat", () => {
   });
 });
 
-// ─── IdNr ────────────────────────────────────
+// --- IdNr ----------------------------------------------
 
 describe("de.idnr", () => {
   test("valid German IdNr", () => {
@@ -81,5 +81,63 @@ describe("de.idnr", () => {
     expect(de.idnr.abbreviation).toBe("IdNr");
     expect(de.idnr.country).toBe("DE");
     expect(de.idnr.entityType).toBe("person");
+  });
+});
+
+// --- SVNR ----------------------------------------------
+
+describe("de.svnr", () => {
+  test("valid SVNR", () => {
+    const r = de.svnr.validate("12010188M011");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid with spaces", () => {
+    const r = de.svnr.validate("12 010188 M 01 1");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid checksum", () => {
+    const r = de.svnr.validate("12010188M012");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = de.svnr.validate("12010188M0");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("invalid format (no letter)", () => {
+    const r = de.svnr.validate("120101880011");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("invalid birth date", () => {
+    const r = de.svnr.validate("12320188M011");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("format adds spaces", () => {
+    expect(de.svnr.format("12010188M011")).toBe(
+      "12 010188 M 01 1",
+    );
+  });
+
+  test("metadata", () => {
+    expect(de.svnr.abbreviation).toBe("SVNR");
+    expect(de.svnr.country).toBe("DE");
+    expect(de.svnr.entityType).toBe("person");
   });
 });

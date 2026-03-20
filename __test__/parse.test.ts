@@ -315,3 +315,37 @@ describe("si.emso parse", () => {
     expect(result!.birthDate.getDate()).toBe(1);
   });
 });
+
+describe("fr.nir parse", () => {
+  const mod = discovered.find(
+    (m) => m.name === "fr.nir",
+  );
+  if (!mod) throw new Error("fr.nir not discovered");
+  const { parse } = mod;
+
+  test("extracts female born 1995-11-01", () => {
+    const result = parse("295117823456784");
+    expect(result).not.toBeNull();
+    expect(result!.gender).toBe("female");
+    expect(result!.birthDate.getFullYear()).toBe(1995);
+    expect(result!.birthDate.getMonth()).toBe(10);
+    expect(result!.birthDate.getDate()).toBe(1);
+  });
+
+  test("extracts male", () => {
+    const base = 1850578123456n;
+    const check = 97n - (base % 97n);
+    const full =
+      base.toString() +
+      check.toString().padStart(2, "0");
+    const result = parse(full);
+    expect(result).not.toBeNull();
+    expect(result!.gender).toBe("male");
+    expect(result!.birthDate.getFullYear()).toBe(1985);
+    expect(result!.birthDate.getMonth()).toBe(4);
+  });
+
+  test("returns null for invalid input", () => {
+    expect(parse("invalid")).toBeNull();
+  });
+});

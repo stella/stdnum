@@ -172,6 +172,10 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> =
     "ch.uid": digs(9).map((d) => `CHE${d}`),
     "ch.vat": digs(9).map((d) => `CHE${d}`),
     "ch.ssn": digs(10).map((d) => `756${d}`),
+    "gb.nino": fc.tuple(
+      letters(L), letters(L), digs(6),
+      fc.constantFrom("A", "B", "C", "D"),
+    ).map(([a, b, d, s]) => `${a}${b}${d}${s}`),
     "cz.dic": digsRange(8, 10),
     "cz.rc": fc.oneof(
       dateDigs(9, "ymd"), dateDigs(10, "ymd"),
@@ -189,6 +193,9 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> =
     "si.emso": dateDigs(13),
     "no.fodselsnummer": dateDigs(11),
     "is_.kennitala": dateDigs(10),
+    "de.svnr": fc.tuple(
+      digs(2), dateDigs(6), letters(L), digs(3),
+    ).map(([a, d, l, s]) => `${a}${d}${l}${s}`),
     "de.vat": fc.tuple(
       fc.integer({ min: 1, max: 9 }), digs(8),
     ).map(([f, r]) => `${String(f)}${r}`),
@@ -196,6 +203,9 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> =
       fc.integer({ min: 1, max: 9 }).map(String),
       digs(10),
     ).map(([f, r]) => `${f}${r}`),
+    "fr.nir": fc.tuple(
+      fc.constantFrom("1", "2"), digs(12), digs(2),
+    ).map(([g, body, ck]) => `${g}${body}${ck}`),
     "fr.tva": fc.tuple(digs(2), digs(9))
       .map(([p, s]) => `${p}${s}`),
     "cy.vat": fc.tuple(digs(8), letters(L))
@@ -487,7 +497,7 @@ const JSVAT_SPECIAL: Record<
 const STDNUM_PERSON: Record<string, string> = {
   "be.nn": "BE", "bg.egn": "BG", "dk.cpr": "DK",
   "ee.ik": "EE", "es.dni": "ES", "fi.hetu": "FI",
-  "gr.amka": "GR", "ie.pps": "IE",
+  "gb.nino": "GB", "gr.amka": "GR", "ie.pps": "IE",
   "lt.asmens": "LT", "nl.bsn": "NL",
   "ro.cnp": "RO", "se.personnummer": "SE",
   "si.emso": "SI", "ch.ssn": "CH",
