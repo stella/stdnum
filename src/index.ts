@@ -99,4 +99,5 @@ export * as ua from "./ua/mod";
 export * as us from "./us/mod";
 export * as uy from "./uy/mod";
 export * as ve from "./ve/mod";
+export * as vn from "./vn/mod";
 export * as za from "./za/mod";
