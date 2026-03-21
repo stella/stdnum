@@ -108,6 +108,10 @@ const vat: Validator = {
   name: "Irish VAT Number",
   localName: "Value Added Tax Number",
   abbreviation: "VAT",
+  aliases: [
+    "VAT number IE",
+  ] as const,
+  candidatePattern: "IE\\d[A-Z+*]\\d{5}[A-Z]",
   country: "IE",
   entityType: "any",
   sourceUrl: "https://www.revenue.ie/",

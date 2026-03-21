@@ -116,6 +116,13 @@ const svnr: Validator = {
   name: "German Social Insurance Number",
   localName: "Sozialversicherungsnummer",
   abbreviation: "SVNR",
+  aliases: [
+    "Sozialversicherungsnummer",
+    "SVNR",
+    "Versicherungsnummer",
+  ] as const,
+  candidatePattern:
+    "\\d{2}\\s?\\d{6}\\s?[A-Z]\\s?\\d{3}",
   country: "DE",
   entityType: "person",
   description:

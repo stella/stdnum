@@ -62,6 +62,13 @@ const vat: Validator = {
   name: "Swiss VAT Number",
   localName: "Mehrwertsteuernummer",
   abbreviation: "MWST",
+  aliases: [
+    "MWST",
+    "TVA",
+    "IVA",
+  ] as const,
+  candidatePattern:
+    "CHE-?\\d{3}\\.?\\d{3}\\.?\\d{3}\\s?(?:MWST|TVA|IVA)",
   country: "CH",
   entityType: "company",
   sourceUrl: "https://www.estv.admin.ch/",

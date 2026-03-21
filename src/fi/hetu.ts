@@ -165,6 +165,12 @@ const hetu: Validator = {
   name: "Finnish Personal ID",
   localName: "Henkilötunnus",
   abbreviation: "HETU",
+  aliases: [
+    "henkilötunnus",
+    "HETU",
+    "sosiaaliturvatunnus",
+  ] as const,
+  candidatePattern: "\\d{6}[-+A]\\d{3}[\\dA-Z]",
   country: "FI",
   entityType: "person",
   sourceUrl: "https://dvv.fi/en/personal-identity-code",

@@ -88,6 +88,12 @@ const nino: Validator = {
   name: "UK National Insurance Number",
   localName: "National Insurance Number",
   abbreviation: "NINO",
+  aliases: [
+    "National Insurance number",
+    "NINO",
+    "NI number",
+  ] as const,
+  candidatePattern: "[A-Z]{2}\\d{6}[A-Z]",
   country: "GB",
   entityType: "person",
   description:

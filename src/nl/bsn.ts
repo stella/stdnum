@@ -57,6 +57,12 @@ const bsn: Validator = {
   name: "Dutch Citizen Service Number",
   localName: "Burgerservicenummer",
   abbreviation: "BSN",
+  aliases: [
+    "burgerservicenummer",
+    "BSN",
+    "sofinummer",
+  ] as const,
+  candidatePattern: "\\d{9}",
   country: "NL",
   entityType: "person",
   sourceUrl: 

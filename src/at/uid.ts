@@ -63,6 +63,12 @@ const uid: Validator = {
   name: "Austrian VAT Number",
   localName: "Umsatzsteuer-Identifikationsnummer",
   abbreviation: "UID",
+  aliases: [
+    "UID",
+    "Umsatzsteuer-Identifikationsnummer",
+    "ATU",
+  ] as const,
+  candidatePattern: "ATU\\d{8}",
   country: "AT",
   entityType: "company",
   sourceUrl: "https://www.bmf.gv.at/",

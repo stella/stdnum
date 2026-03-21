@@ -130,6 +130,11 @@ const vat: Validator = {
   name: "UK VAT Number",
   localName: "VAT Registration Number",
   abbreviation: "VAT",
+  aliases: [
+    "VAT registration number",
+    "VAT number",
+  ] as const,
+  candidatePattern: "GB\\d{9,12}",
   country: "GB",
   entityType: "company",
   sourceUrl: "https://www.gov.uk/vat-registration",
