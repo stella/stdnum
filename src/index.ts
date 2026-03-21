@@ -75,6 +75,7 @@ export * as md from "./md/mod";
 export * as me from "./me/mod";
 export * as mk from "./mk/mod";
 export * as mt from "./mt/mod";
+export * as mu from "./mu/mod";
 export * as mx from "./mx/mod";
 export * as my from "./my/mod";
 export * as nl from "./nl/mod";

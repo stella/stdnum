@@ -60,6 +60,7 @@ export type CountryCode =
   | "MK"
   | "MY"
   | "MT"
+  | "MU"
   | "MX"
   | "MY"
   | "NL"

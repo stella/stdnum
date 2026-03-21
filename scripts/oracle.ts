@@ -277,6 +277,14 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> =
       ),
     ).map(([p, d, c]) => `${p}00${d}${c}`),
     "za.idnr": dateDigs(13, "ymd"),
+    "mu.brn": fc.oneof(
+      fc.tuple(
+        fc.constantFrom("C", "F"), digs(8),
+      ).map(([p, d]) => `${p}${d}`),
+      fc.tuple(
+        fc.constantFrom("0", "1", "2", "3"), digs(7),
+      ).map(([p, d]) => `${p}${d}`),
+    ),
     "nz.ird": fc.oneof(digs(8), digs(9)),
     iban: fc.tuple(
       fc.constantFrom(
@@ -457,7 +465,7 @@ const PY_REMAP: Record<string, string> = {
 const PY_SKIP = new Set([
   "eu.vat", "bic", "ch.vat", "no.mva",
   "is_.vsk", "nl.kvk", "lei", "creditcard",
-  "cz.ico", "sk.dic", "sk.ico",
+  "cz.ico", "sk.dic", "sk.ico", "mu.brn",
 ]);
 
 // jsvat: key → [jsvat config, VAT prefix]
