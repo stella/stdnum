@@ -91,6 +91,9 @@ const siret: Validator = {
   localName:
     "Système d'Identification du Répertoire des Établissements",
   abbreviation: "SIRET",
+  aliases: ["SIRET", "numéro SIRET"] as const,
+  candidatePattern:
+    "\\d{3}\\s?\\d{3}\\s?\\d{3}\\s?\\d{5}",
   country: "FR",
   entityType: "company",
   sourceUrl: 

@@ -108,6 +108,11 @@ const dic: Validator = {
   name: "Czech VAT Number",
   localName: "Daňové identifikační číslo",
   abbreviation: "DIČ",
+  aliases: [
+    "DIČ",
+    "daňové identifikační číslo",
+  ] as const,
+  candidatePattern: "CZ\\d{8,10}",
   country: "CZ",
   entityType: "any",
   sourceUrl: "https://adisspr.mfcr.cz/dpr/DphReg",
