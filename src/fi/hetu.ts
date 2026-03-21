@@ -96,6 +96,22 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
+  // Individual number must be >= 002
+  const serialNum = Number(serial);
+  if (serialNum < 2) {
+    return err(
+      "INVALID_COMPONENT",
+      "HETU individual number must be >= 002",
+    );
+  }
+  // Temporary range 900-999 is not valid
+  if (serialNum >= 900) {
+    return err(
+      "INVALID_COMPONENT",
+      "HETU temporary individual range 900-999",
+    );
+  }
+
   const checkNum = Number(`${dd}${mm}${yy}${serial}`);
   const expected = CHECK_CHARS[checkNum % 31];
   if (checkChar !== expected) {

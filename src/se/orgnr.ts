@@ -1,7 +1,7 @@
 /**
  * Organisationsnummer (Swedish organization number).
  *
- * 10 digits, third digit >= 2. Standard Luhn checksum.
+ * 10 digits. Standard Luhn checksum.
  * Display format: NNNNNN-NNNN.
  *
  * @see https://www.skatteverket.se/
@@ -29,12 +29,6 @@ const validate = (value: string): ValidateResult => {
     return err(
       "INVALID_FORMAT",
       "Swedish Organisationsnummer must contain only digits",
-    );
-  }
-  if (v[2] < "2") {
-    return err(
-      "INVALID_COMPONENT",
-      "Swedish Organisationsnummer third digit must be >= 2",
     );
   }
   if (!luhnValidate(v)) {

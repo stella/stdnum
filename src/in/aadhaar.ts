@@ -40,6 +40,13 @@ const validate = (value: string): ValidateResult => {
       "Aadhaar cannot start with 0 or 1",
     );
   }
+  // Aadhaar cannot be a palindrome
+  if (v === v.split("").reverse().join("")) {
+    return err(
+      "INVALID_FORMAT",
+      "Aadhaar cannot be a palindrome",
+    );
+  }
   if (!verhoeffValidate(v)) {
     return err(
       "INVALID_CHECKSUM",
