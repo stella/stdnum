@@ -75,6 +75,13 @@ const bn: Validator = {
   name: "Business Number",
   localName: "Business Number",
   abbreviation: "BN",
+  aliases: [
+    "BN",
+    "Business Number",
+    "numéro d'entreprise",
+  ] as const,
+  candidatePattern:
+    "\\d{9}\\s?[A-Z]{2}\\s?\\d{4}",
   country: "CA",
   entityType: "company",
   sourceUrl: 

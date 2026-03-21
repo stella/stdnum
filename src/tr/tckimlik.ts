@@ -85,6 +85,11 @@ const tckimlik: Validator = {
   name: "Turkish Personal ID",
   localName: "T.C. Kimlik Numarası",
   abbreviation: "T.C. Kimlik",
+  aliases: [
+    "TC Kimlik No",
+    "T.C. Kimlik Numarası",
+  ] as const,
+  candidatePattern: "[1-9]\\d{10}",
   country: "TR",
   entityType: "person",
   sourceUrl: "https://www.nvi.gov.tr/",

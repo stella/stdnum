@@ -143,6 +143,12 @@ const ein: Validator = {
   name: "Employer Identification Number",
   localName: "Employer Identification Number",
   abbreviation: "EIN",
+  aliases: [
+    "EIN",
+    "Employer Identification Number",
+    "Federal Tax ID",
+  ] as const,
+  candidatePattern: "\\d{2}-?\\d{7}",
   country: "US",
   entityType: "company",
   sourceUrl: 

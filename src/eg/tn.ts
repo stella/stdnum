@@ -81,6 +81,11 @@ const tn: Validator = {
   name: "Egyptian Tax Registration Number",
   localName: "الرقم الضريبي",
   abbreviation: "TN",
+  aliases: [
+    "الرقم الضريبي",
+    "tax number",
+  ] as const,
+  candidatePattern: "\\d{9}",
   country: "EG",
   entityType: "any",
   compact,

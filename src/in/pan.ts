@@ -54,6 +54,11 @@ const pan: Validator = {
   name: "Indian Permanent Account Number",
   localName: "Permanent Account Number",
   abbreviation: "PAN",
+  aliases: [
+    "PAN",
+    "Permanent Account Number",
+  ] as const,
+  candidatePattern: "[A-Z]{5}\\d{4}[A-Z]",
   country: "IN",
   entityType: "any",
   lengths: [10],

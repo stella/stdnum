@@ -53,6 +53,8 @@ const nipt: Validator = {
   localName:
     "Numri i Identifikimit për Personin e Tatueshëm",
   abbreviation: "NIPT",
+  aliases: ["NIPT", "NUIS"] as const,
+  candidatePattern: "[A-Z]\\d{8}[A-Z]",
   country: "AL",
   entityType: "any",
   sourceUrl: "https://www.tatime.gov.al/",

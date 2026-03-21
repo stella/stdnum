@@ -108,6 +108,11 @@ const rif: Validator = {
   name: "Venezuelan Tax ID",
   localName: "Registro de Información Fiscal",
   abbreviation: "RIF",
+  aliases: [
+    "RIF",
+    "Registro de Información Fiscal",
+  ] as const,
+  candidatePattern: "[VEJPG]-?\\d{8}-?\\d",
   country: "VE",
   entityType: "any",
   lengths: [10] as const,

@@ -157,6 +157,12 @@ const euVat: Validator = {
   name: "EU VAT Number",
   localName: "EU VAT Number",
   abbreviation: "EU VAT",
+  aliases: [
+    "EU VAT",
+    "VAT identification number",
+  ] as const,
+  candidatePattern:
+    "[A-Z]{2}\\d{8,12}",
   entityType: "company",
   sourceUrl: 
     "https://ec.europa.eu/taxation_customs/vies/",

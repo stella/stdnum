@@ -80,6 +80,11 @@ const nss: Validator = {
   name: "Spanish Social Security Number",
   localName: "Número de la Seguridad Social",
   abbreviation: "NSS",
+  aliases: [
+    "NSS",
+    "número de seguridad social",
+  ] as const,
+  candidatePattern: "\\d{12}",
   country: "ES",
   entityType: "person",
   description:

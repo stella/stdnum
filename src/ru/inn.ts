@@ -85,6 +85,8 @@ const inn: Validator = {
   name: "Russian Tax ID",
   localName: "Идентификационный номер налогоплательщика",
   abbreviation: "ИНН",
+  aliases: ["ИНН", "INN"] as const,
+  candidatePattern: "\\d{10,12}",
   country: "RU",
   entityType: "any",
   lengths: [10, 12] as const,

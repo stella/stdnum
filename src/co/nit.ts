@@ -91,6 +91,11 @@ const nit: Validator = {
   name: "Número de Identificación Tributaria",
   localName: "Número de Identificación Tributaria",
   abbreviation: "NIT",
+  aliases: [
+    "NIT",
+    "Número de Identificación Tributaria",
+  ] as const,
+  candidatePattern: "\\d{9,10}-?\\d",
   country: "CO",
   entityType: "any",
   description:

@@ -117,6 +117,11 @@ const rut: Validator = {
   name: "Uruguayan Tax ID",
   localName: "Registro Único Tributario",
   abbreviation: "RUT",
+  aliases: [
+    "RUT",
+    "Registro Único Tributario",
+  ] as const,
+  candidatePattern: "\\d{12}",
   country: "UY",
   entityType: "any",
   lengths: [12] as const,

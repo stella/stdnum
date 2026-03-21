@@ -72,6 +72,11 @@ const tin: Validator = {
   name: "Thai Tax Identification Number",
   localName: "เลขประจำตัวผู้เสียภาษี",
   abbreviation: "TIN",
+  aliases: [
+    "เลขประจำตัวผู้เสียภาษี",
+    "TIN",
+  ] as const,
+  candidatePattern: "\\d{13}",
   country: "TH",
   entityType: "any",
   description:

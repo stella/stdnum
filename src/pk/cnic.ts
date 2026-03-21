@@ -70,6 +70,11 @@ const cnic: Validator = {
   name: "Computerized National Identity Card",
   localName: "Computerized National Identity Card",
   abbreviation: "CNIC",
+  aliases: [
+    "CNIC",
+    "شناختی کارڈ",
+  ] as const,
+  candidatePattern: "\\d{5}-?\\d{7}-?\\d",
   country: "PK",
   entityType: "person",
   lengths: [13],
