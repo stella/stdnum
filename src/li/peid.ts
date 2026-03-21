@@ -41,6 +41,11 @@ const peid: Validator = {
   name: "Liechtenstein Person Identification Number",
   localName: "Personenidentifikationsnummer",
   abbreviation: "PEID",
+  aliases: [
+    "PEID",
+    "Personenidentifikation",
+  ] as const,
+  candidatePattern: "\\d{6}",
   country: "LI",
   entityType: "any",
   lengths: [4, 5, 6, 7, 8, 9, 10, 11, 12] as const,

@@ -117,6 +117,9 @@ const gstin: Validator = {
   localName:
     "Goods and Services Tax Identification Number",
   abbreviation: "GSTIN",
+  aliases: ["GSTIN", "GST number"] as const,
+  candidatePattern:
+    "\\d{2}[A-Z]{5}\\d{4}[A-Z][A-Z\\d][Z][A-Z\\d]",
   country: "IN",
   entityType: "company",
   lengths: [15],

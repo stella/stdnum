@@ -174,6 +174,12 @@ const rc: Validator = {
   name: "Czech Birth Number",
   localName: "Rodné číslo",
   abbreviation: "RČ",
+  aliases: [
+    "rodné číslo",
+    "RČ",
+    "birth number",
+  ] as const,
+  candidatePattern: "\\d{6}/\\d{3,4}",
   country: "CZ",
   entityType: "person",
   description:

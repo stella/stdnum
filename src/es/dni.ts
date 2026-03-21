@@ -63,6 +63,13 @@ const dni: Validator = {
   name: "Spanish National ID",
   localName: "Documento Nacional de Identidad",
   abbreviation: "DNI",
+  aliases: [
+    "D.N.I.",
+    "DNI",
+    "documento nacional de identidad",
+  ] as const,
+  candidatePattern:
+    "\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[A-Z]",
   country: "ES",
   entityType: "person",
   sourceUrl: 

@@ -77,6 +77,11 @@ const regon: Validator = {
   name: "Polish Business Register Number",
   localName: "Rejestr Gospodarki Narodowej",
   abbreviation: "REGON",
+  aliases: [
+    "REGON",
+    "numer statystyczny",
+  ] as const,
+  candidatePattern: "\\d{9,14}",
   country: "PL",
   entityType: "company",
   sourceUrl: "https://bip.stat.gov.pl/en/regon/",

@@ -40,6 +40,11 @@ const vsk: Validator = {
   name: "Icelandic VAT Number",
   localName: "Virðisaukaskattur",
   abbreviation: "VSK",
+  aliases: [
+    "VSK-númer",
+    "virðisaukaskattur",
+  ] as const,
+  candidatePattern: "IS\\d{5,6}",
   country: "IS",
   entityType: "company",
   sourceUrl: "https://www.rsk.is/",

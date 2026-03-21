@@ -15,6 +15,11 @@ const ico: Validator = {
   name: "Slovak Company ID",
   localName: "Identifikačné číslo organizácie",
   abbreviation: "IČO",
+  aliases: [
+    "IČO",
+    "identifikačné číslo organizácie",
+  ] as const,
+  candidatePattern: "\\d{8}",
   country: "SK",
   entityType: "company",
   sourceUrl: "https://www.statistics.sk/",

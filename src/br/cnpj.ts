@@ -132,6 +132,12 @@ const cnpj: Validator = {
   name: "Brazilian CNPJ",
   localName: "Cadastro Nacional da Pessoa Jurídica",
   abbreviation: "CNPJ",
+  aliases: [
+    "CNPJ",
+    "Cadastro Nacional da Pessoa Jurídica",
+  ] as const,
+  candidatePattern:
+    "\\d{2}\\.?\\d{3}\\.?\\d{3}/?\\d{4}-?\\d{2}",
   country: "BR",
   entityType: "company",
   sourceUrl: "https://www.gov.br/receitafederal/",

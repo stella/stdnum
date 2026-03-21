@@ -88,6 +88,11 @@ const vat: Validator = {
   name: "Lithuanian VAT Number",
   localName: "PVM mokėtojo kodas",
   abbreviation: "PVM kodas",
+  aliases: [
+    "PVM mokėtojo kodas",
+    "PVM",
+  ] as const,
+  candidatePattern: "LT\\d{9,12}",
   country: "LT",
   entityType: "any",
   sourceUrl: "https://www.vmi.lt/",

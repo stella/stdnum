@@ -58,6 +58,12 @@ const ytunnus: Validator = {
   name: "Finnish Business ID",
   localName: "Y-tunnus",
   abbreviation: "Y-tunnus",
+  aliases: [
+    "Y-tunnus",
+    "yritystunnus",
+    "FO-nummer",
+  ] as const,
+  candidatePattern: "\\d{7}-\\d",
   country: "FI",
   entityType: "company",
   sourceUrl: 

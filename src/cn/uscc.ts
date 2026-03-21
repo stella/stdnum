@@ -89,6 +89,9 @@ const uscc: Validator = {
   name: "Unified Social Credit Code",
   localName: "统一社会信用代码",
   abbreviation: "USCC",
+  aliases: ["统一社会信用代码", "USCC"] as const,
+  candidatePattern:
+    "[0-9A-HJ-NP-RTUW-Y]{2}\\d{6}[0-9A-HJ-NP-RTUW-Y]{10}",
   country: "CN",
   entityType: "company",
   description:

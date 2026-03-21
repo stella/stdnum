@@ -88,6 +88,12 @@ const pps: Validator = {
   name: "Irish Personal ID",
   localName: "Personal Public Service Number",
   abbreviation: "PPS",
+  aliases: [
+    "PPS number",
+    "PPSN",
+    "RSI number",
+  ] as const,
+  candidatePattern: "\\d{7}[A-Z]{1,2}",
   country: "IE",
   entityType: "person",
   sourceUrl: 

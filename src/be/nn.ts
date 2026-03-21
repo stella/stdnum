@@ -101,6 +101,13 @@ const nn: Validator = {
   name: "Belgian National Number",
   localName: "Numéro national",
   abbreviation: "NN",
+  aliases: [
+    "rijksregisternummer",
+    "numéro national",
+    "NN",
+  ] as const,
+  candidatePattern:
+    "\\d{2}\\.?\\d{2}\\.?\\d{2}-?\\d{3}\\.?\\d{2}",
   country: "BE",
   entityType: "person",
   sourceUrl: "https://www.ibz.rrn.fgov.be/",

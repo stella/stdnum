@@ -64,6 +64,12 @@ const abn: Validator = {
   name: "Australian Business Number",
   localName: "Australian Business Number",
   abbreviation: "ABN",
+  aliases: [
+    "ABN",
+    "Australian Business Number",
+  ] as const,
+  candidatePattern:
+    "\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}",
   country: "AU",
   entityType: "company",
   sourceUrl: "https://abr.business.gov.au/",

@@ -55,6 +55,9 @@ const bic: Validator = {
   name: "Business Identifier Code",
   localName: "Business Identifier Code",
   abbreviation: "BIC",
+  aliases: ["BIC", "SWIFT", "BIC/SWIFT"] as const,
+  candidatePattern:
+    "[A-Z]{6}[A-Z0-9]{2}(?:[A-Z0-9]{3})?",
   entityType: "company",
   sourceUrl: "https://www.swift.com/",
   examples: ["DEUTDEFF", "DEUTDEFF500"] as const,

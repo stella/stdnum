@@ -81,6 +81,8 @@ const eid: Validator = {
   name: "Emirates ID",
   localName: "رقم الهوية",
   abbreviation: "EID",
+  aliases: ["EID", "Emirates ID", "رقم الهوية"] as const,
+  candidatePattern: "784-\\d{4}-\\d{7}-\\d",
   country: "AE",
   entityType: "person",
   lengths: [15],

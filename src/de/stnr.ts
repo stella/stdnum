@@ -222,6 +222,11 @@ const stnr: Validator = {
   name: "German Tax Number",
   localName: "Steuernummer",
   abbreviation: "StNr",
+  aliases: [
+    "Steuernummer",
+    "St.Nr.",
+  ] as const,
+  candidatePattern: "\\d{2,4}/\\d{3,4}/\\d{4,5}",
   country: "DE",
   entityType: "any",
   description:

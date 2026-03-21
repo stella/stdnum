@@ -138,6 +138,8 @@ const pesel: Validator = {
   localName:
     "Powszechny Elektroniczny System Ewidencji Ludności",
   abbreviation: "PESEL",
+  aliases: ["PESEL"] as const,
+  candidatePattern: "\\d{11}",
   country: "PL",
   entityType: "person",
   sourceUrl: 

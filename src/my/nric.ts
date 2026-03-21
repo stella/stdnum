@@ -146,6 +146,12 @@ const nric: Validator = {
   name: "Malaysian National Registration Identity Card Number",
   localName: "Nombor Kad Pengenalan",
   abbreviation: "NRIC",
+  aliases: [
+    "NRIC",
+    "MyKad",
+    "kad pengenalan",
+  ] as const,
+  candidatePattern: "\\d{6}-?\\d{2}-?\\d{4}",
   country: "MY",
   entityType: "person",
   description:

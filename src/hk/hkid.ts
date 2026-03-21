@@ -108,6 +108,9 @@ const hkid: Validator = {
   name: "Hong Kong Identity Card Number",
   localName: "Hong Kong Identity Card Number",
   abbreviation: "HKID",
+  aliases: ["HKID", "香港身份證"] as const,
+  candidatePattern:
+    "[A-Z]{1,2}\\d{6}[\\dA]",
   country: "HK",
   entityType: "person",
   lengths: [8, 9],

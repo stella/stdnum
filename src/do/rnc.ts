@@ -106,6 +106,11 @@ const rnc: Validator = {
   name: "Dominican Republic Tax ID",
   localName: "Registro Nacional del Contribuyente",
   abbreviation: "RNC",
+  aliases: [
+    "RNC",
+    "Registro Nacional del Contribuyente",
+  ] as const,
+  candidatePattern: "\\d{9}",
   country: "DO",
   entityType: "any",
   lengths: [9, 11] as const,

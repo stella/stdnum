@@ -48,6 +48,8 @@ const nid: Validator = {
   name: "Iraqi National ID",
   localName: "البطاقة الوطنية الموحدة",
   abbreviation: "NID",
+  aliases: ["NID", "البطاقة الوطنية الموحدة"] as const,
+  candidatePattern: "\\d{12}",
   country: "IQ",
   entityType: "person",
   sourceUrl: "https://mofa.gov.iq/the-civil-status-id/",

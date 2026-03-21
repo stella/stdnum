@@ -84,6 +84,8 @@ const edrpou: Validator = {
   name: "Ukrainian Company Register Number",
   localName: "ЄДРПОУ",
   abbreviation: "ЄДРПОУ",
+  aliases: ["ЄДРПОУ", "EDRPOU"] as const,
+  candidatePattern: "\\d{8}",
   country: "UA",
   entityType: "company",
   lengths: [8] as const,

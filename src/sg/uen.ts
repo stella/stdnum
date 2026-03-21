@@ -207,6 +207,12 @@ const uen: Validator = {
   name: "Singapore Unique Entity Number",
   localName: "Unique Entity Number",
   abbreviation: "UEN",
+  aliases: [
+    "UEN",
+    "Unique Entity Number",
+  ] as const,
+  candidatePattern:
+    "[\\dSTR]\\d{7}[A-Z]",
   country: "SG",
   entityType: "company",
   description:

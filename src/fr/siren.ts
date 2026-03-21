@@ -60,6 +60,8 @@ const siren: Validator = {
   localName:
     "Système d'Identification du Répertoire des Entreprises",
   abbreviation: "SIREN",
+  aliases: ["SIREN", "numéro SIREN"] as const,
+  candidatePattern: "\\d{3}\\s?\\d{3}\\s?\\d{3}",
   country: "FR",
   entityType: "company",
   sourceUrl: 

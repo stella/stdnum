@@ -74,6 +74,11 @@ const brn: Validator = {
   name: "Mauritius Business Registration Number",
   localName: "Business Registration Number",
   abbreviation: "BRN",
+  aliases: [
+    "BRN",
+    "Business Registration Number",
+  ] as const,
+  candidatePattern: "[A-Z]\\d{8}",
   country: "MU",
   entityType: "any",
   compact,

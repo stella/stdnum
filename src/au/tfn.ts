@@ -63,6 +63,11 @@ const tfn: Validator = {
   name: "Tax File Number",
   localName: "Tax File Number",
   abbreviation: "TFN",
+  aliases: [
+    "TFN",
+    "Tax File Number",
+  ] as const,
+  candidatePattern: "\\d{8,9}",
   country: "AU",
   entityType: "person",
   sourceUrl: 

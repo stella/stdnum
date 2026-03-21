@@ -47,6 +47,11 @@ const pin: Validator = {
   name: "Georgian Personal ID",
   localName: "პირადი ნომერი",
   abbreviation: "PIN",
+  aliases: [
+    "პირადი ნომერი",
+    "PIN",
+  ] as const,
+  candidatePattern: "\\d{11}",
   country: "GE",
   entityType: "any",
   lengths: [9, 11] as const,

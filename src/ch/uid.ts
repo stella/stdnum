@@ -87,6 +87,12 @@ const uid: Validator = {
   name: "Swiss Business ID",
   localName: "Unternehmens-Identifikationsnummer",
   abbreviation: "UID",
+  aliases: [
+    "Unternehmens-Identifikationsnummer",
+    "UID",
+    "IDE",
+  ] as const,
+  candidatePattern: "CHE-?\\d{3}\\.?\\d{3}\\.?\\d{3}",
   country: "CH",
   entityType: "company",
   sourceUrl: "https://www.uid.admin.ch/",

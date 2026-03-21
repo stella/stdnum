@@ -74,6 +74,9 @@ const aadhaar: Validator = {
   name: "Indian Unique Identity Number",
   localName: "Aadhaar",
   abbreviation: "Aadhaar",
+  aliases: ["Aadhaar", "आधार"] as const,
+  candidatePattern:
+    "\\d{4}\\s?\\d{4}\\s?\\d{4}",
   country: "IN",
   entityType: "person",
   lengths: [12],

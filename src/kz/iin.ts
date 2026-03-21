@@ -164,6 +164,12 @@ const iin: Validator = {
   localName:
     "Жеке сәйкестендіру нөмірі",
   abbreviation: "IIN",
+  aliases: [
+    "ИИН",
+    "IIN",
+    "индивидуальный идентификационный номер",
+  ] as const,
+  candidatePattern: "\\d{12}",
   country: "KZ",
   entityType: "person",
   lengths: [12] as const,

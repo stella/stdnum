@@ -73,6 +73,12 @@ const tin: Validator = {
   name: "Austrian Tax Identification Number",
   localName: "Abgabenkontonummer",
   abbreviation: "TIN",
+  aliases: [
+    "Steuernummer",
+    "St.Nr.",
+    "TIN",
+  ] as const,
+  candidatePattern: "\\d{2}-?\\d{3}/\\d{4}",
   country: "AT",
   entityType: "any",
   sourceUrl:

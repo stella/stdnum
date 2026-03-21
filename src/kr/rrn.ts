@@ -150,6 +150,13 @@ const rrn: Validator = {
   name: "Korean Resident Registration Number",
   localName: "주민등록번호",
   abbreviation: "RRN",
+  aliases: [
+    "RRN",
+    "주민등록번호",
+    "Resident Registration Number",
+  ] as const,
+  candidatePattern:
+    "\\d{6}[\\s-]?\\d{7}",
   country: "KR",
   entityType: "person",
   description:

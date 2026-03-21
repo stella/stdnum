@@ -88,6 +88,8 @@ const tin: Validator = {
   name: "Belize Tax Identification Number",
   localName: "Tax Identification Number",
   abbreviation: "TIN",
+  aliases: ["TIN"] as const,
+  candidatePattern: "\\d{6}",
   country: "BZ",
   entityType: "any",
   lengths: [6, 8] as const,

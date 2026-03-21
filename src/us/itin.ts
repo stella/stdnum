@@ -98,6 +98,11 @@ const itin: Validator = {
   localName:
     "Individual Taxpayer Identification Number",
   abbreviation: "ITIN",
+  aliases: [
+    "ITIN",
+    "Individual Taxpayer Identification Number",
+  ] as const,
+  candidatePattern: "9\\d{2}[\\s-]?\\d{2}[\\s-]?\\d{4}",
   country: "US",
   entityType: "person",
   sourceUrl:

@@ -103,6 +103,8 @@ const mst: Validator = {
   name: "Vietnamese Tax Number",
   localName: "Mã số thuế",
   abbreviation: "MST",
+  aliases: ["MST", "mã số thuế"] as const,
+  candidatePattern: "\\d{10}(-\\d{3})?",
   country: "VN",
   entityType: "company",
   description:

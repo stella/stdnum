@@ -112,6 +112,12 @@ const cuit: Validator = {
   localName:
     "Clave Única de Identificación Tributaria",
   abbreviation: "CUIT",
+  aliases: [
+    "CUIT",
+    "CUIL",
+    "Clave Única de Identificación Tributaria",
+  ] as const,
+  candidatePattern: "\\d{2}-?\\d{8}-?\\d",
   country: "AR",
   entityType: "any",
   compact,

@@ -176,6 +176,14 @@ const nir: Validator = {
   localName:
     "Numero d'Inscription au Repertoire",
   abbreviation: "NIR",
+  aliases: [
+    "NIR",
+    "numéro de sécurité sociale",
+    "numéro SS",
+    "sécu",
+  ] as const,
+  candidatePattern:
+    "[12]\\s?\\d{2}\\s?\\d{2}\\s?\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{2}",
   country: "FR",
   entityType: "person",
   description:

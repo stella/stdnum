@@ -83,6 +83,11 @@ const tin: Validator = {
   name: "Ghanaian Tax Identification Number",
   localName: "Tax Identification Number",
   abbreviation: "TIN",
+  aliases: [
+    "TIN",
+    "Tax Identification Number",
+  ] as const,
+  candidatePattern: "[A-Z]\\d{9,10}",
   country: "GH",
   entityType: "any",
   compact,

@@ -81,6 +81,11 @@ const vkn: Validator = {
   name: "Turkish Tax ID",
   localName: "Vergi Kimlik Numarası",
   abbreviation: "VKN",
+  aliases: [
+    "VKN",
+    "Vergi Kimlik Numarası",
+  ] as const,
+  candidatePattern: "\\d{10}",
   country: "TR",
   entityType: "company",
   sourceUrl: "https://www.gib.gov.tr/",

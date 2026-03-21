@@ -75,6 +75,12 @@ const vat: Validator = {
   name: "Greek VAT Number",
   localName: "Αριθμός Φορολογικού Μητρώου",
   abbreviation: "ΑΦΜ",
+  aliases: [
+    "ΑΦΜ",
+    "Αριθμός Φορολογικού Μητρώου",
+    "AFM",
+  ] as const,
+  candidatePattern: "EL\\d{9}",
   country: "GR",
   entityType: "any",
   sourceUrl: "https://www.aade.gr/",
