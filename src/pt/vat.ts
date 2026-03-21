@@ -67,6 +67,7 @@ const vat: Validator = {
   abbreviation: "NIF",
   country: "PT",
   entityType: "any",
+  sourceUrl: "https://www.portaldasfinancas.gov.pt/",
   examples: ["501964843"] as const,
   compact,
   format,

@@ -79,6 +79,7 @@ const isin: Validator = {
     "International Securities Identification Number",
   abbreviation: "ISIN",
   entityType: "any",
+  sourceUrl: "https://www.isin.org/",
   examples: ["US0378331005", "GB0002634946"] as const,
   compact,
   format,

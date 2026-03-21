@@ -8,6 +8,8 @@
  * Special cases:
  *   - EL → Greece (gr.vat)
  *   - XI → Northern Ireland (gb.vat)
+ *
+ * @see https://ec.europa.eu/taxation_customs/vies/
  */
 
 import { clean } from "#util/clean";
@@ -156,6 +158,8 @@ const euVat: Validator = {
   localName: "EU VAT Number",
   abbreviation: "EU VAT",
   entityType: "company",
+  sourceUrl: 
+    "https://ec.europa.eu/taxation_customs/vies/",
   examples: [
     "ATU13585627",
     "DE136695976",

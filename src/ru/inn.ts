@@ -7,6 +7,7 @@
  * computed as weighted sum mod 11 mod 10.
  *
  * @see https://en.wikipedia.org/wiki/Taxpayer_Identification_Number_(Russia)
+ * @see https://www.nalog.gov.ru/
  */
 
 import { clean } from "#util/clean";
@@ -87,6 +88,7 @@ const inn: Validator = {
   country: "RU",
   entityType: "any",
   lengths: [10, 12] as const,
+  sourceUrl: "https://www.nalog.gov.ru/",
   examples: ["7707083893", "526317984689"] as const,
   compact,
   format,

@@ -75,6 +75,7 @@ const uid: Validator = {
   abbreviation: "UID",
   country: "CH",
   entityType: "company",
+  sourceUrl: "https://www.uid.admin.ch/",
   examples: ["CHE100155212"] as const,
   compact,
   format,

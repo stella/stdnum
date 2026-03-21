@@ -59,6 +59,8 @@ const vat: Validator = {
   abbreviation: "ALV nro",
   country: "FI",
   entityType: "company",
+  sourceUrl: 
+    "https://www.ytj.fi/en/index/businessid.html",
   examples: ["20774740"] as const,
   compact,
   format,

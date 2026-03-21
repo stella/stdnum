@@ -70,6 +70,7 @@ const idno: Validator = {
   country: "MD",
   entityType: "company",
   lengths: [13] as const,
+  sourceUrl: "https://www.idno.md/",
   examples: ["1008600038413"] as const,
   compact,
   format,

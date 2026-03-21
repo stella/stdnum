@@ -86,6 +86,7 @@ const vat: Validator = {
   abbreviation: "PVM kodas",
   country: "LT",
   entityType: "any",
+  sourceUrl: "https://www.vmi.lt/",
   examples: ["119511515", "100001919017"] as const,
   compact,
   format,

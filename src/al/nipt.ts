@@ -55,6 +55,7 @@ const nipt: Validator = {
   abbreviation: "NIPT",
   country: "AL",
   entityType: "any",
+  sourceUrl: "https://www.tatime.gov.al/",
   examples: ["J91402501L", "K22218003V"] as const,
   compact,
   format,

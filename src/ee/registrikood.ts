@@ -58,6 +58,7 @@ const registrikood: Validator = {
   abbreviation: "Registrikood",
   country: "EE",
   entityType: "company",
+  sourceUrl: "https://www.rik.ee/",
   examples: ["12345678"] as const,
   compact,
   format,

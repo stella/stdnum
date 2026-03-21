@@ -58,6 +58,8 @@ const dni: Validator = {
   abbreviation: "DNI",
   country: "ES",
   entityType: "person",
+  sourceUrl: 
+    "https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/dni/",
   examples: ["54362315K"] as const,
   compact,
   format,

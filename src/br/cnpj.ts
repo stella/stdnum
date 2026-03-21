@@ -124,6 +124,7 @@ const cnpj: Validator = {
   abbreviation: "CNPJ",
   country: "BR",
   entityType: "company",
+  sourceUrl: "https://www.gov.br/receitafederal/",
   examples: ["33000167000101", "00000000000191"] as const,
   compact,
   format,

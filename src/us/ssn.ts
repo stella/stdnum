@@ -85,6 +85,8 @@ const ssn: Validator = {
   abbreviation: "SSN",
   country: "US",
   entityType: "person",
+  sourceUrl: 
+    "https://www.ssa.gov/employer/verifySSN.htm",
   examples: ["536904399"] as const,
   compact,
   format,

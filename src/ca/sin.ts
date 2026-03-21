@@ -60,6 +60,8 @@ const sin: Validator = {
   abbreviation: "SIN",
   country: "CA",
   entityType: "person",
+  sourceUrl: 
+    "https://www.canada.ca/en/employment-social-development/services/sin.html",
   examples: ["123456782"] as const,
   compact,
   format,

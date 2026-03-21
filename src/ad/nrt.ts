@@ -83,6 +83,8 @@ const nrt: Validator = {
   abbreviation: "NRT",
   country: "AD",
   entityType: "any",
+  sourceUrl: 
+    "https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Andorra-TIN.pdf",
   examples: ["U132950X", "D059888N", "F123456M"] as const,
   compact,
   format,

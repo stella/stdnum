@@ -7,6 +7,7 @@
  * number, gender, and a check digit.
  *
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/poland-tin.pdf
+ * @see https://www.gov.pl/web/cyfryzacja/numer-pesel
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -124,6 +125,8 @@ const pesel: Validator = {
   abbreviation: "PESEL",
   country: "PL",
   entityType: "person",
+  sourceUrl: 
+    "https://www.gov.pl/web/cyfryzacja/numer-pesel",
   examples: ["02070803628"] as const,
   compact,
   format,

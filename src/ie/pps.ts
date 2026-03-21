@@ -79,6 +79,8 @@ const pps: Validator = {
   abbreviation: "PPS",
   country: "IE",
   entityType: "person",
+  sourceUrl: 
+    "https://www.gov.ie/en/service/12e6de-get-a-personal-public-service-pps-number/",
   examples: ["6433435F"] as const,
   compact,
   format,

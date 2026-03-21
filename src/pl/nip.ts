@@ -79,6 +79,8 @@ const nip: Validator = {
   abbreviation: "NIP",
   country: "PL",
   entityType: "company",
+  sourceUrl: 
+    "https://www.biznes.gov.pl/en/portal/004124",
   examples: ["2234567895"] as const,
   compact,
   format,

@@ -5,6 +5,7 @@
  * The numeric part is validated as a UID.
  *
  * @see https://www.ch.ch/en/value-added-tax-number-und-business-identification-number/
+ * @see https://www.estv.admin.ch/
  */
 
 import { clean } from "#util/clean";
@@ -63,6 +64,7 @@ const vat: Validator = {
   abbreviation: "MWST",
   country: "CH",
   entityType: "company",
+  sourceUrl: "https://www.estv.admin.ch/",
   examples: ["CHE107787577IVA"] as const,
   compact,
   format,

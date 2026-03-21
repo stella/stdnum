@@ -50,6 +50,7 @@ const businessid: Validator = {
   abbreviation: "FN",
   country: "AT",
   entityType: "company",
+  sourceUrl: "https://www.justiz.gv.at/",
   examples: ["122119m"] as const,
   compact,
   format,

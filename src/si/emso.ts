@@ -6,6 +6,7 @@
  * serial number, and a check digit.
  *
  * @see https://en.wikipedia.org/wiki/Unique_Master_Citizen_Number
+ * @see https://www.gov.si/
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -121,6 +122,7 @@ const emso: Validator = {
   abbreviation: "EMŠO",
   country: "SI",
   entityType: "person",
+  sourceUrl: "https://www.gov.si/",
   examples: ["0101006500006"] as const,
   compact,
   format,

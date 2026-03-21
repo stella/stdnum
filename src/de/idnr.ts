@@ -91,6 +91,8 @@ const idnr: Validator = {
   abbreviation: "IdNr",
   country: "DE",
   entityType: "person",
+  sourceUrl: 
+    "https://www.bzst.de/DE/Privatpersonen/SteuerlicheIdentifikationsnummer/steuerlicheidentifikationsnummer_node.html",
   examples: ["36574261809"] as const,
   compact,
   format,

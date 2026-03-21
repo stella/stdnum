@@ -76,6 +76,7 @@ const cif: Validator = {
   abbreviation: "CIF",
   country: "ES",
   entityType: "company",
+  sourceUrl: "https://www.agenciatributaria.es/",
   examples: ["A13585625"] as const,
   compact,
   format,

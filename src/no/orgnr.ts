@@ -56,6 +56,7 @@ const orgnr: Validator = {
   abbreviation: "Orgnr",
   country: "NO",
   entityType: "company",
+  sourceUrl: "https://www.brreg.no/",
   examples: ["923609016"] as const,
   compact,
   format,

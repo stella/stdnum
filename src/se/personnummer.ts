@@ -140,6 +140,8 @@ const personnummer: Validator = {
   abbreviation: "PN",
   country: "SE",
   entityType: "person",
+  sourceUrl: 
+    "https://www.skatteverket.se/privat/folkbokforing/personnummer.4.3810a01c150939e893f18c29.html",
   examples: ["880320-0016"] as const,
   compact,
   format,

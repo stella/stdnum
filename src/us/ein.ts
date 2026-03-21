@@ -146,6 +146,8 @@ const ein: Validator = {
   abbreviation: "EIN",
   country: "US",
   entityType: "company",
+  sourceUrl: 
+    "https://www.irs.gov/businesses/small-businesses-self-employed/how-eins-are-assigned-and-valid-ein-prefixes",
   examples: ["042103594"] as const,
   compact,
   format,

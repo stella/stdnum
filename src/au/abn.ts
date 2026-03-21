@@ -62,6 +62,7 @@ const abn: Validator = {
   abbreviation: "ABN",
   country: "AU",
   entityType: "company",
+  sourceUrl: "https://abr.business.gov.au/",
   examples: ["83914571673", "51824753556"] as const,
   compact,
   format,

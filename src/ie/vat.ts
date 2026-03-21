@@ -110,6 +110,7 @@ const vat: Validator = {
   abbreviation: "VAT",
   country: "IE",
   entityType: "any",
+  sourceUrl: "https://www.revenue.ie/",
   examples: ["6433435F", "8D79739I"] as const,
   compact,
   format,

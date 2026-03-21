@@ -5,6 +5,8 @@
  * (ISO/IEC 7812-1). Supports Visa, Mastercard,
  * Amex, Discover, and other networks (13-19
  * digits).
+ *
+ * @see https://www.iso.org/standard/70484.html
  */
 
 import {
@@ -166,6 +168,7 @@ const creditCard: Validator = {
   localName: "Credit Card Number",
   abbreviation: "CC",
   entityType: "any",
+  sourceUrl: "https://www.iso.org/standard/70484.html",
   examples: [
     "4111111111111111",
     "5500000000000004",

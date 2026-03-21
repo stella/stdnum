@@ -42,6 +42,7 @@ const vsk: Validator = {
   abbreviation: "VSK",
   country: "IS",
   entityType: "company",
+  sourceUrl: "https://www.rsk.is/",
   examples: ["00621", "123456"] as const,
   compact,
   format,

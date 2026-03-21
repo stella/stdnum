@@ -68,6 +68,7 @@ const vat: Validator = {
   abbreviation: "CVR",
   country: "DK",
   entityType: "company",
+  sourceUrl: "https://erhvervsstyrelsen.dk/",
   examples: ["13585628"] as const,
   compact,
   format,
