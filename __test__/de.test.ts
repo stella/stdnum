@@ -84,6 +84,71 @@ describe("de.idnr", () => {
   });
 });
 
+// --- StNr ----------------------------------------------
+
+describe("de.stnr", () => {
+  test("valid 10-digit regional (Baden-Württemberg)", () => {
+    const r = de.stnr.validate("2181508150");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid 11-digit regional (Bayern)", () => {
+    const r = de.stnr.validate("18181508155");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid 13-digit federal", () => {
+    const r = de.stnr.validate("2475081508152");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid with separators", () => {
+    const r = de.stnr.validate("21/815/08150");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid NRW regional (11 digits)", () => {
+    const r = de.stnr.validate("13381508159");
+    expect(r.valid).toBe(true);
+  });
+
+  test("wrong length (9 digits)", () => {
+    const r = de.stnr.validate("123456789");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("non-digit characters", () => {
+    const r = de.stnr.validate("21815A8150");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("no matching state pattern (13-digit)", () => {
+    // 13 digits; no state starts with 6
+    const r = de.stnr.validate("6123081508152");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("format adds slashes", () => {
+    const formatted = de.stnr.format("2181508150");
+    expect(formatted).toContain("/");
+  });
+
+  test("metadata", () => {
+    expect(de.stnr.abbreviation).toBe("StNr");
+    expect(de.stnr.country).toBe("DE");
+    expect(de.stnr.entityType).toBe("any");
+  });
+});
+
 // --- SVNR ----------------------------------------------
 
 describe("de.svnr", () => {
