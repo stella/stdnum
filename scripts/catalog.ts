@@ -113,6 +113,9 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   BZ: "Belize",
   LK: "Sri Lanka",
   PH: "Philippines",
+  NG: "Nigeria",
+  KW: "Kuwait",
+  BH: "Bahrain",
 };
 
 // ─── Validator entry ────────────────────────
