@@ -20,6 +20,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 /**
  * Weights for the 9-digit RNC check digit.
@@ -90,6 +91,12 @@ const format = (value: string): string => {
   return `${v.slice(0, 3)}-${v.slice(3, 10)}-${v.slice(10)}`;
 };
 
+/** Generate a random valid 9-digit RNC. */
+const generate = (): string => {
+  const payload = randomDigits(8);
+  return payload + calcRncCheckDigit(payload);
+};
+
 /**
  * Dominican Republic RNC / Cédula.
  *
@@ -107,7 +114,8 @@ const rnc: Validator = {
   format,
   validate,
   sourceUrl: "https://dgii.gov.do/",
+  generate,
 };
 
 export default rnc;
-export { compact, format, validate };
+export { compact, format, validate, generate };

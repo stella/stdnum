@@ -17,6 +17,7 @@ import { clean } from "#util/clean";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 /** Weights for check digit computation (positions 0-7). */
 const WEIGHTS = [4, 1, 8, 6, 2, 7, 5, 3] as const;
@@ -88,6 +89,18 @@ const format = (value: string): string => {
   return `${v.slice(0, 3)} ${v.slice(3, 6)} ${v.slice(6, 10)}`;
 };
 
+/** Generate a random valid VOEN. */
+const generate = (): string => {
+  for (let i = 0; i < 100; i++) {
+    const payload = randomDigits(8);
+    const check = calcCheckDigit(payload);
+    if (check === null) continue;
+    const status = Math.random() < 0.5 ? "1" : "2";
+    return payload + check + status;
+  }
+  throw new Error("Failed to generate valid VOEN");
+};
+
 /**
  * Azerbaijani tax identification number (VÖEN).
  *
@@ -106,7 +119,8 @@ const voen: Validator = {
   format,
   validate,
   sourceUrl: "https://www.taxes.gov.az/",
+  generate,
 };
 
 export default voen;
-export { compact, format, validate };
+export { compact, format, validate, generate };

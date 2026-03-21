@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/");
@@ -58,6 +59,14 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `AT${compact(value)}`;
 
+/** Generate a random valid Austrian UID. */
+const generate = (): string => {
+  const payload = randomDigits(7);
+  const cs = luhnChecksum(payload);
+  const check = (((6 - cs) % 10) + 10) % 10;
+  return "U" + payload + String(check);
+};
+
 /** Austrian VAT Identification Number. */
 const uid: Validator = {
   name: "Austrian VAT Number",
@@ -70,7 +79,8 @@ const uid: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default uid;
-export { compact, format, validate };
+export { compact, format, validate, generate };

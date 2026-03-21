@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [
   10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19,
@@ -55,6 +56,9 @@ const format = (value: string): string => {
   return v;
 };
 
+/** Generate a random valid ABN. */
+const generate = (): string => { for (;;) { const c = randomDigits(11); if (validate(c).valid) return c; } };
+
 /** Australian Business Number. */
 const abn: Validator = {
   name: "Australian Business Number",
@@ -67,7 +71,8 @@ const abn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default abn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

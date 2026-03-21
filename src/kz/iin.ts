@@ -25,6 +25,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS_1 = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
@@ -137,6 +138,22 @@ const parse = (
   };
 };
 
+/** Generate a random valid Kazakhstan IIN. */
+const generate = (): string => {
+  for (;;) {
+    const yy = String(randomInt(50, 99)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const gender = String(randomInt(1, 6));
+    const serial = randomDigits(4);
+    const payload = yy + mm + dd + gender + serial;
+    const check = calcCheckDigit(payload);
+    if (check === null) continue;
+    const c = payload + String(check);
+    if (validate(c).valid) return c;
+  }
+};
+
 /**
  * Kazakhstan Individual Identification Number (IIN).
  *
@@ -158,7 +175,8 @@ const iin: Validator = {
     "https://www.oecd.org/tax/automatic-exchange/"
     + "crs-implementation-and-assistance/"
     + "tax-identification-numbers/Kazakhstan-TIN.pdf",
+  generate,
 };
 
 export default iin;
-export { compact, format, parse, validate };
+export { compact, format, parse, validate, generate };

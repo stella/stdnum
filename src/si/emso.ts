@@ -20,6 +20,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
+import { randomInt } from "#util/generate";
 
 const WEIGHTS = [
   7, 6, 5, 4, 3, 2, 7, 6, 5, 4, 3, 2,
@@ -115,6 +116,20 @@ const parse = (
   };
 };
 
+/** Generate a random valid Slovenian EMSO. */
+const generate = (): string => {
+  for (;;) {
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const yyy = String(randomInt(900, 999));
+    const rr = String(randomInt(50, 99));
+    const sss = String(randomInt(0, 999)).padStart(3, "0");
+    const partial = dd + mm + yyy + rr + sss;
+    const c = partial + String(calcCheckDigit(partial));
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Slovenian Unique Master Citizen Number. */
 const emso: Validator = {
   name: "Slovenian Personal ID",
@@ -127,7 +142,8 @@ const emso: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default emso;
-export { compact, format, parse, validate };
+export { compact, format, parse, validate, generate };

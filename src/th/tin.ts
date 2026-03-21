@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -67,6 +68,15 @@ const format = (value: string): string => {
   );
 };
 
+/** Generate a random valid Thai TIN. */
+const generate = (): string => {
+  const first = String(randomInt(1, 8));
+  const payload = first + randomDigits(11);
+  let sum = 0;
+  for (let i = 0; i < 12; i++) sum += (13 - i) * Number(payload[i]);
+  return payload + String((11 - (sum % 11)) % 10);
+};
+
 /** Thai Tax Identification Number. */
 const tin: Validator = {
   name: "Thai Tax Identification Number",
@@ -85,7 +95,8 @@ const tin: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default tin;
-export { compact, format, validate };
+export { compact, format, validate, generate };

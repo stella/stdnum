@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [9, 7, 3, 1, 9, 7, 3, 1];
 
@@ -52,6 +53,9 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `HU${compact(value)}`;
 
+/** Generate a random valid Hungarian VAT number. */
+const generate = (): string => { for (;;) { const c = randomDigits(8); if (validate(c).valid) return c; } };
+
 /** Hungarian VAT Number. */
 const vat: Validator = {
   name: "Hungarian VAT Number",
@@ -64,7 +68,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, validate, generate };

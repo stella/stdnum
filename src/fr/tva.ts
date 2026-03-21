@@ -10,12 +10,13 @@
  * @see https://www.economie.gouv.fr/
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const ALPHABET = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
@@ -106,6 +107,15 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `FR${compact(value)}`;
 
+/** Generate a random valid French TVA. */
+const generate = (): string => {
+  const sp = randomDigits(8);
+  const cs = luhnChecksum(sp + "0");
+  const siren = sp + String((10 - cs) % 10);
+  const prefix = String((12 + 3 * (Number(siren) % 97)) % 97).padStart(2, "0");
+  return prefix + siren;
+};
+
 /** French VAT Number. */
 const tva: Validator = {
   name: "French VAT Number",
@@ -118,7 +128,8 @@ const tva: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default tva;
-export { compact, format, validate };
+export { compact, format, validate, generate };

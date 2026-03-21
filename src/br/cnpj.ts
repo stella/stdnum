@@ -23,6 +23,7 @@ import { clean } from "#util/clean";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const CNPJ_RE = /^[\dA-Z]+$/;
 
@@ -110,6 +111,15 @@ const format = (value: string): string => {
   return `${v.slice(0, 2)}.${v.slice(2, 5)}.${v.slice(5, 8)}/${v.slice(8, 12)}-${v.slice(12)}`;
 };
 
+/** Generate a random valid CNPJ. */
+const generate = (): string => {
+  for (;;) {
+    const base = randomDigits(12);
+    if (base === "000000000000") continue;
+    return base + calcCheckDigits(base);
+  }
+};
+
 /**
  * Brazilian CNPJ (company tax ID).
  *
@@ -129,7 +139,8 @@ const cnpj: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default cnpj;
-export { compact, format, validate };
+export { compact, format, validate, generate };

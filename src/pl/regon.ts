@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS_9 = [8, 9, 2, 3, 4, 5, 6, 7] as const;
 const WEIGHTS_14 = [
@@ -68,6 +69,9 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid 9-digit Polish REGON. */
+const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+
 /** Polish Statistical Identification Number. */
 const regon: Validator = {
   name: "Polish Business Register Number",
@@ -80,7 +84,8 @@ const regon: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default regon;
-export { compact, format, validate };
+export { compact, format, validate, generate };

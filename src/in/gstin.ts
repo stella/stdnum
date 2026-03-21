@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { charValue } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const GSTIN_RE =
   /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]Z[0-9A-Z]$/;
@@ -90,6 +91,26 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid GSTIN. */
+const generate = (): string => {
+  for (;;) {
+    const state = String(randomInt(1, 37)).padStart(2, "0");
+    let pan = "";
+    for (let i = 0; i < 5; i++) pan += String.fromCharCode(65 + randomInt(0, 25));
+    pan += randomDigits(4) + String.fromCharCode(65 + randomInt(0, 25));
+    const entity = String(randomInt(1, 9));
+    const partial = state + pan + entity + "Z";
+    for (let d = 0; d <= 9; d++) {
+      const c = partial + String(d);
+      if (validate(c).valid) return c;
+    }
+    for (let c = 65; c <= 90; c++) {
+      const cand = partial + String.fromCharCode(c);
+      if (validate(cand).valid) return cand;
+    }
+  }
+};
+
 /** Indian Goods and Services Tax ID. */
 const gstin: Validator = {
   name: "Indian Goods and Services Tax ID",
@@ -107,7 +128,8 @@ const gstin: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default gstin;
-export { compact, format, validate };
+export { compact, format, validate, generate };

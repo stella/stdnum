@@ -19,6 +19,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
+import { randomInt } from "#util/generate";
 
 const WEIGHTS_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1] as const;
 const WEIGHTS_2 = [3, 4, 5, 6, 7, 8, 9, 1, 2, 3] as const;
@@ -121,6 +122,20 @@ const parse = (
   };
 };
 
+/** Generate a random valid Estonian IK. */
+const generate = (): string => {
+  for (;;) {
+    const g = String(randomInt(3, 6));
+    const yy = String(randomInt(0, 99)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const s = String(randomInt(0, 999)).padStart(3, "0");
+    const payload = g + yy + mm + dd + s;
+    const c = payload + String(twoPassCheck(payload));
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Estonian Personal Identification Code. */
 const ik: Validator = {
   name: "Estonian Personal ID",
@@ -134,7 +149,8 @@ const ik: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default ik;
-export { compact, format, parse, validate };
+export { compact, format, parse, validate, generate };

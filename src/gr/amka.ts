@@ -8,13 +8,14 @@
  * @see https://www.amka.gr/
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -61,6 +62,20 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Greek AMKA. */
+const generate = (): string => {
+  for (;;) {
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const yy = String(randomInt(50, 99)).padStart(2, "0");
+    const serial = randomDigits(4);
+    const payload = dd + mm + yy + serial;
+    const cs = luhnChecksum(payload + "0");
+    const c = payload + String((10 - cs) % 10);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Greek Social Security Number. */
 const amka: Validator = {
   name: "Greek Social Security Number",
@@ -73,7 +88,8 @@ const amka: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default amka;
-export { compact, format, validate };
+export { compact, format, validate, generate };

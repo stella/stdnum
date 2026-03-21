@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomInt } from "#util/generate";
 
 /**
  * Allowed characters in a SEDOL: digits and
@@ -97,6 +98,16 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   compact(value);
 
+/** Generate a random valid SEDOL. */
+const generate = (): string => {
+  const consonants = "BCDFGHJKLMNPQRSTVWXYZ";
+  const chars = "0123456789BCDFGHJKLMNPQRSTVWXYZ";
+  const first = consonants[randomInt(0, consonants.length - 1)]!;
+  let payload = first;
+  for (let i = 1; i < 6; i++) payload += chars[randomInt(0, chars.length - 1)]!;
+  return payload + calcCheckDigit(payload);
+};
+
 /** Stock Exchange Daily Official List number. */
 const sedol: Validator = {
   name: "Stock Exchange Daily Official List number",
@@ -111,7 +122,8 @@ const sedol: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default sedol;
-export { calcCheckDigit, compact, format, validate };
+export { calcCheckDigit, compact, format, validate, generate };

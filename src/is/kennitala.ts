@@ -17,6 +17,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomInt } from "#util/generate";
 
 const WEIGHTS = [3, 2, 7, 6, 5, 4, 3, 2, 0, 0] as const;
 
@@ -88,6 +89,21 @@ const format = (value: string): string => {
   return `${v.slice(0, 6)}-${v.slice(6)}`;
 };
 
+/** Generate a random valid Icelandic kennitala. */
+const generate = (): string => {
+  for (;;) {
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const yy = String(randomInt(50, 99)).padStart(2, "0");
+    const rr = String(randomInt(20, 99)).padStart(2, "0");
+    const partial = dd + mm + yy + rr;
+    for (let d = 0; d <= 9; d++) {
+      const c = partial + String(d) + "9";
+      if (validate(c).valid) return c;
+    }
+  }
+};
+
 /** Icelandic Identification Number. */
 const kennitala: Validator = {
   name: "Icelandic ID Number",
@@ -100,7 +116,8 @@ const kennitala: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default kennitala;
-export { compact, format, validate };
+export { compact, format, validate, generate };

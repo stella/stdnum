@@ -24,6 +24,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -./");
@@ -69,6 +70,12 @@ const validate = (value: string): ValidateResult => {
 /** TR IDs are displayed without separators. */
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Turkish VKN. */
+const generate = (): string => {
+  const payload = randomDigits(9);
+  return payload + calcCheckDigit(payload);
+};
+
 /** Turkish Tax Identification Number. */
 const vkn: Validator = {
   name: "Turkish Tax ID",
@@ -81,7 +88,8 @@ const vkn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vkn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

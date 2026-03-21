@@ -15,6 +15,7 @@ import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 import { cifChecksum } from "./vat";
+import { randomDigits, randomInt } from "#util/generate";
 
 const CIF_PREFIXES = "ABCDEFGHJNPQRSUVW";
 const CIF_LETTERS = "JABCDEFGHI";
@@ -69,6 +70,15 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Spanish CIF. */
+const generate = (): string => {
+  const letter = CIF_PREFIXES[randomInt(0, CIF_PREFIXES.length - 1)]!;
+  const payload = randomDigits(7);
+  const check = cifChecksum(payload);
+  if ("KPQS".includes(letter)) return letter + payload + CIF_LETTERS[check];
+  return letter + payload + String(check);
+};
+
 /** Spanish Company Tax ID (CIF). */
 const cif: Validator = {
   name: "Spanish Company Tax ID",
@@ -81,7 +91,8 @@ const cif: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default cif;
-export { compact, format, validate };
+export { compact, format, validate, generate };

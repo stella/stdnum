@@ -7,12 +7,13 @@
  * @see https://www.agenziaentrate.gov.it/
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const VALID_PROVINCES = new Set([
   ...Array.from({ length: 100 }, (_, i) =>
@@ -73,6 +74,15 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `IT${compact(value)}`;
 
+/** Generate a random valid Italian Partita IVA. */
+const generate = (): string => {
+  const company = randomDigits(7);
+  const province = String(randomInt(1, 100)).padStart(3, "0");
+  const payload = company + province;
+  const cs = luhnChecksum(payload + "0");
+  return payload + String((10 - cs) % 10);
+};
+
 /** Italian VAT Number. */
 const iva: Validator = {
   name: "Italian VAT Number",
@@ -85,7 +95,8 @@ const iva: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default iva;
-export { compact, format, validate };
+export { compact, format, validate, generate };

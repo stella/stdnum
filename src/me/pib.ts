@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [8, 7, 6, 5, 4, 3, 2] as const;
 
@@ -49,6 +50,13 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Montenegrin PIB. */
+const generate = (): string => {
+  const payload = randomDigits(7);
+  const total = weightedSum(payload, WEIGHTS, 11);
+  return payload + String(((11 - total) % 11) % 10);
+};
+
 /** Montenegrin Tax Identification Number. */
 const pib: Validator = {
   name: "Montenegrin Tax ID",
@@ -62,7 +70,8 @@ const pib: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default pib;
-export { compact, format, validate };
+export { compact, format, validate, generate };

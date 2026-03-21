@@ -21,6 +21,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3] as const;
 
@@ -117,6 +118,20 @@ const parse = (
   };
 };
 
+/** Generate a random valid Polish PESEL. */
+const generate = (): string => {
+  for (;;) {
+    const yy = String(randomInt(0, 99)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const serial = randomDigits(4);
+    const payload = yy + mm + dd + serial;
+    const sum = weightedSum(payload, WEIGHTS, 10);
+    const c = payload + String((10 - sum) % 10);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Polish National Identification Number. */
 const pesel: Validator = {
   name: "Polish National ID",
@@ -131,7 +146,8 @@ const pesel: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default pesel;
-export { compact, format, parse, validate };
+export { compact, format, parse, validate, generate };

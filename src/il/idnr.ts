@@ -7,12 +7,13 @@
  * @see https://en.wikipedia.org/wiki/Israeli_identity_card
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -").padStart(9, "0");
@@ -46,6 +47,13 @@ const format = (value: string): string => {
   return `${v.slice(0, -1)}-${v.slice(-1)}`;
 };
 
+/** Generate a random valid Israeli ID number. */
+const generate = (): string => {
+  const payload = randomDigits(8);
+  const cs = luhnChecksum(payload + "0");
+  return payload + String((10 - cs) % 10);
+};
+
 /** Israeli Identity Number (Mispar Zehut). */
 const idnr: Validator = {
   name: "Israeli Identity Number",
@@ -63,7 +71,8 @@ const idnr: Validator = {
     "https://en.wikipedia.org/wiki/Israeli_identity_card",
   lengths: [9] as const,
   examples: ["039337423", "000000018"] as const,
+  generate,
 };
 
 export default idnr;
-export { compact, format, validate };
+export { compact, format, validate, generate };

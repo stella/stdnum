@@ -13,6 +13,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -68,6 +69,18 @@ const format = (value: string): string => {
   return `BE${v}`;
 };
 
+/** Generate a random valid Belgian VAT number. */
+const generate = (): string => {
+  for (;;) {
+    const prefix = Math.random() < 0.5 ? "0" : "1";
+    const front = prefix + randomDigits(7);
+    const rem = Number.parseInt(front, 10) % 97;
+    const check = rem === 0 ? 97 : 97 - rem;
+    const c = front + String(check).padStart(2, "0");
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Belgian VAT Number. */
 const vat: Validator = {
   name: "Belgian VAT Number",
@@ -80,7 +93,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, validate, generate };

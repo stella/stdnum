@@ -18,6 +18,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.").trim();
@@ -83,6 +84,15 @@ const format = (value: string): string => {
   return `${v.slice(0, 3)}.${v.slice(3, 6)}.${v.slice(6, 9)}-${v.slice(9)}`;
 };
 
+/** Generate a random valid CPF. */
+const generate = (): string => {
+  for (;;) {
+    const base = randomDigits(9);
+    if (/^(\d)\1{8}$/.test(base)) continue;
+    return base + calcCheckDigits(base);
+  }
+};
+
 /** Brazilian CPF (personal tax ID). */
 const cpf: Validator = {
   name: "Brazilian CPF",
@@ -95,7 +105,8 @@ const cpf: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default cpf;
-export { compact, format, validate };
+export { compact, format, validate, generate };

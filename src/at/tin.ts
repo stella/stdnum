@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 /** Luhn-variant doubling table: position-dependent. */
 const DOUBLE = "0246813579";
@@ -61,6 +62,12 @@ const format = (value: string): string => {
   return `${v.slice(0, 2)}-${v.slice(2, 8)}/${v.slice(8)}`;
 };
 
+/** Generate a random valid Austrian TIN. */
+const generate = (): string => {
+  const payload = randomDigits(8);
+  return payload + calcCheckDigit(payload);
+};
+
 /** Austrian Tax Identification Number. */
 const tin: Validator = {
   name: "Austrian Tax Identification Number",
@@ -74,7 +81,8 @@ const tin: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default tin;
-export { compact, format, validate };
+export { compact, format, validate, generate };

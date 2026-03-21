@@ -12,6 +12,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const ODD_MAP: Record<number, number> = {
   0: 1,
@@ -89,6 +90,20 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `CY${compact(value)}`;
 
+/** Generate a random valid Cypriot VAT number. */
+const generate = (): string => {
+  for (;;) {
+    const digits = randomDigits(8);
+    if (digits.startsWith("12")) continue;
+    let odd = 0; let even = 0;
+    for (let i = 0; i < 8; i++) {
+      const d = Number(digits[i]);
+      if (i % 2 === 0) odd += ODD_MAP[d]; else even += d;
+    }
+    return digits + LETTERS[(odd + even) % 26];
+  }
+};
+
 /** Cypriot VAT Number. */
 const vat: Validator = {
   name: "Cypriot VAT Number",
@@ -101,7 +116,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, validate, generate };

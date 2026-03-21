@@ -13,7 +13,7 @@
  * @see https://en.wikipedia.org/wiki/South_African_identity_document
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { err } from "#util/result";
@@ -24,6 +24,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " ");
@@ -114,6 +115,21 @@ const parse = (
   };
 };
 
+/** Generate a random valid South African ID. */
+const generate = (): string => {
+  for (;;) {
+    const yy = String(randomInt(50, 99)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const serial = randomDigits(4);
+    const citizen = String(randomInt(0, 1));
+    const payload = yy + mm + dd + serial + citizen + "8";
+    const cs = luhnChecksum(payload + "0");
+    const c = payload + String((10 - cs) % 10);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** South African Identity Number. */
 const idnr: Validator = {
   name: "South African Identity Number",
@@ -134,7 +150,8 @@ const idnr: Validator = {
     "7503305044089",
     "8001015009087",
   ] as const,
+  generate,
 };
 
 export default idnr;
-export { compact, format, parse, validate };
+export { compact, format, parse, validate, generate };

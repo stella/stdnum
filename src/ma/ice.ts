@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " ");
@@ -45,6 +46,9 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   compact(value);
 
+/** Generate a random valid Moroccan ICE. */
+const generate = (): string => { for (;;) { const c = randomDigits(15); if (validate(c).valid) return c; } };
+
 /** Moroccan Company Identification Number. */
 const ice: Validator = {
   name: "Moroccan Company Identification Number",
@@ -63,7 +67,8 @@ const ice: Validator = {
     "001561191000066",
     "002136093000040",
   ] as const,
+  generate,
 };
 
 export default ice;
-export { compact, format, validate };
+export { compact, format, validate, generate };

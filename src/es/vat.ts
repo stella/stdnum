@@ -13,6 +13,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const DNI_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE";
 const CIF_LETTERS = "JABCDEFGHI";
@@ -142,6 +143,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `ES${compact(value)}`;
 
+/** Generate a random valid Spanish VAT (DNI form). */
+const generate = (): string => {
+  const letters = "TRWAGMYFPDXBNJZSQVHLCKE";
+  const num = randomDigits(8);
+  return num + letters[Number(num) % 23];
+};
+
 /** Spanish VAT Number. */
 const vat: Validator = {
   name: "Spanish VAT Number",
@@ -154,7 +162,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { cifChecksum, compact, format, validate };
+export { cifChecksum, compact, format, validate, generate };

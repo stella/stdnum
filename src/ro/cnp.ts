@@ -20,6 +20,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [
   2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9,
@@ -128,6 +129,22 @@ const parse = (
   };
 };
 
+/** Generate a random valid Romanian CNP. */
+const generate = (): string => {
+  for (;;) {
+    const g = String(randomInt(1, 6));
+    const yy = String(randomInt(0, 99)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const county = String(randomInt(1, 52)).padStart(2, "0");
+    const serial = String(randomInt(1, 999)).padStart(3, "0");
+    const payload = g + yy + mm + dd + county + serial;
+    const sum = weightedSum(payload, WEIGHTS, 11);
+    const c = payload + String(sum === 10 ? 1 : sum);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Romanian Personal Identification Number. */
 const cnp: Validator = {
   name: "Romanian Personal ID",
@@ -140,7 +157,8 @@ const cnp: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default cnp;
-export { compact, format, parse, validate };
+export { compact, format, parse, validate, generate };

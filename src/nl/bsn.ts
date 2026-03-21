@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [9, 8, 7, 6, 5, 4, 3, 2, -1] as const;
 
@@ -52,6 +53,9 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Dutch BSN. */
+const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+
 /** Dutch Citizen Service Number. */
 const bsn: Validator = {
   name: "Dutch Citizen Service Number",
@@ -65,7 +69,8 @@ const bsn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default bsn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS_10 = [2, 4, 10, 3, 5, 9, 4, 6, 8] as const;
 const WEIGHTS_11 = [
@@ -80,6 +81,9 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid 10-digit Russian INN. */
+const generate = (): string => { for (;;) { const c = randomDigits(10); if (validate(c).valid) return c; } };
+
 /** Russian Taxpayer Identification Number. */
 const inn: Validator = {
   name: "Russian Tax ID",
@@ -93,7 +97,8 @@ const inn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default inn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

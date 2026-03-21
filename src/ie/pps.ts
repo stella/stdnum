@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const ALPHABET = "WABCDEFGHIJKLMNOPQRSTUV";
 
@@ -72,6 +73,16 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Irish PPS number. */
+const generate = (): string => {
+  for (;;) {
+    for (let c = 65; c <= 90; c++) {
+      const cand = randomDigits(7) + String.fromCharCode(c);
+      if (validate(cand).valid) return compact(cand);
+    }
+  }
+};
+
 /** Irish Personal Public Service Number. */
 const pps: Validator = {
   name: "Irish Personal ID",
@@ -85,7 +96,8 @@ const pps: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default pps;
-export { compact, format, validate };
+export { compact, format, validate, generate };

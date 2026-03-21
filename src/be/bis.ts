@@ -20,6 +20,7 @@ import {
   checksum,
   format as nnFormat,
 } from "./nn";
+import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " .-");
@@ -63,6 +64,22 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   nnFormat(compact(value));
 
+/** Generate a random valid BIS number. */
+const generate = (): string => {
+  for (;;) {
+    const yy = String(randomInt(0, 99)).padStart(2, "0");
+    const offset = Math.random() < 0.5 ? 20 : 40;
+    const mm = String(randomInt(1, 12) + offset).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const serial = String(randomInt(1, 997)).padStart(3, "0");
+    const base = yy + mm + dd + serial;
+    const n2 = Number("2" + base);
+    const check2 = 97 - (n2 % 97);
+    const c = base + String(check2).padStart(2, "0");
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Belgian BIS Number. */
 const bis: Validator = {
   name: "Belgian BIS Number",
@@ -76,7 +93,8 @@ const bis: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default bis;
-export { compact, format, validate };
+export { compact, format, validate, generate };

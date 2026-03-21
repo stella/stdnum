@@ -10,13 +10,14 @@
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Indonesia-TIN.pdf
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " .-");
@@ -119,6 +120,16 @@ const format = (value: string): string => {
   );
 };
 
+/** Generate a random valid 15-digit NPWP. */
+const generate = (): string => {
+  for (;;) {
+    const p = randomDigits(8);
+    const cs = luhnChecksum(p + "0");
+    const c = p + String((10 - cs) % 10) + randomDigits(6);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Indonesian Taxpayer Identification Number. */
 const npwp: Validator = {
   name: "Indonesian Taxpayer Identification Number",
@@ -137,7 +148,8 @@ const npwp: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default npwp;
-export { compact, format, validate };
+export { compact, format, validate, generate };

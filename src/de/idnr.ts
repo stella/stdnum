@@ -10,12 +10,13 @@
  * @see https://www.bzst.de/DE/Privatpersonen/SteuerlicheIdentifikationsnummer/steuerlicheidentifikationsnummer_node.html
  */
 
-import { mod1110validate } from "#checksums/mod1110";
+import { mod1110validate, mod1110checkDigit } from "#checksums/mod1110";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -/");
@@ -84,6 +85,30 @@ const format = (value: string): string => {
   return `${v.slice(0, 2)} ${v.slice(2, 5)} ${v.slice(5, 8)} ${v.slice(8)}`;
 };
 
+/** Generate a random valid German IdNr. */
+const generate = (): string => {
+  for (;;) {
+    const repeated = randomInt(0, 9);
+    const times = Math.random() < 0.8 ? 2 : 3;
+    const pool: number[] = [];
+    for (let d = 0; d < 10; d++) {
+      const count = d === repeated ? times : 1;
+      for (let t = 0; t < count; t++) pool.push(d);
+    }
+    while (pool.length < 10) pool.push(randomInt(0, 9));
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = randomInt(0, i);
+      [pool[i], pool[j]] = [pool[j]!, pool[i]!];
+    }
+    if (pool[0] === 0) continue;
+    const payload = pool.slice(0, 10).join("");
+    if (!validDistribution(payload)) continue;
+    const check = mod1110checkDigit(payload);
+    const c = payload + String(check);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** German Personal Tax ID. */
 const idnr: Validator = {
   name: "German Tax ID",
@@ -97,7 +122,8 @@ const idnr: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default idnr;
-export { compact, format, validate };
+export { compact, format, validate, generate };

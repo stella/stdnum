@@ -8,12 +8,13 @@
  * @see https://www.canada.ca/en/services/taxes/business-number.html
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const VALID_PROGRAMS = new Set(["RC", "RM", "RP", "RT"]);
 
@@ -70,6 +71,13 @@ const format = (value: string): string => {
   return v;
 };
 
+/** Generate a random valid Canadian BN. */
+const generate = (): string => {
+  const payload = randomDigits(8);
+  const cs = luhnChecksum(payload + "0");
+  return payload + String((10 - cs) % 10);
+};
+
 /** Canadian Business Number. */
 const bn: Validator = {
   name: "Business Number",
@@ -83,7 +91,8 @@ const bn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default bn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

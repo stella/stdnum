@@ -13,6 +13,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -59,6 +60,14 @@ const format = (value: string): string => {
   return `${v.slice(0, 2)} ${v.slice(2, 4)} ${v.slice(4, 7)} ${v.slice(7, 10)} ${v.slice(10)}`;
 };
 
+/** Generate a random valid French NIF. */
+const generate = (): string => {
+  for (;;) {
+    const c = String(randomInt(0, 3)) + randomDigits(12);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** French Tax Identification Number. */
 const nif: Validator = {
   name: "French Tax ID",
@@ -71,7 +80,8 @@ const nif: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nif;
-export { compact, format, validate };
+export { compact, format, validate, generate };

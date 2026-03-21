@@ -17,6 +17,7 @@ import {
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomInt } from "#util/generate";
 
 const letterValue = (ch: string): number => {
   const code = ch.charCodeAt(0);
@@ -111,6 +112,21 @@ const format = (value: string): string => {
   );
 };
 
+/** Generate a random valid German SVNR. */
+const generate = (): string => {
+  for (;;) {
+    const area = String(randomInt(1, 99)).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const yy = String(randomInt(40, 99)).padStart(2, "0");
+    const letter = String.fromCharCode(65 + randomInt(0, 25));
+    const serial = String(randomInt(0, 49)).padStart(2, "0");
+    const partial = area + dd + mm + yy + letter + serial;
+    const c = partial + String(computeCheck(partial));
+    if (validate(c).valid) return c;
+  }
+};
+
 /** German Social Insurance Number. */
 const svnr: Validator = {
   name: "German Social Insurance Number",
@@ -129,7 +145,8 @@ const svnr: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default svnr;
-export { compact, format, validate };
+export { compact, format, validate, generate };

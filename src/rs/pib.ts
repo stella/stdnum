@@ -13,6 +13,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -52,6 +53,9 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Serbian PIB. */
+const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+
 /** Serbian Tax Identification Number. */
 const pib: Validator = {
   name: "Serbian Tax ID",
@@ -65,7 +69,8 @@ const pib: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default pib;
-export { compact, format, validate };
+export { compact, format, validate, generate };

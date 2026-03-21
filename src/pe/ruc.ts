@@ -19,6 +19,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 /**
  * Valid type prefixes for RUC numbers.
@@ -89,6 +90,14 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Peruvian RUC. */
+const generate = (): string => {
+  const prefixes = ["10", "15", "17", "20"] as const;
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]!;
+  const body = prefix + randomDigits(8);
+  return body + String(calcCheckDigit(body));
+};
+
 /**
  * Peruvian RUC (tax identification number).
  *
@@ -107,7 +116,8 @@ const ruc: Validator = {
   sourceUrl: "https://www.sunat.gob.pe/",
   lengths: [11] as const,
   examples: ["20131312955", "20100047218"] as const,
+  generate,
 };
 
 export default ruc;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -10,12 +10,13 @@
  * @see https://uidai.gov.in/
  */
 
-import { verhoeffValidate } from "#checksums/verhoeff";
+import { verhoeffValidate, verhoeffCheckDigit } from "#checksums/verhoeff";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -61,6 +62,13 @@ const format = (value: string): string => {
   return `${v.slice(0, 4)} ${v.slice(4, 8)} ${v.slice(8)}`;
 };
 
+/** Generate a random valid Aadhaar number. */
+const generate = (): string => {
+  const first = String(randomInt(2, 9));
+  const payload = first + randomDigits(10);
+  return payload + String(verhoeffCheckDigit(payload));
+};
+
 /** Indian Unique Identity Number. */
 const aadhaar: Validator = {
   name: "Indian Unique Identity Number",
@@ -76,7 +84,8 @@ const aadhaar: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default aadhaar;
-export { compact, format, validate };
+export { compact, format, validate, generate };

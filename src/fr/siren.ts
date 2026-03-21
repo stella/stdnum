@@ -8,12 +8,13 @@
  * @see https://www.insee.fr/fr/information/2549588
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.");
@@ -46,6 +47,13 @@ const format = (value: string): string => {
   return `${v.slice(0, 3)} ${v.slice(3, 6)} ${v.slice(6)}`;
 };
 
+/** Generate a random valid French SIREN. */
+const generate = (): string => {
+  const payload = randomDigits(8);
+  const cs = luhnChecksum(payload + "0");
+  return payload + String((10 - cs) % 10);
+};
+
 /** French Company Identification Number. */
 const siren: Validator = {
   name: "French Company ID",
@@ -60,7 +68,8 @@ const siren: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default siren;
-export { compact, format, validate };
+export { compact, format, validate, generate };
