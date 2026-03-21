@@ -63,7 +63,7 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => {
   const v = compact(value);
-  return `${v.slice(0, -4)} ${v.at(-4)} ${v.slice(-3)}`;
+  return `${v.slice(0, -3)} ${v.slice(-3, -1)} ${v.at(-1)}`;
 };
 
 /** Portuguese Identity Card number. */
