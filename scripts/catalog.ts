@@ -21,6 +21,7 @@ import type {
 
 const COUNTRY_NAMES: Record<CountryCode, string> = {
   AE: "United Arab Emirates",
+  AI: "Anguilla",
   AT: "Austria",
   BE: "Belgium",
   BG: "Bulgaria",
@@ -107,6 +108,7 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   PA: "Panama",
   VN: "Vietnam",
   BD: "Bangladesh",
+  BZ: "Belize",
 };
 
 // ─── Validator entry ────────────────────────
