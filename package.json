@@ -134,6 +134,7 @@
     "./me/pib": "./src/me/pib.ts",
     "./mk/edb": "./src/mk/edb.ts",
     "./mt/vat": "./src/mt/vat.ts",
+    "./mu/brn": "./src/mu/brn.ts",
     "./mx/clabe": "./src/mx/clabe.ts",
     "./mx/curp": "./src/mx/curp.ts",
     "./mx/rfc": "./src/mx/rfc.ts",
