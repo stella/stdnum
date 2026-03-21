@@ -100,6 +100,9 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   AL: "Albania",
   AM: "Armenia",
   BY: "Belarus",
+  GT: "Guatemala",
+  NI: "Nicaragua",
+  PA: "Panama",
 };
 
 // ─── Validator entry ────────────────────────
