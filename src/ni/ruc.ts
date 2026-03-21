@@ -136,8 +136,9 @@ const validate = (value: string): ValidateResult => {
 
 /**
  * Format: insert hyphens as MMM-DDMMYY-NNNNL
- * for natural persons, or J-NNNNNNNNNNNNN for
- * legal entities.
+ * for natural persons. Legal entities are returned
+ * in compact form (JNNNNNNNNNNNNN); no documented
+ * segmentation exists for the J-prefix format.
  */
 const format = (value: string): string => {
   const v = compact(value);

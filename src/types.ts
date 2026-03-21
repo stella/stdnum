@@ -59,7 +59,6 @@ export type CountryCode =
   | "MD"
   | "ME"
   | "MK"
-  | "MY"
   | "MT"
   | "MU"
   | "MX"
