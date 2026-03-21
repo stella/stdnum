@@ -24,7 +24,13 @@ const calcCheckDigit = (number: string): string => {
   for (let i = 0; i < 9; i++) {
     total += WEIGHTS[i] * Number(number[i]);
   }
-  return String(10 - (total % 11));
+  const remainder = 10 - (total % 11);
+  // When remainder is 10, the sequential part is
+  // never issued by GDT. Returning "0" keeps the
+  // function correct as a digit calculator (mod 10
+  // wrap) while still rejecting these numbers since
+  // no real MST will have this combination.
+  return String(remainder >= 10 ? remainder - 10 : remainder);
 };
 
 const compact = (value: string): string =>
