@@ -3,8 +3,8 @@
  *
  * Moroccan company identification number. 15 digits:
  * 9 enterprise digits + 4 establishment digits +
- * 2 check digits. Uses ISO 7064 Mod 97-10 checksum
- * (remainder must equal 0).
+ * 2 check digits. Uses Mod 97-10 checksum
+ * (full number mod 97 must equal 0).
  *
  * @see https://www.ice.gov.ma/
  */

@@ -4,7 +4,7 @@
  * 11-character alphanumeric identifier. Structure:
  *   - Position 1: type prefix (P/C/G/Q/V)
  *   - Positions 2-3: always "00"
- *   - Positions 4-10: alphanumeric (digits in practice)
+ *   - Positions 4-10: digits
  *   - Position 11: check digit (0-9 or X)
  *
  * Prefixes: P = individual, C = company,
@@ -19,7 +19,7 @@ import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
 
-const FORMAT_RE = /^[PCGQV]00[A-Z0-9]{8}$/;
+const FORMAT_RE = /^[PCGQV]00[0-9]{7}[0-9X]$/;
 
 const compact = (value: string): string =>
   clean(value, " ").toUpperCase();
@@ -50,7 +50,7 @@ const validate = (value: string): ValidateResult => {
     return err(
       "INVALID_FORMAT",
       "Ghanaian TIN must match [PCGQV]00 + " +
-        "8 alphanumeric characters",
+        "7 digits + check digit",
     );
   }
   if (v[10] !== calcCheckDigit(v)) {

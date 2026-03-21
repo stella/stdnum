@@ -24,6 +24,14 @@ describe("gh.tin", () => {
     expect(r.valid).toBe(true);
   });
 
+  test("valid with X check digit", () => {
+    const r = gh.tin.validate("P000000006X");
+    expect(r.valid).toBe(true);
+    if (r.valid) {
+      expect(r.compact).toBe("P000000006X");
+    }
+  });
+
   test("invalid: wrong length", () => {
     const r = gh.tin.validate("C000080356");
     expect(r.valid).toBe(false);
@@ -50,6 +58,14 @@ describe("gh.tin", () => {
 
   test("invalid: positions 2-3 not 00", () => {
     const r = gh.tin.validate("C1200803561");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("invalid: letters in body positions", () => {
+    const r = gh.tin.validate("C00A0803561");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_FORMAT");
