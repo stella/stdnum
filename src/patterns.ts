@@ -15,7 +15,7 @@
  *
  * // Single validator
  * toRegex(cz.ico);
- * // → /\b\d{8}\b/g
+ * // → /(?<!\w)\d{8}(?!\w)/g
  *
  * // All Czech validators
  * byCountry("CZ");
@@ -82,8 +82,10 @@ const inferGroups = (
   const parts = formatted.split(/[^a-zA-Z0-9]+/);
   if (parts.length <= 1) return null;
 
+  // Skip letter-only tokens (prefix like "CHE")
+  // to avoid counting them as digit groups
   const groups = parts
-    .filter((p) => p.length > 0)
+    .filter((p) => p.length > 0 && /\d/.test(p))
     .map((p) => p.length);
 
   return groups.length > 1 ? groups : null;
@@ -100,9 +102,22 @@ const inferPrefix = (
     return null;
   }
   const compact = v.compact(v.examples[0]!);
-  // Check if compact form starts with letters
-  const match = compact.match(/^([A-Z]+)\d/);
-  return match ? match[1]! : null;
+  // Prefix already present in compact form
+  const compactMatch = compact.match(/^([A-Z]+)\d/);
+  if (compactMatch) return compactMatch[1]!;
+  // Prefix added only by format()
+  // (e.g., "DE" for de.vat, "CZ" for cz.dic)
+  const formatted = v.format(compact);
+  const fmtMatch = formatted.match(
+    /^([A-Z]+)[\s\-./]?\d/,
+  );
+  if (
+    fmtMatch &&
+    !compact.startsWith(fmtMatch[1]!)
+  ) {
+    return fmtMatch[1]!;
+  }
+  return null;
 };
 
 /**
@@ -133,8 +148,10 @@ export const toRegex = (v: Validator): RegExp => {
 
   let pattern: string;
 
-  if (groups) {
+  if (groups && lengths.length <= 1) {
     // Use display grouping for precise matching
+    // (only when single length; multi-length
+    // validators need the range pattern instead)
     pattern = groupsToPattern(groups);
   } else if (lengths.length === 1) {
     pattern = `\\d{${lengths[0]}}`;
@@ -198,6 +215,7 @@ export const byEntityType = (
   toPatterns(
     validators.filter(
       (v) =>
+        entityType === "any" ||
         v.entityType === entityType ||
         v.entityType === "any",
     ),

@@ -7,21 +7,54 @@ import {
   toPatterns,
   toRegex,
 } from "../src/patterns";
-import { cz, de, fr, pl } from "../src";
+import { ch, cz, de, fr, pl } from "../src";
 
 describe("toRegex", () => {
   test("digit-only validator", () => {
-    const re = toRegex(cz.ico);
-    expect(re.test("25123891")).toBe(true);
-    expect(re.test("2512389")).toBe(false);
-    expect(re.test("251238910")).toBe(false);
+    expect(
+      toRegex(cz.ico).test("25123891"),
+    ).toBe(true);
+    expect(
+      toRegex(cz.ico).test("2512389"),
+    ).toBe(false);
+    expect(
+      toRegex(cz.ico).test("251238910"),
+    ).toBe(false);
   });
 
-  test("prefixed validator", () => {
-    const re = toRegex(de.vat);
-    // DE VAT compact starts with digits only
-    // (no prefix in compact form)
-    expect(re.test("136695976")).toBe(true);
+  test("format-prepended prefix (de.vat)", () => {
+    // de.vat compact strips "DE", format re-adds it
+    expect(
+      toRegex(de.vat).test("DE136695976"),
+    ).toBe(true);
+    expect(
+      toRegex(de.vat).test("DE 136695976"),
+    ).toBe(true);
+  });
+
+  test("compact prefix (ch.uid)", () => {
+    expect(
+      toRegex(ch.uid).test("CHE-100.155.212"),
+    ).toBe(true);
+    expect(
+      toRegex(ch.uid).test("CHE100155212"),
+    ).toBe(true);
+  });
+
+  test("format-prepended prefix (cz.dic)", () => {
+    expect(
+      toRegex(cz.dic).test("CZ25123891"),
+    ).toBe(true);
+  });
+
+  test("multi-length validator (cz.rc)", () => {
+    // cz.rc accepts both 9 and 10 digit values
+    expect(
+      toRegex(cz.rc).test("7103192745"),
+    ).toBe(true);
+    expect(
+      toRegex(cz.rc).test("710319274"),
+    ).toBe(true);
   });
 
   test("grouped format (compact)", () => {
@@ -45,6 +78,14 @@ describe("toRegex", () => {
     const matches = [...text.matchAll(re)];
     expect(matches.length).toBeGreaterThan(0);
     expect(matches[0]![0]).toBe("25123891");
+  });
+
+  test("finds prefixed identifier in text", () => {
+    const re = toRegex(de.vat);
+    const text = "VAT DE136695976 registered";
+    const matches = [...text.matchAll(re)];
+    expect(matches).toHaveLength(1);
+    expect(matches[0]![0]).toBe("DE136695976");
   });
 });
 
@@ -93,6 +134,12 @@ describe("byEntityType", () => {
         ),
       ).toBe(true);
     }
+  });
+
+  test("any returns all validators", () => {
+    const all = [cz.ico, cz.rc, pl.pesel, pl.nip];
+    const result = byEntityType("any", all);
+    expect(result).toHaveLength(all.length);
   });
 
   test("filters by company", () => {
