@@ -82,10 +82,18 @@ const inferGroups = (
   const parts = formatted.split(/[^a-zA-Z0-9]+/);
   if (parts.length <= 1) return null;
 
-  // Skip letter-only tokens (prefix like "CHE")
-  // to avoid counting them as digit groups
+  // For digit-only validators, skip letter-only
+  // tokens (prefix like "CHE"). For alphanumeric
+  // validators (IBAN, ISIN), keep all groups.
+  const isAlphanumeric = parts.some(
+    (p) => /[a-zA-Z]/.test(p) && /\d/.test(p),
+  );
   const groups = parts
-    .filter((p) => p.length > 0 && /\d/.test(p))
+    .filter(
+      (p) =>
+        p.length > 0 &&
+        (isAlphanumeric || /\d/.test(p)),
+    )
     .map((p) => p.length);
 
   return groups.length > 1 ? groups : null;
@@ -102,9 +110,21 @@ const inferPrefix = (
     return null;
   }
   const compact = v.compact(v.examples[0]!);
-  // Prefix already present in compact form
+  // Prefix already present in compact form.
+  // But only if ALL examples share the same prefix
+  // (e.g., "CHE" for Swiss UID). If examples have
+  // different prefixes (IBAN: GB/DE/FR), there's
+  // no fixed prefix — it's part of the value.
   const compactMatch = compact.match(/^([A-Z]+)\d/);
-  if (compactMatch) return compactMatch[1]!;
+  if (compactMatch && v.examples!.length > 1) {
+    const pfx = compactMatch[1]!;
+    const allSame = v.examples!.every((ex) =>
+      v.compact(ex).startsWith(pfx),
+    );
+    if (allSame) return pfx;
+  } else if (compactMatch && v.examples!.length === 1) {
+    return compactMatch[1]!;
+  }
   // Prefix added only by format()
   // (e.g., "DE" for de.vat, "CZ" for cz.dic)
   const formatted = v.format(compact);
@@ -121,47 +141,64 @@ const inferPrefix = (
 };
 
 /**
- * Build a digit-group regex from group sizes.
- * [2, 3, 3] → /\d{2}[\s\-.]?\d{3}[\s\-.]?\d{3}/
+ * Determine the character class needed for the
+ * compact form: `\d` if all digits, `[A-Z0-9]`
+ * if alphanumeric, etc.
+ */
+const inferCharClass = (v: Validator): string => {
+  if (!v.examples || v.examples.length === 0) {
+    return "\\d";
+  }
+  let hasLetter = false;
+  let hasDigit = false;
+  for (const ex of v.examples) {
+    const c = v.compact(ex);
+    for (const ch of c) {
+      if (/[a-zA-Z]/.test(ch)) hasLetter = true;
+      if (/\d/.test(ch)) hasDigit = true;
+    }
+  }
+  if (hasLetter && hasDigit) return "[A-Z0-9]";
+  if (hasLetter) return "[A-Z]";
+  return "\\d";
+};
+
+/**
+ * Build a group regex from group sizes + char class.
+ * [2, 3, 3] with \d → /\d{2}[\s\-.]?\d{3}[\s\-.]?\d{3}/
  */
 const groupsToPattern = (
   groups: number[],
+  cc: string,
 ): string =>
-  groups.map((g) => `\\d{${g}}`).join(SEP);
+  groups.map((g) => `${cc}{${g}}`).join(SEP);
 
 /**
  * Derive a loose candidate-matching regex from
  * a validator. The regex finds potential matches;
  * use `validate()` to confirm.
  *
- * Strategy:
- * 1. If format() reveals grouping, use that
- *    (e.g., XX.XXX.XXX → /\d{2}\.?\d{3}\.?\d{3}/)
- * 2. Otherwise, match digit sequences of the
- *    right compact length
- * 3. If a prefix is detected, prepend it
+ * Handles both digit-only (IČO, NIP) and
+ * alphanumeric (IBAN, BIC, ISIN, LEI) validators.
  */
 export const toRegex = (v: Validator): RegExp => {
   const prefix = inferPrefix(v);
   const groups = inferGroups(v);
   const lengths = inferLengths(v);
+  const cc = inferCharClass(v);
 
   let pattern: string;
 
   if (groups && lengths.length <= 1) {
-    // Use display grouping for precise matching
-    // (only when single length; multi-length
-    // validators need the range pattern instead)
-    pattern = groupsToPattern(groups);
+    pattern = groupsToPattern(groups, cc);
   } else if (lengths.length === 1) {
-    pattern = `\\d{${lengths[0]}}`;
+    pattern = `${cc}{${lengths[0]}}`;
   } else if (lengths.length > 1) {
     const min = Math.min(...lengths);
     const max = Math.max(...lengths);
-    pattern = `\\d{${min},${max}}`;
+    pattern = `${cc}{${min},${max}}`;
   } else {
-    // Fallback: 6-20 digit sequence
-    pattern = `\\d{6,20}`;
+    pattern = `${cc}{6,20}`;
   }
 
   if (prefix) {
