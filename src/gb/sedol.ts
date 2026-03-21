@@ -19,6 +19,9 @@ import type { ValidateResult, Validator } from "../types";
 /**
  * Allowed characters in a SEDOL: digits and
  * consonants only (vowels are never used).
+ * Spaces occupy vowel positions (A=10, E=14,
+ * I=18, O=24, U=30) so that indexOf returns
+ * the correct SEDOL weight for each consonant.
  */
 const ALPHABET =
   "0123456789 BCD FGH JKLMN PQRST VWXYZ";
@@ -26,10 +29,21 @@ const ALPHABET =
 const WEIGHTS = [1, 3, 1, 7, 3, 9] as const;
 
 const calcCheckDigit = (number: string): string => {
+  if (number.length !== 6) {
+    throw new Error(
+      "calcCheckDigit requires a 6-character " +
+        "SEDOL prefix",
+    );
+  }
   let sum = 0;
   for (let i = 0; i < 6; i++) {
     const ch = number[i]!;
     const val = ALPHABET.indexOf(ch);
+    if (val < 0) {
+      throw new Error(
+        `Invalid SEDOL character: ${ch}`,
+      );
+    }
     // SAFETY: weights length matches loop bound
     sum += WEIGHTS[i]! * val;
   }
@@ -90,7 +104,7 @@ const sedol: Validator = {
     "Stock Exchange Daily Official List number",
   abbreviation: "SEDOL",
   country: "GB",
-  entityType: "company",
+  entityType: "any",
   sourceUrl: "https://en.wikipedia.org/wiki/SEDOL",
   lengths: [7] as const,
   examples: ["B15KXQ8"] as const,

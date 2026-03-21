@@ -37,10 +37,14 @@ const validate = (value: string): ValidateResult => {
       "ITIN must contain only digits",
     );
   }
+  if (v.length !== 9) {
+    return err(
+      "INVALID_LENGTH",
+      "ITIN must be 9 digits",
+    );
+  }
 
-  const match = ITIN_RE.exec(
-    clean(value, " ").trim(),
-  );
+  const match = ITIN_RE.exec(v);
   if (!match?.groups) {
     return err(
       "INVALID_FORMAT",
