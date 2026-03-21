@@ -1,7 +1,7 @@
 /**
  * Organisationsnummer (Swedish organization number).
  *
- * 10 digits, third digit >= 2. Standard Luhn checksum.
+ * 10 digits. Standard Luhn checksum.
  * Display format: NNNNNN-NNNN.
  *
  * @see https://www.skatteverket.se/

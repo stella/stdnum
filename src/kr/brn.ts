@@ -2,8 +2,8 @@
  * BRN (Business Registration Number, 사업자등록번호).
  *
  * Korean Business Registration Number. 10 digits
- * formatted as XXX-XX-XXXXX with a weighted
- * checksum.
+ * formatted as XXX-XX-XXXXX. Validated by component
+ * checks (tax office, business type, serial).
  *
  * @see https://en.wikipedia.org/wiki/Business_registration_number_(South_Korea)
  */

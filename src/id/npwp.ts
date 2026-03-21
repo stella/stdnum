@@ -4,7 +4,7 @@
  * 15 or 16 digits. The 15-digit (legacy) format has a
  * Luhn check on the first 9 digits. The 16-digit format
  * is either a NIK (starts with non-zero) validated as a
- * 16-digit number with date/Luhn checks, or the legacy
+ * province-code and birth-date checks, or the legacy
  * format prefixed with 0 (Luhn on first 10 digits).
  *
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Indonesia-TIN.pdf
@@ -108,6 +108,10 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => {
   const v = compact(value);
+  if (v.length === 16) {
+    // NIK or 0-prefixed legacy: no standard mask
+    return v;
+  }
   return (
     `${v.slice(0, 2)}.${v.slice(2, 5)}.`
     + `${v.slice(5, 8)}.${v.slice(8, 9)}`
@@ -122,10 +126,10 @@ const npwp: Validator = {
   abbreviation: "NPWP",
   country: "ID",
   entityType: "any",
-  lengths: [15],
+  lengths: [15, 16],
   examples: ["013000666091000", "016090524017000"],
   description:
-    "15-digit tax identification number issued by "
+    "15 or 16-digit tax identification number issued by "
     + "the Directorate General of Taxes",
   sourceUrl:
     "https://en.wikipedia.org/wiki/"
