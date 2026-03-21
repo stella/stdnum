@@ -44,20 +44,20 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  if (!isdigits(v.slice(0, 8))) {
-    return err(
-      "INVALID_FORMAT",
-      "USCC positions 1-8 must be digits",
-    );
-  }
-
-  for (let i = 8; i < 18; i++) {
+  for (let i = 0; i < 18; i++) {
     if (!ALPHABET.includes(v[i]!)) {
       return err(
         "INVALID_FORMAT",
         "USCC contains invalid character",
       );
     }
+  }
+
+  if (!isdigits(v.slice(2, 8))) {
+    return err(
+      "INVALID_FORMAT",
+      "USCC region code (positions 3-8) must be digits",
+    );
   }
 
   if (v[17] !== calcCheckChar(v)) {

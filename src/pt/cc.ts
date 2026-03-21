@@ -27,7 +27,7 @@ const calcCheckDigit = (value: string): string => {
     let n = ALPHABET.indexOf(value[i]!);
     if (pos % 2 === 0) {
       n *= 2;
-      if (n > 9) n -= 9;
+      if (n > 9) n = Math.floor(n / 10) + (n % 10);
     }
     sum += n;
   }
@@ -63,7 +63,7 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => {
   const v = compact(value);
-  return `${v.slice(0, -4)} ${v.at(-4)} ${v.slice(-3)}`;
+  return `${v.slice(0, -3)} ${v.slice(-3, -1)} ${v.at(-1)}`;
 };
 
 /** Portuguese Identity Card number. */
@@ -78,7 +78,7 @@ const cc: Validator = {
   sourceUrl:
     "https://pt.wikipedia.org/wiki/Cartão_de_cidadão",
   lengths: [12] as const,
-  examples: ["000000000ZZ4"] as const,
+  examples: ["000000000ZZ8"] as const,
   compact,
   format,
   validate,

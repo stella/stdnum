@@ -32,13 +32,13 @@ describe("pt.vat", () => {
 // ─── CC (Cartão de Cidadão) ────────────────
 
 describe("pt.cc", () => {
-  test("valid: 000000000ZZ4", () => {
-    const r = pt.cc.validate("000000000ZZ4");
+  test("valid: 000000000ZZ8", () => {
+    const r = pt.cc.validate("000000000ZZ8");
     expect(r.valid).toBe(true);
   });
 
   test("valid with spaces", () => {
-    const r = pt.cc.validate("00000000 0 ZZ4");
+    const r = pt.cc.validate("000000000 ZZ 8");
     expect(r.valid).toBe(true);
   });
 
@@ -67,14 +67,14 @@ describe("pt.cc", () => {
   });
 
   test("format adds spaces", () => {
-    expect(pt.cc.format("000000000ZZ4")).toBe(
-      "00000000 0 ZZ4",
+    expect(pt.cc.format("000000000ZZ8")).toBe(
+      "000000000 ZZ 8",
     );
   });
 
   test("compact strips spaces", () => {
-    expect(pt.cc.compact("00000000 0 ZZ4")).toBe(
-      "000000000ZZ4",
+    expect(pt.cc.compact("000000000 ZZ 8")).toBe(
+      "000000000ZZ8",
     );
   });
 

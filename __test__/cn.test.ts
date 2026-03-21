@@ -83,6 +83,7 @@ describe("cn.uscc", () => {
     "91310115MA1K3BTP2B",
     "91340600MA2PBM9HXD",
     "121200004013590816",
+    "Y1110000600037341Y", // non-digit authority code
   ];
 
   for (const v of valid) {
@@ -110,8 +111,16 @@ describe("cn.uscc", () => {
     }
   });
 
-  test("invalid first 8 chars", () => {
-    const r = cn.uscc.validate("A1110000600037341L");
+  test("invalid character (excluded letter I)", () => {
+    const r = cn.uscc.validate("I1110000600037341L");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("non-digit region code rejected", () => {
+    const r = cn.uscc.validate("91A10000600037341L");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_FORMAT");
