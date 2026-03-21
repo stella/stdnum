@@ -94,6 +94,8 @@ const vat: Validator = {
   name: "Cypriot VAT Number",
   localName: "Αριθμός Εγγραφής Φ.Π.Α.",
   abbreviation: "ΦΠΑ",
+  aliases: ["ΦΠΑ", "VAT CY"] as const,
+  candidatePattern: "CY\\d{8}[A-Z]",
   country: "CY",
   entityType: "company",
   sourceUrl: "https://www.mof.gov.cy/",

@@ -56,6 +56,8 @@ const registrikood: Validator = {
   name: "Estonian Company Registration Code",
   localName: "Registrikood",
   abbreviation: "Registrikood",
+  aliases: ["registrikood"] as const,
+  candidatePattern: "\\d{8}",
   country: "EE",
   entityType: "company",
   sourceUrl: "https://www.rik.ee/",

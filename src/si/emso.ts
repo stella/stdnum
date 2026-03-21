@@ -120,6 +120,11 @@ const emso: Validator = {
   name: "Slovenian Personal ID",
   localName: "Enotna matična številka občana",
   abbreviation: "EMŠO",
+  aliases: [
+    "EMŠO",
+    "enotna matična številka občana",
+  ] as const,
+  candidatePattern: "\\d{13}",
   country: "SI",
   entityType: "person",
   sourceUrl: "https://www.gov.si/",

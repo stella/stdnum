@@ -57,6 +57,11 @@ const vat: Validator = {
   name: "Estonian VAT Number",
   localName: "Käibemaksukohustuslase number",
   abbreviation: "KMKR",
+  aliases: [
+    "käibemaksukohustuslase number",
+    "KMKR",
+  ] as const,
+  candidatePattern: "EE\\d{9}",
   country: "EE",
   entityType: "company",
   sourceUrl: "https://www.emta.ee/en",

@@ -126,6 +126,8 @@ const ik: Validator = {
   name: "Estonian Personal ID",
   localName: "Isikukood",
   abbreviation: "IK",
+  aliases: ["isikukood", "IK"] as const,
+  candidatePattern: "[1-6]\\d{10}",
   country: "EE",
   entityType: "person",
   sourceUrl: 

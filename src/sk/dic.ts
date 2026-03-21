@@ -81,6 +81,11 @@ const dic: Validator = {
   localName:
     "Identifikačné číslo pre daň z pridanej hodnoty",
   abbreviation: "IČ DPH",
+  aliases: [
+    "DIČ",
+    "daňové identifikačné číslo",
+  ] as const,
+  candidatePattern: "SK\\d{10}",
   country: "SK",
   entityType: "company",
   sourceUrl: "https://www.financnasprava.sk/",
