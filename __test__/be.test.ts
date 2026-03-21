@@ -106,3 +106,47 @@ describe("be.nn", () => {
     expect(be.nn.entityType).toBe("person");
   });
 });
+
+// ─── BIS (BIS-nummer) ────────────────────────
+
+describe("be.bis", () => {
+  test("valid BIS", () => {
+    const r = be.bis.validate("98472899765");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid checksum", () => {
+    const r = be.bis.validate("98472899766");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = be.bis.validate("9847289976");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("invalid month range", () => {
+    const r = be.bis.validate("85073003328");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("format uses NN separators", () => {
+    expect(be.bis.format("98472899765")).toBe(
+      "98.47.28-997.65",
+    );
+  });
+
+  test("metadata", () => {
+    expect(be.bis.country).toBe("BE");
+    expect(be.bis.entityType).toBe("person");
+  });
+});

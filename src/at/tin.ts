@@ -58,7 +58,7 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => {
   const v = compact(value);
-  return `${v.slice(0, 2)}-${v.slice(2, 5)}/${v.slice(5)}`;
+  return `${v.slice(0, 2)}-${v.slice(2, 8)}/${v.slice(8)}`;
 };
 
 /** Austrian Tax Identification Number. */
@@ -67,7 +67,7 @@ const tin: Validator = {
   localName: "Abgabenkontonummer",
   abbreviation: "TIN",
   country: "AT",
-  entityType: "person",
+  entityType: "any",
   sourceUrl:
     "https://de.wikipedia.org/wiki/Abgabenkontonummer",
   examples: ["591199013"] as const,

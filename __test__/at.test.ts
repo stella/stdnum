@@ -93,3 +93,52 @@ describe("at.businessid", () => {
     expect(at.businessid.entityType).toBe("company");
   });
 });
+
+// ─── TIN (Abgabenkontonummer) ─────────────────
+
+describe("at.tin", () => {
+  test("valid TIN", () => {
+    const r = at.tin.validate("591199013");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid with separators", () => {
+    const r = at.tin.validate("59-119901/3");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid checksum", () => {
+    const r = at.tin.validate("591199014");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = at.tin.validate("59119901");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("non-digit", () => {
+    const r = at.tin.validate("59119901A");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("format groups as 2-6-1", () => {
+    expect(at.tin.format("591199013")).toBe(
+      "59-119901/3",
+    );
+  });
+
+  test("metadata", () => {
+    expect(at.tin.country).toBe("AT");
+    expect(at.tin.entityType).toBe("any");
+  });
+});
