@@ -20,6 +20,7 @@ import type {
 // ─── Country name lookup ────────────────────
 
 const COUNTRY_NAMES: Record<CountryCode, string> = {
+  AE: "United Arab Emirates",
   AT: "Austria",
   BE: "Belgium",
   BG: "Bulgaria",
@@ -105,6 +106,7 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   NI: "Nicaragua",
   PA: "Panama",
   VN: "Vietnam",
+  BD: "Bangladesh",
 };
 
 // ─── Validator entry ────────────────────────
