@@ -19,6 +19,7 @@ export { default as lei } from "./lei";
 export { default as luhn } from "./luhn";
 
 export * as ad from "./ad/mod";
+export * as ae from "./ae/mod";
 export * as al from "./al/mod";
 export * as am from "./am/mod";
 export * as ar from "./ar/mod";
@@ -26,6 +27,7 @@ export * as at from "./at/mod";
 export * as au from "./au/mod";
 export * as az from "./az/mod";
 export * as ba from "./ba/mod";
+export * as bd from "./bd/mod";
 export * as be from "./be/mod";
 export * as bg from "./bg/mod";
 export * as br from "./br/mod";
