@@ -6,6 +6,7 @@
  * serial number, and a check digit.
  *
  * @see https://ro.wikipedia.org/wiki/Cod_numeric_personal
+ * @see https://www.cnp.ro/
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -134,6 +135,7 @@ const cnp: Validator = {
   abbreviation: "CNP",
   country: "RO",
   entityType: "person",
+  sourceUrl: "https://www.cnp.ro/",
   examples: ["1630615123457"] as const,
   compact,
   format,

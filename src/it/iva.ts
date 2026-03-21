@@ -80,6 +80,7 @@ const iva: Validator = {
   abbreviation: "P.IVA",
   country: "IT",
   entityType: "company",
+  sourceUrl: "https://www.agenziaentrate.gov.it/",
   examples: ["00743110157"] as const,
   compact,
   format,

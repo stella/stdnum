@@ -8,6 +8,7 @@
  * number is invalid).
  *
  * @see https://be.wikipedia.org/wiki/Уліковы_нумар_плацельшчыка
+ * @see https://www.nalog.gov.by/
  */
 
 import { clean } from "#util/clean";
@@ -125,6 +126,7 @@ const unp: Validator = {
   abbreviation: "УНП",
   country: "BY",
   entityType: "any",
+  sourceUrl: "https://www.nalog.gov.by/",
   examples: ["200988541", "MA1953684"] as const,
   compact,
   format,

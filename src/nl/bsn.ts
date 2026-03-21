@@ -59,6 +59,8 @@ const bsn: Validator = {
   abbreviation: "BSN",
   country: "NL",
   entityType: "person",
+  sourceUrl: 
+    "https://www.government.nl/topics/personal-data/citizen-service-number-bsn",
   examples: ["111222333"] as const,
   compact,
   format,

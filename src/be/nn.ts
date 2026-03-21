@@ -7,6 +7,7 @@
  * followed by a 3-digit serial and 2 check digits.
  *
  * @see https://fr.wikipedia.org/wiki/Numéro_de_registre_national
+ * @see https://www.ibz.rrn.fgov.be/
  */
 
 import { clean } from "#util/clean";
@@ -86,6 +87,7 @@ const nn: Validator = {
   abbreviation: "NN",
   country: "BE",
   entityType: "person",
+  sourceUrl: "https://www.ibz.rrn.fgov.be/",
   examples: ["93051822361"] as const,
   compact,
   format,

@@ -77,6 +77,8 @@ const bn: Validator = {
   abbreviation: "BN",
   country: "CA",
   entityType: "company",
+  sourceUrl: 
+    "https://www.canada.ca/en/services/taxes/business-number.html",
   examples: ["123026635", "123026635RC0001"] as const,
   compact,
   format,

@@ -99,6 +99,8 @@ const jmbg: Validator = {
   country: "BA",
   entityType: "person",
   lengths: [13] as const,
+  sourceUrl: 
+    "https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/",
   examples: ["0101006500006"] as const,
   compact,
   format,

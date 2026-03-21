@@ -5,6 +5,7 @@
  * a mod 11 checksum (ISO 7064 variant).
  *
  * @see https://en.wikipedia.org/wiki/Tax_identification_number_(Serbia)
+ * @see https://www.purs.gov.rs/
  */
 
 import { clean } from "#util/clean";
@@ -59,6 +60,7 @@ const pib: Validator = {
   country: "RS",
   entityType: "any",
   lengths: [9] as const,
+  sourceUrl: "https://www.purs.gov.rs/",
   examples: ["101134702"] as const,
   compact,
   format,

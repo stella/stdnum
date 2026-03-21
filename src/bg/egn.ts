@@ -6,6 +6,7 @@
  * and a check digit.
  *
  * @see https://en.wikipedia.org/wiki/Unique_citizenship_number
+ * @see https://www.grao.bg/
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -120,6 +121,7 @@ const egn: Validator = {
   abbreviation: "ЕГН",
   country: "BG",
   entityType: "person",
+  sourceUrl: "https://www.grao.bg/",
   examples: ["7523169263"] as const,
   compact,
   format,

@@ -5,6 +5,8 @@
  * identifying legal entities in financial
  * transactions. Validated using ISO 7064
  * Mod 97-10 (same as IBAN).
+ *
+ * @see https://www.gleif.org/
  */
 
 import { mod97 } from "#checksums/mod97";
@@ -68,6 +70,7 @@ const lei: Validator = {
   localName: "Legal Entity Identifier",
   abbreviation: "LEI",
   entityType: "company",
+  sourceUrl: "https://www.gleif.org/",
   examples: ["5493006MHB84DD0ZWV18"] as const,
   compact,
   format,

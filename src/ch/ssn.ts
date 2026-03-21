@@ -66,6 +66,7 @@ const ssn: Validator = {
   abbreviation: "AHV",
   country: "CH",
   entityType: "person",
+  sourceUrl: "https://www.bsv.admin.ch/",
   examples: ["7561234567897"] as const,
   compact,
   format,

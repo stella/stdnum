@@ -96,6 +96,7 @@ const vat: Validator = {
   abbreviation: "ΦΠΑ",
   country: "CY",
   entityType: "company",
+  sourceUrl: "https://www.mof.gov.cy/",
   examples: ["10259033P"] as const,
   compact,
   format,

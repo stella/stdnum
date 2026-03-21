@@ -6,6 +6,7 @@
  * (10 - sum % 10) % 10.
  *
  * @see https://en.wikipedia.org/wiki/Australian_Company_Number
+ * @see https://asic.gov.au/
  */
 
 import { clean } from "#util/clean";
@@ -61,6 +62,7 @@ const acn: Validator = {
   abbreviation: "ACN",
   country: "AU",
   entityType: "company",
+  sourceUrl: "https://asic.gov.au/",
   examples: ["004085616", "010499966"] as const,
   compact,
   format,

@@ -44,6 +44,7 @@ const peid: Validator = {
   country: "LI",
   entityType: "any",
   lengths: [4, 5, 6, 7, 8, 9, 10, 11, 12] as const,
+  sourceUrl: "https://www.oera.li/",
   examples: ["1234567"] as const,
   compact,
   format,

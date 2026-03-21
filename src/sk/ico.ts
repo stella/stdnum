@@ -17,6 +17,7 @@ const ico: Validator = {
   abbreviation: "IČO",
   country: "SK",
   entityType: "company",
+  sourceUrl: "https://www.statistics.sk/",
   examples: ["25123891"] as const,
   compact,
   format,

@@ -61,6 +61,8 @@ const tfn: Validator = {
   abbreviation: "TFN",
   country: "AU",
   entityType: "person",
+  sourceUrl: 
+    "https://www.ato.gov.au/individuals-and-families/tax-file-number",
   examples: ["87650006", "123456782"] as const,
   compact,
   format,

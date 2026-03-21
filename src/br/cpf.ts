@@ -90,6 +90,7 @@ const cpf: Validator = {
   abbreviation: "CPF",
   country: "BR",
   entityType: "person",
+  sourceUrl: "https://www.gov.br/receitafederal/",
   examples: ["39053344705"] as const,
   compact,
   format,

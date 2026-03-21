@@ -65,6 +65,7 @@ const vat: Validator = {
   abbreviation: "VAT",
   country: "MT",
   entityType: "company",
+  sourceUrl: "https://cfr.gov.mt/",
   examples: ["11679112"] as const,
   compact,
   format,

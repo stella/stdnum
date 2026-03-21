@@ -58,6 +58,7 @@ const orgnr: Validator = {
   abbreviation: "Orgnr",
   country: "SE",
   entityType: "company",
+  sourceUrl: "https://www.skatteverket.se/",
   examples: ["1234567897"] as const,
   compact,
   format,

@@ -128,6 +128,8 @@ const ik: Validator = {
   abbreviation: "IK",
   country: "EE",
   entityType: "person",
+  sourceUrl: 
+    "https://www.riigiteataja.ee/en/eli/512012015003/consolide",
   examples: ["36805280109"] as const,
   compact,
   format,

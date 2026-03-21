@@ -59,6 +59,7 @@ const vat: Validator = {
   abbreviation: "KMKR",
   country: "EE",
   entityType: "company",
+  sourceUrl: "https://www.emta.ee/en",
   examples: ["100931558"] as const,
   compact,
   format,

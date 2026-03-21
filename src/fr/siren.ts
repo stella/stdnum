@@ -54,6 +54,8 @@ const siren: Validator = {
   abbreviation: "SIREN",
   country: "FR",
   entityType: "company",
+  sourceUrl: 
+    "https://www.insee.fr/fr/information/2549588",
   examples: ["552008443"] as const,
   compact,
   format,

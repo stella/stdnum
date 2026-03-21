@@ -7,6 +7,7 @@
  * depending on whether the first digit is 0-2/6-9 or 3-5.
  *
  * @see https://en.wikipedia.org/wiki/EDRPOU
+ * @see https://usr.minjust.gov.ua/
  */
 
 import { clean } from "#util/clean";
@@ -82,6 +83,7 @@ const edrpou: Validator = {
   country: "UA",
   entityType: "company",
   lengths: [8] as const,
+  sourceUrl: "https://usr.minjust.gov.ua/",
   examples: ["14360570"] as const,
   compact,
   format,

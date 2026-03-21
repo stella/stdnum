@@ -5,6 +5,7 @@
  * a weighted mod 11 checksum.
  *
  * @see https://github.com/arthurdejong/python-stdnum/blob/master/stdnum/me/pib.py
+ * @see https://www.tax.gov.me/
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -56,6 +57,7 @@ const pib: Validator = {
   country: "ME",
   entityType: "any",
   lengths: [8] as const,
+  sourceUrl: "https://www.tax.gov.me/",
   examples: ["02655284"] as const,
   compact,
   format,

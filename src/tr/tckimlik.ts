@@ -87,6 +87,7 @@ const tckimlik: Validator = {
   abbreviation: "T.C. Kimlik",
   country: "TR",
   entityType: "person",
+  sourceUrl: "https://www.nvi.gov.tr/",
   examples: ["17291716060"] as const,
   compact,
   format,

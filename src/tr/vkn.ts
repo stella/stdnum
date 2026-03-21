@@ -16,6 +16,7 @@
  *
  * @see https://www.turkiye.gov.tr/gib-intvrg-vergi-kimlik-numarasi-dogrulama
  * @see https://arthurdejong.org/python-stdnum/doc/1.17/stdnum.tr.vkn
+ * @see https://www.gib.gov.tr/
  */
 
 import { clean } from "#util/clean";
@@ -75,6 +76,7 @@ const vkn: Validator = {
   abbreviation: "VKN",
   country: "TR",
   entityType: "company",
+  sourceUrl: "https://www.gib.gov.tr/",
   examples: ["4540536920"] as const,
   compact,
   format,

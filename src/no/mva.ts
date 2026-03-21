@@ -53,6 +53,7 @@ const mva: Validator = {
   abbreviation: "MVA",
   country: "NO",
   entityType: "company",
+  sourceUrl: "https://www.skatteetaten.no/",
   examples: ["995525828MVA"] as const,
   compact,
   format,

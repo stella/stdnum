@@ -41,6 +41,7 @@ const kvk: Validator = {
   abbreviation: "KvK",
   country: "NL",
   entityType: "company",
+  sourceUrl: "https://www.kvk.nl/",
   examples: ["12345678"] as const,
   compact,
   format,

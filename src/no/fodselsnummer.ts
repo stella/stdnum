@@ -167,6 +167,7 @@ const fodselsnummer: Validator = {
   abbreviation: "Fødselsnr",
   country: "NO",
   entityType: "person",
+  sourceUrl: "https://www.skatteetaten.no/",
   examples: ["15108695088"] as const,
   compact,
   format,

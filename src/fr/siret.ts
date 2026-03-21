@@ -93,6 +93,8 @@ const siret: Validator = {
   abbreviation: "SIRET",
   country: "FR",
   entityType: "company",
+  sourceUrl: 
+    "https://www.insee.fr/fr/information/2549588",
   examples: ["73282932000074"] as const,
   compact,
   format,

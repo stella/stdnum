@@ -58,6 +58,7 @@ const utr: Validator = {
   abbreviation: "UTR",
   country: "GB",
   entityType: "any",
+  sourceUrl: "https://www.gov.uk/find-utr-number",
   examples: ["1955839661"] as const,
   compact,
   format,

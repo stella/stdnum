@@ -6,6 +6,7 @@
  * "MK" (Latin) or "МК" (Cyrillic).
  *
  * @see https://github.com/arthurdejong/python-stdnum/blob/master/stdnum/mk/edb.py
+ * @see https://www.ujp.gov.mk/
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -64,6 +65,7 @@ const edb: Validator = {
   country: "MK",
   entityType: "any",
   lengths: [13] as const,
+  sourceUrl: "https://www.ujp.gov.mk/",
   examples: ["4002012527974"] as const,
   compact,
   format,

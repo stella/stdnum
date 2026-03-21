@@ -7,6 +7,7 @@
  * a two-pass weighted checksum.
  *
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/lithuania-tin.pdf
+ * @see https://www.registrucentras.lt/
  */
 
 import { clean } from "#util/clean";
@@ -90,6 +91,7 @@ const asmens: Validator = {
   abbreviation: "AK",
   country: "LT",
   entityType: "person",
+  sourceUrl: "https://www.registrucentras.lt/",
   examples: ["33309240064"] as const,
   compact,
   format,

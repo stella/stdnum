@@ -83,6 +83,7 @@ const dic: Validator = {
   abbreviation: "IČ DPH",
   country: "SK",
   entityType: "company",
+  sourceUrl: "https://www.financnasprava.sk/",
   examples: ["2021853504"] as const,
   compact,
   format,

@@ -64,6 +64,7 @@ const vat: Validator = {
   abbreviation: "CIF",
   country: "RO",
   entityType: "any",
+  sourceUrl: "https://www.anaf.ro/",
   examples: ["18547290"] as const,
   compact,
   format,

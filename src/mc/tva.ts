@@ -50,6 +50,7 @@ const tva: Validator = {
   abbreviation: "TVA",
   country: "MC",
   entityType: "company",
+  sourceUrl: "https://www.economie.gouv.fr/",
   examples: ["FR53000004605"] as const,
   compact,
   format,

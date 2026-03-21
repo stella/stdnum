@@ -123,6 +123,7 @@ const vat: Validator = {
   abbreviation: "BTW",
   country: "NL",
   entityType: "company",
+  sourceUrl: "https://www.belastingdienst.nl/",
   examples: ["123456789B13"] as const,
   compact,
   format,
