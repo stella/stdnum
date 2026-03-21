@@ -41,7 +41,7 @@ const calcCheckDigit = (digits: string): number => {
     // SAFETY: loop bound guarantees valid index
     sum += Number(digits[i]) * WEIGHTS[i]!;
   }
-  return 11 - (sum % 11);
+  return (11 - (sum % 11)) % 11;
 };
 
 const validate = (value: string): ValidateResult => {
@@ -127,12 +127,6 @@ const civil: Validator = {
   name: "Civil Number",
   localName: "الرقم المدني",
   abbreviation: "Civil ID",
-  aliases: [
-    "الرقم المدني",
-    "Civil ID",
-    "Civil Number",
-  ] as const,
-  candidatePattern: "\\d{12}",
   country: "KW",
   entityType: "person",
   lengths: [12] as const,

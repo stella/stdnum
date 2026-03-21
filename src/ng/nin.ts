@@ -46,11 +46,6 @@ const nin: Validator = {
   name: "National Identification Number",
   localName: "National Identification Number",
   abbreviation: "NIN",
-  aliases: [
-    "NIN",
-    "National Identification Number",
-  ] as const,
-  candidatePattern: "\\d{11}",
   country: "NG",
   entityType: "person",
   lengths: [11] as const,

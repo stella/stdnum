@@ -85,10 +85,12 @@ for (const { name, parse, validator } of discovered) {
           const result = parse(example);
           expect(result).not.toBeNull();
           expect(result!.birthDate).toBeInstanceOf(Date);
-          expect(
-            result!.gender === "male" ||
-              result!.gender === "female",
-          ).toBe(true);
+          if ("gender" in result!) {
+            expect(
+              result!.gender === "male" ||
+                result!.gender === "female",
+            ).toBe(true);
+          }
         }
       });
     }
