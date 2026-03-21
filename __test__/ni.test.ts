@@ -24,7 +24,7 @@ describe("ni.ruc", () => {
     "607190468000", // too short (12)
     "60719046800001FF", // too long
     "ABCDEFGHIJKLMN", // all letters
-    "001001900001Z", // Z not in alphabet
+    "0010019000001Z", // Z not in alphabet
   ];
 
   for (const v of invalid) {

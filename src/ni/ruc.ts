@@ -64,6 +64,9 @@ const calcCheckLetter = (body: string): string => {
     n = n * 10n + BigInt(ch);
   }
   const idx = Number(n % 23n);
+  // SAFETY: idx is always 0–22 (mod 23), and
+  // CHECK_ALPHABET has exactly 23 characters.
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return CHECK_ALPHABET[idx]!;
 };
 
@@ -91,6 +94,8 @@ const validate = (value: string): ValidateResult => {
 
   // Natural person: 13 digits + 1 letter
   const body = v.slice(0, 13);
+  // SAFETY: length is validated as exactly 14 above.
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const check = v[13]!;
 
   if (!isdigits(body)) {
