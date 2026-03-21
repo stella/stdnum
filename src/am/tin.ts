@@ -49,6 +49,8 @@ const tin: Validator = {
   name: "Armenian Tax ID",
   localName: "Հարկ վճարողի հաշվառման համար",
   abbreviation: "TIN",
+  aliases: ["ՀՎՀՀ", "TIN"] as const,
+  candidatePattern: "\\d{8}",
   country: "AM",
   entityType: "any",
   lengths: [8] as const,

@@ -167,6 +167,13 @@ const creditCard: Validator = {
   name: "Credit Card Number",
   localName: "Credit Card Number",
   abbreviation: "CC",
+  aliases: [
+    "credit card",
+    "card number",
+    "kreditní karta",
+    "Kreditkarte",
+  ] as const,
+  candidatePattern: "(?:\\d[\\s-]?){13,19}",
   entityType: "any",
   sourceUrl: "https://www.iso.org/standard/70484.html",
   examples: [

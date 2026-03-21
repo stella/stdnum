@@ -65,6 +65,12 @@ const vat: Validator = {
   name: "Portuguese VAT Number",
   localName: "Número de Identificação Fiscal",
   abbreviation: "NIF",
+  aliases: [
+    "NIF",
+    "número de identificação fiscal",
+    "contribuinte",
+  ] as const,
+  candidatePattern: "PT\\d{9}",
   country: "PT",
   entityType: "any",
   sourceUrl: "https://www.portaldasfinancas.gov.pt/",

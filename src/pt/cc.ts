@@ -71,6 +71,13 @@ const cc: Validator = {
   name: "Portuguese Identity Card",
   localName: "Cartão de Cidadão",
   abbreviation: "CC",
+  aliases: [
+    "cartão de cidadão",
+    "CC",
+    "número de identificação civil",
+  ] as const,
+  candidatePattern:
+    "\\d{8}\\s?\\d\\s?[A-Z]{2}\\d",
   country: "PT",
   entityType: "person",
   description:

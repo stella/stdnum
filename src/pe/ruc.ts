@@ -99,6 +99,8 @@ const ruc: Validator = {
   name: "Peruvian Tax ID",
   localName: "Registro Único de Contribuyentes",
   abbreviation: "RUC",
+  aliases: ["RUC"] as const,
+  candidatePattern: "\\d{11}",
   country: "PE",
   entityType: "any",
   compact,

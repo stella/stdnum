@@ -161,6 +161,12 @@ const ric: Validator = {
   name: "Chinese Resident Identity Card",
   localName: "居民身份证号码",
   abbreviation: "RIC",
+  aliases: [
+    "身份证",
+    "居民身份证号码",
+    "RIC",
+  ] as const,
+  candidatePattern: "\\d{17}[\\dX]",
   country: "CN",
   entityType: "person",
   description:

@@ -68,6 +68,12 @@ const bis: Validator = {
   name: "Belgian BIS Number",
   localName: "BIS-nummer",
   abbreviation: "BIS",
+  aliases: [
+    "BIS-nummer",
+    "numéro BIS",
+  ] as const,
+  candidatePattern:
+    "\\d{2}\\.?\\d{2}\\.?\\d{2}-?\\d{3}\\.?\\d{2}",
   country: "BE",
   entityType: "person",
   sourceUrl:

@@ -66,6 +66,11 @@ const vat: Validator = {
   name: "Danish VAT Number",
   localName: "Momsregistreringsnummer",
   abbreviation: "CVR",
+  aliases: [
+    "momsnummer",
+    "SE-nummer",
+  ] as const,
+  candidatePattern: "DK\\d{8}",
   country: "DK",
   entityType: "company",
   sourceUrl: "https://erhvervsstyrelsen.dk/",

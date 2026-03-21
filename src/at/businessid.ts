@@ -48,6 +48,12 @@ const businessid: Validator = {
   name: "Austrian Company Register Number",
   localName: "Firmenbuchnummer",
   abbreviation: "FN",
+  aliases: [
+    "Firmenbuchnummer",
+    "FN",
+    "FBN",
+  ] as const,
+  candidatePattern: "FN\\s?\\d{5,6}[a-z]?",
   country: "AT",
   entityType: "company",
   sourceUrl: "https://www.justiz.gv.at/",

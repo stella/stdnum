@@ -80,6 +80,11 @@ const vat: Validator = {
   name: "Slovenian VAT Number",
   localName: "Davčna številka",
   abbreviation: "DDV",
+  aliases: [
+    "DDV",
+    "identifikacijska številka za DDV",
+  ] as const,
+  candidatePattern: "SI\\d{8}",
   country: "SI",
   entityType: "company",
   sourceUrl: "https://www.fu.gov.si/",

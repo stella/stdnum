@@ -94,6 +94,12 @@ const rut: Validator = {
   name: "Chilean Tax ID",
   localName: "Rol Único Tributario",
   abbreviation: "RUT",
+  aliases: [
+    "RUT",
+    "Rol Único Tributario",
+  ] as const,
+  candidatePattern:
+    "\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[\\dkK]",
   country: "CL",
   entityType: "any",
   compact,

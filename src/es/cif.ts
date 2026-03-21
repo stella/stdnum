@@ -74,6 +74,12 @@ const cif: Validator = {
   name: "Spanish Company Tax ID",
   localName: "Código de Identificación Fiscal",
   abbreviation: "CIF",
+  aliases: [
+    "CIF",
+    "código de identificación fiscal",
+  ] as const,
+  candidatePattern:
+    "[A-HJNP-SUVW]\\d{7}[\\dA-J]",
   country: "ES",
   entityType: "company",
   sourceUrl: "https://www.agenciatributaria.es/",

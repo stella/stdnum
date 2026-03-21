@@ -57,6 +57,11 @@ const vat: Validator = {
   name: "Finnish VAT Number",
   localName: "Arvonlisäveronumero",
   abbreviation: "ALV nro",
+  aliases: [
+    "ALV-numero",
+    "Y-tunnus",
+  ] as const,
+  candidatePattern: "FI\\d{8}",
   country: "FI",
   entityType: "company",
   sourceUrl: 

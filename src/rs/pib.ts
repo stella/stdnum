@@ -57,6 +57,11 @@ const pib: Validator = {
   name: "Serbian Tax ID",
   localName: "Poreski identifikacioni broj",
   abbreviation: "PIB",
+  aliases: [
+    "PIB",
+    "poreski identifikacioni broj",
+  ] as const,
+  candidatePattern: "\\d{9}",
   country: "RS",
   entityType: "any",
   lengths: [9] as const,

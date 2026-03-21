@@ -51,6 +51,12 @@ const idnr: Validator = {
   name: "Israeli Identity Number",
   localName: "מספר זהות",
   abbreviation: "ת.ז.",
+  aliases: [
+    "תעודת זהות",
+    "Teudat Zehut",
+    "ID number",
+  ] as const,
+  candidatePattern: "\\d{9}",
   country: "IL",
   entityType: "person",
   compact,

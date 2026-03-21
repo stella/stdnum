@@ -114,6 +114,11 @@ const vat: Validator = {
   name: "Latvian VAT Number",
   localName: "PVN reģistrācijas numurs",
   abbreviation: "PVN",
+  aliases: [
+    "PVN reģistrācijas numurs",
+    "PVN",
+  ] as const,
+  candidatePattern: "LV\\d{11}",
   country: "LV",
   entityType: "any",
   sourceUrl: "https://www.vid.gov.lv/en",

@@ -88,6 +88,8 @@ const ubn: Validator = {
   name: "Unified Business Number",
   localName: "統一編號",
   abbreviation: "UBN",
+  aliases: ["統一編號", "UBN"] as const,
+  candidatePattern: "\\d{8}",
   country: "TW",
   entityType: "company",
   description:

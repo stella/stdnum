@@ -63,6 +63,8 @@ const vat: Validator = {
   name: "Maltese VAT Number",
   localName: "VAT Registration Number",
   abbreviation: "VAT",
+  aliases: ["VAT number MT"] as const,
+  candidatePattern: "MT\\d{8}",
   country: "MT",
   entityType: "company",
   sourceUrl: "https://cfr.gov.mt/",

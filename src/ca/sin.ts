@@ -58,6 +58,12 @@ const sin: Validator = {
   name: "Social Insurance Number",
   localName: "Social Insurance Number",
   abbreviation: "SIN",
+  aliases: [
+    "SIN",
+    "Social Insurance Number",
+    "NAS",
+  ] as const,
+  candidatePattern: "\\d{3}-?\\d{3}-?\\d{3}",
   country: "CA",
   entityType: "person",
   sourceUrl: 

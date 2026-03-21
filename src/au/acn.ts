@@ -60,6 +60,12 @@ const acn: Validator = {
   name: "Australian Company Number",
   localName: "Australian Company Number",
   abbreviation: "ACN",
+  aliases: [
+    "ACN",
+    "Australian Company Number",
+  ] as const,
+  candidatePattern:
+    "\\d{3}\\s?\\d{3}\\s?\\d{3}",
   country: "AU",
   entityType: "company",
   sourceUrl: "https://asic.gov.au/",

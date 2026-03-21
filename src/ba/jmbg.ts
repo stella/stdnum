@@ -96,6 +96,8 @@ const jmbg: Validator = {
   name: "Bosnian Personal ID",
   localName: "Jedinstveni matični broj građana",
   abbreviation: "JMBG",
+  aliases: ["JMBG", "matični broj"] as const,
+  candidatePattern: "\\d{13}",
   country: "BA",
   entityType: "person",
   lengths: [13] as const,

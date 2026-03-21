@@ -50,6 +50,12 @@ const orgnr: Validator = {
   name: "Swedish Organization Number",
   localName: "Organisationsnummer",
   abbreviation: "Orgnr",
+  aliases: [
+    "organisationsnummer",
+    "org.nr",
+    "org nr",
+  ] as const,
+  candidatePattern: "\\d{6}-\\d{4}",
   country: "SE",
   entityType: "company",
   sourceUrl: "https://www.skatteverket.se/",

@@ -121,6 +121,11 @@ const vat: Validator = {
   name: "Dutch VAT Number",
   localName: "BTW-identificatienummer",
   abbreviation: "BTW",
+  aliases: [
+    "BTW-nummer",
+    "BTW-id",
+  ] as const,
+  candidatePattern: "NL\\d{9}B\\d{2}",
   country: "NL",
   entityType: "company",
   sourceUrl: "https://www.belastingdienst.nl/",

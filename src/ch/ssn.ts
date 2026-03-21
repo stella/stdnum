@@ -64,6 +64,14 @@ const ssn: Validator = {
   name: "Swiss Social Security Number",
   localName: "AHV-Versichertennummer",
   abbreviation: "AHV",
+  aliases: [
+    "AHV-Nummer",
+    "numéro AVS",
+    "AVS",
+    "AHV",
+  ] as const,
+  candidatePattern:
+    "756\\.?\\d{4}\\.?\\d{4}\\.?\\d{2}",
   country: "CH",
   entityType: "person",
   sourceUrl: "https://www.bsv.admin.ch/",

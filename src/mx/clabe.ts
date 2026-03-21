@@ -87,6 +87,11 @@ const clabe: Validator = {
   name: "Mexican Bank Account",
   localName: "Clave Bancaria Estandarizada",
   abbreviation: "CLABE",
+  aliases: [
+    "CLABE",
+    "Clave Bancaria Estandarizada",
+  ] as const,
+  candidatePattern: "\\d{18}",
   country: "MX",
   entityType: "any",
   lengths: [18] as const,

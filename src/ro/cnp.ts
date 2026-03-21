@@ -133,6 +133,9 @@ const cnp: Validator = {
   name: "Romanian Personal ID",
   localName: "Cod Numeric Personal",
   abbreviation: "CNP",
+  aliases: ["CNP", "cod numeric personal"] as const,
+  candidatePattern:
+    "[1-8]\\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])\\d{6}",
   country: "RO",
   entityType: "person",
   sourceUrl: "https://www.cnp.ro/",

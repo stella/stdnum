@@ -73,6 +73,13 @@ const vat: Validator = {
   name: "Belgian VAT Number",
   localName: "BTW-identificatienummer",
   abbreviation: "BTW",
+  aliases: [
+    "BTW",
+    "TVA",
+    "numéro d'entreprise",
+    "ondernemingsnummer",
+  ] as const,
+  candidatePattern: "BE0?\\d{9,10}",
   country: "BE",
   entityType: "company",
   sourceUrl: "https://finances.belgium.be/",

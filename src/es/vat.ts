@@ -147,6 +147,13 @@ const vat: Validator = {
   name: "Spanish VAT Number",
   localName: "Número de Identificación Fiscal",
   abbreviation: "NIF",
+  aliases: [
+    "NIF",
+    "CIF",
+    "número de identificación fiscal",
+  ] as const,
+  candidatePattern:
+    "ES[A-Z]\\d{7}[A-Z\\d]",
   country: "ES",
   entityType: "any",
   sourceUrl: "https://www.agenciatributaria.es/",

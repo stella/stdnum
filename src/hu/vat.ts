@@ -57,6 +57,11 @@ const vat: Validator = {
   name: "Hungarian VAT Number",
   localName: "Adószám",
   abbreviation: "ANUM",
+  aliases: [
+    "adószám",
+    "adóazonosító jel",
+  ] as const,
+  candidatePattern: "\\d{8}-\\d-\\d{2}",
   country: "HU",
   entityType: "company",
   sourceUrl: "https://nav.gov.hu/",

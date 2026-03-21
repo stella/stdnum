@@ -166,6 +166,12 @@ const curp: Validator = {
   name: "Mexican Personal ID",
   localName: "Clave Única de Registro de Población",
   abbreviation: "CURP",
+  aliases: [
+    "CURP",
+    "Clave Única de Registro de Población",
+  ] as const,
+  candidatePattern:
+    "[A-Z]{4}\\d{6}[HM][A-Z]{5}[A-Z\\d]\\d",
   country: "MX",
   entityType: "person",
   lengths: [18] as const,

@@ -103,6 +103,11 @@ const sedol: Validator = {
   localName:
     "Stock Exchange Daily Official List number",
   abbreviation: "SEDOL",
+  aliases: [
+    "SEDOL",
+    "Stock Exchange Daily Official List",
+  ] as const,
+  candidatePattern: "[B-DF-HJ-NP-TV-Z0-9]{6}\\d",
   country: "GB",
   entityType: "any",
   sourceUrl: "https://en.wikipedia.org/wiki/SEDOL",

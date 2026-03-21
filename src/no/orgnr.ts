@@ -54,6 +54,11 @@ const orgnr: Validator = {
   name: "Norwegian Organization Number",
   localName: "Organisasjonsnummer",
   abbreviation: "Orgnr",
+  aliases: [
+    "organisasjonsnummer",
+    "org.nr",
+  ] as const,
+  candidatePattern: "\\d{9}",
   country: "NO",
   entityType: "company",
   sourceUrl: "https://www.brreg.no/",

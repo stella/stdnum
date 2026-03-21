@@ -60,6 +60,13 @@ const vat: Validator = {
   name: "Swedish VAT Number",
   localName: "Momsregistreringsnummer",
   abbreviation: "Momsnr.",
+  aliases: [
+    "Momsnr.",
+    "Momsregistreringsnummer",
+    "Swedish VAT Number",
+    "SE VAT",
+  ] as const,
+  candidatePattern: "SE\\s?\\d{10}01",
   country: "SE",
   entityType: "company",
   sourceUrl: "https://www.skatteverket.se/",

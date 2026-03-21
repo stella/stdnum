@@ -56,6 +56,11 @@ const utr: Validator = {
   name: "UK Unique Taxpayer Reference",
   localName: "Unique Taxpayer Reference",
   abbreviation: "UTR",
+  aliases: [
+    "Unique Taxpayer Reference",
+    "UTR",
+  ] as const,
+  candidatePattern: "\\d{10}",
   country: "GB",
   entityType: "any",
   sourceUrl: "https://www.gov.uk/find-utr-number",

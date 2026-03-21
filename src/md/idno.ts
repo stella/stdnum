@@ -67,6 +67,11 @@ const idno: Validator = {
   name: "Moldavian Company Identification Number",
   localName: "IDNO",
   abbreviation: "IDNO",
+  aliases: [
+    "IDNO",
+    "cod de identificare",
+  ] as const,
+  candidatePattern: "\\d{13}",
   country: "MD",
   entityType: "company",
   lengths: [13] as const,

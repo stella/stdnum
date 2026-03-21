@@ -54,6 +54,8 @@ const pib: Validator = {
   name: "Montenegrin Tax ID",
   localName: "Poreski identifikacioni broj",
   abbreviation: "PIB",
+  aliases: ["PIB"] as const,
+  candidatePattern: "\\d{8}",
   country: "ME",
   entityType: "any",
   lengths: [8] as const,

@@ -78,6 +78,12 @@ const mynumber: Validator = {
   name: "Japanese Individual Number",
   localName: "マイナンバー",
   abbreviation: "My Number",
+  aliases: [
+    "My Number",
+    "マイナンバー",
+    "個人番号",
+  ] as const,
+  candidatePattern: "\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}",
   country: "JP",
   entityType: "person",
   description:

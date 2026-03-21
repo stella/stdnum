@@ -78,6 +78,11 @@ const isin: Validator = {
   localName:
     "International Securities Identification Number",
   abbreviation: "ISIN",
+  aliases: [
+    "ISIN",
+    "International Securities Identification Number",
+  ] as const,
+  candidatePattern: "[A-Z]{2}[A-Z0-9]{9}\\d",
   entityType: "any",
   sourceUrl: "https://www.isin.org/",
   examples: ["US0378331005", "GB0002634946"] as const,

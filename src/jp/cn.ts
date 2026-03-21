@@ -72,6 +72,11 @@ const cn: Validator = {
   name: "Japanese Corporate Number",
   localName: "法人番号",
   abbreviation: "CN",
+  aliases: [
+    "法人番号",
+    "Corporate Number",
+  ] as const,
+  candidatePattern: "\\d{13}",
   country: "JP",
   entityType: "company",
   description:

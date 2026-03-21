@@ -106,6 +106,11 @@ const ird: Validator = {
   name: "IRD Number",
   localName: "IRD Number",
   abbreviation: "IRD",
+  aliases: [
+    "IRD number",
+    "tax number NZ",
+  ] as const,
+  candidatePattern: "\\d{8,9}",
   country: "NZ",
   entityType: "any",
   compact,

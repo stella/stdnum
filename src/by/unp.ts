@@ -124,6 +124,8 @@ const unp: Validator = {
   name: "Belarus Tax Number",
   localName: "Учётный номер плательщика",
   abbreviation: "УНП",
+  aliases: ["УНП", "UNP"] as const,
+  candidatePattern: "\\d{9}",
   country: "BY",
   entityType: "any",
   sourceUrl: "https://www.nalog.gov.by/",
