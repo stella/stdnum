@@ -25,7 +25,7 @@ describe("id.npwp", () => {
   });
 
   test("another valid NPWP", () => {
-    const r = id.npwp.validate("013001238091000");
+    const r = id.npwp.validate("016090524017000");
     expect(r.valid).toBe(true);
   });
 
@@ -38,10 +38,18 @@ describe("id.npwp", () => {
   });
 
   test("wrong length (too long)", () => {
-    const r = id.npwp.validate("0130006660910001");
+    const r = id.npwp.validate("01300066609100012");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("invalid Luhn checksum", () => {
+    const r = id.npwp.validate("013001238091000");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
     }
   });
 

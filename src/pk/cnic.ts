@@ -18,6 +18,11 @@ import type { ValidateResult, Validator } from "../types";
 const compact = (value: string): string =>
   clean(value, " -");
 
+/** Valid province IDs (first digit). */
+const VALID_PROVINCES = new Set([
+  "1", "2", "3", "4", "5", "6", "7",
+]);
+
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
   if (v.length !== 13) {
@@ -32,11 +37,18 @@ const validate = (value: string): ValidateResult => {
       "CNIC must contain only digits",
     );
   }
-  // Province code cannot be all zeros.
-  if (v.slice(0, 5) === "00000") {
+  // First digit must be a valid province code
+  if (!VALID_PROVINCES.has(v[0]!)) {
     return err(
       "INVALID_COMPONENT",
-      "CNIC province code cannot be 00000",
+      "CNIC province code is invalid",
+    );
+  }
+  // Last digit indicates gender (1-9), 0 is invalid
+  if (v[12] === "0") {
+    return err(
+      "INVALID_COMPONENT",
+      "CNIC gender digit must not be 0",
     );
   }
   return { valid: true, compact: v };

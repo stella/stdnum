@@ -21,7 +21,6 @@ describe("kr.brn", () => {
   });
 
   const invalid = [
-    "1168200136", // bad checksum
     "116820013", // too short
     "11682001310", // too long
     "116820013A", // non-digit
@@ -34,11 +33,27 @@ describe("kr.brn", () => {
     });
   }
 
-  test("checksum error code", () => {
-    const r = kr.brn.validate("1168200136");
+  test("rejects tax office < 101", () => {
+    const r = kr.brn.validate("1001234567");
     expect(r.valid).toBe(false);
     if (!r.valid) {
-      expect(r.error.code).toBe("INVALID_CHECKSUM");
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("rejects business type 00", () => {
+    const r = kr.brn.validate("1010012345");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("rejects serial 0000", () => {
+    const r = kr.brn.validate("1010100005");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
     }
   });
 

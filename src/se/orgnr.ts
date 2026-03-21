@@ -31,12 +31,6 @@ const validate = (value: string): ValidateResult => {
       "Swedish Organisationsnummer must contain only digits",
     );
   }
-  if (v[2] < "2") {
-    return err(
-      "INVALID_COMPONENT",
-      "Swedish Organisationsnummer third digit must be >= 2",
-    );
-  }
   if (!luhnValidate(v)) {
     return err(
       "INVALID_CHECKSUM",

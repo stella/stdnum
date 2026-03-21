@@ -9,13 +9,10 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-
-const WEIGHTS = [1, 3, 7, 1, 3, 7, 1, 3, 5] as const;
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -34,19 +31,25 @@ const validate = (value: string): ValidateResult => {
       "BRN must contain only digits",
     );
   }
-
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    const weighted = Number(v[i]) * WEIGHTS[i]!;
-    sum += i === 8
-      ? weighted + Math.floor(weighted / 10)
-      : weighted;
-  }
-  const check = (10 - (sum % 10)) % 10;
-  if (check !== Number(v[9])) {
+  // Tax office number must be >= 101
+  if (v.slice(0, 3) < "101") {
     return err(
-      "INVALID_CHECKSUM",
-      "BRN check digit does not match",
+      "INVALID_COMPONENT",
+      "BRN tax office code must be >= 101",
+    );
+  }
+  // Business type must not be 00
+  if (v.slice(3, 5) === "00") {
+    return err(
+      "INVALID_COMPONENT",
+      "BRN business type must not be 00",
+    );
+  }
+  // Serial part must not be 0000
+  if (v.slice(5, 9) === "0000") {
+    return err(
+      "INVALID_COMPONENT",
+      "BRN serial must not be 0000",
     );
   }
   return { valid: true, compact: v };
@@ -55,20 +58,6 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => {
   const v = compact(value);
   return `${v.slice(0, 3)}-${v.slice(3, 5)}-${v.slice(5)}`;
-};
-
-/** Generate a random valid BRN. */
-const generate = (): string => {
-  const payload = randomDigits(9);
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    const weighted = Number(payload[i]) * WEIGHTS[i]!;
-    sum += i === 8
-      ? weighted + Math.floor(weighted / 10)
-      : weighted;
-  }
-  const check = (10 - (sum % 10)) % 10;
-  return `${payload}${String(check)}`;
 };
 
 /** Korean Business Registration Number. */
@@ -87,8 +76,7 @@ const brn: Validator = {
   compact,
   format,
   validate,
-  generate,
 };
 
 export default brn;
-export { compact, format, generate, validate };
+export { compact, format, validate };
