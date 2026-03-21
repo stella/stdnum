@@ -124,8 +124,8 @@ describe("kr.rrn", () => {
   });
 
   test("rejects place > 96", () => {
-    // place of birth 97 is invalid; need valid
-    // checksum for this to reach the place check
+    // place of birth 97 is invalid; the place
+    // check runs before the checksum check
     const r = kr.rrn.validate("9710131971234");
     expect(r.valid).toBe(false);
     if (!r.valid) {
@@ -189,6 +189,18 @@ describe("kr.rrn parse", () => {
       expect(p.birthDate.getFullYear()).toBe(1897);
       expect(p.birthDate.getMonth()).toBe(9);
       expect(p.birthDate.getDate()).toBe(13);
+    }
+  });
+
+  test("parse 2000s male foreigner (digit 7)", () => {
+    // gender digit 7 = male foreigner born 2000s
+    const p = parse("0503157010100");
+    expect(p).not.toBeNull();
+    if (p) {
+      expect(p.gender).toBe("male");
+      expect(p.birthDate.getFullYear()).toBe(2005);
+      expect(p.birthDate.getMonth()).toBe(2);
+      expect(p.birthDate.getDate()).toBe(15);
     }
   });
 

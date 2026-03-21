@@ -135,7 +135,7 @@ const parse = (
   if (bd === null) return null;
 
   const genderDigit = v[6];
-  const isMale = "1359".includes(genderDigit);
+  const isMale = "13579".includes(genderDigit);
 
   return {
     birthDate: new Date(
