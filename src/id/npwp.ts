@@ -54,7 +54,7 @@ const validateNik = (
   const month = Number(v.slice(8, 10));
   const year = Number(v.slice(10, 12));
   // Females have 40 added to the day
-  if (day > 40) day -= 40;
+  day = day % 40;
   // Validate the date (century is ambiguous in NIK)
   if (
     !isValidDate(1900 + year, month, day)
