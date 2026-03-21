@@ -65,6 +65,8 @@ export * as id from "./id/mod";
 export * as ie from "./ie/mod";
 export * as il from "./il/mod";
 export * as in_ from "./in/mod";
+export * as iq from "./iq/mod";
+export * as ir from "./ir/mod";
 export * as is_ from "./is/mod";
 export * as it from "./it/mod";
 export * as jp from "./jp/mod";

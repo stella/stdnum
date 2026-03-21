@@ -49,6 +49,8 @@ export type CountryCode =
   | "IE"
   | "IL"
   | "IN"
+  | "IQ"
+  | "IR"
   | "IS"
   | "IT"
   | "JP"
