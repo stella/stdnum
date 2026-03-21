@@ -153,6 +153,13 @@ const personnummer: Validator = {
   name: "Swedish Personal ID",
   localName: "Personnummer",
   abbreviation: "PN",
+  aliases: [
+    "personnummer",
+    "personnr",
+    "pers.nr",
+    "personal identity number",
+  ] as const,
+  candidatePattern: "\\d{6,8}-\\d{4}",
   country: "SE",
   entityType: "person",
   sourceUrl: 

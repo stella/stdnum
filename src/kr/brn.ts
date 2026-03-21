@@ -65,6 +65,11 @@ const brn: Validator = {
   name: "Korean Business Registration Number",
   localName: "사업자등록번호",
   abbreviation: "BRN",
+  aliases: [
+    "사업자등록번호",
+    "BRN",
+  ] as const,
+  candidatePattern: "\\d{3}-?\\d{2}-?\\d{5}",
   country: "KR",
   entityType: "company",
   description:

@@ -83,6 +83,11 @@ const ssn: Validator = {
   name: "Social Security Number",
   localName: "Social Security Number",
   abbreviation: "SSN",
+  aliases: [
+    "SSN",
+    "Social Security Number",
+  ] as const,
+  candidatePattern: "\\d{3}-?\\d{2}-?\\d{4}",
   country: "US",
   entityType: "person",
   sourceUrl: 

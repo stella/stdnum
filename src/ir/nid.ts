@@ -101,6 +101,8 @@ const nid: Validator = {
   name: "Iranian National ID",
   localName: "کد ملی",
   abbreviation: "NID",
+  aliases: ["NID", "کد ملی", "national code"] as const,
+  candidatePattern: "\\d{10}",
   country: "IR",
   entityType: "person",
   sourceUrl: "https://www.sabteahval.ir/",

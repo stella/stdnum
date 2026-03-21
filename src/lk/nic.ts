@@ -188,6 +188,8 @@ const nic: Validator = {
   name: "National Identity Card",
   localName: "ජාතික හැඳුනුම්පත",
   abbreviation: "NIC",
+  aliases: ["NIC", "ජාතික හැඳුනුම්පත"] as const,
+  candidatePattern: "\\d{9}[VXvx]|\\d{12}",
   country: "LK",
   entityType: "person",
   description:

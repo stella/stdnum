@@ -247,6 +247,15 @@ const codiceFiscale: Validator = {
   name: "Italian Tax Code",
   localName: "Codice Fiscale",
   abbreviation: "CF",
+  aliases: [
+    "codice fiscale",
+    "C.F.",
+    "CF",
+    "cod. fisc.",
+    "fiscal code",
+  ] as const,
+  candidatePattern:
+    "[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]",
   country: "IT",
   entityType: "person",
   description:

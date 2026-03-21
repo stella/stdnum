@@ -82,6 +82,11 @@ const lei: Validator = {
   name: "Legal Entity Identifier",
   localName: "Legal Entity Identifier",
   abbreviation: "LEI",
+  aliases: [
+    "LEI",
+    "Legal Entity Identifier",
+  ] as const,
+  candidatePattern: "[A-Z0-9]{18}\\d{2}",
   entityType: "company",
   sourceUrl: "https://www.gleif.org/",
   examples: ["5493006MHB84DD0ZWV18"] as const,

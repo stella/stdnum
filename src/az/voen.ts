@@ -111,6 +111,8 @@ const voen: Validator = {
   localName:
     "Vergi Ödəyicisinin Eyniləşdirmə Nömrəsi",
   abbreviation: "VÖEN",
+  aliases: ["VÖEN"] as const,
+  candidatePattern: "\\d{10}",
   country: "AZ",
   entityType: "any",
   lengths: [10] as const,

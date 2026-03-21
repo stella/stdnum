@@ -66,6 +66,11 @@ const cvr: Validator = {
   name: "Danish Business Register Number",
   localName: "CVR-nummer",
   abbreviation: "CVR",
+  aliases: [
+    "CVR-nummer",
+    "CVR",
+  ] as const,
+  candidatePattern: "\\d{8}",
   country: "DK",
   entityType: "company",
   sourceUrl: "https://erhvervsstyrelsen.dk/",

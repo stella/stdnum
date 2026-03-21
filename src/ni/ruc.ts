@@ -160,6 +160,8 @@ const ruc: Validator = {
   name: "Tax Identification Number",
   localName: "Registro Único de Contribuyente",
   abbreviation: "RUC",
+  aliases: ["RUC"] as const,
+  candidatePattern: "[JKME]\\d{13}",
   country: "NI",
   entityType: "any",
   description:

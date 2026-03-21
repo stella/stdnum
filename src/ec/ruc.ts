@@ -172,6 +172,11 @@ const ruc: Validator = {
   name: "Registro Único de Contribuyentes",
   localName: "Registro Único de Contribuyentes",
   abbreviation: "RUC",
+  aliases: [
+    "RUC",
+    "Registro Único de Contribuyentes",
+  ] as const,
+  candidatePattern: "\\d{13}",
   country: "EC",
   entityType: "any",
   description:

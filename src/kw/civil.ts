@@ -127,6 +127,8 @@ const civil: Validator = {
   name: "Civil Number",
   localName: "الرقم المدني",
   abbreviation: "Civil ID",
+  aliases: ["Civil ID", "الرقم المدني"] as const,
+  candidatePattern: "\\d{12}",
   country: "KW",
   entityType: "person",
   lengths: [12] as const,

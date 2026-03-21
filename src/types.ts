@@ -178,4 +178,23 @@ export type Validator = {
    * form placeholders. NOT cryptographically secure.
    */
   generate?: () => string;
+
+  /**
+   * All known names, abbreviations, and common
+   * references for this identifier. Superset of
+   * name/localName/abbreviation. Useful for
+   * searching documents, building autocomplete,
+   * or contextual detection.
+   */
+  aliases?: readonly string[];
+
+  /**
+   * Regex pattern string to find candidates of
+   * this identifier in free text. Should be loose
+   * enough to catch formatted variants (dots,
+   * spaces, hyphens) but specific enough to avoid
+   * excessive noise. Matched candidates should be
+   * passed to validate() for confirmation.
+   */
+  candidatePattern?: string;
 };

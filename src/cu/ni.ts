@@ -107,6 +107,12 @@ const ni: Validator = {
   name: "Cuban Identity Card Number",
   localName: "Número de Identidad",
   abbreviation: "NI",
+  aliases: [
+    "NI",
+    "número de identidad",
+    "carnet de identidad",
+  ] as const,
+  candidatePattern: "\\d{11}",
   country: "CU",
   entityType: "person",
   lengths: [11] as const,

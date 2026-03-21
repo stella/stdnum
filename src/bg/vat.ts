@@ -131,6 +131,11 @@ const vat: Validator = {
   name: "Bulgarian VAT Number",
   localName: "ИН по ДДС",
   abbreviation: "ИН по ДДС",
+  aliases: [
+    "ДДС",
+    "идентификационен номер по ДДС",
+  ] as const,
+  candidatePattern: "BG\\d{9,10}",
   country: "BG",
   entityType: "any",
   sourceUrl: "https://www.nra.bg/",

@@ -39,6 +39,11 @@ const kvk: Validator = {
   name: "Dutch Chamber of Commerce Number",
   localName: "KvK-nummer",
   abbreviation: "KvK",
+  aliases: [
+    "KVK-nummer",
+    "Kamer van Koophandel",
+  ] as const,
+  candidatePattern: "\\d{8}",
   country: "NL",
   entityType: "company",
   sourceUrl: "https://www.kvk.nl/",

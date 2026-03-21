@@ -71,6 +71,8 @@ const tin: Validator = {
   name: "Anguilla Tax Identification Number",
   localName: "Tax Identification Number",
   abbreviation: "TIN",
+  aliases: ["TIN"] as const,
+  candidatePattern: "\\d{11}",
   country: "AI",
   entityType: "any",
   lengths: [10] as const,

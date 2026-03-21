@@ -54,6 +54,11 @@ const ice: Validator = {
   name: "Moroccan Company Identification Number",
   localName: "Identifiant Commun de l'Entreprise",
   abbreviation: "ICE",
+  aliases: [
+    "ICE",
+    "Identifiant Commun de l'Entreprise",
+  ] as const,
+  candidatePattern: "\\d{15}",
   country: "MA",
   entityType: "company",
   compact,

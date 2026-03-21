@@ -81,6 +81,12 @@ const nie: Validator = {
   name: "Spanish Foreigner ID",
   localName: "Número de Identidad de Extranjero",
   abbreviation: "NIE",
+  aliases: [
+    "N.I.E.",
+    "NIE",
+    "número de identidad de extranjero",
+  ] as const,
+  candidatePattern: "[XYZ]-?\\d{7}-?[A-Z]",
   country: "ES",
   entityType: "person",
   sourceUrl: 

@@ -109,6 +109,12 @@ const cpr: Validator = {
   name: "Danish Personal ID",
   localName: "Det Centrale Personregister",
   abbreviation: "CPR",
+  aliases: [
+    "CPR-nummer",
+    "personnummer",
+    "CPR",
+  ] as const,
+  candidatePattern: "\\d{6}-?\\d{4}",
   country: "DK",
   entityType: "person",
   sourceUrl: "https://cpr.dk/",

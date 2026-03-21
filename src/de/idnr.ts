@@ -114,6 +114,13 @@ const idnr: Validator = {
   name: "German Tax ID",
   localName: "Steuerliche Identifikationsnummer",
   abbreviation: "IdNr",
+  aliases: [
+    "Steuerliche Identifikationsnummer",
+    "IdNr",
+    "Steuer-ID",
+  ] as const,
+  candidatePattern:
+    "\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}",
   country: "DE",
   entityType: "person",
   sourceUrl: 

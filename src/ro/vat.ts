@@ -71,6 +71,13 @@ const vat: Validator = {
   name: "Romanian VAT Number",
   localName: "Cod de Identificare Fiscală",
   abbreviation: "CIF",
+  aliases: [
+    "CUI",
+    "CIF",
+    "cod de identificare fiscală",
+    "cod fiscal",
+  ] as const,
+  candidatePattern: "RO\\d{2,10}",
   country: "RO",
   entityType: "any",
   sourceUrl: "https://www.anaf.ro/",

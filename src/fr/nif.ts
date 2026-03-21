@@ -73,6 +73,12 @@ const nif: Validator = {
   name: "French Tax ID",
   localName: "Numéro d'Identification Fiscale",
   abbreviation: "NIF",
+  aliases: [
+    "numéro fiscal",
+    "NIF",
+    "numéro d'identification fiscale",
+  ] as const,
+  candidatePattern: "\\d{13}",
   country: "FR",
   entityType: "person",
   sourceUrl: "https://www.impots.gouv.fr/",

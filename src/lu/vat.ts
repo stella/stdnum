@@ -61,6 +61,11 @@ const vat: Validator = {
   name: "Luxembourg VAT Number",
   localName: "Numéro de TVA",
   abbreviation: "TVA",
+  aliases: [
+    "TVA",
+    "numéro d'identification TVA",
+  ] as const,
+  candidatePattern: "LU\\d{8}",
   country: "LU",
   entityType: "company",
   sourceUrl: "https://pfi.public.lu/",

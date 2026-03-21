@@ -135,6 +135,11 @@ const idnr: Validator = {
   name: "South African Identity Number",
   localName: "South African Identity Number",
   abbreviation: "SA ID",
+  aliases: [
+    "ID number",
+    "RSA ID",
+  ] as const,
+  candidatePattern: "\\d{13}",
   country: "ZA",
   entityType: "person",
   compact,

@@ -48,6 +48,11 @@ const tva: Validator = {
   name: "Monacan VAT Number",
   localName: "Numéro de TVA",
   abbreviation: "TVA",
+  aliases: [
+    "numéro de TVA",
+    "TVA",
+  ] as const,
+  candidatePattern: "FR\\d{11}",
   country: "MC",
   entityType: "company",
   sourceUrl: "https://www.economie.gouv.fr/",

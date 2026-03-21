@@ -81,6 +81,12 @@ const amka: Validator = {
   name: "Greek Social Security Number",
   localName: "Αριθμός Μητρώου Κοινωνικής Ασφάλισης",
   abbreviation: "ΑΜΚΑ",
+  aliases: [
+    "ΑΜΚΑ",
+    "Αριθμός Μητρώου Κοινωνικής Ασφάλισης",
+    "AMKA",
+  ] as const,
+  candidatePattern: "\\d{11}",
   country: "GR",
   entityType: "person",
   sourceUrl: "https://www.amka.gr/",

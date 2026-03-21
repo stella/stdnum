@@ -104,6 +104,8 @@ const asmens: Validator = {
   name: "Lithuanian Personal ID",
   localName: "Asmens kodas",
   abbreviation: "AK",
+  aliases: ["asmens kodas", "AK"] as const,
+  candidatePattern: "[3-6]\\d{10}",
   country: "LT",
   entityType: "person",
   sourceUrl: "https://www.registrucentras.lt/",

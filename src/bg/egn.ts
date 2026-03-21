@@ -134,6 +134,12 @@ const egn: Validator = {
   name: "Bulgarian Personal ID",
   localName: "Единен граждански номер",
   abbreviation: "ЕГН",
+  aliases: [
+    "ЕГН",
+    "единен граждански номер",
+    "EGN",
+  ] as const,
+  candidatePattern: "\\d{10}",
   country: "BG",
   entityType: "person",
   sourceUrl: "https://www.grao.bg/",

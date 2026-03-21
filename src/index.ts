@@ -6,7 +6,6 @@ export type {
   ValidateResult,
   Validator,
 } from "./types";
-
 export { default as bic } from "./bic";
 export {
   default as creditcard,

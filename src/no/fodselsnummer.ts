@@ -178,6 +178,11 @@ const fodselsnummer: Validator = {
   name: "Norwegian Birth Number",
   localName: "Fødselsnummer",
   abbreviation: "Fødselsnr",
+  aliases: [
+    "fødselsnummer",
+    "personnummer",
+  ] as const,
+  candidatePattern: "\\d{11}",
   country: "NO",
   entityType: "person",
   sourceUrl: "https://www.skatteetaten.no/",

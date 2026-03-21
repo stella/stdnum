@@ -109,6 +109,8 @@ const kennitala: Validator = {
   name: "Icelandic ID Number",
   localName: "Kennitala",
   abbreviation: "kt.",
+  aliases: ["kennitala", "kt."] as const,
+  candidatePattern: "\\d{6}-?\\d{4}",
   country: "IS",
   entityType: "any",
   sourceUrl: "https://www.skra.is/",

@@ -64,6 +64,8 @@ const cpr: Validator = {
   name: "Central Population Registration Number",
   localName: "الرقم السكاني",
   abbreviation: "CPR",
+  aliases: ["CPR", "الرقم السكاني"] as const,
+  candidatePattern: "\\d{9}",
   country: "BH",
   entityType: "person",
   lengths: [9] as const,

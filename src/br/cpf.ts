@@ -98,6 +98,11 @@ const cpf: Validator = {
   name: "Brazilian CPF",
   localName: "Cadastro de Pessoas Físicas",
   abbreviation: "CPF",
+  aliases: [
+    "CPF",
+    "Cadastro de Pessoas Físicas",
+  ] as const,
+  candidatePattern: "\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}",
   country: "BR",
   entityType: "person",
   sourceUrl: "https://www.gov.br/receitafederal/",

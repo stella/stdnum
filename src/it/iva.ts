@@ -88,6 +88,13 @@ const iva: Validator = {
   name: "Italian VAT Number",
   localName: "Partita IVA",
   abbreviation: "P.IVA",
+  aliases: [
+    "partita IVA",
+    "P.IVA",
+    "P. IVA",
+    "VAT IT",
+  ] as const,
+  candidatePattern: "IT\\d{11}",
   country: "IT",
   entityType: "company",
   sourceUrl: "https://www.agenziaentrate.gov.it/",

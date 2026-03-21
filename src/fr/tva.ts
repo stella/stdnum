@@ -121,6 +121,12 @@ const tva: Validator = {
   name: "French VAT Number",
   localName: "Numéro de TVA intracommunautaire",
   abbreviation: "TVA",
+  aliases: [
+    "numéro de TVA",
+    "TVA intracommunautaire",
+    "FR VAT",
+  ] as const,
+  candidatePattern: "FR[A-Z0-9]{2}\\d{9}",
   country: "FR",
   entityType: "company",
   sourceUrl: "https://www.economie.gouv.fr/",

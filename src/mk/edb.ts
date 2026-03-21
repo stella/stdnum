@@ -70,6 +70,12 @@ const edb: Validator = {
   name: "North Macedonian Tax ID",
   localName: "Edinstven danocen broj",
   abbreviation: "EDB",
+  aliases: [
+    "ЕДБ",
+    "единствен даночен број",
+    "EDB",
+  ] as const,
+  candidatePattern: "MK\\d{13}",
   country: "MK",
   entityType: "any",
   lengths: [13] as const,

@@ -322,6 +322,9 @@ const iban: Validator = {
   name: "IBAN",
   localName: "IBAN",
   abbreviation: "IBAN",
+  aliases: ["IBAN"] as const,
+  candidatePattern:
+    "[A-Z]{2}\\d{2}[\\s]?[A-Z0-9]{4}[\\s]?(?:[A-Z0-9]{4}[\\s]?){2,7}[A-Z0-9]{1,4}",
   entityType: "any",
   description:
     "International bank account number per ISO 13616",

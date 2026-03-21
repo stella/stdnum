@@ -81,6 +81,11 @@ const nrt: Validator = {
   name: "Andorra Tax Number",
   localName: "Número de Registre Tributari",
   abbreviation: "NRT",
+  aliases: [
+    "NRT",
+    "Número de Registre Tributari",
+  ] as const,
+  candidatePattern: "[A-Z]-?\\d{6}-?[A-Z]",
   country: "AD",
   entityType: "any",
   sourceUrl: 

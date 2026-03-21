@@ -74,6 +74,12 @@ const vat: Validator = {
   name: "German VAT Number",
   localName: "Umsatzsteuer-Identifikationsnummer",
   abbreviation: "USt-IdNr.",
+  aliases: [
+    "USt-IdNr",
+    "Umsatzsteuer-Identifikationsnummer",
+    "VAT DE",
+  ] as const,
+  candidatePattern: "DE\\d{9}",
   country: "DE",
   entityType: "company",
   description:

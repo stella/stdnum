@@ -125,6 +125,12 @@ const rfc: Validator = {
   name: "Mexican Tax ID",
   localName: "Registro Federal de Contribuyentes",
   abbreviation: "RFC",
+  aliases: [
+    "RFC",
+    "Registro Federal de Contribuyentes",
+  ] as const,
+  candidatePattern:
+    "[A-ZÑ&]{3,4}\\d{6}[A-Z\\d]{3}",
   country: "MX",
   entityType: "any",
   lengths: [12, 13] as const,

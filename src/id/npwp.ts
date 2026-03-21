@@ -135,6 +135,12 @@ const npwp: Validator = {
   name: "Indonesian Taxpayer Identification Number",
   localName: "Nomor Pokok Wajib Pajak",
   abbreviation: "NPWP",
+  aliases: [
+    "NPWP",
+    "Nomor Pokok Wajib Pajak",
+  ] as const,
+  candidatePattern:
+    "\\d{2}\\.?\\d{3}\\.?\\d{3}\\.?\\d-?\\d{3}\\.?\\d{3}",
   country: "ID",
   entityType: "any",
   lengths: [15, 16],

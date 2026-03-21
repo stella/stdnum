@@ -60,6 +60,11 @@ const vat: Validator = {
   name: "Croatian VAT Number",
   localName: "Osobni identifikacijski broj",
   abbreviation: "OIB",
+  aliases: [
+    "OIB",
+    "osobni identifikacijski broj",
+  ] as const,
+  candidatePattern: "HR\\d{11}",
   country: "HR",
   entityType: "any",
   sourceUrl: "https://www.porezna-uprava.hr/",

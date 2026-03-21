@@ -67,6 +67,12 @@ const pnf: Validator = {
   name: "Bulgarian Foreigner Number",
   localName: "Личен номер на чужденец",
   abbreviation: "ЛНЧ",
+  aliases: [
+    "ЛНЧ",
+    "личен номер на чужденец",
+    "PNF",
+  ] as const,
+  candidatePattern: "\\d{10}",
   country: "BG",
   entityType: "person",
   sourceUrl:
