@@ -74,6 +74,12 @@ describe("ni.ruc", () => {
     );
   });
 
+  test("format adds hyphen for legal entity", () => {
+    expect(ni.ruc.format("J1310000252297")).toBe(
+      "J-1310000252297",
+    );
+  });
+
   test("metadata", () => {
     expect(ni.ruc.abbreviation).toBe("RUC");
     expect(ni.ruc.country).toBe("NI");

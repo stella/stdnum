@@ -142,7 +142,7 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => {
   const v = compact(value);
   if (v[0] === "J") {
-    return `J${v.slice(1)}`;
+    return `J-${v.slice(1)}`;
   }
   return (
     `${v.slice(0, 3)}-${v.slice(3, 9)}` +

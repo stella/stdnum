@@ -78,7 +78,7 @@ const z = (n: number): string =>
  * Compute a single DV digit via weighted sum mod 11.
  * Weights start at 2 and increment, applied
  * right-to-left. For old-format juridical RUCs,
- * the weight resets (decrements by 1) at position 12.
+ * weight 12 is skipped (jumps from 11 to 13).
  */
 const digitDV = (
   buf: string,
@@ -88,7 +88,7 @@ const digitDV = (
   let sum = 0;
   for (let i = buf.length - 1; i >= 0; i--) {
     if (isOldFormat && weight === 12) {
-      weight -= 1;
+      weight += 1; // skip 12, continue from 13
     }
     sum += weight * (buf.charCodeAt(i) - 48);
     weight += 1;
@@ -113,7 +113,7 @@ const computeDV = (
 
   if (
     len < 3 ||
-    len > 5 ||
+    len > 4 ||
     (len === 4 && segments[1] !== "NT")
   ) {
     return null;
@@ -285,10 +285,10 @@ const validate = (value: string): ValidateResult => {
     .replace(/-+$/, "")
     .split("-");
 
-  if (segments.length < 3 || segments.length > 5) {
+  if (segments.length < 3 || segments.length > 4) {
     return err(
       "INVALID_FORMAT",
-      "Panama RUC must have 3–5 " +
+      "Panama RUC must have 3–4 " +
         "hyphen-separated segments",
     );
   }
