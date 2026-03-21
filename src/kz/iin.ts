@@ -51,12 +51,12 @@ const compact = (value: string): string =>
  */
 const calcCheckDigit = (
   digits: string,
-): number | null => {
+): number => {
   let remainder = weightedSum(digits, WEIGHTS_1, 11);
   if (remainder === 10) {
     remainder = weightedSum(digits, WEIGHTS_2, 11);
   }
-  return remainder < 10 ? remainder : null;
+  return remainder === 10 ? 0 : remainder;
 };
 
 const validate = (value: string): ValidateResult => {
@@ -98,7 +98,7 @@ const validate = (value: string): ValidateResult => {
   }
 
   const expected = calcCheckDigit(v.slice(0, 11));
-  if (expected === null || expected !== Number(v[11])) {
+  if (expected !== Number(v[11])) {
     return err(
       "INVALID_CHECKSUM",
       "IIN check digit does not match",

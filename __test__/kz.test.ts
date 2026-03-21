@@ -61,6 +61,12 @@ describe("kz.iin", () => {
       expect(r.error.code).toBe("INVALID_COMPONENT");
   });
 
+  test("valid IIN with check digit 0 (double-10)", () => {
+    // Both weight passes yield remainder 10 → check digit 0
+    const r = kz.iin.validate("000101100710");
+    expect(r.valid).toBe(true);
+  });
+
   test("invalid checksum", () => {
     // Change last digit from 0 to 1
     const r = kz.iin.validate("880515300121");
