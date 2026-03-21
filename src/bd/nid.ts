@@ -95,13 +95,6 @@ const nid: Validator = {
   name: "National Identity Number",
   localName: "জাতীয় পরিচয়পত্র",
   abbreviation: "NID",
-  aliases: [
-    "NID",
-    "জাতীয় পরিচয়পত্র",
-    "National ID",
-    "Voter ID",
-  ] as const,
-  candidatePattern: "\\d{10}|\\d{13}|\\d{17}",
   country: "BD",
   entityType: "person",
   lengths: [10, 13, 17],
