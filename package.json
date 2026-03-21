@@ -219,7 +219,7 @@
     "ibantools": "^4.5.1",
     "jsvat": "^2.5.4",
     "luhn": "^2.4.1",
-    "oxfmt": "^0.40.0",
+    "oxfmt": "^0.41.0",
     "oxlint": "^1.55.0",
     "stdnum": "^1.11.7",
     "validate-polish": "^2.1.40"
