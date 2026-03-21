@@ -50,13 +50,6 @@ const philid: Validator = {
   name: "Philippine Identification System Number",
   localName: "PhilSys Card Number",
   abbreviation: "PhilID",
-  aliases: [
-    "PhilID",
-    "PhilSys",
-    "Philippine Identification System Number",
-  ] as const,
-  candidatePattern:
-    "\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}",
   country: "PH",
   entityType: "person",
   description:
