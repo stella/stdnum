@@ -6,9 +6,6 @@ export type {
   ValidateResult,
   Validator,
 } from "./types";
-export type { FindOptions, FoundIdentifier } from "./find";
-export { findInText } from "./find";
-
 export { default as bic } from "./bic";
 export {
   default as creditcard,
