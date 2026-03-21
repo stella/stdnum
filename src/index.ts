@@ -20,6 +20,7 @@ export { default as luhn } from "./luhn";
 
 export * as ad from "./ad/mod";
 export * as ae from "./ae/mod";
+export * as ai from "./ai/mod";
 export * as al from "./al/mod";
 export * as am from "./am/mod";
 export * as ar from "./ar/mod";
@@ -32,6 +33,7 @@ export * as be from "./be/mod";
 export * as bg from "./bg/mod";
 export * as br from "./br/mod";
 export * as by from "./by/mod";
+export * as bz from "./bz/mod";
 export * as ca from "./ca/mod";
 export * as ch from "./ch/mod";
 export * as cl from "./cl/mod";
