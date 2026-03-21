@@ -4,8 +4,10 @@
  * 13 digits: PPPPP-DDDDDDD-G where P is a province/
  * district code (5 digits), D is a sequential number
  * (7 digits), and G is a gender digit (odd = male,
- * even = female). No checksum; structural validation.
+ * even = female, including 0). No checksum; structural
+ * validation.
  *
+ * @see https://www.geo.tv/latest/157233-secret-behind-every-digit-of-the-cnic-number
  * @see https://en.wikipedia.org/wiki/CNIC_(Pakistan)
  */
 
@@ -44,7 +46,11 @@ const validate = (value: string): ValidateResult => {
       "CNIC province code is invalid",
     );
   }
-  // Last digit indicates gender (1-9), 0 is invalid
+  // Last digit indicates gender: odd = male,
+  // even = female. Digit 0 is rejected per
+  // python-stdnum convention; NADRA does not
+  // publish whether 0 is a valid gender code.
+  // @see https://www.geo.tv/latest/157233
   if (v[12] === "0") {
     return err(
       "INVALID_COMPONENT",
