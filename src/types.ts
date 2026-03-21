@@ -4,6 +4,7 @@
  */
 export type CountryCode =
   | "AD"
+  | "AE"
   | "AL"
   | "AM"
   | "AR"
@@ -11,6 +12,7 @@ export type CountryCode =
   | "AU"
   | "AZ"
   | "BA"
+  | "BD"
   | "BE"
   | "BG"
   | "BR"
