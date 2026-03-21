@@ -35,6 +35,7 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   FI: "Finland",
   FR: "France",
   GB: "United Kingdom",
+  GE: "Georgia",
   GH: "Ghana",
   GR: "Greece",
   HR: "Croatia",
@@ -46,6 +47,7 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   IT: "Italy",
   JP: "Japan",
   KR: "South Korea",
+  KZ: "Kazakhstan",
   LT: "Lithuania",
   LU: "Luxembourg",
   LV: "Latvia",
@@ -96,6 +98,7 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   CU: "Cuba",
   AD: "Andorra",
   AL: "Albania",
+  AM: "Armenia",
   BY: "Belarus",
 };
 
