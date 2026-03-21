@@ -72,3 +72,77 @@ describe("cn.ric", () => {
     expect(cn.ric.entityType).toBe("person");
   });
 });
+
+// ─── USCC (Unified Social Credit Code) ─────
+
+describe("cn.uscc", () => {
+  const valid = [
+    "91110000600037341L",
+    "911522010783762860",
+    "91152201078377449P",
+    "91310115MA1K3BTP2B",
+    "91340600MA2PBM9HXD",
+    "121200004013590816",
+  ];
+
+  for (const v of valid) {
+    test(`valid: ${v}`, () => {
+      const r = cn.uscc.validate(v);
+      expect(r.valid).toBe(true);
+    });
+  }
+
+  test("valid with spaces", () => {
+    const r = cn.uscc.validate("91 110000 600037341L");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid lowercase normalised", () => {
+    const r = cn.uscc.validate("91110000600037341l");
+    expect(r.valid).toBe(true);
+  });
+
+  test("wrong length", () => {
+    const r = cn.uscc.validate("12345");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("invalid first 8 chars", () => {
+    const r = cn.uscc.validate("A1110000600037341L");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("invalid alphabet chars (I, O, Z, S, V)", () => {
+    const r = cn.uscc.validate("9111000060003IOZSV");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("bad check digit", () => {
+    const r = cn.uscc.validate("91110000600037341N");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("compact strips spaces and dashes", () => {
+    expect(cn.uscc.compact("91 110000-600037341L")).toBe(
+      "91110000600037341L",
+    );
+  });
+
+  test("metadata", () => {
+    expect(cn.uscc.abbreviation).toBe("USCC");
+    expect(cn.uscc.country).toBe("CN");
+    expect(cn.uscc.entityType).toBe("company");
+  });
+});
