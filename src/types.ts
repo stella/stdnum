@@ -5,6 +5,7 @@
 export type CountryCode =
   | "AD"
   | "AL"
+  | "AM"
   | "AR"
   | "AT"
   | "AU"
@@ -33,6 +34,7 @@ export type CountryCode =
   | "FI"
   | "FR"
   | "GB"
+  | "GE"
   | "GH"
   | "GR"
   | "HK"
@@ -46,6 +48,7 @@ export type CountryCode =
   | "IT"
   | "JP"
   | "KR"
+  | "KZ"
   | "LI"
   | "LT"
   | "LU"
