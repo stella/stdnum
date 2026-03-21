@@ -18,7 +18,10 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
+import {
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 
 const WEIGHTS = [4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] as const;
 
@@ -110,7 +113,20 @@ const format = (value: string): string => {
 };
 
 /** Generate a random valid Uruguayan RUT. */
-const generate = (): string => { for (;;) { const c = randomDigits(12); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const docType = String(randomInt(1, 22)).padStart(
+      2,
+      "0",
+    );
+    const seq = randomDigits(6);
+    if (seq === "000000") continue;
+    const partial = `${docType}${seq}001`;
+    const check = calcCheckDigit(partial);
+    if (check === null) continue;
+    return `${partial}${check}`;
+  }
+};
 
 /**
  * Uruguayan RUT (tax identification number).
