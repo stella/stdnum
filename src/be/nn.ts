@@ -95,4 +95,4 @@ const nn: Validator = {
 };
 
 export default nn;
-export { compact, format, validate };
+export { checksum, compact, format, validate };
