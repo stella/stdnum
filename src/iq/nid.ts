@@ -14,50 +14,14 @@
  */
 
 import { clean } from "#util/clean";
+import { normalizeArabicDigits } from "#util/arabic";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 
-/**
- * Arabic-Indic and Extended Arabic-Indic digit map.
- * Converts Arabic numeral characters to ASCII digits.
- */
-const ARABIC_DIGITS: Record<string, string> = {
-  "\u0660": "0", // ٠
-  "\u0661": "1", // ١
-  "\u0662": "2", // ٢
-  "\u0663": "3", // ٣
-  "\u0664": "4", // ٤
-  "\u0665": "5", // ٥
-  "\u0666": "6", // ٦
-  "\u0667": "7", // ٧
-  "\u0668": "8", // ٨
-  "\u0669": "9", // ٩
-  "\u06F0": "0", // ۰
-  "\u06F1": "1", // ۱
-  "\u06F2": "2", // ۲
-  "\u06F3": "3", // ۳
-  "\u06F4": "4", // ۴
-  "\u06F5": "5", // ۵
-  "\u06F6": "6", // ۶
-  "\u06F7": "7", // ۷
-  "\u06F8": "8", // ۸
-  "\u06F9": "9", // ۹
-};
-
-const ARABIC_REGEX = new RegExp(
-  `[${Object.keys(ARABIC_DIGITS).join("")}]`,
-  "g",
-);
-
-const compact = (value: string): string => {
-  const cleaned = clean(value, " -./");
-  return cleaned.replace(
-    ARABIC_REGEX,
-    (ch) => ARABIC_DIGITS[ch] ?? ch,
-  );
-};
+const compact = (value: string): string =>
+  normalizeArabicDigits(clean(value, " -./"));
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
@@ -84,12 +48,6 @@ const nid: Validator = {
   name: "Iraqi National ID",
   localName: "البطاقة الوطنية الموحدة",
   abbreviation: "NID",
-  aliases: [
-    "NID",
-    "البطاقة الوطنية الموحدة",
-    "Iraqi National ID",
-  ] as const,
-  candidatePattern: "\\d{12}",
   country: "IQ",
   entityType: "person",
   sourceUrl: "https://mofa.gov.iq/the-civil-status-id/",

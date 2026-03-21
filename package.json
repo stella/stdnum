@@ -125,6 +125,8 @@
     "./in/aadhaar": "./src/in/aadhaar.ts",
     "./in/gstin": "./src/in/gstin.ts",
     "./in/pan": "./src/in/pan.ts",
+    "./iq/nid": "./src/iq/nid.ts",
+    "./ir/nid": "./src/ir/nid.ts",
     "./is/kennitala": "./src/is/kennitala.ts",
     "./is/vsk": "./src/is/vsk.ts",
     "./isin": "./src/isin.ts",
