@@ -17,6 +17,7 @@ import { isdigits } from "#util/strings";
 
 import { twoPassCheck } from "../ee/ik";
 import type { ValidateResult, Validator } from "../types";
+import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -84,6 +85,20 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Lithuanian personal code. */
+const generate = (): string => {
+  for (;;) {
+    const g = String(randomInt(3, 6));
+    const yy = String(randomInt(0, 99)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const s = String(randomInt(0, 999)).padStart(3, "0");
+    const payload = g + yy + mm + dd + s;
+    const c = payload + String(twoPassCheck(payload));
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Lithuanian Personal Code. */
 const asmens: Validator = {
   name: "Lithuanian Personal ID",
@@ -96,7 +111,8 @@ const asmens: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default asmens;
-export { compact, format, validate };
+export { compact, format, validate, generate };

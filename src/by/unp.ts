@@ -16,6 +16,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 /** Cyrillic to Latin mapping for the letter positions. */
 const CYRILLIC_TO_LATIN: Record<string, string> = {
@@ -119,6 +120,20 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Belarus UNP. */
+const generate = (): string => {
+  for (let i = 0; i < 100; i++) {
+    const prefix = String(randomInt(1, 7));
+    const rest = randomDigits(7);
+    const payload = prefix + rest;
+    const check = calcCheckDigit(payload);
+    if (check === null) continue;
+    const c = payload.slice(0, 8) + String(check);
+    if (validate(c).valid) return c;
+  }
+  throw new Error("Failed to generate valid UNP");
+};
+
 /** Belarus UNP (Учётный номер плательщика). */
 const unp: Validator = {
   name: "Belarus Tax Number",
@@ -131,7 +146,8 @@ const unp: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default unp;
-export { compact, format, validate };
+export { compact, format, validate, generate };

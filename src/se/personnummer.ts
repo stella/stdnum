@@ -8,7 +8,7 @@
  * @see https://www.skatteverket.se/privat/folkbokforing/personnummer.4.3810a01c150939e893f18c29.html
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { err } from "#util/result";
@@ -19,6 +19,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
+import { randomInt } from "#util/generate";
 
 /**
  * Match python-stdnum's compact: preserve the '-' or '+'
@@ -133,6 +134,20 @@ const parse = (
   };
 };
 
+/** Generate a random valid Swedish personnummer. */
+const generate = (): string => {
+  for (;;) {
+    const yy = String(randomInt(50, 99)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const serial = String(randomInt(0, 999)).padStart(3, "0");
+    const payload = yy + mm + dd + serial;
+    const cs = luhnChecksum(payload + "0");
+    const c = payload + String((10 - cs) % 10);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Swedish Personal Identity Number. */
 const personnummer: Validator = {
   name: "Swedish Personal ID",
@@ -146,7 +161,8 @@ const personnummer: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default personnummer;
-export { compact, format, parse, validate };
+export { compact, format, parse, validate, generate };

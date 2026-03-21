@@ -17,6 +17,7 @@ import { clean } from "#util/clean";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const RUT_RE = /^\d{7,8}[\dK]$/;
 
@@ -84,6 +85,12 @@ const format = (value: string): string => {
   );
 };
 
+/** Generate a random valid Chilean RUT. */
+const generate = (): string => {
+  const body = randomDigits(8);
+  return body + calcCheckDigit(body);
+};
+
 /**
  * Chilean RUT (tax identification number).
  *
@@ -102,7 +109,8 @@ const rut: Validator = {
   sourceUrl: "https://www.sii.cl/",
   lengths: [8, 9] as const,
   examples: ["760864285", "125319092"] as const,
+  generate,
 };
 
 export default rut;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -12,6 +12,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [
   21, 19, 17, 13, 11, 9, 7, 3, 1,
@@ -55,6 +56,12 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid PNF. */
+const generate = (): string => {
+  const payload = randomDigits(9);
+  return payload + calcCheckDigit(payload);
+};
+
 /** Bulgarian Personal Number of a Foreigner. */
 const pnf: Validator = {
   name: "Bulgarian Foreigner Number",
@@ -68,7 +75,8 @@ const pnf: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default pnf;
-export { compact, format, validate };
+export { compact, format, validate, generate };

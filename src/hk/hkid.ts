@@ -13,6 +13,7 @@ import { clean } from "#util/clean";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 /** Strip spaces, parentheses, and dashes. */
 const compact = (value: string): string =>
@@ -88,6 +89,20 @@ const format = (value: string): string => {
   return `${prefix}${digits}(${check})`;
 };
 
+/** Generate a random valid HKID. */
+const generate = (): string => {
+  for (;;) {
+    const letter = String.fromCharCode(65 + randomInt(0, 25));
+    const digits = randomDigits(6);
+    for (let d = 0; d <= 9; d++) {
+      const c = letter + digits + String(d);
+      if (validate(c).valid) return compact(c);
+    }
+    const cA = letter + digits + "A";
+    if (validate(cA).valid) return compact(cA);
+  }
+};
+
 /** Hong Kong Identity Card number. */
 const hkid: Validator = {
   name: "Hong Kong Identity Card Number",
@@ -106,7 +121,8 @@ const hkid: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default hkid;
-export { compact, format, validate };
+export { compact, format, validate, generate };

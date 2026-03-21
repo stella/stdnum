@@ -12,6 +12,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [3, 2, 7, 6, 5, 4, 3, 2, 1] as const;
 
@@ -49,6 +50,9 @@ const format = (value: string): string => {
   return `${v.slice(0, 3)} ${v.slice(3, 6)} ${v.slice(6)}`;
 };
 
+/** Generate a random valid Norwegian org number. */
+const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+
 /** Norwegian Organization Number. */
 const orgnr: Validator = {
   name: "Norwegian Organization Number",
@@ -61,7 +65,8 @@ const orgnr: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default orgnr;
-export { compact, format, validate };
+export { compact, format, validate, generate };

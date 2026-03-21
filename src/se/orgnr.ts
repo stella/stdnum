@@ -7,12 +7,13 @@
  * @see https://www.skatteverket.se/
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -45,6 +46,13 @@ const format = (value: string): string => {
   return `${v.slice(0, 6)}-${v.slice(6)}`;
 };
 
+/** Generate a random valid Swedish org number. */
+const generate = (): string => {
+  const p = randomDigits(9);
+  const cs = luhnChecksum(p + "0");
+  return p + String((10 - cs) % 10);
+};
+
 /** Swedish Organization Number. */
 const orgnr: Validator = {
   name: "Swedish Organization Number",
@@ -57,7 +65,8 @@ const orgnr: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default orgnr;
-export { compact, format, validate };
+export { compact, format, validate, generate };

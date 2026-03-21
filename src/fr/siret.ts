@@ -9,12 +9,13 @@
  * @see https://www.insee.fr/fr/information/2549588
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.");
@@ -85,6 +86,17 @@ const format = (value: string): string => {
   return `${v.slice(0, 3)} ${v.slice(3, 6)} ${v.slice(6, 9)} ${v.slice(9)}`;
 };
 
+/** Generate a random valid French SIRET. */
+const generate = (): string => {
+  const sp = randomDigits(8);
+  const sc = luhnChecksum(sp + "0");
+  const siren = sp + String((10 - sc) % 10);
+  const nic = randomDigits(4);
+  const payload = siren + nic;
+  const cs = luhnChecksum(payload + "0");
+  return payload + String((10 - cs) % 10);
+};
+
 /** French Establishment Identification Number. */
 const siret: Validator = {
   name: "French Establishment ID",
@@ -99,7 +111,8 @@ const siret: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default siret;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -21,6 +21,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
+import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.");
@@ -153,6 +154,22 @@ const parse = (
   };
 };
 
+/** Generate a random valid French NIR. */
+const generate = (): string => {
+  for (;;) {
+    const g = String(randomInt(1, 2));
+    const yy = String(randomInt(50, 99)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const dept = String(randomInt(1, 95)).padStart(2, "0");
+    const com = String(randomInt(1, 999)).padStart(3, "0");
+    const s = String(randomInt(1, 999)).padStart(3, "0");
+    const base = g + yy + mm + dept + com + s;
+    const check = String(97 - (Number(base) % 97)).padStart(2, "0");
+    const c = base + check;
+    if (validate(c).valid) return c;
+  }
+};
+
 /** French Social Security Number. */
 const nir: Validator = {
   name: "French Social Security Number",
@@ -171,7 +188,8 @@ const nir: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nir;
-export { compact, format, parse, validate };
+export { compact, format, parse, validate, generate };

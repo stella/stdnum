@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [9, 8, 7, 6, 5, 4, 3, 2];
 
@@ -60,6 +61,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `PT${compact(value)}`;
 
+/** Generate a random valid Portuguese NIF. */
+const generate = (): string => {
+  const payload = String(randomInt(1, 9)) + randomDigits(7);
+  const sum = weightedSum(payload, WEIGHTS, 11);
+  return payload + String(((11 - sum) % 11) % 10);
+};
+
 /** Portuguese VAT Number. */
 const vat: Validator = {
   name: "Portuguese VAT Number",
@@ -72,7 +80,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, validate, generate };

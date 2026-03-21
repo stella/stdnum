@@ -14,6 +14,7 @@ import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 import { CHECK_LETTERS } from "./dni";
+import { randomDigits, randomInt } from "#util/generate";
 
 const PREFIX_MAP: Record<string, string> = {
   X: "0",
@@ -65,6 +66,16 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Spanish NIE. */
+const generate = (): string => {
+  const prefixes = ["X", "Y", "Z"] as const;
+  const vals: Record<string, number> = { X: 0, Y: 1, Z: 2 };
+  const prefix = prefixes[randomInt(0, 2)]!;
+  const digits = randomDigits(7);
+  const num = vals[prefix]! * 10000000 + Number(digits);
+  return prefix + digits + CHECK_LETTERS[num % 23];
+};
+
 /** Spanish Foreigner Identification Number. */
 const nie: Validator = {
   name: "Spanish Foreigner ID",
@@ -78,7 +89,8 @@ const nie: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nie;
-export { compact, format, validate };
+export { compact, format, validate, generate };

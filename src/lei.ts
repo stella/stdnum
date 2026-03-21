@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
 
 import type { ValidateResult, Validator } from "./types";
+import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -").toUpperCase();
@@ -64,6 +65,18 @@ const format = (value: string): string => {
   return `${v.slice(0, 4)} ${v.slice(4, 8)} ${v.slice(8, 12)} ${v.slice(12, 16)} ${v.slice(16)}`;
 };
 
+/** Generate a random valid LEI. */
+const generate = (): string => {
+  for (;;) {
+    let base = "";
+    for (let i = 0; i < 18; i++) base += String(randomInt(0, 9));
+    for (let cd = 0; cd < 100; cd++) {
+      const c = base + String(cd).padStart(2, "0");
+      if (validate(c).valid) return c;
+    }
+  }
+};
+
 /** Legal Entity Identifier. */
 const lei: Validator = {
   name: "Legal Entity Identifier",
@@ -75,7 +88,8 @@ const lei: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default lei;
-export { compact, format, validate };
+export { compact, format, validate, generate };

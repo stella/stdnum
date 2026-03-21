@@ -22,6 +22,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -157,6 +158,15 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Ecuadorian RUC. */
+const generate = (): string => {
+  for (;;) {
+    const province = String(randomInt(1, 24)).padStart(2, "0");
+    const c = province + randomDigits(11);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Ecuadorian tax identification number. */
 const ruc: Validator = {
   name: "Registro Único de Contribuyentes",
@@ -172,7 +182,8 @@ const ruc: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default ruc;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [3, 4, 6, 7, 8, 9, 10, 1];
 
@@ -58,6 +59,9 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `MT${compact(value)}`;
 
+/** Generate a random valid Maltese VAT number. */
+const generate = (): string => { for (;;) { const c = String(randomInt(1, 9)) + randomDigits(7); if (validate(c).valid) return c; } };
+
 /** Maltese VAT Number. */
 const vat: Validator = {
   name: "Maltese VAT Number",
@@ -70,7 +74,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, validate, generate };

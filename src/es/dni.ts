@@ -13,6 +13,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const CHECK_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE";
 
@@ -51,6 +52,12 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Spanish DNI. */
+const generate = (): string => {
+  const num = randomDigits(8);
+  return num + CHECK_LETTERS[Number(num) % 23];
+};
+
 /** Spanish National Identity Document. */
 const dni: Validator = {
   name: "Spanish National ID",
@@ -64,7 +71,8 @@ const dni: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default dni;
-export { CHECK_LETTERS, compact, format, validate };
+export { CHECK_LETTERS, compact, format, validate, generate };

@@ -21,6 +21,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const VALID_TYPES = new Set([
   "20", "23", "24", "27",
@@ -91,6 +92,15 @@ const format = (value: string): string => {
   return `${v.slice(0, 2)}-${v.slice(2, 10)}-${v.slice(10)}`;
 };
 
+/** Generate a random valid CUIT. */
+const generate = (): string => {
+  const types = ["20", "23", "24", "27", "30", "33", "34"];
+  const type = types[Math.floor(Math.random() * types.length)]!;
+  const body = type + randomDigits(8);
+  const check = calcCheckDigit(body);
+  return body + String(check);
+};
+
 /**
  * Argentine CUIT (tax identification number).
  *
@@ -110,7 +120,8 @@ const cuit: Validator = {
   sourceUrl: "https://www.afip.gob.ar/",
   lengths: [11] as const,
   examples: ["20267565393", "20055361682"] as const,
+  generate,
 };
 
 export default cuit;
-export { compact, format, validate };
+export { compact, format, validate, generate };

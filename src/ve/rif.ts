@@ -18,6 +18,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 /**
  * Map prefix letter to its numeric offset used
@@ -99,6 +100,14 @@ const format = (value: string): string => {
   return `${v[0]}-${v.slice(1, 9)}-${v.slice(9)}`;
 };
 
+/** Generate a random valid Venezuelan RIF. */
+const generate = (): string => {
+  const types = ["V", "E", "J", "P", "G"] as const;
+  const prefix = types[randomInt(0, types.length - 1)]!;
+  const body = randomDigits(8);
+  return prefix + body + String(calcCheckDigit(prefix, body));
+};
+
 /**
  * Venezuelan RIF (tax identification number).
  *
@@ -117,7 +126,8 @@ const rif: Validator = {
   validate,
   sourceUrl:
     "https://en.wikipedia.org/wiki/Tax_Identification_Number#Venezuela",
+  generate,
 };
 
 export default rif;
-export { compact, format, validate };
+export { compact, format, validate, generate };

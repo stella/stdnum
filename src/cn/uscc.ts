@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const ALPHABET = "0123456789ABCDEFGHJKLMNPQRTUWXY";
 
@@ -72,6 +73,17 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid USCC. */
+const generate = (): string => {
+  const reg = ALPHABET[randomInt(1, 9)]!;
+  const etype = ALPHABET[randomInt(1, 9)]!;
+  const region = randomDigits(6);
+  let org = "";
+  for (let i = 0; i < 9; i++) org += ALPHABET[randomInt(0, ALPHABET.length - 1)]!;
+  const payload = reg + etype + region + org;
+  return payload + calcCheckChar(payload);
+};
+
 /** Chinese Unified Social Credit Code. */
 const uscc: Validator = {
   name: "Unified Social Credit Code",
@@ -88,7 +100,8 @@ const uscc: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default uscc;
-export { compact, format, validate };
+export { compact, format, validate, generate };

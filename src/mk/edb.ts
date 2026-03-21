@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [
   7, 6, 5, 4, 3, 2, 7, 6, 5, 4, 3, 2,
@@ -57,6 +58,13 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Macedonian EDB. */
+const generate = (): string => {
+  const payload = randomDigits(12);
+  const total = weightedSum(payload, WEIGHTS, 11);
+  return payload + String(((11 - total) % 11) % 10);
+};
+
 /** North Macedonian Tax Identification Number. */
 const edb: Validator = {
   name: "North Macedonian Tax ID",
@@ -70,7 +78,8 @@ const edb: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default edb;
-export { compact, format, validate };
+export { compact, format, validate, generate };

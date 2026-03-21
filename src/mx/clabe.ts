@@ -18,6 +18,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [3, 7, 1] as const;
 
@@ -78,6 +79,12 @@ const format = (value: string): string => {
   return `${v.slice(0, 3)} ${v.slice(3, 6)} ${v.slice(6, 17)} ${v.slice(17)}`;
 };
 
+/** Generate a random valid Mexican CLABE. */
+const generate = (): string => {
+  const payload = randomDigits(17);
+  return payload + calcCheckDigit(payload);
+};
+
 /**
  * Mexican CLABE (standardized bank account number).
  *
@@ -95,7 +102,8 @@ const clabe: Validator = {
   format,
   validate,
   sourceUrl: "https://en.wikipedia.org/wiki/CLABE",
+  generate,
 };
 
 export default clabe;
-export { compact, format, validate };
+export { compact, format, validate, generate };

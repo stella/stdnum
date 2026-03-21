@@ -19,6 +19,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [2, 7, 6, 5, 4, 3, 2, 1];
 
@@ -57,6 +58,9 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Danish CVR. */
+const generate = (): string => { for (;;) { const c = String(randomInt(1, 9)) + randomDigits(7); if (validate(c).valid) return c; } };
+
 /** Danish Central Business Register Number. */
 const cvr: Validator = {
   name: "Danish Business Register Number",
@@ -69,7 +73,8 @@ const cvr: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default cvr;
-export { compact, format, validate };
+export { compact, format, validate, generate };

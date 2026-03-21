@@ -18,6 +18,7 @@ import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 import { validate as validateRc } from "./rc";
+import { randomDigits, randomInt } from "#util/generate";
 
 const ICO_WEIGHTS = [8, 7, 6, 5, 4, 3, 2] as const;
 
@@ -103,6 +104,16 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `CZ${compact(value)}`;
 
+/** Generate a random valid 8-digit DIČ. */
+const generate = (): string => {
+  const first = String(randomInt(1, 8));
+  const payload = first + randomDigits(6);
+  const sum = weightedSum(payload, ICO_WEIGHTS, 11);
+  const v11 = (11 - sum) % 11;
+  const check = v11 === 0 ? 1 : v11 % 10;
+  return payload + String(check);
+};
+
 /** Czech VAT Number. */
 const dic: Validator = {
   name: "Czech VAT Number",
@@ -115,7 +126,8 @@ const dic: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default dic;
-export { compact, format, validate };
+export { compact, format, validate, generate };

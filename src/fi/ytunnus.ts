@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [7, 9, 10, 5, 8, 4, 2, 1];
 
@@ -49,6 +50,9 @@ const format = (value: string): string => {
   return `${v.slice(0, 7)}-${v[7]}`;
 };
 
+/** Generate a random valid Finnish Y-tunnus. */
+const generate = (): string => { for (;;) { const c = randomDigits(8); if (validate(c).valid) return c; } };
+
 /** Finnish Business ID. */
 const ytunnus: Validator = {
   name: "Finnish Business ID",
@@ -62,7 +66,8 @@ const ytunnus: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default ytunnus;
-export { compact, format, validate };
+export { compact, format, validate, generate };

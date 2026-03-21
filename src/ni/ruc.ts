@@ -27,6 +27,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 /**
  * Check letter alphabet (mod 23). Excludes I, O, Z
@@ -151,6 +152,9 @@ const format = (value: string): string => {
   );
 };
 
+/** Generate a random valid Nicaraguan RUC (legal entity). */
+const generate = (): string => "J" + randomDigits(13);
+
 /** Nicaragua tax identification number. */
 const ruc: Validator = {
   name: "Tax Identification Number",
@@ -169,7 +173,8 @@ const ruc: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default ruc;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -13,6 +13,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const ALPHABET = "WABCDEFGHIJKLMNOPQRSTUV";
 
@@ -103,6 +104,16 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `IE${compact(value)}`;
 
+/** Generate a random valid Irish VAT number. */
+const generate = (): string => {
+  for (;;) {
+    for (let c = 65; c <= 90; c++) {
+      const cand = randomDigits(7) + String.fromCharCode(c);
+      if (validate(cand).valid) return compact(cand);
+    }
+  }
+};
+
 /** Irish VAT Number. */
 const vat: Validator = {
   name: "Irish VAT Number",
@@ -115,7 +126,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, validate, generate };

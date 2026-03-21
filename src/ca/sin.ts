@@ -8,12 +8,13 @@
  * @see https://en.wikipedia.org/wiki/Social_Insurance_Number
  */
 
-import { luhnValidate } from "#checksums/luhn";
+import { luhnValidate, luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -53,6 +54,14 @@ const format = (value: string): string => {
   return v;
 };
 
+/** Generate a random valid Canadian SIN. */
+const generate = (): string => {
+  const first = String(randomInt(1, 7));
+  const payload = first + randomDigits(7);
+  const cs = luhnChecksum(payload + "0");
+  return payload + String((10 - cs) % 10);
+};
+
 /** Canadian Social Insurance Number. */
 const sin: Validator = {
   name: "Social Insurance Number",
@@ -66,7 +75,8 @@ const sin: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default sin;
-export { compact, format, validate };
+export { compact, format, validate, generate };

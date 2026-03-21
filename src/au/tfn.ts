@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [1, 4, 3, 7, 5, 8, 6, 9, 10] as const;
 
@@ -54,6 +55,9 @@ const format = (value: string): string => {
   return v;
 };
 
+/** Generate a random valid TFN. */
+const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+
 /** Australian Tax File Number. */
 const tfn: Validator = {
   name: "Tax File Number",
@@ -67,7 +71,8 @@ const tfn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default tfn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

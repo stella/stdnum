@@ -13,6 +13,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4] as const;
 
@@ -68,6 +69,19 @@ const format = (value: string): string => {
   return `CHE-${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
 };
 
+/** Generate a random valid Swiss UID. */
+const generate = (): string => {
+  for (let i = 0; i < 100; i++) {
+    const payload = randomDigits(8);
+    let sum = 0;
+    for (let j = 0; j < 8; j++) sum += Number(payload[j]) * WEIGHTS[j];
+    const check = (11 - (sum % 11)) % 11;
+    if (check === 10) continue;
+    return "CHE" + payload + String(check);
+  }
+  throw new Error("Failed to generate valid Swiss UID");
+};
+
 /** Swiss Business Identification Number. */
 const uid: Validator = {
   name: "Swiss Business ID",
@@ -80,7 +94,8 @@ const uid: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default uid;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -18,6 +18,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
+import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS_D1 = [3, 7, 6, 1, 8, 9, 4, 5, 2] as const;
 const WEIGHTS_D2 = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2] as const;
@@ -160,6 +161,18 @@ const parse = (
   };
 };
 
+/** Generate a random valid Norwegian birth number. */
+const generate = (): string => {
+  for (;;) {
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const yy = String(randomInt(50, 99)).padStart(2, "0");
+    const ind = String(randomInt(0, 499)).padStart(3, "0");
+    const c = dd + mm + yy + ind + randomDigits(2);
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Norwegian Birth Number. */
 const fodselsnummer: Validator = {
   name: "Norwegian Birth Number",
@@ -172,7 +185,8 @@ const fodselsnummer: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default fodselsnummer;
-export { compact, format, parse, validate };
+export { compact, format, parse, validate, generate };

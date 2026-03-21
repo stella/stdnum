@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [8, 7, 6, 5, 4, 3, 2, 1] as const;
 
@@ -55,6 +56,14 @@ const format = (value: string): string => {
   return v;
 };
 
+/** Generate a random valid ACN. */
+const generate = (): string => {
+  const payload = randomDigits(8);
+  let sum = 0;
+  for (let i = 0; i < 8; i++) sum += Number(payload[i]) * WEIGHTS[i];
+  return payload + String((10 - (sum % 10)) % 10);
+};
+
 /** Australian Company Number. */
 const acn: Validator = {
   name: "Australian Company Number",
@@ -67,7 +76,8 @@ const acn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default acn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

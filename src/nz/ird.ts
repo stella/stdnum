@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const PRIMARY_WEIGHTS = [
   3, 2, 7, 6, 5, 4, 3, 2,
@@ -101,6 +102,9 @@ const format = (value: string): string => {
   return `${prefix}-${last6.slice(0, 3)}-${last6.slice(3)}`;
 };
 
+/** Generate a random valid NZ IRD number. */
+const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+
 /** New Zealand IRD Number. */
 const ird: Validator = {
   name: "IRD Number",
@@ -116,7 +120,8 @@ const ird: Validator = {
   sourceUrl: "https://www.ird.govt.nz/",
   lengths: [8, 9] as const,
   examples: ["49091850", "136410132"] as const,
+  generate,
 };
 
 export default ird;
-export { compact, format, validate };
+export { compact, format, validate, generate };

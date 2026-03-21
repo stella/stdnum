@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -61,6 +62,14 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `EL${compact(value)}`;
 
+/** Generate a random valid Greek VAT number. */
+const generate = (): string => {
+  const payload = randomDigits(8);
+  let cs = 0;
+  for (let i = 0; i < 8; i++) cs = cs * 2 + Number(payload[i]);
+  return payload + String(((cs * 2) % 11) % 10);
+};
+
 /** Greek VAT Number. */
 const vat: Validator = {
   name: "Greek VAT Number",
@@ -73,7 +82,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, validate, generate };

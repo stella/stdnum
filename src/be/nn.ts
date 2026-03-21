@@ -15,6 +15,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " .-");
@@ -80,6 +81,21 @@ const format = (value: string): string => {
   return `${v.slice(0, 2)}.${v.slice(2, 4)}.${v.slice(4, 6)}-${v.slice(6, 9)}.${v.slice(9)}`;
 };
 
+/** Generate a random valid Belgian NN. */
+const generate = (): string => {
+  for (;;) {
+    const yy = String(randomInt(0, 99)).padStart(2, "0");
+    const mm = String(randomInt(1, 12)).padStart(2, "0");
+    const dd = String(randomInt(1, 28)).padStart(2, "0");
+    const serial = String(randomInt(1, 997)).padStart(3, "0");
+    const base = yy + mm + dd + serial;
+    const n1 = Number(base);
+    const check1 = 97 - (n1 % 97);
+    const c = base + String(check1).padStart(2, "0");
+    if (validate(c).valid) return c;
+  }
+};
+
 /** Belgian National Number. */
 const nn: Validator = {
   name: "Belgian National Number",
@@ -92,7 +108,8 @@ const nn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nn;
-export { checksum, compact, format, validate };
+export { checksum, compact, format, validate, generate };

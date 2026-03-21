@@ -13,6 +13,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.");
@@ -59,6 +60,14 @@ const format = (value: string): string => {
   return `${v.slice(0, 3)}.${v.slice(3, 7)}.${v.slice(7, 11)}.${v.slice(11)}`;
 };
 
+/** Generate a random valid Swiss SSN. */
+const generate = (): string => {
+  const payload = "756" + randomDigits(9);
+  let sum = 0;
+  for (let i = 0; i < 12; i++) sum += Number(payload[i]) * (i % 2 === 0 ? 1 : 3);
+  return payload + String((10 - (sum % 10)) % 10);
+};
+
 /** Swiss Social Security Number. */
 const ssn: Validator = {
   name: "Swiss Social Security Number",
@@ -71,7 +80,8 @@ const ssn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default ssn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

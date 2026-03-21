@@ -13,6 +13,7 @@ import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 import { twoPassCheck } from "./ik";
+import { randomDigits, randomInt } from "#util/generate";
 
 const VALID_FIRST = new Set(["1", "7", "8", "9"]);
 
@@ -51,6 +52,14 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Estonian Registrikood. */
+const generate = (): string => {
+  const firsts = [1, 7, 8, 9];
+  const first = String(firsts[randomInt(0, 3)]!);
+  const payload = first + randomDigits(6);
+  return payload + String(twoPassCheck(payload));
+};
+
 /** Estonian Company Registration Code. */
 const registrikood: Validator = {
   name: "Estonian Company Registration Code",
@@ -63,7 +72,8 @@ const registrikood: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default registrikood;
-export { compact, format, validate };
+export { compact, format, validate, generate };

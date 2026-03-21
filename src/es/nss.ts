@@ -20,6 +20,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -/.");
@@ -75,6 +76,9 @@ const format = (value: string): string => {
   return `${v.slice(0, 2)}/${v.slice(2, 10)}/${v.slice(10)}`;
 };
 
+/** Generate a random valid Spanish NSS. */
+const generate = (): string => { for (;;) { const c = randomDigits(12); if (validate(c).valid) return c; } };
+
 /** Spanish Social Security Number. */
 const nss: Validator = {
   name: "Spanish Social Security Number",
@@ -91,7 +95,8 @@ const nss: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nss;
-export { compact, format, validate };
+export { compact, format, validate, generate };

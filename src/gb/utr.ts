@@ -14,6 +14,7 @@ import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [6, 7, 8, 9, 10, 5, 4, 3, 2] as const;
 const CHECK_LOOKUP = "21987654321";
@@ -51,6 +52,9 @@ const format = (value: string): string => {
   return `${v.slice(0, 5)} ${v.slice(5)}`;
 };
 
+/** Generate a random valid UK UTR. */
+const generate = (): string => { for (;;) { const c = randomDigits(10); if (validate(c).valid) return c; } };
+
 /** UK Unique Taxpayer Reference. */
 const utr: Validator = {
   name: "UK Unique Taxpayer Reference",
@@ -63,7 +67,8 @@ const utr: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default utr;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -15,6 +15,7 @@ import { isdigits } from "#util/strings";
 
 import { validate as validateRc } from "../cz/rc";
 import type { ValidateResult, Validator } from "../types";
+import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   const v = clean(value, " -");
@@ -75,6 +76,9 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   `SK${compact(value)}`;
 
+/** Generate a random valid Slovak DIČ. */
+const generate = (): string => { for (;;) { const c = randomDigits(10); if (validate(c).valid) return c; } };
+
 /** Slovak VAT Number. */
 const dic: Validator = {
   name: "Slovak VAT Number",
@@ -88,7 +92,8 @@ const dic: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default dic;
-export { compact, format, validate };
+export { compact, format, validate, generate };
