@@ -119,15 +119,19 @@ const patternToRegex = (pattern: string): RegExp => {
 const COMPILED: Array<{
   state: StateName;
   regional: RegExp;
+  regionalFmt: string;
   federal: RegExp;
+  federalFmt: string;
 }> = (
   Object.entries(STATES) as Array<
     [StateName, readonly [string, string]]
   >
-).map(([state, [regional, federal]]) => ({
+).map(([state, [regionalFmt, federalFmt]]) => ({
   state,
-  regional: patternToRegex(regional),
-  federal: patternToRegex(federal),
+  regional: patternToRegex(regionalFmt),
+  regionalFmt,
+  federal: patternToRegex(federalFmt),
+  federalFmt,
 }));
 
 const compact = (value: string): string =>
@@ -176,24 +180,15 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => {
   const v = compact(value);
 
-  for (const { regional, federal } of COMPILED) {
+  for (const entry of COMPILED) {
     const pattern =
-      v.length === 13
-        ? federal
-        : regional;
+      v.length === 13 ? entry.federal : entry.regional;
     if (!pattern.test(v)) continue;
 
-    // Derive segments from the format string
     const fmt =
       v.length === 13
-        ? Object.values(STATES).find(
-            (_, i) => COMPILED[i]!.federal === pattern,
-          )?.[1]
-        : Object.values(STATES).find(
-            (_, i) => COMPILED[i]!.regional === pattern,
-          )?.[0];
-
-    if (!fmt) return v;
+        ? entry.federalFmt
+        : entry.regionalFmt;
 
     // Group by consecutive runs of the same letter
     // category: literal digits, F, B, U, P
