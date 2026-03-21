@@ -83,6 +83,7 @@ export type CountryCode =
   | "US"
   | "UY"
   | "VE"
+  | "VN"
   | "ZA";
 
 export type ErrorCode =
