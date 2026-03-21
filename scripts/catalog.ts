@@ -45,6 +45,8 @@ const COUNTRY_NAMES: Record<CountryCode, string> = {
   IE: "Ireland",
   IL: "Israel",
   IN: "India",
+  IQ: "Iraq",
+  IR: "Iran",
   IS: "Iceland",
   IT: "Italy",
   JP: "Japan",
