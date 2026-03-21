@@ -85,6 +85,97 @@ describe("gb.utr", () => {
   });
 });
 
+// --- SEDOL ---------------------------------------------
+
+describe("gb.sedol", () => {
+  test("valid new-style SEDOL", () => {
+    const r = gb.sedol.validate("B15KXQ8");
+    expect(r.valid).toBe(true);
+    if (r.valid) expect(r.compact).toBe("B15KXQ8");
+  });
+
+  test("valid old-style numeric SEDOL", () => {
+    const r = gb.sedol.validate("0263494");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid with spaces", () => {
+    const r = gb.sedol.validate("B 1 5 K X Q 8");
+    expect(r.valid).toBe(true);
+  });
+
+  test("valid lowercase input", () => {
+    const r = gb.sedol.validate("b15kxq8");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid checksum", () => {
+    const r = gb.sedol.validate("B15KXQ9");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = gb.sedol.validate("B15KXQ");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("invalid character: vowel", () => {
+    const r = gb.sedol.validate("A15KXQ8");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("digit-prefix with letters is invalid", () => {
+    const r = gb.sedol.validate("1B5KXQ8");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
+    }
+  });
+
+  test("compact uppercases", () => {
+    expect(gb.sedol.compact("b15kxq8")).toBe(
+      "B15KXQ8",
+    );
+  });
+
+  test("format returns compact form", () => {
+    expect(gb.sedol.format("b15kxq8")).toBe("B15KXQ8");
+  });
+
+  test("calcCheckDigit throws on invalid char", () => {
+    const { calcCheckDigit } = require(
+      "../src/gb/sedol",
+    );
+    expect(() => calcCheckDigit("B15AXQ")).toThrow(
+      "Invalid SEDOL character",
+    );
+  });
+
+  test("calcCheckDigit throws on wrong length", () => {
+    const { calcCheckDigit } = require(
+      "../src/gb/sedol",
+    );
+    expect(() => calcCheckDigit("B15KX")).toThrow(
+      "6-character",
+    );
+  });
+
+  test("metadata", () => {
+    expect(gb.sedol.abbreviation).toBe("SEDOL");
+    expect(gb.sedol.country).toBe("GB");
+    expect(gb.sedol.entityType).toBe("any");
+  });
+});
+
 // --- NINO ----------------------------------------------
 
 describe("gb.nino", () => {
