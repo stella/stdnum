@@ -16,6 +16,7 @@ export type CountryCode =
   | "BD"
   | "BE"
   | "BG"
+  | "BH"
   | "BR"
   | "BY"
   | "BZ"
@@ -55,6 +56,7 @@ export type CountryCode =
   | "IT"
   | "JP"
   | "KR"
+  | "KW"
   | "KZ"
   | "LI"
   | "LK"
@@ -70,6 +72,7 @@ export type CountryCode =
   | "MU"
   | "MX"
   | "MY"
+  | "NG"
   | "NI"
   | "NL"
   | "NO"
@@ -152,6 +155,25 @@ export type Validator = {
    * with a code and message on failure.
    */
   validate: (value: string) => ValidateResult;
+
+  /**
+   * All known names, abbreviations, and common
+   * references for this identifier. Superset of
+   * name/localName/abbreviation. Useful for
+   * searching documents, building autocomplete,
+   * or contextual detection.
+   */
+  aliases?: readonly string[];
+
+  /**
+   * Regex pattern string to find candidates of
+   * this identifier in free text. Should be loose
+   * enough to catch formatted variants (dots,
+   * spaces, hyphens) but specific enough to avoid
+   * excessive noise. Matched candidates should be
+   * passed to validate() for confirmation.
+   */
+  candidatePattern?: string;
 
   /** One-liner describing the identifier. */
   description?: string;
