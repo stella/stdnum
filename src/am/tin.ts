@@ -1,3 +1,6 @@
+/** Generate a random valid Armenian TIN. */
+const generate = (): string => randomDigits(8);
+
 /**
  * TIN (Tax Identification Number, ՀԾՀ).
  *
@@ -16,6 +19,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -62,7 +66,8 @@ const tin: Validator = {
     "https://www.oecd.org/tax/automatic-exchange/"
     + "crs-implementation-and-assistance/"
     + "tax-identification-numbers/Armenia-TIN.pdf",
+  generate,
 };
 
 export default tin;
-export { compact, format, validate };
+export { compact, format, validate, generate };

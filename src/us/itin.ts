@@ -1,3 +1,17 @@
+/** Generate a random valid U.S. ITIN. */
+const generate = (): string => {
+  const area = "9" + randomDigits(2);
+  const allowed = Array.from(
+    { length: 30 },
+    (_, i) => i + 70,
+  ).filter((g) => g !== 89 && g !== 93);
+  const group = String(
+    allowed[Math.floor(Math.random() * allowed.length)]!,
+  );
+  const serial = randomDigits(4);
+  return `${area}${group}${serial}`;
+};
+
 /**
  * ITIN (U.S. Individual Taxpayer Identification
  * Number).
@@ -13,6 +27,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -113,7 +128,8 @@ const itin: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default itin;
-export { compact, format, validate };
+export { compact, format, validate, generate };

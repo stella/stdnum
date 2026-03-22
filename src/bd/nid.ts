@@ -1,3 +1,13 @@
+/** Generate a random valid Bangladesh NID (13-digit). */
+const generate = (): string => {
+  const district = randomDigits(2);
+  const rmoValues = ["1", "2", "3", "4", "5", "9"];
+  const rmo =
+    rmoValues[randomInt(0, rmoValues.length - 1)]!;
+  const rest = randomDigits(10);
+  return `${district}${rmo}${rest}`;
+};
+
 /**
  * NID (জাতীয় পরিচয়পত্র, Bangladesh National ID).
  *
@@ -23,6 +33,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -113,7 +124,8 @@ const nid: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nid;
-export { compact, format, validate };
+export { compact, format, validate, generate };

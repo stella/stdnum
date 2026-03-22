@@ -1,3 +1,26 @@
+/** Generate a random valid BIC (8-character). */
+const generate = (): string => {
+  const randomLetter = (): string =>
+    String.fromCodePoint(65 + randomInt(0, 25));
+  const randomAlphaNum = (): string => {
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return chars[randomInt(0, chars.length - 1)]!;
+  };
+  const countries = [
+    "DE", "GB", "US", "FR", "CH", "NL", "AT",
+  ];
+  const country =
+    countries[randomInt(0, countries.length - 1)]!;
+  const bank =
+    randomLetter() +
+    randomLetter() +
+    randomLetter() +
+    randomLetter();
+  const location = randomAlphaNum() + randomAlphaNum();
+  return `${bank}${country}${location}`;
+};
+
 /**
  * BIC (Business Identifier Code).
  *
@@ -12,6 +35,7 @@
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
+import { randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "./types";
 
@@ -64,7 +88,8 @@ const bic: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default bic;
-export { compact, format, validate };
+export { compact, format, validate, generate };

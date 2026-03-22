@@ -1,3 +1,26 @@
+/** Generate a random valid UK NINO. */
+const generate = (): string => {
+  const validFirst = "ABCEGHJKLMNOPRSTWXYZ";
+  const validSecond = "ABCEGHJKLMNPRSTWXYZ";
+  const suffixes = "ABCD";
+  let first: string;
+  let second: string;
+  let prefix: string;
+  do {
+    first =
+      validFirst[randomInt(0, validFirst.length - 1)]!;
+    second =
+      validSecond[
+        randomInt(0, validSecond.length - 1)
+      ]!;
+    prefix = first + second;
+  } while (INVALID_PREFIX.has(prefix));
+  const digits = randomDigits(6);
+  const suffix =
+    suffixes[randomInt(0, suffixes.length - 1)]!;
+  return `${prefix}${digits}${suffix}`;
+};
+
 /**
  * NINO (National Insurance Number).
  *
@@ -11,6 +34,7 @@
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -107,7 +131,8 @@ const nino: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nino;
-export { compact, format, validate };
+export { compact, format, validate, generate };

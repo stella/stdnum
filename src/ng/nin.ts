@@ -1,3 +1,6 @@
+/** Generate a random valid Nigerian NIN. */
+const generate = (): string => randomDigits(11);
+
 /**
  * NIN (National Identification Number, Nigeria).
  *
@@ -13,6 +16,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -58,7 +62,8 @@ const nin: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nin;
-export { compact, format, validate };
+export { compact, format, validate, generate };

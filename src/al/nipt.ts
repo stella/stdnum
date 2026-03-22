@@ -1,3 +1,15 @@
+/** Generate a random valid Albanian NIPT. */
+const generate = (): string => {
+  const first = String.fromCodePoint(
+    65 + randomInt(0, 12),
+  ); // A-M
+  const digits = randomDigits(8);
+  const last = String.fromCodePoint(
+    65 + randomInt(0, 25),
+  ); // A-Z
+  return `${first}${digits}${last}`;
+};
+
 /**
  * NIPT (Numri i Identifikimit për Personin e Tatueshëm,
  * Albanian tax number).
@@ -12,6 +24,7 @@
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -62,7 +75,8 @@ const nipt: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nipt;
-export { compact, format, validate };
+export { compact, format, validate, generate };

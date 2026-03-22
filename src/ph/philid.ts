@@ -1,3 +1,6 @@
+/** Generate a random valid PhilID. */
+const generate = (): string => randomDigits(12);
+
 /**
  * PhilID (Philippine Identification System Number,
  * PhilSys Card Number, PCN).
@@ -14,6 +17,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -68,7 +72,8 @@ const philid: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default philid;
-export { compact, format, validate };
+export { compact, format, validate, generate };

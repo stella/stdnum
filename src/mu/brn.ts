@@ -1,3 +1,12 @@
+/** Generate a random valid Mauritius BRN (entity). */
+const generate = (): string => {
+  const letter = String.fromCodePoint(
+    65 + randomInt(0, 25),
+  );
+  const digits = randomDigits(8);
+  return `${letter}${digits}`;
+};
+
 /**
  * BRN (Business Registration Number, Mauritius).
  *
@@ -23,6 +32,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -90,7 +100,8 @@ const brn: Validator = {
   sourceUrl: "https://companies.govmu.org/",
   lengths: [8, 9] as const,
   examples: ["C07015330", "C16135302"] as const,
+  generate,
 };
 
 export default brn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

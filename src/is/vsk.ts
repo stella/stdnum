@@ -1,3 +1,9 @@
+/** Generate a random valid Icelandic VSK. */
+const generate = (): string => {
+  const len = randomInt(5, 6);
+  return randomDigits(len);
+};
+
 /**
  * VSK (Virðisaukaskattur, Icelandic VAT number).
  *
@@ -9,6 +15,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -52,7 +59,8 @@ const vsk: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vsk;
-export { compact, format, validate };
+export { compact, format, validate, generate };

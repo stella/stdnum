@@ -1,3 +1,9 @@
+/** Generate a random valid Anguilla TIN. */
+const generate = (): string => {
+  const prefix = Math.random() < 0.5 ? "1" : "2";
+  return prefix + randomDigits(9);
+};
+
 /**
  * TIN (Anguilla Tax Identification Number).
  *
@@ -19,6 +25,7 @@
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -84,7 +91,8 @@ const tin: Validator = {
     "Anguilla tax number issued by the Inland Revenue Department",
   sourceUrl:
     "https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Anguilla-TIN.pdf",
+  generate,
 };
 
 export default tin;
-export { compact, format, validate };
+export { compact, format, validate, generate };

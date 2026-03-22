@@ -1,3 +1,12 @@
+/** Generate a random valid Pakistan CNIC. */
+const generate = (): string => {
+  const province = String(randomInt(1, 7));
+  const district = randomDigits(4);
+  const serial = randomDigits(7);
+  const gender = String(randomInt(1, 9));
+  return `${province}${district}${serial}${gender}`;
+};
+
 /**
  * CNIC (Computerized National Identity Card, Pakistan).
  *
@@ -14,6 +23,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -86,7 +96,8 @@ const cnic: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default cnic;
-export { compact, format, validate };
+export { compact, format, validate, generate };

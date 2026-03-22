@@ -1,3 +1,6 @@
+/** Generate a random valid Georgian PIN (11-digit). */
+const generate = (): string => randomDigits(11);
+
 /**
  * PIN (Personal Identification Number, პირადი ნომერი).
  *
@@ -14,6 +17,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -63,7 +67,8 @@ const pin: Validator = {
     "https://www.oecd.org/tax/automatic-exchange/"
     + "crs-implementation-and-assistance/"
     + "tax-identification-numbers/Georgia-TIN.pdf",
+  generate,
 };
 
 export default pin;
-export { compact, format, validate };
+export { compact, format, validate, generate };

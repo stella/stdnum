@@ -1,3 +1,15 @@
+/** Generate a random valid Andorra NRT. */
+const generate = (): string => {
+  const prefixes = "CDEGOPU";
+  const prefix =
+    prefixes[randomInt(0, prefixes.length - 1)]!;
+  const digits = randomDigits(6);
+  const suffix = String.fromCodePoint(
+    65 + randomInt(0, 25),
+  );
+  return `${prefix}${digits}${suffix}`;
+};
+
 /**
  * NRT (Número de Registre Tributari, Andorra tax number).
  *
@@ -16,6 +28,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -94,7 +107,8 @@ const nrt: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nrt;
-export { compact, format, validate };
+export { compact, format, validate, generate };
