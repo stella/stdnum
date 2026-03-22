@@ -1,3 +1,25 @@
+/** Generate a random valid U.S. SSN. */
+const generate = (): string => {
+  for (;;) {
+    let area: string;
+    do {
+      area = String(randomInt(1, 899)).padStart(
+        3,
+        "0",
+      );
+    } while (area === "666");
+    const group = String(randomInt(1, 99)).padStart(
+      2,
+      "0",
+    );
+    const serial = String(
+      randomInt(1, 9999),
+    ).padStart(4, "0");
+    const ssn = `${area}${group}${serial}`;
+    if (!BLACKLIST.has(ssn)) return ssn;
+  }
+};
+
 /**
  * SSN (U.S. Social Security Number).
  *
@@ -13,6 +35,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -96,7 +119,8 @@ const ssn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default ssn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

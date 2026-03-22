@@ -1,3 +1,6 @@
+/** Generate a random valid Dutch KvK number. */
+const generate = (): string => randomDigits(8);
+
 /**
  * KvK-nummer (Dutch Chamber of Commerce number).
  *
@@ -9,6 +12,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -51,7 +55,8 @@ const kvk: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default kvk;
-export { compact, format, validate };
+export { compact, format, validate, generate };

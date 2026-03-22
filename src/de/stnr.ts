@@ -1,4 +1,16 @@
 /**
+ * Generate a random valid Steuernummer.
+ * Uses Berlin regional format (FFBBBUUUUP, 10 digits).
+ */
+const generate = (): string => {
+  const ff = randomDigits(2);
+  const bbb = randomDigits(3);
+  const uuuu = randomDigits(4);
+  const p = randomDigits(1);
+  return `${ff}${bbb}${uuuu}${p}`;
+};
+
+/**
  * StNr (Steuernummer).
  *
  * German tax number assigned by the local tax office.
@@ -17,6 +29,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -239,7 +252,8 @@ const stnr: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default stnr;
-export { compact, format, validate };
+export { compact, format, validate, generate };

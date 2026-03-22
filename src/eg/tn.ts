@@ -1,3 +1,6 @@
+/** Generate a random valid Egyptian TN. */
+const generate = (): string => randomDigits(9);
+
 /**
  * TN (Tax Registration Number, الرقم الضريبي).
  *
@@ -11,6 +14,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -95,7 +99,8 @@ const tn: Validator = {
   sourceUrl: "https://www.eta.gov.eg/",
   lengths: [9] as const,
   examples: ["100531385", "331105268"] as const,
+  generate,
 };
 
 export default tn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

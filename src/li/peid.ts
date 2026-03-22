@@ -1,3 +1,10 @@
+/** Generate a random valid Liechtenstein PEID. */
+const generate = (): string => {
+  const len = randomInt(4, 12);
+  const first = String(randomInt(1, 9));
+  return first + randomDigits(len - 1);
+};
+
 /**
  * PEID (Personenidentifikationsnummer).
  *
@@ -11,6 +18,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -54,7 +62,8 @@ const peid: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default peid;
-export { compact, format, validate };
+export { compact, format, validate, generate };

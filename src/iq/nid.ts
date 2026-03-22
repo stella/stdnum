@@ -1,3 +1,6 @@
+/** Generate a random valid Iraqi NID. */
+const generate = (): string => randomDigits(12);
+
 /**
  * NID (Iraqi National ID, البطاقة الوطنية الموحدة).
  *
@@ -17,6 +20,7 @@ import { clean } from "#util/clean";
 import { normalizeArabicDigits } from "#util/arabic";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -60,7 +64,8 @@ const nid: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default nid;
-export { compact, format, validate };
+export { compact, format, validate, generate };

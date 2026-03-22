@@ -1,3 +1,11 @@
+/** Generate a random valid Costa Rican CPF. */
+const generate = (): string => {
+  const province = String(randomInt(1, 9));
+  const volume = randomDigits(4);
+  const entry = randomDigits(4);
+  return `0${province}${volume}${entry}`;
+};
+
 /**
  * CPF (Cédula de Persona Física, Costa Rican
  * physical person ID number).
@@ -17,6 +25,7 @@
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -98,7 +107,8 @@ const cpf: Validator = {
   format,
   validate,
   sourceUrl: "https://www.tse.go.cr/",
+  generate,
 };
 
 export default cpf;
-export { compact, format, validate };
+export { compact, format, validate, generate };

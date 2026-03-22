@@ -1,3 +1,6 @@
+/** Generate a random valid Argentine DNI. */
+const generate = (): string => randomDigits(8);
+
 /**
  * DNI (Documento Nacional de Identidad).
  *
@@ -11,6 +14,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -68,7 +72,8 @@ const dni: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default dni;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -1,3 +1,12 @@
+/** Generate a random valid Handelsregisternummer. */
+const generate = (): string => {
+  const types = ["HRA", "HRB", "GNR", "PR", "VR"];
+  const type =
+    types[randomInt(0, types.length - 1)]!;
+  const number = randomDigits(5);
+  return `${type}${number}`;
+};
+
 /**
  * Handelsregisternummer (German Company Register Number).
  *
@@ -18,6 +27,7 @@
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -95,7 +105,8 @@ const handelsreg: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default handelsreg;
-export { compact, format, validate };
+export { compact, format, validate, generate };

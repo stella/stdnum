@@ -1,3 +1,18 @@
+/** Generate a random valid Korean BRN. */
+const generate = (): string => {
+  const office = String(randomInt(101, 999));
+  let bizType: string;
+  do {
+    bizType = randomDigits(2);
+  } while (bizType === "00");
+  let serial: string;
+  do {
+    serial = randomDigits(4);
+  } while (serial === "0000");
+  const last = randomDigits(1);
+  return `${office}${bizType}${serial}${last}`;
+};
+
 /**
  * BRN (Business Registration Number, 사업자등록번호).
  *
@@ -11,6 +26,7 @@
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -81,7 +97,8 @@ const brn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default brn;
-export { compact, format, validate };
+export { compact, format, validate, generate };

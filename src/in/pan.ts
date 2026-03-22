@@ -1,3 +1,19 @@
+/** Generate a random valid Indian PAN. */
+const generate = (): string => {
+  const randomLetter = (): string =>
+    String.fromCodePoint(65 + randomInt(0, 25));
+  const first3 =
+    randomLetter() + randomLetter() + randomLetter();
+  const holderType =
+    HOLDER_TYPES[
+      randomInt(0, HOLDER_TYPES.length - 1)
+    ]!;
+  const fifth = randomLetter();
+  const digits = randomDigits(4);
+  const last = randomLetter();
+  return `${first3}${holderType}${fifth}${digits}${last}`;
+};
+
 /**
  * PAN (Permanent Account Number, Indian tax ID).
  *
@@ -14,6 +30,7 @@
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -70,7 +87,8 @@ const pan: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default pan;
-export { compact, format, validate };
+export { compact, format, validate, generate };

@@ -1,3 +1,12 @@
+/** Generate a random valid Austrian Firmenbuchnummer. */
+const generate = (): string => {
+  const digits = randomDigits(randomInt(5, 6));
+  const letter = String.fromCodePoint(
+    97 + randomInt(0, 25),
+  ); // a-z (compact lowercases)
+  return `${digits}${letter}`;
+};
+
 /**
  * Firmenbuchnummer (Austrian company register number).
  *
@@ -9,6 +18,7 @@
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -61,7 +71,8 @@ const businessid: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default businessid;
-export { compact, format, validate };
+export { compact, format, validate, generate };
