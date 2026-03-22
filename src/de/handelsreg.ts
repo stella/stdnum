@@ -29,22 +29,30 @@ const REGISTER_TYPES = new Set([
   "VR",
 ]);
 
-const compact = (value: string): string =>
-  clean(value, " .").trim().toUpperCase();
-
 /**
  * Parse out the register type and number from
  * various formats like "HRB 12345", "HRB12345",
  * "Amtsgericht München HRB 12345".
+ *
+ * Accepts any uppercase letter sequence so that
+ * validate() can produce a meaningful error for
+ * unrecognised register types.
  */
 const parse = (
   value: string,
 ): { type: string; number: string } | null => {
-  const v = compact(value);
-  // Match register type followed by digits
-  const match = v.match(/(HRA|HRB|GNR|PR|VR)\s*(\d+)/);
+  const v = clean(value, " .").trim().toUpperCase();
+  const match = v.match(/([A-Z]+)\s*(\d+)/);
   if (!match) return null;
   return { type: match[1]!, number: match[2]! };
+};
+
+const compact = (value: string): string => {
+  const parsed = parse(value);
+  if (!parsed) {
+    return clean(value, " .").trim().toUpperCase();
+  }
+  return `${parsed.type} ${parsed.number}`;
 };
 
 const validate = (value: string): ValidateResult => {
@@ -106,11 +114,7 @@ const handelsreg: Validator = {
   sourceUrl:
     "https://de.wikipedia.org/wiki/Handelsregister_(Deutschland)",
   examples: ["HRB 12345"] as const,
-  compact: (v: string) => {
-    const parsed = parse(v);
-    if (!parsed) return clean(v, " .").trim();
-    return `${parsed.type} ${parsed.number}`;
-  },
+  compact,
   format,
   validate,
 };
