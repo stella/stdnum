@@ -42,7 +42,10 @@ const format = (value: string): string => {
   if (v.length === 8) {
     return `${v.slice(0, 2)}.${v.slice(2, 5)}.${v.slice(5)}`;
   }
-  return `${v.slice(0, 1)}.${v.slice(1, 4)}.${v.slice(4)}`;
+  if (v.length === 7) {
+    return `${v.slice(0, 1)}.${v.slice(1, 4)}.${v.slice(4)}`;
+  }
+  return v;
 };
 
 /** Argentine National Identity Document. */
