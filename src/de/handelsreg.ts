@@ -42,7 +42,12 @@ const parse = (
   value: string,
 ): { type: string; number: string } | null => {
   const v = clean(value, " .").trim().toUpperCase();
-  const match = v.match(/([A-Z]{2,3})\s*(\d+)/);
+  // Try known register types first (anchored to end),
+  // then fall back to any 2-3 letter type for
+  // INVALID_COMPONENT reporting.
+  const match =
+    v.match(/(HRA|HRB|GNR|PR|VR)(\d+)$/)
+    ?? v.match(/([A-Z]{2,3})(\d+)$/);
   if (!match) return null;
   return { type: match[1]!, number: match[2]! };
 };
