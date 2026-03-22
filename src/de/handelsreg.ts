@@ -42,7 +42,7 @@ const parse = (
   value: string,
 ): { type: string; number: string } | null => {
   const v = clean(value, " .").trim().toUpperCase();
-  const match = v.match(/([A-Z]+)\s*(\d+)/);
+  const match = v.match(/([A-Z]{2,3})\s*(\d+)/);
   if (!match) return null;
   return { type: match[1]!, number: match[2]! };
 };
