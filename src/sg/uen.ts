@@ -15,6 +15,7 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -202,6 +203,19 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string =>
   compact(value);
 
+/** Generate a random valid Singapore UEN (business format). */
+const generate = (): string => {
+  const weights = [10, 4, 9, 3, 8, 2, 7, 1];
+  const checkAlpha = "XMKECAWLJDB";
+  const body = randomDigits(8);
+  let sum = 0;
+  for (let i = 0; i < 8; i++) {
+    sum += Number(body[i]) * weights[i]!;
+  }
+  const check = checkAlpha[sum % 11]!;
+  return body + check;
+};
+
 /** Singapore Unique Entity Number. */
 const uen: Validator = {
   name: "Singapore Unique Entity Number",
@@ -227,7 +241,8 @@ const uen: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default uen;
-export { compact, format, validate };
+export { compact, format, validate, generate };
