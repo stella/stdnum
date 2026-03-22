@@ -36,7 +36,6 @@
   "exports": {
     ".": "./src/index.ts",
     "./types": "./src/types.ts",
-    "./patterns": "./src/patterns.ts",
     "./ad/nrt": "./src/ad/nrt.ts",
     "./ae/eid": "./src/ae/eid.ts",
     "./ai/tin": "./src/ai/tin.ts",
@@ -173,6 +172,7 @@
     "./no/orgnr": "./src/no/orgnr.ts",
     "./nz/ird": "./src/nz/ird.ts",
     "./pa/ruc": "./src/pa/ruc.ts",
+    "./patterns": "./src/patterns.ts",
     "./pe/ruc": "./src/pe/ruc.ts",
     "./ph/philid": "./src/ph/philid.ts",
     "./pk/cnic": "./src/pk/cnic.ts",
