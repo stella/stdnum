@@ -284,12 +284,9 @@ describe("us.rtn", () => {
   });
 
   test("valid thrift prefix (21)", () => {
-    const r = us.rtn.validate("211000021");
-    if (!r.valid) {
-      expect(r.error.code).not.toBe(
-        "INVALID_COMPONENT",
-      );
-    }
+    const r = us.rtn.validate("210000023");
+    expect(r.valid).toBe(true);
+    if (r.valid) expect(r.compact).toBe("210000023");
   });
 
   test("metadata", () => {

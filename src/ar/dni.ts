@@ -20,17 +20,17 @@ const compact = (value: string): string =>
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
 
-  if (!isdigits(v)) {
-    return err(
-      "INVALID_FORMAT",
-      "DNI must contain only digits",
-    );
-  }
-
   if (v.length < 7 || v.length > 8) {
     return err(
       "INVALID_LENGTH",
       "DNI must be 7 or 8 digits",
+    );
+  }
+
+  if (!isdigits(v)) {
+    return err(
+      "INVALID_FORMAT",
+      "DNI must contain only digits",
     );
   }
 
