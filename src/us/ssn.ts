@@ -1,18 +1,23 @@
 /** Generate a random valid U.S. SSN. */
 const generate = (): string => {
-  let area: string;
-  do {
-    area = String(randomInt(1, 899)).padStart(3, "0");
-  } while (area === "666");
-  const group = String(randomInt(1, 99)).padStart(
-    2,
-    "0",
-  );
-  const serial = String(randomInt(1, 9999)).padStart(
-    4,
-    "0",
-  );
-  return `${area}${group}${serial}`;
+  for (;;) {
+    let area: string;
+    do {
+      area = String(randomInt(1, 899)).padStart(
+        3,
+        "0",
+      );
+    } while (area === "666");
+    const group = String(randomInt(1, 99)).padStart(
+      2,
+      "0",
+    );
+    const serial = String(
+      randomInt(1, 9999),
+    ).padStart(4, "0");
+    const ssn = `${area}${group}${serial}`;
+    if (!BLACKLIST.has(ssn)) return ssn;
+  }
 };
 
 /**
@@ -30,7 +35,7 @@ const generate = (): string => {
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 

@@ -6,7 +6,7 @@ const generate = (): string => {
     (_, i) => i + 70,
   ).filter((g) => g !== 89 && g !== 93);
   const group = String(
-    allowed[Math.floor(Math.random() * allowed.length)]!,
+    allowed[randomInt(0, allowed.length - 1)]!,
   );
   const serial = randomDigits(4);
   return `${area}${group}${serial}`;

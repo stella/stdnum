@@ -14,7 +14,7 @@ const generate = (): string => {
     "92", "93", "94", "95", "98", "99",
   ];
   const prefix =
-    prefixes[Math.floor(Math.random() * prefixes.length)]!;
+    prefixes[randomInt(0, prefixes.length - 1)]!;
   return prefix + randomDigits(7);
 };
 
@@ -32,7 +32,7 @@ const generate = (): string => {
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits } from "#util/generate";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 

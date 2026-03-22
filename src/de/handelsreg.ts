@@ -2,7 +2,7 @@
 const generate = (): string => {
   const types = ["HRA", "HRB", "GNR", "PR", "VR"];
   const type =
-    types[Math.floor(Math.random() * types.length)]!;
+    types[randomInt(0, types.length - 1)]!;
   const number = randomDigits(5);
   return `${type}${number}`;
 };
@@ -27,7 +27,7 @@ const generate = (): string => {
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
-import { randomDigits } from "#util/generate";
+import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
