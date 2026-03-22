@@ -69,11 +69,9 @@ const format = (value: string): string => {
 
 /** Generate a random valid Portuguese CC number. */
 const generate = (): string => {
-  const VERSION_CHARS =
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const digits = randomDigits(9);
-  const v0 = VERSION_CHARS[randomInt(0, 35)]!;
-  const v1 = VERSION_CHARS[randomInt(0, 35)]!;
+  const v0 = ALPHABET[randomInt(0, 35)]!;
+  const v1 = ALPHABET[randomInt(0, 35)]!;
   const body = digits + v0 + v1;
   const check = calcCheckDigit(body);
   return body + check;

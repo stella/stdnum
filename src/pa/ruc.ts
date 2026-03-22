@@ -348,7 +348,7 @@ const generate = (): string => {
     segments,
     segments.join("-"),
   )!;
-  return `${segments.join("-")}DV${dv}`;
+  return `${segments.join("-")} DV${dv}`;
 };
 
 /** Panama tax identification number. */

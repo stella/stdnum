@@ -80,9 +80,7 @@ for (const { name, validator } of generators) {
 
     test("returns a compact string", () => {
       const value = validator.generate!();
-      expect(value).not.toContain(" ");
-      expect(value).not.toContain("-");
-      expect(value).not.toContain("/");
+      expect(validator.compact(value)).toBe(value);
     });
   });
 }

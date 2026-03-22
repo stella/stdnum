@@ -75,12 +75,23 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** All valid Federal Reserve prefix ranges. */
+const PREFIX_RANGES: readonly [number, number][] = [
+  [1, 12],
+  [21, 32],
+  [61, 72],
+  [80, 80],
+];
+
 /** Generate a random valid U.S. RTN. */
 const generate = (): string => {
-  const prefix = String(randomInt(1, 12)).padStart(
-    2,
-    "0",
-  );
+  const range =
+    PREFIX_RANGES[
+      randomInt(0, PREFIX_RANGES.length - 1)
+    ]!;
+  const prefix = String(
+    randomInt(range[0], range[1]),
+  ).padStart(2, "0");
   const mid = randomDigits(6);
   const body = prefix + mid;
   let sum = 0;
