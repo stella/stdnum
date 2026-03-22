@@ -7,7 +7,12 @@
  * @see https://www.statistics.sk/
  */
 
-import { compact, format, validate } from "../cz/ico";
+import {
+  compact,
+  format,
+  generate,
+  validate,
+} from "../cz/ico";
 import type { Validator } from "../types";
 
 /** Slovak Company Identification Number. */
@@ -27,7 +32,8 @@ const ico: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default ico;
-export { compact, format, validate };
+export { compact, format, validate, generate };

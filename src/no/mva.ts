@@ -11,7 +11,10 @@ import { clean } from "#util/clean";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
-import { validate as validateOrgnr } from "./orgnr";
+import {
+  validate as validateOrgnr,
+  generate as generateOrgnr,
+} from "./orgnr";
 
 const compact = (value: string): string => {
   let v = clean(value, " -").toUpperCase();
@@ -46,6 +49,9 @@ const format = (value: string): string => {
   return `NO ${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)} MVA`;
 };
 
+/** Generate a random valid Norwegian VAT number. */
+const generate = (): string => generateOrgnr() + "MVA";
+
 /** Norwegian VAT Number. */
 const mva: Validator = {
   name: "Norwegian VAT Number",
@@ -63,7 +69,8 @@ const mva: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default mva;
-export { compact, format, validate };
+export { compact, format, validate, generate };

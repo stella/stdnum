@@ -9,6 +9,7 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -82,6 +83,15 @@ const format = (value: string): string => {
   return `${v.slice(0, 8)} ${v.slice(8)}`;
 };
 
+/** Generate a random valid CBU. */
+const generate = (): string => {
+  const block1 = randomDigits(7);
+  const check1 = calcCheck(block1, WEIGHTS_BLOCK1);
+  const block2 = randomDigits(13);
+  const check2 = calcCheck(block2, WEIGHTS_BLOCK2);
+  return block1 + String(check1) + block2 + String(check2);
+};
+
 /** Argentine Uniform Bank Key. */
 const cbu: Validator = {
   name: "Argentine Bank Account Number",
@@ -101,7 +111,8 @@ const cbu: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default cbu;
-export { compact, format, validate };
+export { compact, format, validate, generate };

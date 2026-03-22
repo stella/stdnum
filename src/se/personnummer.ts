@@ -144,7 +144,8 @@ const generate = (): string => {
     const payload = yy + mm + dd + serial;
     const cs = luhnChecksum(payload + "0");
     const c = payload + String((10 - cs) % 10);
-    if (validate(c).valid) return c;
+    const result = validate(c);
+    if (result.valid) return result.compact;
   }
 };
 

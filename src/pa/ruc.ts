@@ -18,6 +18,7 @@
  */
 
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -337,6 +338,19 @@ const format = (value: string): string => {
   return `${segments.join("-")} DV ${dvPart}`;
 };
 
+/** Generate a random valid Panama RUC (natural person). */
+const generate = (): string => {
+  const province = String(randomInt(1, 13));
+  const volume = String(randomInt(1, 9999));
+  const folio = String(randomInt(1, 99999));
+  const segments = [province, volume, folio];
+  const dv = computeDV(
+    segments,
+    segments.join("-"),
+  )!;
+  return `${segments.join("-")} DV${dv}`;
+};
+
 /** Panama tax identification number. */
 const ruc: Validator = {
   name: "Tax Identification Number",
@@ -357,7 +371,8 @@ const ruc: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default ruc;
-export { compact, format, validate };
+export { compact, format, validate, generate };

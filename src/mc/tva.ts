@@ -10,6 +10,7 @@
  * @see https://www.economie.gouv.fr/
  */
 
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -43,6 +44,15 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** Generate a random valid Monacan TVA number. */
+const generate = (): string => {
+  const siren = "000" + randomDigits(6);
+  const prefix = String(
+    (12 + 3 * (Number(siren) % 97)) % 97,
+  ).padStart(2, "0");
+  return "FR" + prefix + siren;
+};
+
 /** Monacan VAT Number. */
 const tva: Validator = {
   name: "Monacan VAT Number",
@@ -60,7 +70,8 @@ const tva: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default tva;
-export { compact, format, validate };
+export { compact, format, validate, generate };

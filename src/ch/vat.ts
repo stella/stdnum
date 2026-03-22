@@ -12,7 +12,10 @@ import { clean } from "#util/clean";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
-import { validate as validateUid } from "./uid";
+import {
+  validate as validateUid,
+  generate as generateUid,
+} from "./uid";
 
 const SUFFIXES = ["MWST", "TVA", "IVA", "TPV"] as const;
 
@@ -57,6 +60,9 @@ const format = (value: string): string => {
   return `CHE-${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)} ${parts.suffix}`;
 };
 
+/** Generate a random valid Swiss VAT number. */
+const generate = (): string => generateUid() + "MWST";
+
 /** Swiss VAT Number. */
 const vat: Validator = {
   name: "Swiss VAT Number",
@@ -76,7 +82,8 @@ const vat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vat;
-export { compact, format, validate };
+export { compact, format, validate, generate };

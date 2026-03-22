@@ -9,6 +9,7 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -66,6 +67,16 @@ const format = (value: string): string => {
   return `${v.slice(0, -3)} ${v.slice(-3, -1)} ${v.at(-1)}`;
 };
 
+/** Generate a random valid Portuguese CC number. */
+const generate = (): string => {
+  const digits = randomDigits(9);
+  const v0 = ALPHABET[randomInt(0, 35)]!;
+  const v1 = ALPHABET[randomInt(0, 35)]!;
+  const body = digits + v0 + v1;
+  const check = calcCheckDigit(body);
+  return body + check;
+};
+
 /** Portuguese Identity Card number. */
 const cc: Validator = {
   name: "Portuguese Identity Card",
@@ -89,7 +100,8 @@ const cc: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default cc;
-export { compact, format, validate };
+export { compact, format, validate, generate };

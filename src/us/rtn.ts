@@ -16,6 +16,7 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -74,6 +75,33 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+/** All valid Federal Reserve prefix ranges. */
+const PREFIX_RANGES: readonly [number, number][] = [
+  [1, 12],
+  [21, 32],
+  [61, 72],
+  [80, 80],
+];
+
+/** Generate a random valid U.S. RTN. */
+const generate = (): string => {
+  const range =
+    PREFIX_RANGES[
+      randomInt(0, PREFIX_RANGES.length - 1)
+    ]!;
+  const prefix = String(
+    randomInt(range[0], range[1]),
+  ).padStart(2, "0");
+  const mid = randomDigits(6);
+  const body = prefix + mid;
+  let sum = 0;
+  for (let i = 0; i < 8; i++) {
+    sum += Number(body[i]) * WEIGHTS[i]!;
+  }
+  const check = (10 - (sum % 10)) % 10;
+  return body + String(check);
+};
+
 /** U.S. Routing Transit Number. */
 const rtn: Validator = {
   name: "Routing Transit Number",
@@ -96,7 +124,8 @@ const rtn: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default rtn;
-export { compact, format, validate };
+export { compact, format, validate, generate };
