@@ -3,7 +3,7 @@
  *
  * German commercial register number assigned by the
  * local court (Amtsgericht). Format: register type
- * (HRA, HRB) + number, optionally with court name.
+ * (HRA, HRB, GnR, PR, VR) + number.
  *
  * HRA = Handelsregister Abteilung A (partnerships,
  * sole proprietors). HRB = Abteilung B (corporations).
@@ -30,76 +30,49 @@ const REGISTER_TYPES = new Set([
 ]);
 
 /**
- * Parse out the register type and number from
- * various formats like "HRB 12345", "HRB12345",
- * "Amtsgericht München HRB 12345".
- *
- * Accepts any uppercase letter sequence so that
- * validate() can produce a meaningful error for
- * unrecognised register types.
+ * Strip separators and normalize to canonical form.
+ * Accepts "HRB 12345", "HRB12345", "hrb 12345".
  */
-const parse = (
-  value: string,
-): { type: string; number: string } | null => {
-  const v = clean(value, " .").trim().toUpperCase();
-  // Try known register types first (anchored to end),
-  // then fall back to any 2-3 letter type for
-  // INVALID_COMPONENT reporting.
-  const match =
-    v.match(/(HRA|HRB|GNR|PR|VR)(\d+)$/)
-    ?? v.match(/([A-Z]{2,3})(\d+)$/);
-  if (!match) return null;
-  return { type: match[1]!, number: match[2]! };
-};
-
 const compact = (value: string): string => {
-  const parsed = parse(value);
-  if (!parsed) {
-    return clean(value, " .").trim().toUpperCase();
-  }
-  return `${parsed.type} ${parsed.number}`;
+  const v = clean(value, " -.").trim().toUpperCase();
+  const match = v.match(
+    /^(HRA|HRB|GNR|PR|VR)(\d{1,7})$/,
+  );
+  if (!match) return v;
+  return `${match[1]} ${match[2]}`;
 };
 
 const validate = (value: string): ValidateResult => {
-  const parsed = parse(value);
+  const v = clean(value, " -.").trim().toUpperCase();
 
-  if (!parsed) {
+  const match = v.match(/^([A-Z]{2,3})(\d{1,7})$/);
+  if (!match) {
     return err(
       "INVALID_FORMAT",
-      "Handelsregisternummer must contain a register "
-        + "type (HRA, HRB, GnR, PR, VR) followed "
-        + "by a number",
+      "Handelsregisternummer must be a register type "
+        + "(HRA, HRB, GnR, PR, VR) followed by "
+        + "1-7 digits",
     );
   }
 
-  if (!REGISTER_TYPES.has(parsed.type)) {
+  const type = match[1]!;
+  const number = match[2]!;
+
+  if (!REGISTER_TYPES.has(type)) {
     return err(
       "INVALID_COMPONENT",
-      "Invalid register type",
-    );
-  }
-
-  if (
-    parsed.number.length < 1
-    || parsed.number.length > 7
-  ) {
-    return err(
-      "INVALID_LENGTH",
-      "Register number must be 1 to 7 digits",
+      `Unrecognised register type "${type}"`,
     );
   }
 
   return {
     valid: true,
-    compact: `${parsed.type} ${parsed.number}`,
+    compact: `${type} ${number}`,
   };
 };
 
-const format = (value: string): string => {
-  const parsed = parse(value);
-  if (!parsed) return compact(value);
-  return `${parsed.type} ${parsed.number}`;
-};
+const format = (value: string): string =>
+  compact(value);
 
 /** German Company Register Number. */
 const handelsreg: Validator = {

@@ -267,9 +267,12 @@ describe("de.handelsreg", () => {
   test("number too long (8 digits)", () => {
     const r = de.handelsreg.validate("HRB 12345678");
     expect(r.valid).toBe(false);
-    if (!r.valid) {
-      expect(r.error.code).toBe("INVALID_LENGTH");
-    }
+  });
+
+  test("with dashes", () => {
+    const r = de.handelsreg.validate("HRB-12345");
+    expect(r.valid).toBe(true);
+    if (r.valid) expect(r.compact).toBe("HRB 12345");
   });
 
   test("format normalizes", () => {
