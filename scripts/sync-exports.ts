@@ -35,16 +35,37 @@ const buildExportKey = (relPath: string): string => {
   return `./${withoutExt}`;
 };
 
-const buildExportValue = (relPath: string): string => {
-  return `./src/${relPath}`;
+type ConditionalExport = {
+  types: string;
+  import: string;
+  default: string;
+};
+
+const buildExportValue = (
+  relPath: string,
+): ConditionalExport => {
+  const withoutExt = relPath.replace(/\.ts$/, "");
+  return {
+    types: `./dist/${withoutExt}.d.ts`,
+    import: `./dist/${withoutExt}.js`,
+    default: `./dist/${withoutExt}.js`,
+  };
 };
 
 const scanExports = async (): Promise<
-  Record<string, string>
+  Record<string, ConditionalExport>
 > => {
-  const exports: Record<string, string> = {
-    ".": "./src/index.ts",
-    "./types": "./src/types.ts",
+  const exports: Record<string, ConditionalExport> = {
+    ".": {
+      types: "./dist/index.d.ts",
+      import: "./dist/index.js",
+      default: "./dist/index.js",
+    },
+    "./types": {
+      types: "./dist/types.d.ts",
+      import: "./dist/types.js",
+      default: "./dist/types.js",
+    },
   };
 
   const files = await readdir(SRC, { recursive: true });
@@ -62,15 +83,18 @@ const scanExports = async (): Promise<
 };
 
 const sortExports = (
-  exports: Record<string, string>,
-): Record<string, string> => {
+  exports: Record<string, ConditionalExport>,
+): Record<string, ConditionalExport> => {
   const entries = Object.entries(exports);
 
-  // Sort alphabetically, but keep "." first and "./types" second
-  const pinned = [".","./types"];
+  // Sort alphabetically, but keep "." first and
+  // "./types" second
+  const pinned = [".", "./types"];
   const pinnedEntries = pinned
     .filter((k) => exports[k] !== undefined)
-    .map((k) => [k, exports[k]!] as const);
+    .map(
+      (k) => [k, exports[k]] as [string, ConditionalExport],
+    );
 
   const rest = entries
     .filter(([k]) => !pinned.includes(k))
@@ -85,7 +109,7 @@ const main = async () => {
   const pkgText = await Bun.file(PKG_PATH).text();
   const pkg = JSON.parse(pkgText);
 
-  const oldExports: Record<string, string> =
+  const oldExports: Record<string, unknown> =
     pkg.exports ?? {};
   const newExports = sortExports(await scanExports());
 
@@ -100,7 +124,10 @@ const main = async () => {
   for (const key of newKeys) {
     if (!oldKeys.has(key)) {
       added.push(key);
-    } else if (oldExports[key] !== newExports[key]) {
+    } else if (
+      JSON.stringify(oldExports[key]) !==
+      JSON.stringify(newExports[key])
+    ) {
       changed.push(key);
     }
   }
@@ -126,9 +153,7 @@ const main = async () => {
   const total = Object.keys(newExports).length;
 
   if (!hasChanges) {
-    console.log(
-      `Exports: ${total} entries, no changes.`,
-    );
+    console.log(`Exports: ${total} entries, no changes.`);
     return;
   }
 
