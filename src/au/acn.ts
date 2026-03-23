@@ -35,10 +35,10 @@ const validate = (value: string): ValidateResult => {
 
   let sum = 0;
   for (let i = 0; i < 8; i++) {
-    sum += Number(v[i]) * WEIGHTS[i];
+    sum += Number(v.charAt(i)) * (WEIGHTS[i] ?? 0);
   }
   const check = (10 - (sum % 10)) % 10;
-  if (check !== Number(v[8])) {
+  if (check !== Number(v.charAt(8))) {
     return err(
       "INVALID_CHECKSUM",
       "ACN check digit mismatch",
@@ -60,7 +60,7 @@ const format = (value: string): string => {
 const generate = (): string => {
   const payload = randomDigits(8);
   let sum = 0;
-  for (let i = 0; i < 8; i++) sum += Number(payload[i]) * WEIGHTS[i];
+  for (let i = 0; i < 8; i++) sum += Number(payload.charAt(i)) * (WEIGHTS[i] ?? 0);
   return payload + String((10 - (sum % 10)) % 10);
 };
 

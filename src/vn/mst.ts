@@ -23,7 +23,7 @@ const WEIGHTS = [31, 29, 23, 19, 17, 13, 7, 5, 3] as const;
 const calcCheckDigit = (number: string): string => {
   let total = 0;
   for (let i = 0; i < 9; i++) {
-    total += WEIGHTS[i] * Number(number[i]);
+    total += (WEIGHTS[i] ?? 0) * Number(number.charAt(i));
   }
   const remainder = 10 - (total % 11);
   // When remainder is 10, the sequential part is

@@ -31,7 +31,6 @@ const generate = (): string => {
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
-import { isdigits } from "#util/strings";
 import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";

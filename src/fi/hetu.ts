@@ -54,9 +54,9 @@ const validate = (value: string): ValidateResult => {
   const dd = v.slice(0, 2);
   const mm = v.slice(2, 4);
   const yy = v.slice(4, 6);
-  const separator = v[6];
+  const separator = v.charAt(6);
   const serial = v.slice(7, 10);
-  const checkChar = v[10];
+  const checkChar = v.charAt(10);
 
   if (!isdigits(dd) || !isdigits(mm) || !isdigits(yy)) {
     return err(
@@ -113,7 +113,7 @@ const validate = (value: string): ValidateResult => {
   }
 
   const checkNum = Number(`${dd}${mm}${yy}${serial}`);
-  const expected = CHECK_CHARS[checkNum % 31];
+  const expected = CHECK_CHARS.charAt(checkNum % 31);
   if (checkChar !== expected) {
     return err(
       "INVALID_CHECKSUM",
@@ -140,7 +140,7 @@ const parse = (
   const dd = Number(v.slice(0, 2));
   const mm = Number(v.slice(2, 4));
   const yy = Number(v.slice(4, 6));
-  const separator = v[6];
+  const separator = v.charAt(6);
   const serial = Number(v.slice(7, 10));
 
   let century: number;

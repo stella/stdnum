@@ -29,7 +29,9 @@ const compact = (value: string): string =>
 const validDistribution = (value: string): boolean => {
   const counts = Array.from<number>({ length: 10 }).fill(0);
   for (let i = 0; i < 10; i++) {
-    counts[Number(value[i])]++;
+    const idx = Number(value.charAt(i));
+    const prev = counts[idx];
+    if (prev !== undefined) counts[idx] = prev + 1;
   }
   let doubles = 0;
   let triples = 0;

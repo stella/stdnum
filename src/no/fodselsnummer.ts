@@ -49,7 +49,7 @@ const checkDigit = (
 ): number | undefined => {
   let sum = 0;
   for (let i = 0; i < weights.length; i++) {
-    sum += Number(v[i]) * weights[i];
+    sum += Number(v.charAt(i)) * (weights[i] ?? 0);
   }
   const remainder = (11 - (sum % 11)) % 11;
   if (remainder === 10) return undefined;

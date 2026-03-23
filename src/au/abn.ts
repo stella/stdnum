@@ -37,9 +37,9 @@ const validate = (value: string): ValidateResult => {
 
   let sum = 0;
   for (let i = 0; i < 11; i++) {
-    let d = Number(v[i]);
+    let d = Number(v.charAt(i));
     if (i === 0) d -= 1;
-    sum += d * WEIGHTS[i];
+    sum += d * (WEIGHTS[i] ?? 0);
   }
   if (sum % 89 !== 0) {
     return err("INVALID_CHECKSUM", "ABN checksum mismatch");

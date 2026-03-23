@@ -44,7 +44,7 @@ const validate = (value: string): ValidateResult => {
 
   let sum = 0;
   for (let i = 0; i < 8; i++) {
-    sum += Number(digits[i]) * WEIGHTS[i];
+    sum += Number(digits.charAt(i)) * (WEIGHTS[i] ?? 0);
   }
   const check = (11 - (sum % 11)) % 11;
   if (check === 10) {
@@ -74,7 +74,7 @@ const generate = (): string => {
   for (let i = 0; i < 100; i++) {
     const payload = randomDigits(8);
     let sum = 0;
-    for (let j = 0; j < 8; j++) sum += Number(payload[j]) * WEIGHTS[j];
+    for (let j = 0; j < 8; j++) sum += Number(payload.charAt(j)) * (WEIGHTS[j] ?? 0);
     const check = (11 - (sum % 11)) % 11;
     if (check === 10) continue;
     return "CHE" + payload + String(check);

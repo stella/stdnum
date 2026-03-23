@@ -42,7 +42,7 @@ const calcCheckDigit = (
 ): string | null => {
   let sum = 0;
   for (let i = 0; i < 8; i++) {
-    sum += WEIGHTS[i] * Number(value[i]);
+    sum += (WEIGHTS[i] ?? 0) * Number(value.charAt(i));
   }
   const result = sum % 11;
   return result === 10 ? null : String(result);

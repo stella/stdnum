@@ -54,19 +54,19 @@ const calcCheckDigits = (number: string): string => {
   const w1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   let sum = 0;
   for (let i = 0; i < 12; i++) {
-    sum += w1[i] * charToValue(number[i]);
+    sum += (w1[i] ?? 0) * charToValue(number.charAt(i));
   }
   const d1 = ((11 - (sum % 11)) % 11) % 10;
 
   const w2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   sum = 0;
   for (let i = 0; i < 12; i++) {
-    sum += w2[i] * charToValue(number[i]);
+    sum += (w2[i] ?? 0) * charToValue(number.charAt(i));
   }
   // Use the computed d1 (not the stored digit at
   // number[12]) so both check digits are derived
   // from the base alone.
-  sum += w2[12] * d1;
+  sum += (w2[12] ?? 0) * d1;
   const d2 = ((11 - (sum % 11)) % 11) % 10;
 
   return `${d1}${d2}`;

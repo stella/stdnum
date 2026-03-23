@@ -63,7 +63,7 @@ const calcCheckDigit = (number: string): number | null => {
     const ch = work[i]!;
     const val = ALPHABET.indexOf(ch);
     if (val === -1) return null;
-    sum += WEIGHTS[i] * val;
+    sum += (WEIGHTS[i] ?? 0) * val;
   }
   const remainder = sum % 11;
   if (remainder > 9) return null;

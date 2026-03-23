@@ -42,7 +42,7 @@ const validate = (value: string): ValidateResult => {
   // Checksum: weights on first 8 digits, check is 9th
   let sum = 0;
   for (let i = 0; i < 8; i++) {
-    sum += Number(v[i]) * WEIGHTS[i];
+    sum += Number(v.charAt(i)) * (WEIGHTS[i] ?? 0);
   }
   const remainder = (11 - (sum % 11)) % 11;
   if (remainder === 10 || remainder !== Number(v[8])) {
