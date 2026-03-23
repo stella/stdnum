@@ -23,9 +23,7 @@ import type {
   Validator,
 } from "../types";
 
-const WEIGHTS = [
-  2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2,
-] as const;
+const WEIGHTS = [2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2] as const;
 
 const centuryMap: Record<number, number> = {
   2: 1900,
@@ -132,10 +130,7 @@ const civil: Validator = {
   country: "KW",
   entityType: "person",
   lengths: [12] as const,
-  examples: [
-    "289011200032",
-    "305031512348",
-  ] as const,
+  examples: ["289011200032", "305031512348"] as const,
   description:
     "12-digit civil identification number issued by PACI",
   sourceUrl:

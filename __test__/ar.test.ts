@@ -186,9 +186,7 @@ describe("ar.cbu", () => {
   });
 
   test("valid CBU with spaces", () => {
-    const r = ar.cbu.validate(
-      "28505909 40090418135201",
-    );
+    const r = ar.cbu.validate("28505909 40090418135201");
     expect(r.valid).toBe(true);
   });
 

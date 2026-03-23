@@ -128,9 +128,7 @@ describe("in.pan", () => {
   });
 
   test("format returns compact form", () => {
-    expect(in_.pan.format("abcpp1234c")).toBe(
-      "ABCPP1234C",
-    );
+    expect(in_.pan.format("abcpp1234c")).toBe("ABCPP1234C");
   });
 
   test("metadata", () => {

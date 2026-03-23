@@ -10,11 +10,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [6, 7, 8, 9, 10, 5, 4, 3, 2] as const;
 const CHECK_LOOKUP = "21987654321";
@@ -53,17 +53,19 @@ const format = (value: string): string => {
 };
 
 /** Generate a random valid UK UTR. */
-const generate = (): string => { for (;;) { const c = randomDigits(10); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(10);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** UK Unique Taxpayer Reference. */
 const utr: Validator = {
   name: "UK Unique Taxpayer Reference",
   localName: "Unique Taxpayer Reference",
   abbreviation: "UTR",
-  aliases: [
-    "Unique Taxpayer Reference",
-    "UTR",
-  ] as const,
+  aliases: ["Unique Taxpayer Reference", "UTR"] as const,
   candidatePattern: "\\d{10}",
   country: "GB",
   entityType: "any",

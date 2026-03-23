@@ -24,9 +24,9 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -81,10 +81,7 @@ const brn: Validator = {
   name: "Korean Business Registration Number",
   localName: "사업자등록번호",
   abbreviation: "BRN",
-  aliases: [
-    "사업자등록번호",
-    "BRN",
-  ] as const,
+  aliases: ["사업자등록번호", "BRN"] as const,
   candidatePattern: "\\d{3}-?\\d{2}-?\\d{5}",
   country: "KR",
   entityType: "company",

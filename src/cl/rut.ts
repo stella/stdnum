@@ -14,10 +14,10 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const RUT_RE = /^\d{7,8}[\dK]$/;
 
@@ -101,12 +101,8 @@ const rut: Validator = {
   name: "Chilean Tax ID",
   localName: "Rol Único Tributario",
   abbreviation: "RUT",
-  aliases: [
-    "RUT",
-    "Rol Único Tributario",
-  ] as const,
-  candidatePattern:
-    "\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[\\dkK]",
+  aliases: ["RUT", "Rol Único Tributario"] as const,
+  candidatePattern: "\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[\\dkK]",
   country: "CL",
   entityType: "any",
   compact,

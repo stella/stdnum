@@ -10,11 +10,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [9, 7, 3, 1, 9, 7, 3, 1];
 
@@ -54,17 +54,19 @@ const format = (value: string): string =>
   `HU${compact(value)}`;
 
 /** Generate a random valid Hungarian VAT number. */
-const generate = (): string => { for (;;) { const c = randomDigits(8); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(8);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Hungarian VAT Number. */
 const vat: Validator = {
   name: "Hungarian VAT Number",
   localName: "Adószám",
   abbreviation: "ANUM",
-  aliases: [
-    "adószám",
-    "adóazonosító jel",
-  ] as const,
+  aliases: ["adószám", "adóazonosító jel"] as const,
   candidatePattern: "\\d{8}-\\d-\\d{2}",
   country: "HU",
   entityType: "company",

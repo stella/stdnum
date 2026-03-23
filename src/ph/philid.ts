@@ -15,9 +15,9 @@ const generate = (): string => randomDigits(12);
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -65,10 +65,7 @@ const philid: Validator = {
     "https://en.wikipedia.org/wiki/" +
     "Philippine_national_identity_card",
   lengths: [12] as const,
-  examples: [
-    "123456789012",
-    "000011112222",
-  ] as const,
+  examples: ["123456789012", "000011112222"] as const,
   compact,
   format,
   validate,

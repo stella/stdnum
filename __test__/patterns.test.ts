@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
+import { ch, cz, de, fr, pl } from "../src";
 import {
   allPatterns,
   byCountry,
@@ -7,54 +8,35 @@ import {
   toPatterns,
   toRegex,
 } from "../src/patterns";
-import { ch, cz, de, fr, pl } from "../src";
 
 describe("toRegex", () => {
   test("digit-only validator", () => {
-    expect(
-      toRegex(cz.ico).test("25123891"),
-    ).toBe(true);
-    expect(
-      toRegex(cz.ico).test("2512389"),
-    ).toBe(false);
-    expect(
-      toRegex(cz.ico).test("251238910"),
-    ).toBe(false);
+    expect(toRegex(cz.ico).test("25123891")).toBe(true);
+    expect(toRegex(cz.ico).test("2512389")).toBe(false);
+    expect(toRegex(cz.ico).test("251238910")).toBe(false);
   });
 
   test("format-prepended prefix (de.vat)", () => {
     // de.vat compact strips "DE", format re-adds it
-    expect(
-      toRegex(de.vat).test("DE136695976"),
-    ).toBe(true);
-    expect(
-      toRegex(de.vat).test("DE 136695976"),
-    ).toBe(true);
+    expect(toRegex(de.vat).test("DE136695976")).toBe(true);
+    expect(toRegex(de.vat).test("DE 136695976")).toBe(true);
   });
 
   test("compact prefix (ch.uid)", () => {
-    expect(
-      toRegex(ch.uid).test("CHE-100.155.212"),
-    ).toBe(true);
-    expect(
-      toRegex(ch.uid).test("CHE100155212"),
-    ).toBe(true);
+    expect(toRegex(ch.uid).test("CHE-100.155.212")).toBe(
+      true,
+    );
+    expect(toRegex(ch.uid).test("CHE100155212")).toBe(true);
   });
 
   test("format-prepended prefix (cz.dic)", () => {
-    expect(
-      toRegex(cz.dic).test("CZ25123891"),
-    ).toBe(true);
+    expect(toRegex(cz.dic).test("CZ25123891")).toBe(true);
   });
 
   test("multi-length validator (cz.rc)", () => {
     // cz.rc accepts both 9 and 10 digit values
-    expect(
-      toRegex(cz.rc).test("7103192745"),
-    ).toBe(true);
-    expect(
-      toRegex(cz.rc).test("710319274"),
-    ).toBe(true);
+    expect(toRegex(cz.rc).test("7103192745")).toBe(true);
+    expect(toRegex(cz.rc).test("710319274")).toBe(true);
   });
 
   test("grouped format (compact)", () => {
@@ -94,21 +76,13 @@ describe("toPatterns", () => {
     const patterns = toPatterns([cz.ico, de.vat]);
     expect(patterns).toHaveLength(2);
     expect(patterns[0]!.validator).toBe(cz.ico);
-    expect(patterns[0]!.regex).toBeInstanceOf(
-      RegExp,
-    );
+    expect(patterns[0]!.regex).toBeInstanceOf(RegExp);
   });
 });
 
 describe("byCountry", () => {
   test("filters by country", () => {
-    const all = [
-      cz.ico,
-      cz.dic,
-      cz.rc,
-      de.vat,
-      de.idnr,
-    ];
+    const all = [cz.ico, cz.dic, cz.rc, de.vat, de.idnr];
     const czPatterns = byCountry("CZ", all);
     expect(czPatterns).toHaveLength(3);
     for (const p of czPatterns) {
@@ -117,9 +91,7 @@ describe("byCountry", () => {
   });
 
   test("returns empty for unknown country", () => {
-    expect(
-      byCountry("CZ", [de.vat]),
-    ).toHaveLength(0);
+    expect(byCountry("CZ", [de.vat])).toHaveLength(0);
   });
 });
 
@@ -129,9 +101,7 @@ describe("byEntityType", () => {
     const persons = byEntityType("person", all);
     for (const p of persons) {
       expect(
-        ["person", "any"].includes(
-          p.validator.entityType,
-        ),
+        ["person", "any"].includes(p.validator.entityType),
       ).toBe(true);
     }
   });
@@ -148,9 +118,7 @@ describe("byEntityType", () => {
     expect(companies.length).toBeGreaterThan(0);
     for (const p of companies) {
       expect(
-        ["company", "any"].includes(
-          p.validator.entityType,
-        ),
+        ["company", "any"].includes(p.validator.entityType),
       ).toBe(true);
     }
   });

@@ -72,8 +72,7 @@ const LEGACY_MAP: Record<string, string> = {
 };
 
 /** Prepend n leading zeros. */
-const z = (n: number): string =>
-  "0".repeat(Math.max(0, n));
+const z = (n: number): string => "0".repeat(Math.max(0, n));
 
 /**
  * Compute a single DV digit via weighted sum mod 11.
@@ -222,9 +221,7 @@ const computeDV = (
       z(6 - s2.length) +
       s2;
     isOld =
-      buf[3] === "0" &&
-      buf[4] === "0" &&
-      buf[5]! < "5";
+      buf[3] === "0" && buf[4] === "0" && buf[5]! < "5";
   }
 
   // Apply legacy cross-reference for old format
@@ -252,10 +249,7 @@ const computeDV = (
 const compact = (value: string): string => {
   let v = clean(value, "").trim().toUpperCase();
   // Normalize DV portion: " DV: 49" -> " DV49"
-  v = v.replace(
-    /\s*DV[:\s]*(\d{2})$/,
-    " DV$1",
-  );
+  v = v.replace(/\s*DV[:\s]*(\d{2})$/, " DV$1");
   // Collapse any remaining internal whitespace
   v = v.replace(/\s+/g, " ");
   return v;
@@ -266,9 +260,7 @@ const validate = (value: string): ValidateResult => {
 
   // Extract the DV portion: "...DV49", "...DV:49",
   // or "... DV 49"
-  const dvMatch = v.match(
-    /^(.+?)-?\s*DV[:\s]*(\d{2})$/,
-  );
+  const dvMatch = v.match(/^(.+?)-?\s*DV[:\s]*(\d{2})$/);
 
   if (!dvMatch) {
     return err(
@@ -282,9 +274,7 @@ const validate = (value: string): ValidateResult => {
   const dvPart = dvMatch[2]!;
 
   // The RUC part should be hyphen-separated segments
-  const segments = rucPart
-    .replace(/-+$/, "")
-    .split("-");
+  const segments = rucPart.replace(/-+$/, "").split("-");
 
   if (segments.length < 3 || segments.length > 4) {
     return err(
@@ -312,13 +302,11 @@ const validate = (value: string): ValidateResult => {
   if (computed !== dvPart) {
     return err(
       "INVALID_CHECKSUM",
-      "Panama RUC dígito verificador " +
-        "does not match",
+      "Panama RUC dígito verificador " + "does not match",
     );
   }
 
-  const compactForm =
-    segments.join("-") + " DV" + dvPart;
+  const compactForm = segments.join("-") + " DV" + dvPart;
   return { valid: true, compact: compactForm };
 };
 
@@ -327,9 +315,7 @@ const validate = (value: string): ValidateResult => {
  */
 const format = (value: string): string => {
   const v = compact(value);
-  const dvMatch = v.match(
-    /^(.+?)-?\s*DV[:\s]*(\d{2})$/,
-  );
+  const dvMatch = v.match(/^(.+?)-?\s*DV[:\s]*(\d{2})$/);
   if (!dvMatch) return v;
 
   const rucPart = dvMatch[1]!.replace(/-+$/, "");
@@ -344,10 +330,7 @@ const generate = (): string => {
   const volume = String(randomInt(1, 9999));
   const folio = String(randomInt(1, 99999));
   const segments = [province, volume, folio];
-  const dv = computeDV(
-    segments,
-    segments.join("-"),
-  )!;
+  const dv = computeDV(segments, segments.join("-"))!;
   return `${segments.join("-")} DV${dv}`;
 };
 
@@ -357,12 +340,10 @@ const ruc: Validator = {
   localName: "Registro Único de Contribuyente",
   abbreviation: "RUC",
   aliases: ["RUC"] as const,
-  candidatePattern:
-    "\\d{1,2}-?\\d{1,4}-?\\d{1,6}",
+  candidatePattern: "\\d{1,2}-?\\d{1,4}-?\\d{1,6}",
   country: "PA",
   entityType: "any",
-  description:
-    "Tax identifier issued by Panama's DGI",
+  description: "Tax identifier issued by Panama's DGI",
   sourceUrl: "https://dgi.mef.gob.pa/",
   examples: [
     "1-184-921 DV49",

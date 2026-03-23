@@ -103,9 +103,7 @@ for (const [name, v] of validators) {
         ).toBeUndefined();
       } else {
         // Namespace `is_` maps to country "IS"
-        const expected = ns
-          .replace(/_$/, "")
-          .toUpperCase();
+        const expected = ns.replace(/_$/, "").toUpperCase();
         expect(
           v.country,
           `${name}: expected country "${expected}" but got "${v.country}"`,
@@ -121,9 +119,7 @@ for (const [name, v] of validators) {
           expect(
             result.valid,
             `${name}: example "${example}" failed validation: ${
-              !result.valid
-                ? result.error.message
-                : ""
+              !result.valid ? result.error.message : ""
             }`,
           ).toBe(true);
         }

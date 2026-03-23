@@ -159,9 +159,7 @@ describe("us.itin", () => {
   });
 
   test("format adds dashes", () => {
-    expect(us.itin.format("912903456")).toBe(
-      "912-90-3456",
-    );
+    expect(us.itin.format("912903456")).toBe("912-90-3456");
   });
 
   test("metadata", () => {

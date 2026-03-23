@@ -11,16 +11,12 @@ describe("id.npwp", () => {
   });
 
   test("valid with dots and dash", () => {
-    const r = id.npwp.validate(
-      "01.300.066.6-091.000",
-    );
+    const r = id.npwp.validate("01.300.066.6-091.000");
     expect(r.valid).toBe(true);
   });
 
   test("valid with spaces", () => {
-    const r = id.npwp.validate(
-      "01 300 066 6 091 000",
-    );
+    const r = id.npwp.validate("01 300 066 6 091 000");
     expect(r.valid).toBe(true);
   });
 
@@ -68,9 +64,9 @@ describe("id.npwp", () => {
   });
 
   test("compact strips separators", () => {
-    expect(
-      id.npwp.compact("01.300.066.6-091.000"),
-    ).toBe("013000666091000");
+    expect(id.npwp.compact("01.300.066.6-091.000")).toBe(
+      "013000666091000",
+    );
   });
 
   test("metadata", () => {

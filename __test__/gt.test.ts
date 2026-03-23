@@ -55,17 +55,13 @@ describe("gt.nit", () => {
   });
 
   test("compact strips hyphens and leading zeros", () => {
-    expect(gt.nit.compact("0576937-K")).toBe(
-      "576937K",
-    );
+    expect(gt.nit.compact("0576937-K")).toBe("576937K");
     expect(gt.nit.compact("007108-0")).toBe("71080");
   });
 
   test("format adds hyphen before check", () => {
     expect(gt.nit.format("576937K")).toBe("576937-K");
-    expect(gt.nit.format("39525503")).toBe(
-      "3952550-3",
-    );
+    expect(gt.nit.format("39525503")).toBe("3952550-3");
   });
 
   test("generate produces valid NIT", () => {

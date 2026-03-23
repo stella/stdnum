@@ -12,9 +12,9 @@ const generate = (): string => randomDigits(9);
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -85,10 +85,7 @@ const tn: Validator = {
   name: "Egyptian Tax Registration Number",
   localName: "الرقم الضريبي",
   abbreviation: "TN",
-  aliases: [
-    "الرقم الضريبي",
-    "tax number",
-  ] as const,
+  aliases: ["الرقم الضريبي", "tax number"] as const,
   candidatePattern: "\\d{9}",
   country: "EG",
   entityType: "any",

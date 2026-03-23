@@ -75,8 +75,7 @@ const format = (value: string): string => {
 };
 
 const MAESTRO_PREFIXES: readonly number[] = [
-  5018, 5020, 5038, 5893, 6304, 6759, 6761,
-  6762, 6763,
+  5018, 5020, 5038, 5893, 6304, 6759, 6761, 6762, 6763,
 ];
 
 /**
@@ -113,8 +112,7 @@ const detectNetwork = (
 
   // Maestro (check before Mastercard; some share
   // the 50xx prefix space)
-  if (MAESTRO_PREFIXES.includes(d4))
-    return "maestro";
+  if (MAESTRO_PREFIXES.includes(d4)) return "maestro";
 
   // Mastercard: 51-55 or 2221-2720
   if (d2 >= 51 && d2 <= 55) return "mastercard";
@@ -152,8 +150,9 @@ const CARD_PREFIXES = [
  */
 const generate = (): string => {
   const idx = randomInt(0, CARD_PREFIXES.length - 1);
-  const [prefix, length] = CARD_PREFIXES[idx] as
-    (typeof CARD_PREFIXES)[number];
+  const [prefix, length] = CARD_PREFIXES[
+    idx
+  ] as (typeof CARD_PREFIXES)[number];
   const remaining = length - prefix.length - 1;
   const payload = `${prefix}${randomDigits(remaining)}`;
   const partial = `${payload}0`;

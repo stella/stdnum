@@ -23,9 +23,7 @@ describe("th.tin", () => {
   });
 
   test("valid with spaces", () => {
-    const r = th.tin.validate(
-      "1 1017 00230 70 8",
-    );
+    const r = th.tin.validate("1 1017 00230 70 8");
     expect(r.valid).toBe(true);
   });
 
@@ -63,9 +61,7 @@ describe("th.tin", () => {
     const r = th.tin.validate("9101700230700");
     expect(r.valid).toBe(false);
     if (!r.valid) {
-      expect(r.error.code).toBe(
-        "INVALID_COMPONENT",
-      );
+      expect(r.error.code).toBe("INVALID_COMPONENT");
     }
   });
 
@@ -90,12 +86,12 @@ describe("th.tin", () => {
   });
 
   test("compact strips spaces and dashes", () => {
-    expect(
-      th.tin.compact("1-1017-00230-70-8"),
-    ).toBe("1101700230708");
-    expect(
-      th.tin.compact("1 1017 00230 70 8"),
-    ).toBe("1101700230708");
+    expect(th.tin.compact("1-1017-00230-70-8")).toBe(
+      "1101700230708",
+    );
+    expect(th.tin.compact("1 1017 00230 70 8")).toBe(
+      "1101700230708",
+    );
   });
 
   test("metadata", () => {

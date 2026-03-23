@@ -10,9 +10,7 @@ const generate = (): string => {
     first =
       validFirst[randomInt(0, validFirst.length - 1)]!;
     second =
-      validSecond[
-        randomInt(0, validSecond.length - 1)
-      ]!;
+      validSecond[randomInt(0, validSecond.length - 1)]!;
     prefix = first + second;
   } while (INVALID_PREFIX.has(prefix));
   const digits = randomDigits(6);
@@ -33,21 +31,38 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { err } from "#util/result";
 import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
 
 const INVALID_FIRST = new Set([
-  "D", "F", "I", "Q", "U", "V",
+  "D",
+  "F",
+  "I",
+  "Q",
+  "U",
+  "V",
 ]);
 
 const INVALID_SECOND = new Set([
-  "D", "F", "I", "O", "Q", "U", "V",
+  "D",
+  "F",
+  "I",
+  "O",
+  "Q",
+  "U",
+  "V",
 ]);
 
 const INVALID_PREFIX = new Set([
-  "BG", "GB", "NK", "KN", "TN", "NT", "ZZ",
+  "BG",
+  "GB",
+  "NK",
+  "KN",
+  "TN",
+  "NT",
+  "ZZ",
 ]);
 
 const compact = (value: string): string =>

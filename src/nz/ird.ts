@@ -10,41 +10,35 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
-const PRIMARY_WEIGHTS = [
-  3, 2, 7, 6, 5, 4, 3, 2,
-] as const;
+const PRIMARY_WEIGHTS = [3, 2, 7, 6, 5, 4, 3, 2] as const;
 
-const SECONDARY_WEIGHTS = [
-  7, 4, 3, 2, 5, 2, 7, 6,
-] as const;
+const SECONDARY_WEIGHTS = [7, 4, 3, 2, 5, 2, 7, 6] as const;
 
 /**
  * Calculate the check digit for an IRD number.
  * The input should be the number without the check
  * digit, zero-padded to 8 digits.
  */
-const calcCheckDigit = (
-  payload: string,
-): number | null => {
+const calcCheckDigit = (payload: string): number | null => {
   const padded = payload.padStart(8, "0");
   let sum = 0;
   for (let i = 0; i < 8; i++) {
     sum += PRIMARY_WEIGHTS[i]! * Number(padded[i]);
   }
-  let remainder = (-sum % 11 + 11) % 11;
+  let remainder = ((-sum % 11) + 11) % 11;
   if (remainder !== 10) return remainder;
 
   sum = 0;
   for (let i = 0; i < 8; i++) {
     sum += SECONDARY_WEIGHTS[i]! * Number(padded[i]);
   }
-  remainder = (-sum % 11 + 11) % 11;
+  remainder = ((-sum % 11) + 11) % 11;
   if (remainder === 10) return null;
   return remainder;
 };
@@ -103,17 +97,19 @@ const format = (value: string): string => {
 };
 
 /** Generate a random valid NZ IRD number. */
-const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(9);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** New Zealand IRD Number. */
 const ird: Validator = {
   name: "IRD Number",
   localName: "IRD Number",
   abbreviation: "IRD",
-  aliases: [
-    "IRD number",
-    "tax number NZ",
-  ] as const,
+  aliases: ["IRD number", "tax number NZ"] as const,
   candidatePattern: "\\d{8,9}",
   country: "NZ",
   entityType: "any",

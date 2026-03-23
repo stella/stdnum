@@ -22,15 +22,47 @@ import { isdigits } from "#util/strings";
 import type { ValidateResult, Validator } from "../types";
 
 /** Check letter alphabet for "Other" format. */
-const OTHER_ALPHA =
-  "ABCDEFGHJKLMNPQRSTUVWX0123456789";
+const OTHER_ALPHA = "ABCDEFGHJKLMNPQRSTUVWX0123456789";
 
 const ENTITY_TYPES = new Set([
-  "CC", "CD", "CH", "CL", "CM", "CP", "CS", "CX",
-  "DP", "FB", "FC", "FM", "FN", "GA", "GB", "GS",
-  "HS", "LL", "LP", "MB", "MC", "MD", "MH", "MM",
-  "MQ", "NB", "NR", "PA", "PB", "PF", "RF", "RP",
-  "SM", "SS", "TC", "TU", "VH", "XL",
+  "CC",
+  "CD",
+  "CH",
+  "CL",
+  "CM",
+  "CP",
+  "CS",
+  "CX",
+  "DP",
+  "FB",
+  "FC",
+  "FM",
+  "FN",
+  "GA",
+  "GB",
+  "GS",
+  "HS",
+  "LL",
+  "LP",
+  "MB",
+  "MC",
+  "MD",
+  "MH",
+  "MM",
+  "MQ",
+  "NB",
+  "NR",
+  "PA",
+  "PB",
+  "PF",
+  "RF",
+  "RP",
+  "SM",
+  "SS",
+  "TC",
+  "TU",
+  "VH",
+  "XL",
 ]);
 
 const compact = (value: string): string =>
@@ -40,9 +72,7 @@ const compact = (value: string): string =>
  * Validate Business (ROB) UEN (9 chars):
  * 8 digits + 1 check letter.
  */
-const validateBusiness = (
-  v: string,
-): ValidateResult => {
+const validateBusiness = (v: string): ValidateResult => {
   if (!isdigits(v.slice(0, 8))) {
     return err(
       "INVALID_FORMAT",
@@ -113,15 +143,9 @@ const validateLocalCompany = (
  * R/S/T + 2 digits + 2-letter type + 4 digits
  * + 1 check letter.
  */
-const validateOther = (
-  v: string,
-): ValidateResult => {
+const validateOther = (v: string): ValidateResult => {
   const prefix = v[0]!;
-  if (
-    prefix !== "R" &&
-    prefix !== "S" &&
-    prefix !== "T"
-  ) {
+  if (prefix !== "R" && prefix !== "S" && prefix !== "T") {
     return err(
       "INVALID_COMPONENT",
       "Other UEN must start with R, S, or T",
@@ -160,7 +184,7 @@ const validateOther = (
     sum += idx * weights[i]!;
   }
   const expected =
-    OTHER_ALPHA[((sum - 5) % 11 + 11) % 11];
+    OTHER_ALPHA[(((sum - 5) % 11) + 11) % 11];
   if (v[9] !== expected) {
     return err(
       "INVALID_CHECKSUM",
@@ -200,8 +224,7 @@ const validate = (value: string): ValidateResult => {
   return validateOther(v);
 };
 
-const format = (value: string): string =>
-  compact(value);
+const format = (value: string): string => compact(value);
 
 /** Generate a random valid Singapore UEN (business format). */
 const generate = (): string => {
@@ -221,12 +244,8 @@ const uen: Validator = {
   name: "Singapore Unique Entity Number",
   localName: "Unique Entity Number",
   abbreviation: "UEN",
-  aliases: [
-    "UEN",
-    "Unique Entity Number",
-  ] as const,
-  candidatePattern:
-    "[\\dSTR]\\d{7}[A-Z]",
+  aliases: ["UEN", "Unique Entity Number"] as const,
+  candidatePattern: "[\\dSTR]\\d{7}[A-Z]",
   country: "SG",
   entityType: "company",
   description:

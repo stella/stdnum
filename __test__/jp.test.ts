@@ -4,10 +4,7 @@ import { jp } from "../src";
 import { generate } from "../src/jp/mynumber";
 
 describe("jp.cn", () => {
-  const valid = [
-    "5835678256246",
-    "2021001052596",
-  ];
+  const valid = ["5835678256246", "2021001052596"];
 
   for (const v of valid) {
     test(`valid: ${v}`, () => {
@@ -57,10 +54,7 @@ describe("jp.cn", () => {
 // ─── My Number ──────────────────────────────────
 
 describe("jp.mynumber", () => {
-  const valid = [
-    "123456789018",
-    "000000000019",
-  ];
+  const valid = ["123456789018", "000000000019"];
 
   for (const v of valid) {
     test(`valid: ${v}`, () => {
@@ -97,12 +91,12 @@ describe("jp.mynumber", () => {
   });
 
   test("compact strips spaces and dashes", () => {
-    expect(
-      jp.mynumber.compact("1234 5678 9018"),
-    ).toBe("123456789018");
-    expect(
-      jp.mynumber.compact("1234-5678-9018"),
-    ).toBe("123456789018");
+    expect(jp.mynumber.compact("1234 5678 9018")).toBe(
+      "123456789018",
+    );
+    expect(jp.mynumber.compact("1234-5678-9018")).toBe(
+      "123456789018",
+    );
   });
 
   test("format groups as 4-4-4", () => {

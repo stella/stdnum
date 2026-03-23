@@ -17,9 +17,7 @@ export const isValidDate = (
  * rolling pivot: years after the current year are
  * assumed to be in the previous century.
  */
-export const resolveTwoDigitYear = (
-  yy: number,
-): number => {
+export const resolveTwoDigitYear = (yy: number): number => {
   const y = 2000 + yy;
   return y > new Date().getFullYear() ? y - 100 : y;
 };

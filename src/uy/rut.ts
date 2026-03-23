@@ -14,14 +14,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import {
-  randomDigits,
-  randomInt,
-} from "#util/generate";
 
 const WEIGHTS = [4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] as const;
 
@@ -40,9 +37,7 @@ const compact = (value: string): string => {
 const pymod = (a: number, b: number): number =>
   ((a % b) + b) % b;
 
-const calcCheckDigit = (
-  value: string,
-): string | null => {
+const calcCheckDigit = (value: string): string | null => {
   let sum = 0;
   for (let i = 0; i < 11; i++) {
     sum += Number(value[i]) * WEIGHTS[i]!;
@@ -58,10 +53,7 @@ const validate = (value: string): ValidateResult => {
   const v = compact(value);
 
   if (v.length !== 12) {
-    return err(
-      "INVALID_LENGTH",
-      "RUT must be 12 digits",
-    );
+    return err("INVALID_LENGTH", "RUT must be 12 digits");
   }
 
   if (!isdigits(v)) {
@@ -137,10 +129,7 @@ const rut: Validator = {
   name: "Uruguayan Tax ID",
   localName: "Registro Único Tributario",
   abbreviation: "RUT",
-  aliases: [
-    "RUT",
-    "Registro Único Tributario",
-  ] as const,
+  aliases: ["RUT", "Registro Único Tributario"] as const,
   candidatePattern: "\\d{12}",
   country: "UY",
   entityType: "any",

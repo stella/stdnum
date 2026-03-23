@@ -19,17 +19,20 @@ describe("ad.nrt", () => {
   test("invalid prefix letter I", () => {
     const r = ad.nrt.validate("I706193G");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_COMPONENT");
   });
   test("invalid length", () => {
     const r = ad.nrt.validate("A123B");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
   test("F-type digits too high", () => {
     const r = ad.nrt.validate("F700000A");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_COMPONENT");
   });
   test("A-type accepts digits in range 700000-799999", () => {
     const r1 = ad.nrt.validate("A700000B");
@@ -40,7 +43,8 @@ describe("ad.nrt", () => {
   test("A-type rejects digits outside 700000-799999", () => {
     const r = ad.nrt.validate("A123456B");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_COMPONENT");
   });
   test("format adds separators", () => {
     expect(ad.nrt.format("D059888N")).toBe("D-059888-N");

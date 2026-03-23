@@ -10,11 +10,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [
   10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19,
@@ -57,19 +57,20 @@ const format = (value: string): string => {
 };
 
 /** Generate a random valid ABN. */
-const generate = (): string => { for (;;) { const c = randomDigits(11); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(11);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Australian Business Number. */
 const abn: Validator = {
   name: "Australian Business Number",
   localName: "Australian Business Number",
   abbreviation: "ABN",
-  aliases: [
-    "ABN",
-    "Australian Business Number",
-  ] as const,
-  candidatePattern:
-    "\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}",
+  aliases: ["ABN", "Australian Business Number"] as const,
+  candidatePattern: "\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}",
   country: "AU",
   entityType: "company",
   sourceUrl: "https://abr.business.gov.au/",

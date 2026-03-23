@@ -9,11 +9,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.");
@@ -64,7 +64,8 @@ const format = (value: string): string => {
 const generate = (): string => {
   const payload = "756" + randomDigits(9);
   let sum = 0;
-  for (let i = 0; i < 12; i++) sum += Number(payload[i]) * (i % 2 === 0 ? 1 : 3);
+  for (let i = 0; i < 12; i++)
+    sum += Number(payload[i]) * (i % 2 === 0 ? 1 : 3);
   return payload + String((10 - (sum % 10)) % 10);
 };
 
@@ -79,8 +80,7 @@ const ssn: Validator = {
     "AVS",
     "AHV",
   ] as const,
-  candidatePattern:
-    "756\\.?\\d{4}\\.?\\d{4}\\.?\\d{2}",
+  candidatePattern: "756\\.?\\d{4}\\.?\\d{4}\\.?\\d{2}",
   country: "CH",
   entityType: "person",
   sourceUrl: "https://www.bsv.admin.ch/",

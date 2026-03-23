@@ -18,7 +18,10 @@
 import { Glob } from "bun";
 import { describe, expect, test } from "bun:test";
 
-import type { ParsedPersonId, Validator } from "../src/types";
+import type {
+  ParsedPersonId,
+  Validator,
+} from "../src/types";
 
 // ─── Auto-discover every module with parse ─────
 
@@ -205,7 +208,8 @@ describe("it.codicefiscale parse", () => {
   const mod = discovered.find(
     (m) => m.name === "it.codicefiscale",
   );
-  if (!mod) throw new Error("it.codicefiscale not discovered");
+  if (!mod)
+    throw new Error("it.codicefiscale not discovered");
   const { parse } = mod;
 
   test("extracts male born 1983-11-18", () => {
@@ -241,9 +245,7 @@ describe("no.fodselsnummer parse", () => {
 });
 
 describe("pl.pesel parse", () => {
-  const mod = discovered.find(
-    (m) => m.name === "pl.pesel",
-  );
+  const mod = discovered.find((m) => m.name === "pl.pesel");
   if (!mod) throw new Error("pl.pesel not discovered");
   const { parse } = mod;
 
@@ -302,9 +304,7 @@ describe("se.personnummer parse", () => {
 });
 
 describe("si.emso parse", () => {
-  const mod = discovered.find(
-    (m) => m.name === "si.emso",
-  );
+  const mod = discovered.find((m) => m.name === "si.emso");
   if (!mod) throw new Error("si.emso not discovered");
   const { parse } = mod;
 
@@ -319,9 +319,7 @@ describe("si.emso parse", () => {
 });
 
 describe("fr.nir parse", () => {
-  const mod = discovered.find(
-    (m) => m.name === "fr.nir",
-  );
+  const mod = discovered.find((m) => m.name === "fr.nir");
   if (!mod) throw new Error("fr.nir not discovered");
   const { parse } = mod;
 
@@ -338,8 +336,7 @@ describe("fr.nir parse", () => {
     const base = 1850578123456n;
     const check = 97n - (base % 97n);
     const full =
-      base.toString() +
-      check.toString().padStart(2, "0");
+      base.toString() + check.toString().padStart(2, "0");
     const result = parse(full);
     expect(result).not.toBeNull();
     expect(result!.gender).toBe("male");

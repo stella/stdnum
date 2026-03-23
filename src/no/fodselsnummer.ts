@@ -10,6 +10,7 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -18,7 +19,6 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS_D1 = [3, 7, 6, 1, 8, 9, 4, 5, 2] as const;
 const WEIGHTS_D2 = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2] as const;
@@ -135,9 +135,7 @@ const format = (value: string): string => {
  * birth number. Returns null if the value is not
  * valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -178,10 +176,7 @@ const fodselsnummer: Validator = {
   name: "Norwegian Birth Number",
   localName: "Fødselsnummer",
   abbreviation: "Fødselsnr",
-  aliases: [
-    "fødselsnummer",
-    "personnummer",
-  ] as const,
+  aliases: ["fødselsnummer", "personnummer"] as const,
   candidatePattern: "\\d{11}",
   country: "NO",
   entityType: "person",

@@ -42,19 +42,22 @@ describe("bz.tin", () => {
   test("invalid: wrong length (7 digits)", () => {
     const r = bz.tin.validate("0000051");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
 
   test("invalid: wrong length (9 digits)", () => {
     const r = bz.tin.validate("000005100");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
 
   test("invalid: contains letters", () => {
     const r = bz.tin.validate("00000A10");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_FORMAT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_FORMAT");
   });
 
   test("invalid: bad suffix code", () => {

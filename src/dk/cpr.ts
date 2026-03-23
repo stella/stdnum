@@ -82,9 +82,7 @@ const format = (value: string): string => {
  * Extract birth date and gender from a CPR number.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -109,11 +107,7 @@ const cpr: Validator = {
   name: "Danish Personal ID",
   localName: "Det Centrale Personregister",
   abbreviation: "CPR",
-  aliases: [
-    "CPR-nummer",
-    "personnummer",
-    "CPR",
-  ] as const,
+  aliases: ["CPR-nummer", "personnummer", "CPR"] as const,
   candidatePattern: "\\d{6}-?\\d{4}",
   country: "DK",
   entityType: "person",

@@ -16,9 +16,9 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -49,10 +49,7 @@ const peid: Validator = {
   name: "Liechtenstein Person Identification Number",
   localName: "Personenidentifikationsnummer",
   abbreviation: "PEID",
-  aliases: [
-    "PEID",
-    "Personenidentifikation",
-  ] as const,
+  aliases: ["PEID", "Personenidentifikation"] as const,
   candidatePattern: "\\d{6}",
   country: "LI",
   entityType: "any",

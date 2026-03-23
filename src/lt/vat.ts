@@ -10,11 +10,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -81,17 +81,19 @@ const format = (value: string): string =>
   `LT${compact(value)}`;
 
 /** Generate a random valid Lithuanian VAT number. */
-const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(9);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Lithuanian VAT Number. */
 const vat: Validator = {
   name: "Lithuanian VAT Number",
   localName: "PVM mokėtojo kodas",
   abbreviation: "PVM kodas",
-  aliases: [
-    "PVM mokėtojo kodas",
-    "PVM",
-  ] as const,
+  aliases: ["PVM mokėtojo kodas", "PVM"] as const,
   candidatePattern: "LT\\d{9,12}",
   country: "LT",
   entityType: "any",

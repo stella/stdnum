@@ -12,11 +12,11 @@
 
 import { luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
 
 import type { ValidateResult, Validator } from "./types";
-import { randomInt } from "#util/generate";
 
 const ISIN_RE = /^[A-Z]{2}[0-9A-Z]{9}[0-9]$/;
 
@@ -77,9 +77,11 @@ const format = (value: string): string => {
 const generate = (): string => {
   const countries = ["US", "GB", "DE", "FR", "JP"];
   for (;;) {
-    const cc = countries[randomInt(0, countries.length - 1)]!;
+    const cc =
+      countries[randomInt(0, countries.length - 1)]!;
     let nsin = "";
-    for (let i = 0; i < 9; i++) nsin += String(randomInt(0, 9));
+    for (let i = 0; i < 9; i++)
+      nsin += String(randomInt(0, 9));
     const base = cc + nsin;
     for (let d = 0; d <= 9; d++) {
       const c = base + String(d);

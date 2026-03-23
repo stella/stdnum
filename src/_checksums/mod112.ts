@@ -10,8 +10,7 @@
  */
 
 const WEIGHTS = [
-  7, 9, 10, 5, 8, 4, 2, 1, 6,
-  3, 7, 9, 10, 5, 8, 4, 2,
+  7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2,
 ] as const;
 
 const CHECK_CHARS = "10X98765432";
@@ -34,9 +33,7 @@ export const mod112checkChar = (
  * Validate an 18-character string with a Mod 11,2
  * check character (last char is 0-9 or X).
  */
-export const mod112validate = (
-  value: string,
-): boolean => {
+export const mod112validate = (value: string): boolean => {
   const payload = value.slice(0, 17);
   const check = value[17]!.toUpperCase();
   return mod112checkChar(payload) === check;

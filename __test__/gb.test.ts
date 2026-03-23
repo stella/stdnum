@@ -142,9 +142,7 @@ describe("gb.sedol", () => {
   });
 
   test("compact uppercases", () => {
-    expect(gb.sedol.compact("b15kxq8")).toBe(
-      "B15KXQ8",
-    );
+    expect(gb.sedol.compact("b15kxq8")).toBe("B15KXQ8");
   });
 
   test("format returns compact form", () => {
@@ -152,18 +150,14 @@ describe("gb.sedol", () => {
   });
 
   test("calcCheckDigit throws on invalid char", () => {
-    const { calcCheckDigit } = require(
-      "../src/gb/sedol",
-    );
+    const { calcCheckDigit } = require("../src/gb/sedol");
     expect(() => calcCheckDigit("B15AXQ")).toThrow(
       "Invalid SEDOL character",
     );
   });
 
   test("calcCheckDigit throws on wrong length", () => {
-    const { calcCheckDigit } = require(
-      "../src/gb/sedol",
-    );
+    const { calcCheckDigit } = require("../src/gb/sedol");
     expect(() => calcCheckDigit("B15KX")).toThrow(
       "6-character",
     );

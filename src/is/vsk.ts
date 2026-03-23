@@ -13,9 +13,9 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -47,10 +47,7 @@ const vsk: Validator = {
   name: "Icelandic VAT Number",
   localName: "Virðisaukaskattur",
   abbreviation: "VSK",
-  aliases: [
-    "VSK-númer",
-    "virðisaukaskattur",
-  ] as const,
+  aliases: ["VSK-númer", "virðisaukaskattur"] as const,
   candidatePattern: "IS\\d{5,6}",
   country: "IS",
   entityType: "company",

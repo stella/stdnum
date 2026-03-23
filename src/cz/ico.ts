@@ -63,11 +63,7 @@ const ico: Validator = {
   name: "Czech Company ID",
   localName: "Identifikační číslo osoby",
   abbreviation: "IČO",
-  aliases: [
-    "IČO",
-    "IČ",
-    "identifikační číslo",
-  ] as const,
+  aliases: ["IČO", "IČ", "identifikační číslo"] as const,
   candidatePattern: "\\d{8}",
   country: "CZ",
   entityType: "company",

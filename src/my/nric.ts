@@ -31,17 +31,92 @@ import type {
  * 98-99 legacy.
  */
 const VALID_PB_CODES = new Set([
-  "01", "02", "03", "04", "05", "06", "07", "08",
-  "09", "10", "11", "12", "13", "14", "15", "16",
-  "21", "22", "23", "24", "25", "26", "27", "28",
-  "29", "30", "31", "32", "33", "34", "35", "36",
-  "37", "38", "39", "40", "41", "42", "43", "44",
-  "45", "46", "47", "48", "49", "50", "51", "52",
-  "53", "54", "55", "56", "57", "58", "59", "60",
-  "61", "62", "63", "64", "65", "66", "67", "68",
-  "71", "72", "74", "75", "76", "77",
-  "78", "79", "82", "83", "84", "85", "86", "87",
-  "88", "89", "90", "91", "92", "93", "98", "99",
+  "01",
+  "02",
+  "03",
+  "04",
+  "05",
+  "06",
+  "07",
+  "08",
+  "09",
+  "10",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+  "16",
+  "21",
+  "22",
+  "23",
+  "24",
+  "25",
+  "26",
+  "27",
+  "28",
+  "29",
+  "30",
+  "31",
+  "32",
+  "33",
+  "34",
+  "35",
+  "36",
+  "37",
+  "38",
+  "39",
+  "40",
+  "41",
+  "42",
+  "43",
+  "44",
+  "45",
+  "46",
+  "47",
+  "48",
+  "49",
+  "50",
+  "51",
+  "52",
+  "53",
+  "54",
+  "55",
+  "56",
+  "57",
+  "58",
+  "59",
+  "60",
+  "61",
+  "62",
+  "63",
+  "64",
+  "65",
+  "66",
+  "67",
+  "68",
+  "71",
+  "72",
+  "74",
+  "75",
+  "76",
+  "77",
+  "78",
+  "79",
+  "82",
+  "83",
+  "84",
+  "85",
+  "86",
+  "87",
+  "88",
+  "89",
+  "90",
+  "91",
+  "92",
+  "93",
+  "98",
+  "99",
 ]);
 
 const compact = (value: string): string =>
@@ -107,9 +182,7 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => {
   const v = compact(value);
   return (
-    v.slice(0, 6) + "-" +
-    v.slice(6, 8) + "-" +
-    v.slice(8)
+    v.slice(0, 6) + "-" + v.slice(6, 8) + "-" + v.slice(8)
   );
 };
 
@@ -117,9 +190,7 @@ const format = (value: string): string => {
  * Extract birth date and gender from an NRIC.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -132,8 +203,7 @@ const parse = (
 
   // Last digit: odd = male, even = female
   const lastDigit = Number(v[11]);
-  const gender =
-    lastDigit % 2 === 1 ? "male" : "female";
+  const gender = lastDigit % 2 === 1 ? "male" : "female";
 
   return {
     birthDate: new Date(year, mm - 1, dd),
@@ -146,11 +216,7 @@ const nric: Validator = {
   name: "Malaysian National Registration Identity Card Number",
   localName: "Nombor Kad Pengenalan",
   abbreviation: "NRIC",
-  aliases: [
-    "NRIC",
-    "MyKad",
-    "kad pengenalan",
-  ] as const,
+  aliases: ["NRIC", "MyKad", "kad pengenalan"] as const,
   candidatePattern: "\\d{6}-?\\d{2}-?\\d{4}",
   country: "MY",
   entityType: "person",
@@ -159,10 +225,7 @@ const nric: Validator = {
   sourceUrl:
     "https://en.wikipedia.org/wiki/Malaysian_identity_card",
   lengths: [12] as const,
-  examples: [
-    "770305021234",
-    "880715141234",
-  ] as const,
+  examples: ["770305021234", "880715141234"] as const,
   compact,
   format,
   validate,

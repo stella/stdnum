@@ -9,11 +9,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4] as const;
 
@@ -74,7 +74,8 @@ const generate = (): string => {
   for (let i = 0; i < 100; i++) {
     const payload = randomDigits(8);
     let sum = 0;
-    for (let j = 0; j < 8; j++) sum += Number(payload.charAt(j)) * (WEIGHTS[j] ?? 0);
+    for (let j = 0; j < 8; j++)
+      sum += Number(payload.charAt(j)) * (WEIGHTS[j] ?? 0);
     const check = (11 - (sum % 11)) % 11;
     if (check === 10) continue;
     return "CHE" + payload + String(check);

@@ -58,9 +58,7 @@ describe("sg.uen", () => {
   });
 
   test("compact strips spaces and uppercases", () => {
-    expect(sg.uen.compact("0019 2200m")).toBe(
-      "00192200M",
-    );
+    expect(sg.uen.compact("0019 2200m")).toBe("00192200M");
   });
 
   test("metadata", () => {

@@ -10,11 +10,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [8, 7, 6, 5, 4, 3, 2, 1] as const;
 
@@ -60,7 +60,8 @@ const format = (value: string): string => {
 const generate = (): string => {
   const payload = randomDigits(8);
   let sum = 0;
-  for (let i = 0; i < 8; i++) sum += Number(payload.charAt(i)) * (WEIGHTS[i] ?? 0);
+  for (let i = 0; i < 8; i++)
+    sum += Number(payload.charAt(i)) * (WEIGHTS[i] ?? 0);
   return payload + String((10 - (sum % 10)) % 10);
 };
 
@@ -69,12 +70,8 @@ const acn: Validator = {
   name: "Australian Company Number",
   localName: "Australian Company Number",
   abbreviation: "ACN",
-  aliases: [
-    "ACN",
-    "Australian Company Number",
-  ] as const,
-  candidatePattern:
-    "\\d{3}\\s?\\d{3}\\s?\\d{3}",
+  aliases: ["ACN", "Australian Company Number"] as const,
+  candidatePattern: "\\d{3}\\s?\\d{3}\\s?\\d{3}",
   country: "AU",
   entityType: "company",
   sourceUrl: "https://asic.gov.au/",

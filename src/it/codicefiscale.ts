@@ -117,14 +117,32 @@ const CHECK_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 /** Omocodia letter-to-digit mapping. */
 const OMOCODIA: Record<string, string> = {
-  L: "0", M: "1", N: "2", P: "3", Q: "4",
-  R: "5", S: "6", T: "7", U: "8", V: "9",
+  L: "0",
+  M: "1",
+  N: "2",
+  P: "3",
+  Q: "4",
+  R: "5",
+  S: "6",
+  T: "7",
+  U: "8",
+  V: "9",
 };
 
 /** Month letter to 1-based month number. */
 const MONTH_LETTERS: Record<string, number> = {
-  A: 1, B: 2, C: 3, D: 4, E: 5, H: 6,
-  L: 7, M: 8, P: 9, R: 10, S: 11, T: 12,
+  A: 1,
+  B: 2,
+  C: 3,
+  D: 4,
+  E: 5,
+  H: 6,
+  L: 7,
+  M: 8,
+  P: 9,
+  R: 10,
+  S: 11,
+  T: 12,
 };
 
 const decodeCfDigit = (ch: string): number => {
@@ -213,9 +231,7 @@ const format = (value: string): string => compact(value);
  * Returns null if the value is not valid or is an
  * 11-digit Partita IVA (no personal data embedded).
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -223,11 +239,13 @@ const parse = (
   if (v.length !== 16) return null;
 
   const yy =
-    decodeCfDigit(v.charAt(6)) * 10 + decodeCfDigit(v.charAt(7));
+    decodeCfDigit(v.charAt(6)) * 10 +
+    decodeCfDigit(v.charAt(7));
   const month = MONTH_LETTERS[v.charAt(8)];
   if (month === undefined) return null;
   let dd =
-    decodeCfDigit(v.charAt(9)) * 10 + decodeCfDigit(v.charAt(10));
+    decodeCfDigit(v.charAt(9)) * 10 +
+    decodeCfDigit(v.charAt(10));
 
   const gender = dd > 40 ? "female" : "male";
   if (dd > 40) dd -= 40;

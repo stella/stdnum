@@ -143,9 +143,7 @@ describe("fr.nir", () => {
   });
 
   test("valid with spaces", () => {
-    const r = fr.nir.validate(
-      "2 95 11 78 234 567 84",
-    );
+    const r = fr.nir.validate("2 95 11 78 234 567 84");
     expect(r.valid).toBe(true);
   });
 
@@ -153,8 +151,7 @@ describe("fr.nir", () => {
     const base = 1850578123456n;
     const check = 97n - (base % 97n);
     const full =
-      base.toString() +
-      check.toString().padStart(2, "0");
+      base.toString() + check.toString().padStart(2, "0");
     const r = fr.nir.validate(full);
     expect(r.valid).toBe(true);
   });
@@ -163,8 +160,7 @@ describe("fr.nir", () => {
     const numericBase = 2900319001002n;
     const check = 97n - (numericBase % 97n);
     const full =
-      "290032A001002" +
-      check.toString().padStart(2, "0");
+      "290032A001002" + check.toString().padStart(2, "0");
     const r = fr.nir.validate(full);
     expect(r.valid).toBe(true);
   });
@@ -173,8 +169,7 @@ describe("fr.nir", () => {
     const numericBase = 1880318010005n;
     const check = 97n - (numericBase % 97n);
     const full =
-      "188032B010005" +
-      check.toString().padStart(2, "0");
+      "188032B010005" + check.toString().padStart(2, "0");
     const r = fr.nir.validate(full);
     expect(r.valid).toBe(true);
   });
@@ -207,9 +202,7 @@ describe("fr.nir", () => {
     const r = fr.nir.validate("395117823456700");
     expect(r.valid).toBe(false);
     if (!r.valid) {
-      expect(r.error.code).toBe(
-        "INVALID_COMPONENT",
-      );
+      expect(r.error.code).toBe("INVALID_COMPONENT");
     }
   });
 

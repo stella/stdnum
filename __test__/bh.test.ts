@@ -69,15 +69,11 @@ describe("bh.cpr", () => {
   });
 
   test("format adds dashes", () => {
-    expect(bh.cpr.format("890112345")).toBe(
-      "89-01-12345",
-    );
+    expect(bh.cpr.format("890112345")).toBe("89-01-12345");
   });
 
   test("compact strips separators", () => {
-    expect(bh.cpr.compact("89-01-12345")).toBe(
-      "890112345",
-    );
+    expect(bh.cpr.compact("89-01-12345")).toBe("890112345");
   });
 
   test("metadata", () => {

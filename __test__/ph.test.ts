@@ -3,10 +3,7 @@ import { describe, expect, test } from "bun:test";
 import { ph } from "../src";
 
 describe("ph.philid", () => {
-  const valid = [
-    "123456789012",
-    "000011112222",
-  ];
+  const valid = ["123456789012", "000011112222"];
 
   for (const v of valid) {
     test(`valid: ${v}`, () => {
@@ -31,9 +28,9 @@ describe("ph.philid", () => {
   // ─── Invalid ─────────────────────────────────
 
   const invalid = [
-    "12345678901",   // too short (11)
+    "12345678901", // too short (11)
     "1234567890123", // too long (13)
-    "12345678901A",  // non-digit
+    "12345678901A", // non-digit
   ];
 
   for (const v of invalid) {

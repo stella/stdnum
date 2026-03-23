@@ -105,9 +105,7 @@ describe("creditcard.generate() specifics", () => {
 });
 
 describe("iban.generate() specifics", () => {
-  const entry = generators.find(
-    (g) => g.name === "iban",
-  );
+  const entry = generators.find((g) => g.name === "iban");
   if (!entry)
     throw new Error("iban generator not discovered");
 
@@ -124,9 +122,7 @@ describe("iban.generate() specifics", () => {
 });
 
 describe("luhn.generate() specifics", () => {
-  const entry = generators.find(
-    (g) => g.name === "luhn",
-  );
+  const entry = generators.find((g) => g.name === "luhn");
   if (!entry)
     throw new Error("luhn generator not discovered");
 

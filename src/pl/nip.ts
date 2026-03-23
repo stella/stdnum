@@ -81,12 +81,10 @@ const nip: Validator = {
     "NIP",
     "numer identyfikacji podatkowej",
   ] as const,
-  candidatePattern:
-    "\\d{3}-?\\d{3}-?\\d{2}-?\\d{2}",
+  candidatePattern: "\\d{3}-?\\d{3}-?\\d{2}-?\\d{2}",
   country: "PL",
   entityType: "company",
-  sourceUrl: 
-    "https://www.biznes.gov.pl/en/portal/004124",
+  sourceUrl: "https://www.biznes.gov.pl/en/portal/004124",
   examples: ["2234567895"] as const,
   compact,
   format,

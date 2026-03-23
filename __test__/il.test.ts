@@ -59,9 +59,7 @@ describe("il.idnr", () => {
   });
 
   test("format adds separator", () => {
-    expect(il.idnr.format("39337423")).toBe(
-      "03933742-3",
-    );
+    expect(il.idnr.format("39337423")).toBe("03933742-3");
   });
 
   test("metadata", () => {

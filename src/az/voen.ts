@@ -14,10 +14,10 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 /** Weights for check digit computation (positions 0-7). */
 const WEIGHTS = [4, 1, 8, 6, 2, 7, 5, 3] as const;
@@ -37,9 +37,7 @@ const compact = (value: string): string => {
  * Calculate the check digit (position 8) using
  * weighted sum of the first 8 digits mod 11.
  */
-const calcCheckDigit = (
-  value: string,
-): string | null => {
+const calcCheckDigit = (value: string): string | null => {
   let sum = 0;
   for (let i = 0; i < 8; i++) {
     sum += (WEIGHTS[i] ?? 0) * Number(value.charAt(i));
@@ -108,8 +106,7 @@ const generate = (): string => {
  */
 const voen: Validator = {
   name: "Azerbaijani Tax ID",
-  localName:
-    "Vergi Ödəyicisinin Eyniləşdirmə Nömrəsi",
+  localName: "Vergi Ödəyicisinin Eyniləşdirmə Nömrəsi",
   abbreviation: "VÖEN",
   aliases: ["VÖEN"] as const,
   candidatePattern: "\\d{10}",

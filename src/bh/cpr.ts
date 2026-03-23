@@ -70,10 +70,8 @@ const cpr: Validator = {
   entityType: "person",
   lengths: [9] as const,
   examples: ["890112345", "000612345"] as const,
-  description:
-    "9-digit personal identification number",
-  sourceUrl:
-    "https://www.bahrain.bh/wps/portal/IDInfo_en",
+  description: "9-digit personal identification number",
+  sourceUrl: "https://www.bahrain.bh/wps/portal/IDInfo_en",
   compact,
   format,
   validate,

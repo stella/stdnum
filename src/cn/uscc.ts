@@ -10,11 +10,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const ALPHABET = "0123456789ABCDEFGHJKLMNPQRTUWXY";
 
@@ -79,7 +79,8 @@ const generate = (): string => {
   const etype = ALPHABET[randomInt(1, 9)]!;
   const region = randomDigits(6);
   let org = "";
-  for (let i = 0; i < 9; i++) org += ALPHABET[randomInt(0, ALPHABET.length - 1)]!;
+  for (let i = 0; i < 9; i++)
+    org += ALPHABET[randomInt(0, ALPHABET.length - 1)]!;
   const payload = reg + etype + region + org;
   return payload + calcCheckChar(payload);
 };

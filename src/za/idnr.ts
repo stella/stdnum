@@ -13,9 +13,13 @@
  * @see https://en.wikipedia.org/wiki/South_African_identity_document
  */
 
-import { luhnValidate, luhnChecksum } from "#checksums/luhn";
+import {
+  luhnValidate,
+  luhnChecksum,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -24,7 +28,6 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " ");
@@ -97,9 +100,7 @@ const format = (value: string): string => {
  * Extract birth date and gender from a South African
  * ID number. Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -135,10 +136,7 @@ const idnr: Validator = {
   name: "South African Identity Number",
   localName: "South African Identity Number",
   abbreviation: "SA ID",
-  aliases: [
-    "ID number",
-    "RSA ID",
-  ] as const,
+  aliases: ["ID number", "RSA ID"] as const,
   candidatePattern: "\\d{13}",
   country: "ZA",
   entityType: "person",
@@ -151,10 +149,7 @@ const idnr: Validator = {
     "https://en.wikipedia.org/wiki/" +
     "South_African_identity_document",
   lengths: [13] as const,
-  examples: [
-    "7503305044089",
-    "8001015009087",
-  ] as const,
+  examples: ["7503305044089", "8001015009087"] as const,
   generate,
 };
 

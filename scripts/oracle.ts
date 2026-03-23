@@ -15,12 +15,32 @@ import IBAN from "iban";
 import { isValidIBAN } from "ibantools";
 import {
   checkVAT,
-  belgium, bulgaria, croatia, cyprus,
-  czechRepublic, denmark, estonia, finland,
-  germany, greece, hungary, ireland, italy,
-  latvia, lithuania, luxembourg, malta,
-  netherlands, poland, portugal, romania,
-  slovenia, spain, sweden, switzerland, norway,
+  belgium,
+  bulgaria,
+  croatia,
+  cyprus,
+  czechRepublic,
+  denmark,
+  estonia,
+  finland,
+  germany,
+  greece,
+  hungary,
+  ireland,
+  italy,
+  latvia,
+  lithuania,
+  luxembourg,
+  malta,
+  netherlands,
+  poland,
+  portugal,
+  romania,
+  slovenia,
+  spain,
+  sweden,
+  switzerland,
+  norway,
 } from "jsvat";
 import luhnLib from "luhn";
 import { execSync } from "node:child_process";
@@ -45,9 +65,12 @@ type Discovered = {
 
 const isValidator = (v: unknown): v is Validator =>
   Boolean(
-    v && typeof v === "object" &&
-      "validate" in v && "compact" in v &&
-      "format" in v && "entityType" in v,
+    v &&
+    typeof v === "object" &&
+    "validate" in v &&
+    "compact" in v &&
+    "format" in v &&
+    "entityType" in v,
   );
 
 const discover = (): Discovered[] => {
@@ -55,8 +78,10 @@ const discover = (): Discovered[] => {
   for (const [ns, mod] of Object.entries(all)) {
     if (isValidator(mod)) {
       result.push({
-        key: ns, country: mod.country,
-        entityType: mod.entityType, validator: mod,
+        key: ns,
+        country: mod.country,
+        entityType: mod.entityType,
+        validator: mod,
       });
     } else if (mod && typeof mod === "object") {
       for (const [k, v] of Object.entries(
@@ -64,8 +89,10 @@ const discover = (): Discovered[] => {
       )) {
         if (isValidator(v)) {
           result.push({
-            key: `${ns}.${k}`, country: v.country,
-            entityType: v.entityType, validator: v,
+            key: `${ns}.${k}`,
+            country: v.country,
+            entityType: v.entityType,
+            validator: v,
           });
         }
       }
@@ -77,9 +104,12 @@ const discover = (): Discovered[] => {
 // ─── Arbitrary generators ───────────────────
 
 const rawDigs = (n: number): fc.Arbitrary<string> =>
-  fc.array(fc.integer({ min: 0, max: 9 }), {
-    minLength: n, maxLength: n,
-  }).map((ds: number[]) => ds.join(""));
+  fc
+    .array(fc.integer({ min: 0, max: 9 }), {
+      minLength: n,
+      maxLength: n,
+    })
+    .map((ds: number[]) => ds.join(""));
 
 const digs = (n: number): fc.Arbitrary<string> => {
   const edges: fc.Arbitrary<string>[] = [
@@ -102,19 +132,21 @@ const digs = (n: number): fc.Arbitrary<string> => {
 const digsRange = (a: number, b: number) =>
   fc.integer({ min: a, max: b }).chain((n) => digs(n));
 
-const datePrefix = (
-  order: "ymd" | "dmy",
-): string[] => {
+const datePrefix = (order: "ymd" | "dmy"): string[] => {
   const now = new Date();
   const [y, m, d] = [
-    now.getFullYear(), now.getMonth() + 1,
+    now.getFullYear(),
+    now.getMonth() + 1,
     now.getDate(),
   ];
-  const p2 = (n: number) =>
-    String(n).padStart(2, "0");
+  const p2 = (n: number) => String(n).padStart(2, "0");
   const dates: [number, number, number][] = [
-    [y, m, d], [y, m, d + 1], [y, m, d - 1],
-    [2000, 1, 1], [1999, 12, 31], [1900, 1, 1],
+    [y, m, d],
+    [y, m, d + 1],
+    [y, m, d - 1],
+    [2000, 1, 1],
+    [1999, 12, 31],
+    [1900, 1, 1],
   ];
   return dates.map(([yr, mo, dy]) =>
     order === "ymd"
@@ -124,7 +156,8 @@ const datePrefix = (
 };
 
 const dateDigs = (
-  len: number, order: "ymd" | "dmy" = "dmy",
+  len: number,
+  order: "ymd" | "dmy" = "dmy",
 ) => {
   const pfxs = datePrefix(order);
   const sLen = len - 6;
@@ -133,21 +166,20 @@ const dateDigs = (
     { weight: 70, arbitrary: digs(len) },
     ...pfxs.map((pfx) => ({
       weight: Math.max(1, Math.floor(30 / pfxs.length)),
-      arbitrary: rawDigs(sLen).map(
-        (s) => `${pfx}${s}`,
-      ),
+      arbitrary: rawDigs(sLen).map((s) => `${pfx}${s}`),
     })),
   );
 };
 
 const alnumStr = (min: number, max: number) =>
-  fc.array(
-    fc.constantFrom(
-      ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        .split(""),
-    ),
-    { minLength: min, maxLength: max },
-  ).map((c: string[]) => c.join(""));
+  fc
+    .array(
+      fc.constantFrom(
+        ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+      ),
+      { minLength: min, maxLength: max },
+    )
+    .map((c: string[]) => c.join(""));
 
 const letters = (chars: string) =>
   fc.constantFrom(...chars.split(""));
@@ -157,8 +189,19 @@ const letters = (chars: string) =>
 
 const L = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const HETU_SEP = [
-  "+", "-", "Y", "X", "W", "V",
-  "U", "A", "B", "C", "D", "E", "F",
+  "+",
+  "-",
+  "Y",
+  "X",
+  "W",
+  "V",
+  "U",
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
 ];
 const HETU_CHK = "0123456789ABCDEFHJKLMNPRSTUVWXY";
 const ES_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE";
@@ -166,152 +209,218 @@ const IE_LETTERS = "WABCDEFGHIJKLMNOPQRSTUV";
 const CIF_PFX = "ABCDEFGHJNPQRSUVW";
 const CIF_CHK = "0123456789JABCDEFGHI";
 
-const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> =
-  {
-    "at.uid": digs(8).map((d) => `U${d}`),
-    "ch.uid": digs(9).map((d) => `CHE${d}`),
-    "ch.vat": digs(9).map((d) => `CHE${d}`),
-    "ch.ssn": digs(10).map((d) => `756${d}`),
-    "gb.nino": fc.tuple(
-      letters(L), letters(L), digs(6),
+const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
+  "at.uid": digs(8).map((d) => `U${d}`),
+  "ch.uid": digs(9).map((d) => `CHE${d}`),
+  "ch.vat": digs(9).map((d) => `CHE${d}`),
+  "ch.ssn": digs(10).map((d) => `756${d}`),
+  "gb.nino": fc
+    .tuple(
+      letters(L),
+      letters(L),
+      digs(6),
       fc.constantFrom("A", "B", "C", "D"),
-    ).map(([a, b, d, s]) => `${a}${b}${d}${s}`),
-    "cz.dic": digsRange(8, 10),
-    "cz.rc": fc.oneof(
-      dateDigs(9, "ymd"), dateDigs(10, "ymd"),
-    ),
-    "sk.rc": fc.oneof(
-      dateDigs(9, "ymd"), dateDigs(10, "ymd"),
-    ),
-    "pl.pesel": dateDigs(11, "ymd"),
-    "be.nn": dateDigs(11, "ymd"),
-    "bg.egn": dateDigs(10, "ymd"),
-    "dk.cpr": dateDigs(10),
-    "ee.ik": dateDigs(11, "ymd"),
-    "lt.asmens": dateDigs(11, "ymd"),
-    "gr.amka": dateDigs(11),
-    "si.emso": dateDigs(13),
-    "no.fodselsnummer": dateDigs(11),
-    "is_.kennitala": dateDigs(10),
-    "de.svnr": fc.tuple(
-      digs(2), dateDigs(6), letters(L), digs(3),
-    ).map(([a, d, l, s]) => `${a}${d}${l}${s}`),
-    "de.vat": fc.tuple(
-      fc.integer({ min: 1, max: 9 }), digs(8),
-    ).map(([f, r]) => `${String(f)}${r}`),
-    "tr.tckimlik": fc.tuple(
+    )
+    .map(([a, b, d, s]) => `${a}${b}${d}${s}`),
+  "cz.dic": digsRange(8, 10),
+  "cz.rc": fc.oneof(
+    dateDigs(9, "ymd"),
+    dateDigs(10, "ymd"),
+  ),
+  "sk.rc": fc.oneof(
+    dateDigs(9, "ymd"),
+    dateDigs(10, "ymd"),
+  ),
+  "pl.pesel": dateDigs(11, "ymd"),
+  "be.nn": dateDigs(11, "ymd"),
+  "bg.egn": dateDigs(10, "ymd"),
+  "dk.cpr": dateDigs(10),
+  "ee.ik": dateDigs(11, "ymd"),
+  "lt.asmens": dateDigs(11, "ymd"),
+  "gr.amka": dateDigs(11),
+  "si.emso": dateDigs(13),
+  "no.fodselsnummer": dateDigs(11),
+  "is_.kennitala": dateDigs(10),
+  "de.svnr": fc
+    .tuple(digs(2), dateDigs(6), letters(L), digs(3))
+    .map(([a, d, l, s]) => `${a}${d}${l}${s}`),
+  "de.vat": fc
+    .tuple(fc.integer({ min: 1, max: 9 }), digs(8))
+    .map(([f, r]) => `${String(f)}${r}`),
+  "tr.tckimlik": fc
+    .tuple(
       fc.integer({ min: 1, max: 9 }).map(String),
       digs(10),
-    ).map(([f, r]) => `${f}${r}`),
-    "fr.nir": fc.tuple(
-      fc.constantFrom("1", "2"), digs(12), digs(2),
-    ).map(([g, body, ck]) => `${g}${body}${ck}`),
-    "fr.tva": fc.tuple(digs(2), digs(9))
-      .map(([p, s]) => `${p}${s}`),
-    "cy.vat": fc.tuple(digs(8), letters(L))
+    )
+    .map(([f, r]) => `${f}${r}`),
+  "fr.nir": fc
+    .tuple(fc.constantFrom("1", "2"), digs(12), digs(2))
+    .map(([g, body, ck]) => `${g}${body}${ck}`),
+  "fr.tva": fc
+    .tuple(digs(2), digs(9))
+    .map(([p, s]) => `${p}${s}`),
+  "cy.vat": fc
+    .tuple(digs(8), letters(L))
+    .map(([d, l]) => `${d}${l}`),
+  "ie.vat": fc
+    .tuple(digs(7), letters(IE_LETTERS))
+    .map(([d, l]) => `${d}${l}`),
+  "ie.pps": fc.oneof(
+    fc
+      .tuple(digs(7), letters(IE_LETTERS))
       .map(([d, l]) => `${d}${l}`),
-    "ie.vat": fc.tuple(digs(7), letters(IE_LETTERS))
-      .map(([d, l]) => `${d}${l}`),
-    "ie.pps": fc.oneof(
-      fc.tuple(digs(7), letters(IE_LETTERS))
-        .map(([d, l]) => `${d}${l}`),
-      fc.tuple(
-        digs(7), letters(IE_LETTERS),
+    fc
+      .tuple(
+        digs(7),
+        letters(IE_LETTERS),
         fc.constantFrom("A", "B", "H"),
-      ).map(([d, l1, l2]) => `${d}${l1}${l2}`),
-    ),
-    "nl.vat": fc.tuple(digs(9), digs(2))
-      .map(([d, s]) => `${d}B${s}`),
-    "es.vat": fc.oneof(
-      fc.tuple(digs(8), letters(ES_LETTERS))
-        .map(([d, l]) => `${d}${l}`),
-      fc.tuple(
-        letters(CIF_PFX), digs(7), letters(CIF_CHK),
-      ).map(([p, d, c]) => `${p}${d}${c}`),
-    ),
-    "es.dni": fc.tuple(digs(8), letters(ES_LETTERS))
+      )
+      .map(([d, l1, l2]) => `${d}${l1}${l2}`),
+  ),
+  "nl.vat": fc
+    .tuple(digs(9), digs(2))
+    .map(([d, s]) => `${d}B${s}`),
+  "es.vat": fc.oneof(
+    fc
+      .tuple(digs(8), letters(ES_LETTERS))
       .map(([d, l]) => `${d}${l}`),
-    "es.nie": fc.tuple(
+    fc
+      .tuple(letters(CIF_PFX), digs(7), letters(CIF_CHK))
+      .map(([p, d, c]) => `${p}${d}${c}`),
+  ),
+  "es.dni": fc
+    .tuple(digs(8), letters(ES_LETTERS))
+    .map(([d, l]) => `${d}${l}`),
+  "es.nie": fc
+    .tuple(
       fc.constantFrom("X", "Y", "Z"),
-      digs(7), letters(ES_LETTERS),
-    ).map(([p, d, l]) => `${p}${d}${l}`),
-    "es.cif": fc.tuple(
-      letters(CIF_PFX), digs(7), letters(CIF_CHK),
-    ).map(([p, d, c]) => `${p}${d}${c}`),
-    "fi.hetu": fc.tuple(
-      digs(6), fc.constantFrom(...HETU_SEP),
-      digs(3), letters(HETU_CHK),
-    ).map(([d, s, c, x]) => `${d}${s}${c}${x}`),
-    "it.codiceFiscale": fc.tuple(
-      alnumStr(15, 15), letters(L),
-    ).map(([f, c]) => `${f}${c}`),
-    "se.personnummer": fc.oneof(
-      digs(10),
-      fc.tuple(digs(6), digs(4))
-        .map(([d, s]) => `${d}+${s}`),
-      digs(12),
-    ),
-    "br.cnpj": fc.oneof(
-      digs(14),
-      fc.array(fc.oneof(
-        fc.integer({ min: 0, max: 9 }).map(String),
-        fc.integer({ min: 65, max: 90 })
-          .map((c) => String.fromCharCode(c)),
-      ), { minLength: 14, maxLength: 14 })
-        .map((ch) => ch.join("")),
-    ),
-    "ca.bn": fc.oneof(
-      digs(9),
-      fc.tuple(
+      digs(7),
+      letters(ES_LETTERS),
+    )
+    .map(([p, d, l]) => `${p}${d}${l}`),
+  "es.cif": fc
+    .tuple(letters(CIF_PFX), digs(7), letters(CIF_CHK))
+    .map(([p, d, c]) => `${p}${d}${c}`),
+  "fi.hetu": fc
+    .tuple(
+      digs(6),
+      fc.constantFrom(...HETU_SEP),
+      digs(3),
+      letters(HETU_CHK),
+    )
+    .map(([d, s, c, x]) => `${d}${s}${c}${x}`),
+  "it.codiceFiscale": fc
+    .tuple(alnumStr(15, 15), letters(L))
+    .map(([f, c]) => `${f}${c}`),
+  "se.personnummer": fc.oneof(
+    digs(10),
+    fc.tuple(digs(6), digs(4)).map(([d, s]) => `${d}+${s}`),
+    digs(12),
+  ),
+  "br.cnpj": fc.oneof(
+    digs(14),
+    fc
+      .array(
+        fc.oneof(
+          fc.integer({ min: 0, max: 9 }).map(String),
+          fc
+            .integer({ min: 65, max: 90 })
+            .map((c) => String.fromCharCode(c)),
+        ),
+        { minLength: 14, maxLength: 14 },
+      )
+      .map((ch) => ch.join("")),
+  ),
+  "ca.bn": fc.oneof(
+    digs(9),
+    fc
+      .tuple(
         digs(9),
         fc.constantFrom("RC", "RM", "RP", "RT"),
         digs(4),
-      ).map(([r, p, f]) => `${r}${p}${f}`),
-    ),
-    "gh.tin": fc.tuple(
+      )
+      .map(([r, p, f]) => `${r}${p}${f}`),
+  ),
+  "gh.tin": fc
+    .tuple(
       fc.constantFrom("P", "C", "G", "Q", "V"),
       digs(7),
       fc.constantFrom(
-        "0", "1", "2", "3", "4",
-        "5", "6", "7", "8", "9", "X",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "X",
       ),
-    ).map(([p, d, c]) => `${p}00${d}${c}`),
-    "za.idnr": dateDigs(13, "ymd"),
-    "mu.brn": fc.oneof(
-      fc.tuple(
-        fc.constantFrom("C", "F"), digs(8),
-      ).map(([p, d]) => `${p}${d}`),
-      fc.tuple(
-        fc.constantFrom("0", "1", "2", "3"), digs(7),
-      ).map(([p, d]) => `${p}${d}`),
-    ),
-    "nz.ird": fc.oneof(digs(8), digs(9)),
-    iban: fc.tuple(
+    )
+    .map(([p, d, c]) => `${p}00${d}${c}`),
+  "za.idnr": dateDigs(13, "ymd"),
+  "mu.brn": fc.oneof(
+    fc
+      .tuple(fc.constantFrom("C", "F"), digs(8))
+      .map(([p, d]) => `${p}${d}`),
+    fc
+      .tuple(fc.constantFrom("0", "1", "2", "3"), digs(7))
+      .map(([p, d]) => `${p}${d}`),
+  ),
+  "nz.ird": fc.oneof(digs(8), digs(9)),
+  iban: fc
+    .tuple(
       fc.constantFrom(
-        "CZ", "DE", "SK", "PL", "GB",
-        "FR", "AT", "NL", "IT", "ES",
+        "CZ",
+        "DE",
+        "SK",
+        "PL",
+        "GB",
+        "FR",
+        "AT",
+        "NL",
+        "IT",
+        "ES",
       ),
-      digs(2), alnumStr(12, 26),
-    ).map(([cc, ck, bb]) => `${cc}${ck}${bb}`),
-    luhn: digsRange(13, 19),
-    creditcard: digsRange(13, 19),
-    isin: fc.tuple(
+      digs(2),
+      alnumStr(12, 26),
+    )
+    .map(([cc, ck, bb]) => `${cc}${ck}${bb}`),
+  luhn: digsRange(13, 19),
+  creditcard: digsRange(13, 19),
+  isin: fc
+    .tuple(
       fc.constantFrom(
-        "US", "DE", "GB", "FR", "JP",
-        "CH", "NL", "IT", "ES", "CA",
+        "US",
+        "DE",
+        "GB",
+        "FR",
+        "JP",
+        "CH",
+        "NL",
+        "IT",
+        "ES",
+        "CA",
       ),
       alnumStr(9, 9),
       fc.integer({ min: 0, max: 9 }).map(String),
-    ).map(([cc, id, ck]) => `${cc}${id}${ck}`),
-    lei: fc.tuple(alnumStr(18, 18), digs(2))
-      .map(([p, c]) => `${p}${c}`),
-    bic: fc.tuple(
-      fc.array(letters(L), { minLength: 6, maxLength: 6 })
+    )
+    .map(([cc, id, ck]) => `${cc}${id}${ck}`),
+  lei: fc
+    .tuple(alnumStr(18, 18), digs(2))
+    .map(([p, c]) => `${p}${c}`),
+  bic: fc
+    .tuple(
+      fc
+        .array(letters(L), { minLength: 6, maxLength: 6 })
         .map((c: string[]) => c.join("")),
       alnumStr(2, 2),
       fc.oneof(fc.constant(""), alnumStr(3, 3)),
-    ).map(([i, l, b]) => `${i}${l}${b}`),
-  };
+    )
+    .map(([i, l, b]) => `${i}${l}${b}`),
+};
 
 const inferArb = (v: Validator): fc.Arbitrary<string> => {
   const lens = v.lengths;
@@ -335,22 +444,25 @@ const RUBY_GEM = (() => {
     return execSync("ruby -e 'puts Gem.user_dir'", {
       encoding: "utf-8",
     }).trim();
-  } catch { return ""; }
+  } catch {
+    return "";
+  }
 })();
 
 const probe = (cmd: string): boolean => {
   try {
     execSync(cmd, { stdio: "ignore" });
     return true;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 };
 
 const hasPython = () =>
   probe(`${PYTHON} -c "import stdnum"`);
 const hasIdnumbers = () =>
   probe(`${PYTHON} -c "import idnumbers"`);
-const hasRust = () =>
-  probe(`test -f ${RUST_BIN}`);
+const hasRust = () => probe(`test -f ${RUST_BIN}`);
 const hasRubyValvat = () =>
   probe(`GEM_HOME=${RUBY_GEM} ruby -e "require 'valvat'"`);
 const hasRubySsn = () =>
@@ -359,22 +471,25 @@ const hasRubySsn = () =>
       `"require 'social_security_number'"`,
   );
 const hasPhp = () =>
-  probe(
-    `php -r "require 'scripts/vendor/autoload.php';"`,
-  );
+  probe(`php -r "require 'scripts/vendor/autoload.php';"`);
 
 type SubBatch = (
-  arg: string, vals: readonly string[],
+  arg: string,
+  vals: readonly string[],
 ) => boolean[];
 
 const pyBatch: SubBatch = (mod, vals) => {
   const json = JSON.stringify(vals);
   const s = `import json, sys\nfrom stdnum.${mod} import is_valid\nvals = json.loads(sys.stdin.read())\nfor v in vals:\n    print("1" if is_valid(v) else "0")`;
   writeFileSync("/tmp/_stdnum_oracle.py", s);
-  return execSync(
-    `${PYTHON} /tmp/_stdnum_oracle.py`,
-    { input: json, encoding: "utf-8", timeout: 60_000 },
-  ).trim().split("\n").map((l) => l === "1");
+  return execSync(`${PYTHON} /tmp/_stdnum_oracle.py`, {
+    input: json,
+    encoding: "utf-8",
+    timeout: 60_000,
+  })
+    .trim()
+    .split("\n")
+    .map((l) => l === "1");
 };
 
 const pyIdnBatch: SubBatch = (cls, vals) => {
@@ -382,18 +497,26 @@ const pyIdnBatch: SubBatch = (cls, vals) => {
   const json = JSON.stringify(vals);
   const s = `import json, sys\nfrom idnumbers.nationalid.${mod} import ${name}\nvals = json.loads(sys.stdin.read())\nfor v in vals:\n    print("1" if ${name}.validate(v) else "0")`;
   writeFileSync("/tmp/_stdnum_idn.py", s);
-  return execSync(
-    `${PYTHON} /tmp/_stdnum_idn.py`,
-    { input: json, encoding: "utf-8", timeout: 60_000 },
-  ).trim().split("\n").map((l) => l === "1");
+  return execSync(`${PYTHON} /tmp/_stdnum_idn.py`, {
+    input: json,
+    encoding: "utf-8",
+    timeout: 60_000,
+  })
+    .trim()
+    .split("\n")
+    .map((l) => l === "1");
 };
 
 const rustBatch: SubBatch = (fmt, vals) => {
   const json = JSON.stringify(vals);
-  return execSync(
-    `${RUST_BIN} ${fmt}`,
-    { input: json, encoding: "utf-8", timeout: 60_000 },
-  ).trim().split("\n").map((l) => l === "1");
+  return execSync(`${RUST_BIN} ${fmt}`, {
+    input: json,
+    encoding: "utf-8",
+    timeout: 60_000,
+  })
+    .trim()
+    .split("\n")
+    .map((l) => l === "1");
 };
 
 const rubyScript = (
@@ -407,14 +530,19 @@ const rubyScript = (
     tmp,
     `require 'json'\nrequire '${gem}'\nvals = JSON.parse(STDIN.read)\n${body}`,
   );
-  return execSync(
-    `GEM_HOME=${RUBY_GEM} ruby ${tmp}`,
-    { input: json, encoding: "utf-8", timeout: 60_000 },
-  ).trim().split("\n").map((l) => l === "1");
+  return execSync(`GEM_HOME=${RUBY_GEM} ruby ${tmp}`, {
+    input: json,
+    encoding: "utf-8",
+    timeout: 60_000,
+  })
+    .trim()
+    .split("\n")
+    .map((l) => l === "1");
 };
 
 const valvatBatch = (
-  pfx: string, vals: readonly string[],
+  pfx: string,
+  vals: readonly string[],
 ) =>
   rubyScript(
     "valvat",
@@ -422,9 +550,7 @@ const valvatBatch = (
     vals,
   );
 
-const ssnBatch = (
-  cc: string, vals: readonly string[],
-) =>
+const ssnBatch = (cc: string, vals: readonly string[]) =>
   rubyScript(
     "social_security_number",
     `vals.each do |v|\n  begin\n    ssn = SocialSecurityNumber::Validator.new({number: v, country_code: '${cc}'})\n    puts ssn.valid? ? "1" : "0"\n  rescue\n    puts "0"\n  end\nend`,
@@ -432,17 +558,22 @@ const ssnBatch = (
   );
 
 const phpBatch = (
-  cc: string, vals: readonly string[],
+  cc: string,
+  vals: readonly string[],
 ): boolean[] => {
   const json = JSON.stringify(vals);
   writeFileSync(
     "/tmp/_stdnum_oracle.php",
     `<?php\nrequire 'scripts/vendor/autoload.php';\nuse loophp\\Tin\\TIN;\n$vals = json_decode(file_get_contents('php://stdin'), true);\nforeach ($vals as $v) {\n    try { $r = TIN::from($v, '${cc}')->isValid(); echo $r ? "1" : "0"; } catch (Exception $e) { echo "0"; }\n    echo "\\n";\n}`,
   );
-  return execSync(
-    `php /tmp/_stdnum_oracle.php`,
-    { input: json, encoding: "utf-8", timeout: 60_000 },
-  ).trim().split("\n").map((l) => l === "1");
+  return execSync(`php /tmp/_stdnum_oracle.php`, {
+    input: json,
+    encoding: "utf-8",
+    timeout: 60_000,
+  })
+    .trim()
+    .split("\n")
+    .map((l) => l === "1");
 };
 
 // ─── Oracle registry maps ───────────────────
@@ -451,31 +582,45 @@ const phpBatch = (
 
 // python-stdnum module (key → py module path)
 const PY_REMAP: Record<string, string> = {
-  "dk.vat": "dk.cvr", "ee.vat": "ee.kmkr",
-  "es.vat": "es.nif", "fi.vat": "fi.alv",
-  "hr.vat": "hr.oib", "hu.vat": "hu.anum",
-  "lt.vat": "lt.pvm", "lu.vat": "lu.tva",
-  "lv.vat": "lv.pvn", "nl.vat": "nl.btw",
-  "pt.vat": "pt.nif", "ro.vat": "ro.cf",
+  "dk.vat": "dk.cvr",
+  "ee.vat": "ee.kmkr",
+  "es.vat": "es.nif",
+  "fi.vat": "fi.alv",
+  "hr.vat": "hr.oib",
+  "hu.vat": "hu.anum",
+  "lt.vat": "lt.pvm",
+  "lu.vat": "lu.tva",
+  "lv.vat": "lv.pvn",
+  "nl.vat": "nl.btw",
+  "pt.vat": "pt.nif",
+  "ro.vat": "ro.cf",
   "si.vat": "si.ddv",
   "it.codiceFiscale": "it.codicefiscale",
   "do_.rnc": "do.rnc",
 };
 // Keys to skip (no python-stdnum module exists)
 const PY_SKIP = new Set([
-  "eu.vat", "bic", "ch.vat", "no.mva",
-  "is_.vsk", "nl.kvk", "lei", "creditcard",
-  "cz.ico", "sk.dic", "sk.ico", "mu.brn",
+  "eu.vat",
+  "bic",
+  "ch.vat",
+  "no.mva",
+  "is_.vsk",
+  "nl.kvk",
+  "lei",
+  "creditcard",
+  "cz.ico",
+  "sk.dic",
+  "sk.ico",
+  "mu.brn",
 ]);
 
 // jsvat: key → [jsvat config, VAT prefix]
 const jc = (
-  cfg: typeof belgium, pfx: string,
+  cfg: typeof belgium,
+  pfx: string,
 ): [typeof belgium, string] => [cfg, pfx];
 
-const JSVAT: Record<
-  string, [typeof belgium, string]
-> = {
+const JSVAT: Record<string, [typeof belgium, string]> = {
   "be.vat": jc(belgium, "BE"),
   "bg.vat": jc(bulgaria, "BG"),
   "hr.vat": jc(croatia, "HR"),
@@ -512,16 +657,26 @@ const JSVAT_SPECIAL: Record<
 
 // stdnum-js: key → country code
 const STDNUM_PERSON: Record<string, string> = {
-  "be.nn": "BE", "bg.egn": "BG", "dk.cpr": "DK",
-  "ee.ik": "EE", "es.dni": "ES", "fi.hetu": "FI",
-  "gb.nino": "GB", "gr.amka": "GR", "ie.pps": "IE",
-  "lt.asmens": "LT", "nl.bsn": "NL",
-  "ro.cnp": "RO", "se.personnummer": "SE",
-  "si.emso": "SI", "ch.ssn": "CH",
+  "be.nn": "BE",
+  "bg.egn": "BG",
+  "dk.cpr": "DK",
+  "ee.ik": "EE",
+  "es.dni": "ES",
+  "fi.hetu": "FI",
+  "gb.nino": "GB",
+  "gr.amka": "GR",
+  "ie.pps": "IE",
+  "lt.asmens": "LT",
+  "nl.bsn": "NL",
+  "ro.cnp": "RO",
+  "se.personnummer": "SE",
+  "si.emso": "SI",
+  "ch.ssn": "CH",
   "no.fodselsnummer": "NO",
 };
 const STDNUM_ENTITY: Record<string, string> = {
-  "ch.uid": "CH", "no.orgnr": "NO",
+  "ch.uid": "CH",
+  "no.orgnr": "NO",
 };
 const STDNUM_MIXED: Record<string, string> = {
   "is_.kennitala": "IS",
@@ -530,7 +685,9 @@ const STDNUM_MIXED: Record<string, string> = {
 // validate-polish
 const { nip, pesel, regon } = validatePolish;
 const POLISH: Record<string, (v: string) => boolean> = {
-  "pl.nip": nip, "pl.pesel": pesel, "pl.regon": regon,
+  "pl.nip": nip,
+  "pl.pesel": pesel,
+  "pl.regon": regon,
 };
 
 // idnumbers: key → "Country.ClassName"
@@ -549,25 +706,51 @@ const IDNUMBERS: Record<string, string> = {
 
 // valvat (Ruby): key → VAT prefix
 const VALVAT: Record<string, string> = {
-  "at.uid": "AT", "be.vat": "BE", "bg.vat": "BG",
-  "hr.vat": "HR", "cy.vat": "CY", "cz.dic": "CZ",
-  "de.vat": "DE", "dk.vat": "DK", "ee.vat": "EE",
-  "fi.vat": "FI", "gb.vat": "GB", "gr.vat": "EL",
-  "hu.vat": "HU", "ie.vat": "IE", "it.iva": "IT",
-  "lt.vat": "LT", "lu.vat": "LU", "lv.vat": "LV",
-  "mt.vat": "MT", "nl.vat": "NL", "pl.nip": "PL",
-  "pt.vat": "PT", "ro.vat": "RO", "se.vat": "SE",
-  "si.vat": "SI", "es.vat": "ES", "sk.dic": "SK",
+  "at.uid": "AT",
+  "be.vat": "BE",
+  "bg.vat": "BG",
+  "hr.vat": "HR",
+  "cy.vat": "CY",
+  "cz.dic": "CZ",
+  "de.vat": "DE",
+  "dk.vat": "DK",
+  "ee.vat": "EE",
+  "fi.vat": "FI",
+  "gb.vat": "GB",
+  "gr.vat": "EL",
+  "hu.vat": "HU",
+  "ie.vat": "IE",
+  "it.iva": "IT",
+  "lt.vat": "LT",
+  "lu.vat": "LU",
+  "lv.vat": "LV",
+  "mt.vat": "MT",
+  "nl.vat": "NL",
+  "pl.nip": "PL",
+  "pt.vat": "PT",
+  "ro.vat": "RO",
+  "se.vat": "SE",
+  "si.vat": "SI",
+  "es.vat": "ES",
+  "sk.dic": "SK",
 };
 
 // Ruby social_security_number: key → country
 const RUBY_SSN: Record<string, string> = {
-  "be.nn": "BE", "bg.egn": "BG", "dk.cpr": "DK",
-  "ee.ik": "EE", "es.dni": "ES", "fi.hetu": "FI",
-  "it.codiceFiscale": "IT", "lt.asmens": "LT",
-  "nl.bsn": "NL", "ro.cnp": "RO",
-  "se.personnummer": "SE", "si.emso": "SI",
-  "no.fodselsnummer": "NO", "cz.rc": "CZ",
+  "be.nn": "BE",
+  "bg.egn": "BG",
+  "dk.cpr": "DK",
+  "ee.ik": "EE",
+  "es.dni": "ES",
+  "fi.hetu": "FI",
+  "it.codiceFiscale": "IT",
+  "lt.asmens": "LT",
+  "nl.bsn": "NL",
+  "ro.cnp": "RO",
+  "se.personnummer": "SE",
+  "si.emso": "SI",
+  "no.fodselsnummer": "NO",
+  "cz.rc": "CZ",
   "sk.rc": "SK",
 };
 
@@ -575,8 +758,10 @@ const RUBY_SSN: Record<string, string> = {
 // loophp/tin validates EU TIN format specs.
 // Only map where our validator IS the TIN.
 const PHP_TIN: Record<string, string> = {
-  "de.idnr": "DE", "fr.nif": "FR",
-  "pl.nip": "PL", "pt.vat": "PT",
+  "de.idnr": "DE",
+  "fr.nif": "FR",
+  "pl.nip": "PL",
+  "pt.vat": "PT",
 };
 
 // ─── Oracle entry type ──────────────────────
@@ -593,14 +778,21 @@ type OracleEntry = {
 const buildOracles = (): OracleEntry[] => {
   const e: OracleEntry[] = [];
   const safe = (
-    name: string, source: string, key: string,
+    name: string,
+    source: string,
+    key: string,
     fn: (vals: string[]) => boolean[],
   ) =>
     e.push({
-      name, source, key,
+      name,
+      source,
+      key,
       validate: (vals) => {
-        try { return fn(vals); }
-        catch { return null; }
+        try {
+          return fn(vals);
+        } catch {
+          return null;
+        }
       },
     });
 
@@ -611,7 +803,8 @@ const buildOracles = (): OracleEntry[] => {
       const mod = PY_REMAP[d.key] ?? d.key;
       safe(
         `${d.key} (vs python-stdnum)`,
-        "python-stdnum", d.key,
+        "python-stdnum",
+        d.key,
         (v) => pyBatch(mod, v),
       );
     }
@@ -620,9 +813,8 @@ const buildOracles = (): OracleEntry[] => {
   // idnumbers
   if (hasIdnumbers()) {
     for (const [key, cls] of Object.entries(IDNUMBERS))
-      safe(
-        `${key} (vs idnumbers)`,
-        "idnumbers", key, (v) => pyIdnBatch(cls, v),
+      safe(`${key} (vs idnumbers)`, "idnumbers", key, (v) =>
+        pyIdnBatch(cls, v),
       );
   }
 
@@ -630,7 +822,8 @@ const buildOracles = (): OracleEntry[] => {
   for (const [key, [cfg, pfx]] of Object.entries(JSVAT))
     e.push({
       name: `${key} (vs jsvat)`,
-      source: "jsvat", key,
+      source: "jsvat",
+      key,
       validate: (v) =>
         v.map((x) => checkVAT(`${pfx}${x}`, [cfg]).isValid),
     });
@@ -639,7 +832,8 @@ const buildOracles = (): OracleEntry[] => {
   ))
     e.push({
       name: `${key} (vs jsvat)`,
-      source: "jsvat", key,
+      source: "jsvat",
+      key,
       validate: (v) =>
         v.map((x) => checkVAT(wrap(x), [cfg]).isValid),
     });
@@ -648,21 +842,24 @@ const buildOracles = (): OracleEntry[] => {
   for (const [key, cc] of Object.entries(STDNUM_PERSON))
     e.push({
       name: `${key} (vs stdnum-js)`,
-      source: "stdnum-js", key,
+      source: "stdnum-js",
+      key,
       validate: (v) =>
         v.map((x) => stdnumPerson(cc, x).isValid),
     });
   for (const [key, cc] of Object.entries(STDNUM_ENTITY))
     e.push({
       name: `${key} (vs stdnum-js)`,
-      source: "stdnum-js", key,
+      source: "stdnum-js",
+      key,
       validate: (v) =>
         v.map((x) => stdnumEntity(cc, x).isValid),
     });
   for (const [key, cc] of Object.entries(STDNUM_MIXED))
     e.push({
       name: `${key} (vs stdnum-js)`,
-      source: "stdnum-js", key,
+      source: "stdnum-js",
+      key,
       validate: (v) =>
         v.map(
           (x) =>
@@ -675,47 +872,52 @@ const buildOracles = (): OracleEntry[] => {
   for (const [key, fn] of Object.entries(POLISH))
     e.push({
       name: `${key} (vs validate-polish)`,
-      source: "validate-polish", key,
+      source: "validate-polish",
+      key,
       validate: (v) => v.map(fn),
     });
 
   // ibantools + iban.js
   e.push({
     name: "iban (vs ibantools)",
-    source: "ibantools", key: "iban",
+    source: "ibantools",
+    key: "iban",
     validate: (v) => v.map(isValidIBAN),
   });
   e.push({
     name: "iban (vs iban.js)",
-    source: "iban.js", key: "iban",
+    source: "iban.js",
+    key: "iban",
     validate: (v) =>
       v.map((x) => IBAN.isValid(x) as boolean),
   });
 
   // luhn / fast-luhn (length-gated)
-  const luhnGate = (
-    fn: (x: string) => boolean,
-  ) => (v: string) =>
-    v.length >= 13 && v.length <= 19 && fn(v);
+  const luhnGate =
+    (fn: (x: string) => boolean) => (v: string) =>
+      v.length >= 13 && v.length <= 19 && fn(v);
 
   e.push({
     name: "luhn (vs luhn npm)",
-    source: "luhn", key: "luhn",
+    source: "luhn",
+    key: "luhn",
     validate: (v) =>
-      v.map(luhnGate((x) => luhnLib.validate(x) as boolean)),
+      v.map(
+        luhnGate((x) => luhnLib.validate(x) as boolean),
+      ),
   });
   e.push({
     name: "luhn (vs fast-luhn)",
-    source: "fast-luhn", key: "luhn",
+    source: "fast-luhn",
+    key: "luhn",
     validate: (v) => v.map(luhnGate(fastLuhn)),
   });
 
   // valvat (Ruby)
   if (hasRubyValvat()) {
     for (const [key, pfx] of Object.entries(VALVAT))
-      safe(
-        `${key} (vs valvat)`, "valvat", key,
-        (v) => valvatBatch(pfx, v),
+      safe(`${key} (vs valvat)`, "valvat", key, (v) =>
+        valvatBatch(pfx, v),
       );
   }
 
@@ -723,7 +925,9 @@ const buildOracles = (): OracleEntry[] => {
   if (hasPhp()) {
     for (const [key, cc] of Object.entries(PHP_TIN))
       safe(
-        `${key} (vs loophp/tin)`, "loophp/tin", key,
+        `${key} (vs loophp/tin)`,
+        "loophp/tin",
+        key,
         (v) => phpBatch(cc, v),
       );
   }
@@ -731,21 +935,18 @@ const buildOracles = (): OracleEntry[] => {
   // social_security_number (Ruby)
   if (hasRubySsn()) {
     for (const [key, cc] of Object.entries(RUBY_SSN))
-      safe(
-        `${key} (vs ruby-ssn)`, "ruby-ssn", key,
-        (v) => ssnBatch(cc, v),
+      safe(`${key} (vs ruby-ssn)`, "ruby-ssn", key, (v) =>
+        ssnBatch(cc, v),
       );
   }
 
   // Rust
   if (hasRust()) {
-    safe(
-      "iban (vs rust)", "rust", "iban",
-      (v) => rustBatch("iban", v),
+    safe("iban (vs rust)", "rust", "iban", (v) =>
+      rustBatch("iban", v),
     );
-    safe(
-      "luhn (vs rust)", "rust", "luhn",
-      (v) => rustBatch("luhn", v),
+    safe("luhn (vs rust)", "rust", "luhn", (v) =>
+      rustBatch("luhn", v),
     );
   }
 
@@ -758,14 +959,11 @@ const mutate = (value: string): string[] => {
   const out: string[] = [];
   for (let i = 0; i < value.length; i++) {
     const ch = value[i];
-    if (ch === undefined || ch < "0" || ch > "9")
-      continue;
+    if (ch === undefined || ch < "0" || ch > "9") continue;
     for (let d = 0; d <= 9; d++) {
       const r = String(d);
       if (r === ch) continue;
-      out.push(
-        value.slice(0, i) + r + value.slice(i + 1),
-      );
+      out.push(value.slice(0, i) + r + value.slice(i + 1));
     }
   }
   return out;
@@ -868,16 +1066,12 @@ const run = () => {
   for (const d of validators) {
     if (!hasChecksum(d.validator)) continue;
     const arb = arbFor(d.key, d.validator);
-    const cands = fc.sample(
-      arb, Math.min(NUM, 2000),
-    );
+    const cands = fc.sample(arb, Math.min(NUM, 2000));
     const valid = cands.filter(
       (v) => d.validator.validate(v).valid,
     );
     if (valid.length === 0) {
-      console.log(
-        `  SKIP ${d.key}: no valid values found`,
-      );
+      console.log(`  SKIP ${d.key}: no valid values found`);
       continue;
     }
     const toTest = valid.slice(0, 50);

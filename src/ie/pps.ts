@@ -10,11 +10,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const ALPHABET = "WABCDEFGHIJKLMNOPQRSTUV";
 
@@ -88,15 +88,11 @@ const pps: Validator = {
   name: "Irish Personal ID",
   localName: "Personal Public Service Number",
   abbreviation: "PPS",
-  aliases: [
-    "PPS number",
-    "PPSN",
-    "RSI number",
-  ] as const,
+  aliases: ["PPS number", "PPSN", "RSI number"] as const,
   candidatePattern: "\\d{7}[A-Z]{1,2}",
   country: "IE",
   entityType: "person",
-  sourceUrl: 
+  sourceUrl:
     "https://www.gov.ie/en/service/12e6de-get-a-personal-public-service-pps-number/",
   examples: ["6433435F"] as const,
   compact,

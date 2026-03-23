@@ -21,9 +21,9 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -32,16 +32,19 @@ const compact = (value: string): string =>
 
 /** Valid province IDs (first digit). */
 const VALID_PROVINCES = new Set([
-  "1", "2", "3", "4", "5", "6", "7",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
 ]);
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
   if (v.length !== 13) {
-    return err(
-      "INVALID_LENGTH",
-      "CNIC must be 13 digits",
-    );
+    return err("INVALID_LENGTH", "CNIC must be 13 digits");
   }
   if (!isdigits(v)) {
     return err(
@@ -80,10 +83,7 @@ const cnic: Validator = {
   name: "Computerized National Identity Card",
   localName: "Computerized National Identity Card",
   abbreviation: "CNIC",
-  aliases: [
-    "CNIC",
-    "شناختی کارڈ",
-  ] as const,
+  aliases: ["CNIC", "شناختی کارڈ"] as const,
   candidatePattern: "\\d{5}-?\\d{7}-?\\d",
   country: "PK",
   entityType: "person",

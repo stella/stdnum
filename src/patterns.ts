@@ -27,10 +27,7 @@
  * ```
  */
 
-import type {
-  CountryCode,
-  Validator,
-} from "./types";
+import type { CountryCode, Validator } from "./types";
 
 // ─── Pattern type ─────────────────────────────
 
@@ -68,9 +65,7 @@ const inferLengths = (v: Validator): number[] => {
  * Returns an array of group sizes, e.g.,
  * "25 123 891" → [2, 3, 3].
  */
-const inferGroups = (
-  v: Validator,
-): number[] | null => {
+const inferGroups = (v: Validator): number[] | null => {
   if (!v.examples || v.examples.length === 0) {
     return null;
   }
@@ -91,8 +86,7 @@ const inferGroups = (
   const groups = parts
     .filter(
       (p) =>
-        p.length > 0 &&
-        (isAlphanumeric || /\d/.test(p)),
+        p.length > 0 && (isAlphanumeric || /\d/.test(p)),
     )
     .map((p) => p.length);
 
@@ -103,9 +97,7 @@ const inferGroups = (
  * Detect if this validator uses a known prefix
  * (e.g., "CZ" for DIČ, "CHE" for Swiss UID).
  */
-const inferPrefix = (
-  v: Validator,
-): string | null => {
+const inferPrefix = (v: Validator): string | null => {
   if (!v.examples || v.examples.length === 0) {
     return null;
   }
@@ -128,13 +120,8 @@ const inferPrefix = (
   // Prefix added only by format()
   // (e.g., "DE" for de.vat, "CZ" for cz.dic)
   const formatted = v.format(compact);
-  const fmtMatch = formatted.match(
-    /^([A-Z]+)[\s\-./]?\d/,
-  );
-  if (
-    fmtMatch &&
-    !compact.startsWith(fmtMatch[1]!)
-  ) {
+  const fmtMatch = formatted.match(/^([A-Z]+)[\s\-./]?\d/);
+  if (fmtMatch && !compact.startsWith(fmtMatch[1]!)) {
     return fmtMatch[1]!;
   }
   return null;
@@ -170,8 +157,7 @@ const inferCharClass = (v: Validator): string => {
 const groupsToPattern = (
   groups: number[],
   cc: string,
-): string =>
-  groups.map((g) => `${cc}{${g}}`).join(SEP);
+): string => groups.map((g) => `${cc}{${g}}`).join(SEP);
 
 /**
  * Derive a loose candidate-matching regex from

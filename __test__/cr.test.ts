@@ -30,13 +30,15 @@ describe("cr.cpf", () => {
   test("wrong length", () => {
     const r = cr.cpf.validate("12345678");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
 
   test("non-digit characters", () => {
     const r = cr.cpf.validate("FF84907170");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_FORMAT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_FORMAT");
   });
 
   test("first digit not 0", () => {

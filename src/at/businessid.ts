@@ -17,8 +17,8 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { err } from "#util/result";
 import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -58,11 +58,7 @@ const businessid: Validator = {
   name: "Austrian Company Register Number",
   localName: "Firmenbuchnummer",
   abbreviation: "FN",
-  aliases: [
-    "Firmenbuchnummer",
-    "FN",
-    "FBN",
-  ] as const,
+  aliases: ["Firmenbuchnummer", "FN", "FBN"] as const,
   candidatePattern: "FN\\s?\\d{5,6}[a-z]?",
   country: "AT",
   entityType: "company",

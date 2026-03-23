@@ -113,9 +113,7 @@ const format = (value: string): string => {
  * Extract birth date and gender from a birth number.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -164,9 +162,7 @@ const generate = (): string => {
     }
   }
 
-  throw new Error(
-    "Failed to generate valid birth number",
-  );
+  throw new Error("Failed to generate valid birth number");
 };
 
 /** Czech/Slovak Birth Number. */
@@ -174,11 +170,7 @@ const rc: Validator = {
   name: "Czech Birth Number",
   localName: "Rodné číslo",
   abbreviation: "RČ",
-  aliases: [
-    "rodné číslo",
-    "RČ",
-    "birth number",
-  ] as const,
+  aliases: ["rodné číslo", "RČ", "birth number"] as const,
   candidatePattern: "\\d{6}/\\d{3,4}",
   country: "CZ",
   entityType: "person",

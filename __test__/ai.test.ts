@@ -30,19 +30,22 @@ describe("ai.tin", () => {
   test("invalid: wrong length (too short)", () => {
     const r = ai.tin.validate("12345678");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
 
   test("invalid: wrong length (too long)", () => {
     const r = ai.tin.validate("12345678901");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
 
   test("invalid: contains letters", () => {
     const r = ai.tin.validate("12345A6789");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_FORMAT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_FORMAT");
   });
 
   test("invalid: prefix not 1 or 2", () => {
@@ -64,7 +67,9 @@ describe("ai.tin", () => {
   });
 
   test("compact strips separators", () => {
-    expect(ai.tin.compact("12345-67890")).toBe("1234567890");
+    expect(ai.tin.compact("12345-67890")).toBe(
+      "1234567890",
+    );
   });
 
   test("metadata", () => {

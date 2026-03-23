@@ -13,11 +13,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [2, 7, 6, 5, 4, 3, 2, 1];
 
@@ -63,17 +63,19 @@ const format = (value: string): string =>
   `DK${compact(value)}`;
 
 /** Generate a random valid Danish VAT number. */
-const generate = (): string => { for (;;) { const c = String(randomInt(1, 9)) + randomDigits(7); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = String(randomInt(1, 9)) + randomDigits(7);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Danish VAT Number. */
 const vat: Validator = {
   name: "Danish VAT Number",
   localName: "Momsregistreringsnummer",
   abbreviation: "CVR",
-  aliases: [
-    "momsnummer",
-    "SE-nummer",
-  ] as const,
+  aliases: ["momsnummer", "SE-nummer"] as const,
   candidatePattern: "DK\\d{8}",
   country: "DK",
   entityType: "company",

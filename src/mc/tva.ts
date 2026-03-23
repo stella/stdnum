@@ -13,11 +13,11 @@
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 
-import type { ValidateResult, Validator } from "../types";
 import {
   compact as frCompact,
   validate as frValidate,
 } from "../fr/tva";
+import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string => {
   const v = frCompact(value);
@@ -58,10 +58,7 @@ const tva: Validator = {
   name: "Monacan VAT Number",
   localName: "Numéro de TVA",
   abbreviation: "TVA",
-  aliases: [
-    "numéro de TVA",
-    "TVA",
-  ] as const,
+  aliases: ["numéro de TVA", "TVA"] as const,
   candidatePattern: "FR\\d{11}",
   country: "MC",
   entityType: "company",

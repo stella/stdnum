@@ -15,11 +15,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 /**
  * Valid type prefixes for RUC numbers.
@@ -27,9 +27,7 @@ import { randomDigits } from "#util/generate";
  * 17 = non-domiciled, 20 = legal entity,
  * others for specific entity types.
  */
-const VALID_PREFIXES = new Set([
-  "10", "15", "17", "20",
-]);
+const VALID_PREFIXES = new Set(["10", "15", "17", "20"]);
 
 const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
 
@@ -56,10 +54,7 @@ const validate = (value: string): ValidateResult => {
   const v = compact(value);
 
   if (v.length !== 11) {
-    return err(
-      "INVALID_LENGTH",
-      "RUC must be 11 digits",
-    );
+    return err("INVALID_LENGTH", "RUC must be 11 digits");
   }
 
   if (!isdigits(v)) {
@@ -93,7 +88,8 @@ const format = (value: string): string => compact(value);
 /** Generate a random valid Peruvian RUC. */
 const generate = (): string => {
   const prefixes = ["10", "15", "17", "20"] as const;
-  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]!;
+  const prefix =
+    prefixes[Math.floor(Math.random() * prefixes.length)]!;
   const body = prefix + randomDigits(8);
   return body + String(calcCheckDigit(body));
 };

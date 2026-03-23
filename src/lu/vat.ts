@@ -8,11 +8,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -53,7 +53,10 @@ const format = (value: string): string =>
 /** Generate a random valid Luxembourg VAT number. */
 const generate = (): string => {
   const body = randomDigits(6);
-  return body + String(Number.parseInt(body, 10) % 89).padStart(2, "0");
+  return (
+    body +
+    String(Number.parseInt(body, 10) % 89).padStart(2, "0")
+  );
 };
 
 /** Luxembourg VAT Number. */
@@ -61,10 +64,7 @@ const vat: Validator = {
   name: "Luxembourg VAT Number",
   localName: "Numéro de TVA",
   abbreviation: "TVA",
-  aliases: [
-    "TVA",
-    "numéro d'identification TVA",
-  ] as const,
+  aliases: ["TVA", "numéro d'identification TVA"] as const,
   candidatePattern: "LU\\d{8}",
   country: "LU",
   entityType: "company",

@@ -14,11 +14,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 /**
  * Map prefix letter to its numeric offset used
@@ -105,7 +105,9 @@ const generate = (): string => {
   const types = ["V", "E", "J", "P", "G"] as const;
   const prefix = types[randomInt(0, types.length - 1)]!;
   const body = randomDigits(8);
-  return prefix + body + String(calcCheckDigit(prefix, body));
+  return (
+    prefix + body + String(calcCheckDigit(prefix, body))
+  );
 };
 
 /**

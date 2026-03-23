@@ -3,12 +3,17 @@ const generate = (): string => {
   const randomLetter = (): string =>
     String.fromCodePoint(65 + randomInt(0, 25));
   const randomAlphaNum = (): string => {
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     return chars[randomInt(0, chars.length - 1)]!;
   };
   const countries = [
-    "DE", "GB", "US", "FR", "CH", "NL", "AT",
+    "DE",
+    "GB",
+    "US",
+    "FR",
+    "CH",
+    "NL",
+    "AT",
   ];
   const country =
     countries[randomInt(0, countries.length - 1)]!;
@@ -34,8 +39,8 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { err } from "#util/result";
 import { randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "./types";
 
@@ -80,8 +85,7 @@ const bic: Validator = {
   localName: "Business Identifier Code",
   abbreviation: "BIC",
   aliases: ["BIC", "SWIFT", "BIC/SWIFT"] as const,
-  candidatePattern:
-    "[A-Z]{6}[A-Z0-9]{2}(?:[A-Z0-9]{3})?",
+  candidatePattern: "[A-Z]{6}[A-Z0-9]{2}(?:[A-Z0-9]{3})?",
   entityType: "company",
   sourceUrl: "https://www.swift.com/",
   examples: ["DEUTDEFF", "DEUTDEFF500"] as const,

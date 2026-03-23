@@ -11,16 +11,12 @@
  */
 
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-
-import {
-  checksum,
-  format as nnFormat,
-} from "./nn";
-import { randomInt } from "#util/generate";
+import { checksum, format as nnFormat } from "./nn";
 
 const compact = (value: string): string =>
   clean(value, " .-");
@@ -69,9 +65,15 @@ const generate = (): string => {
   for (;;) {
     const yy = String(randomInt(0, 99)).padStart(2, "0");
     const offset = Math.random() < 0.5 ? 20 : 40;
-    const mm = String(randomInt(1, 12) + offset).padStart(2, "0");
+    const mm = String(randomInt(1, 12) + offset).padStart(
+      2,
+      "0",
+    );
     const dd = String(randomInt(1, 28)).padStart(2, "0");
-    const serial = String(randomInt(1, 997)).padStart(3, "0");
+    const serial = String(randomInt(1, 997)).padStart(
+      3,
+      "0",
+    );
     const base = yy + mm + dd + serial;
     const n2 = Number("2" + base);
     const check2 = 97 - (n2 % 97);
@@ -85,10 +87,7 @@ const bis: Validator = {
   name: "Belgian BIS Number",
   localName: "BIS-nummer",
   abbreviation: "BIS",
-  aliases: [
-    "BIS-nummer",
-    "numéro BIS",
-  ] as const,
+  aliases: ["BIS-nummer", "numéro BIS"] as const,
   candidatePattern:
     "\\d{2}\\.?\\d{2}\\.?\\d{2}-?\\d{3}\\.?\\d{2}",
   country: "BE",

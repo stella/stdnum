@@ -17,6 +17,7 @@
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -25,7 +26,6 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS_1 = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
@@ -50,9 +50,7 @@ const compact = (value: string): string =>
  * Two-pass check digit: weighted sum mod 11 with
  * fallback to second weight set.
  */
-const calcCheckDigit = (
-  digits: string,
-): number => {
+const calcCheckDigit = (digits: string): number => {
   let remainder = weightedSum(digits, WEIGHTS_1, 11);
   if (remainder === 10) {
     remainder = weightedSum(digits, WEIGHTS_2, 11);
@@ -118,9 +116,7 @@ const format = (value: string): string => {
  * Extract birth date and gender from a Kazakhstan IIN.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -161,8 +157,7 @@ const generate = (): string => {
  */
 const iin: Validator = {
   name: "Kazakhstan Individual ID",
-  localName:
-    "Жеке сәйкестендіру нөмірі",
+  localName: "Жеке сәйкестендіру нөмірі",
   abbreviation: "IIN",
   aliases: [
     "ИИН",
@@ -178,9 +173,9 @@ const iin: Validator = {
   format,
   validate,
   sourceUrl:
-    "https://www.oecd.org/tax/automatic-exchange/"
-    + "crs-implementation-and-assistance/"
-    + "tax-identification-numbers/Kazakhstan-TIN.pdf",
+    "https://www.oecd.org/tax/automatic-exchange/" +
+    "crs-implementation-and-assistance/" +
+    "tax-identification-numbers/Kazakhstan-TIN.pdf",
   generate,
 };
 

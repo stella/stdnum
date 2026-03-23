@@ -8,13 +8,16 @@
  * @see https://www.insee.fr/fr/information/2549588
  */
 
-import { luhnValidate, luhnChecksum } from "#checksums/luhn";
+import {
+  luhnValidate,
+  luhnChecksum,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.");
@@ -64,8 +67,7 @@ const siren: Validator = {
   candidatePattern: "\\d{3}\\s?\\d{3}\\s?\\d{3}",
   country: "FR",
   entityType: "company",
-  sourceUrl: 
-    "https://www.insee.fr/fr/information/2549588",
+  sourceUrl: "https://www.insee.fr/fr/information/2549588",
   examples: ["552008443"] as const,
   compact,
   format,

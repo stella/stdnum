@@ -10,13 +10,16 @@
  * @see https://uidai.gov.in/
  */
 
-import { verhoeffValidate, verhoeffCheckDigit } from "#checksums/verhoeff";
+import {
+  verhoeffValidate,
+  verhoeffCheckDigit,
+} from "#checksums/verhoeff";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -75,8 +78,7 @@ const aadhaar: Validator = {
   localName: "Aadhaar",
   abbreviation: "Aadhaar",
   aliases: ["Aadhaar", "आधार"] as const,
-  candidatePattern:
-    "\\d{4}\\s?\\d{4}\\s?\\d{4}",
+  candidatePattern: "\\d{4}\\s?\\d{4}\\s?\\d{4}",
   country: "IN",
   entityType: "person",
   lengths: [12],

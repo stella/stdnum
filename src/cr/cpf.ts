@@ -24,8 +24,8 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { err } from "#util/result";
 import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -94,10 +94,7 @@ const cpf: Validator = {
   name: "Costa Rican Physical Person ID",
   localName: "Cédula de Persona Física",
   abbreviation: "CPF",
-  aliases: [
-    "CPF",
-    "cédula de persona física",
-  ] as const,
+  aliases: ["CPF", "cédula de persona física"] as const,
   candidatePattern: "\\d{9,12}",
   country: "CR",
   entityType: "person",

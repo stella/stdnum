@@ -10,12 +10,12 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 import { cifChecksum } from "./vat";
-import { randomDigits, randomInt } from "#util/generate";
 
 const CIF_PREFIXES = "ABCDEFGHJNPQRSUVW";
 const CIF_LETTERS = "JABCDEFGHI";
@@ -72,10 +72,12 @@ const format = (value: string): string => compact(value);
 
 /** Generate a random valid Spanish CIF. */
 const generate = (): string => {
-  const letter = CIF_PREFIXES[randomInt(0, CIF_PREFIXES.length - 1)]!;
+  const letter =
+    CIF_PREFIXES[randomInt(0, CIF_PREFIXES.length - 1)]!;
   const payload = randomDigits(7);
   const check = cifChecksum(payload);
-  if ("KPQS".includes(letter)) return letter + payload + CIF_LETTERS.charAt(check);
+  if ("KPQS".includes(letter))
+    return letter + payload + CIF_LETTERS.charAt(check);
   return letter + payload + String(check);
 };
 
@@ -88,8 +90,7 @@ const cif: Validator = {
     "CIF",
     "código de identificación fiscal",
   ] as const,
-  candidatePattern:
-    "[A-HJNP-SUVW]\\d{7}[\\dA-J]",
+  candidatePattern: "[A-HJNP-SUVW]\\d{7}[\\dA-J]",
   country: "ES",
   entityType: "company",
   sourceUrl: "https://www.agenciatributaria.es/",

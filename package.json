@@ -1,6 +1,6 @@
 {
   "name": "@stll/stdnum",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Validate, compact, and format standard identifiers (IČO, IBAN, VAT, birth numbers, credit cards). Pure TypeScript, zero dependencies.",
   "keywords": [
     "credit-card",
@@ -24,191 +24,887 @@
     "url": "https://github.com/stella/stdnum"
   },
   "files": [
-    "src/"
+    "src",
+    "dist"
   ],
   "type": "module",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "imports": {
-    "#checksums/*": "./src/_checksums/*.ts",
-    "#util/*": "./src/_util/*.ts"
+    "#checksums/*": "./dist/_checksums/*.js",
+    "#util/*": "./dist/_util/*.js"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./types": "./src/types.ts",
-    "./ad/nrt": "./src/ad/nrt.ts",
-    "./ae/eid": "./src/ae/eid.ts",
-    "./ai/tin": "./src/ai/tin.ts",
-    "./al/nipt": "./src/al/nipt.ts",
-    "./am/tin": "./src/am/tin.ts",
-    "./ar/cbu": "./src/ar/cbu.ts",
-    "./ar/cuit": "./src/ar/cuit.ts",
-    "./ar/dni": "./src/ar/dni.ts",
-    "./at/businessid": "./src/at/businessid.ts",
-    "./at/tin": "./src/at/tin.ts",
-    "./at/uid": "./src/at/uid.ts",
-    "./at/vnr": "./src/at/vnr.ts",
-    "./au/abn": "./src/au/abn.ts",
-    "./au/acn": "./src/au/acn.ts",
-    "./au/tfn": "./src/au/tfn.ts",
-    "./az/voen": "./src/az/voen.ts",
-    "./ba/jmbg": "./src/ba/jmbg.ts",
-    "./bd/nid": "./src/bd/nid.ts",
-    "./be/bis": "./src/be/bis.ts",
-    "./be/nn": "./src/be/nn.ts",
-    "./be/vat": "./src/be/vat.ts",
-    "./bg/egn": "./src/bg/egn.ts",
-    "./bg/pnf": "./src/bg/pnf.ts",
-    "./bg/vat": "./src/bg/vat.ts",
-    "./bh/cpr": "./src/bh/cpr.ts",
-    "./bic": "./src/bic.ts",
-    "./br/cnpj": "./src/br/cnpj.ts",
-    "./br/cpf": "./src/br/cpf.ts",
-    "./by/unp": "./src/by/unp.ts",
-    "./bz/tin": "./src/bz/tin.ts",
-    "./ca/bn": "./src/ca/bn.ts",
-    "./ca/sin": "./src/ca/sin.ts",
-    "./ch/ssn": "./src/ch/ssn.ts",
-    "./ch/uid": "./src/ch/uid.ts",
-    "./ch/vat": "./src/ch/vat.ts",
-    "./cl/rut": "./src/cl/rut.ts",
-    "./cn/ric": "./src/cn/ric.ts",
-    "./cn/uscc": "./src/cn/uscc.ts",
-    "./co/nit": "./src/co/nit.ts",
-    "./cr/cpf": "./src/cr/cpf.ts",
-    "./creditcard": "./src/creditcard.ts",
-    "./cu/ni": "./src/cu/ni.ts",
-    "./cy/vat": "./src/cy/vat.ts",
-    "./cz/dic": "./src/cz/dic.ts",
-    "./cz/ico": "./src/cz/ico.ts",
-    "./cz/rc": "./src/cz/rc.ts",
-    "./de/handelsreg": "./src/de/handelsreg.ts",
-    "./de/idnr": "./src/de/idnr.ts",
-    "./de/stnr": "./src/de/stnr.ts",
-    "./de/svnr": "./src/de/svnr.ts",
-    "./de/vat": "./src/de/vat.ts",
-    "./dk/cpr": "./src/dk/cpr.ts",
-    "./dk/cvr": "./src/dk/cvr.ts",
-    "./dk/vat": "./src/dk/vat.ts",
-    "./do/rnc": "./src/do/rnc.ts",
-    "./ec/ruc": "./src/ec/ruc.ts",
-    "./ee/ik": "./src/ee/ik.ts",
-    "./ee/registrikood": "./src/ee/registrikood.ts",
-    "./ee/vat": "./src/ee/vat.ts",
-    "./eg/tn": "./src/eg/tn.ts",
-    "./es/cif": "./src/es/cif.ts",
-    "./es/dni": "./src/es/dni.ts",
-    "./es/nie": "./src/es/nie.ts",
-    "./es/nss": "./src/es/nss.ts",
-    "./es/vat": "./src/es/vat.ts",
-    "./eu/vat": "./src/eu/vat.ts",
-    "./fi/hetu": "./src/fi/hetu.ts",
-    "./fi/vat": "./src/fi/vat.ts",
-    "./fi/ytunnus": "./src/fi/ytunnus.ts",
-    "./fr/nif": "./src/fr/nif.ts",
-    "./fr/nir": "./src/fr/nir.ts",
-    "./fr/siren": "./src/fr/siren.ts",
-    "./fr/siret": "./src/fr/siret.ts",
-    "./fr/tva": "./src/fr/tva.ts",
-    "./gb/nino": "./src/gb/nino.ts",
-    "./gb/sedol": "./src/gb/sedol.ts",
-    "./gb/utr": "./src/gb/utr.ts",
-    "./gb/vat": "./src/gb/vat.ts",
-    "./ge/pin": "./src/ge/pin.ts",
-    "./gh/tin": "./src/gh/tin.ts",
-    "./gr/amka": "./src/gr/amka.ts",
-    "./gr/vat": "./src/gr/vat.ts",
-    "./gt/nit": "./src/gt/nit.ts",
-    "./hk/hkid": "./src/hk/hkid.ts",
-    "./hr/vat": "./src/hr/vat.ts",
-    "./hu/vat": "./src/hu/vat.ts",
-    "./iban": "./src/iban.ts",
-    "./id/npwp": "./src/id/npwp.ts",
-    "./ie/pps": "./src/ie/pps.ts",
-    "./ie/vat": "./src/ie/vat.ts",
-    "./il/idnr": "./src/il/idnr.ts",
-    "./in/aadhaar": "./src/in/aadhaar.ts",
-    "./in/gstin": "./src/in/gstin.ts",
-    "./in/pan": "./src/in/pan.ts",
-    "./iq/nid": "./src/iq/nid.ts",
-    "./ir/nid": "./src/ir/nid.ts",
-    "./is/kennitala": "./src/is/kennitala.ts",
-    "./is/vsk": "./src/is/vsk.ts",
-    "./isin": "./src/isin.ts",
-    "./it/codicefiscale": "./src/it/codicefiscale.ts",
-    "./it/iva": "./src/it/iva.ts",
-    "./jp/cn": "./src/jp/cn.ts",
-    "./jp/mynumber": "./src/jp/mynumber.ts",
-    "./kr/brn": "./src/kr/brn.ts",
-    "./kr/rrn": "./src/kr/rrn.ts",
-    "./kw/civil": "./src/kw/civil.ts",
-    "./kz/iin": "./src/kz/iin.ts",
-    "./lei": "./src/lei.ts",
-    "./li/peid": "./src/li/peid.ts",
-    "./lk/nic": "./src/lk/nic.ts",
-    "./lt/asmens": "./src/lt/asmens.ts",
-    "./lt/vat": "./src/lt/vat.ts",
-    "./lu/vat": "./src/lu/vat.ts",
-    "./luhn": "./src/luhn.ts",
-    "./lv/vat": "./src/lv/vat.ts",
-    "./ma/ice": "./src/ma/ice.ts",
-    "./mc/tva": "./src/mc/tva.ts",
-    "./md/idno": "./src/md/idno.ts",
-    "./me/pib": "./src/me/pib.ts",
-    "./mk/edb": "./src/mk/edb.ts",
-    "./mt/vat": "./src/mt/vat.ts",
-    "./mu/brn": "./src/mu/brn.ts",
-    "./mx/clabe": "./src/mx/clabe.ts",
-    "./mx/curp": "./src/mx/curp.ts",
-    "./mx/rfc": "./src/mx/rfc.ts",
-    "./my/nric": "./src/my/nric.ts",
-    "./ng/nin": "./src/ng/nin.ts",
-    "./ni/ruc": "./src/ni/ruc.ts",
-    "./nl/bsn": "./src/nl/bsn.ts",
-    "./nl/kvk": "./src/nl/kvk.ts",
-    "./nl/vat": "./src/nl/vat.ts",
-    "./no/fodselsnummer": "./src/no/fodselsnummer.ts",
-    "./no/mva": "./src/no/mva.ts",
-    "./no/orgnr": "./src/no/orgnr.ts",
-    "./nz/ird": "./src/nz/ird.ts",
-    "./pa/ruc": "./src/pa/ruc.ts",
-    "./patterns": "./src/patterns.ts",
-    "./pe/ruc": "./src/pe/ruc.ts",
-    "./ph/philid": "./src/ph/philid.ts",
-    "./pk/cnic": "./src/pk/cnic.ts",
-    "./pl/nip": "./src/pl/nip.ts",
-    "./pl/pesel": "./src/pl/pesel.ts",
-    "./pl/regon": "./src/pl/regon.ts",
-    "./pt/cc": "./src/pt/cc.ts",
-    "./pt/vat": "./src/pt/vat.ts",
-    "./ro/cnp": "./src/ro/cnp.ts",
-    "./ro/vat": "./src/ro/vat.ts",
-    "./rs/pib": "./src/rs/pib.ts",
-    "./ru/inn": "./src/ru/inn.ts",
-    "./se/orgnr": "./src/se/orgnr.ts",
-    "./se/personnummer": "./src/se/personnummer.ts",
-    "./se/vat": "./src/se/vat.ts",
-    "./sg/uen": "./src/sg/uen.ts",
-    "./si/emso": "./src/si/emso.ts",
-    "./si/vat": "./src/si/vat.ts",
-    "./sk/dic": "./src/sk/dic.ts",
-    "./sk/ico": "./src/sk/ico.ts",
-    "./sk/rc": "./src/sk/rc.ts",
-    "./th/tin": "./src/th/tin.ts",
-    "./tr/tckimlik": "./src/tr/tckimlik.ts",
-    "./tr/vkn": "./src/tr/vkn.ts",
-    "./tw/ubn": "./src/tw/ubn.ts",
-    "./ua/edrpou": "./src/ua/edrpou.ts",
-    "./us/ein": "./src/us/ein.ts",
-    "./us/itin": "./src/us/itin.ts",
-    "./us/rtn": "./src/us/rtn.ts",
-    "./us/ssn": "./src/us/ssn.ts",
-    "./uy/rut": "./src/uy/rut.ts",
-    "./ve/rif": "./src/ve/rif.ts",
-    "./vn/mst": "./src/vn/mst.ts",
-    "./za/idnr": "./src/za/idnr.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js",
+      "default": "./dist/types.js"
+    },
+    "./ad/nrt": {
+      "types": "./dist/ad/nrt.d.ts",
+      "import": "./dist/ad/nrt.js",
+      "default": "./dist/ad/nrt.js"
+    },
+    "./ae/eid": {
+      "types": "./dist/ae/eid.d.ts",
+      "import": "./dist/ae/eid.js",
+      "default": "./dist/ae/eid.js"
+    },
+    "./ai/tin": {
+      "types": "./dist/ai/tin.d.ts",
+      "import": "./dist/ai/tin.js",
+      "default": "./dist/ai/tin.js"
+    },
+    "./al/nipt": {
+      "types": "./dist/al/nipt.d.ts",
+      "import": "./dist/al/nipt.js",
+      "default": "./dist/al/nipt.js"
+    },
+    "./am/tin": {
+      "types": "./dist/am/tin.d.ts",
+      "import": "./dist/am/tin.js",
+      "default": "./dist/am/tin.js"
+    },
+    "./ar/cbu": {
+      "types": "./dist/ar/cbu.d.ts",
+      "import": "./dist/ar/cbu.js",
+      "default": "./dist/ar/cbu.js"
+    },
+    "./ar/cuit": {
+      "types": "./dist/ar/cuit.d.ts",
+      "import": "./dist/ar/cuit.js",
+      "default": "./dist/ar/cuit.js"
+    },
+    "./ar/dni": {
+      "types": "./dist/ar/dni.d.ts",
+      "import": "./dist/ar/dni.js",
+      "default": "./dist/ar/dni.js"
+    },
+    "./at/businessid": {
+      "types": "./dist/at/businessid.d.ts",
+      "import": "./dist/at/businessid.js",
+      "default": "./dist/at/businessid.js"
+    },
+    "./at/tin": {
+      "types": "./dist/at/tin.d.ts",
+      "import": "./dist/at/tin.js",
+      "default": "./dist/at/tin.js"
+    },
+    "./at/uid": {
+      "types": "./dist/at/uid.d.ts",
+      "import": "./dist/at/uid.js",
+      "default": "./dist/at/uid.js"
+    },
+    "./at/vnr": {
+      "types": "./dist/at/vnr.d.ts",
+      "import": "./dist/at/vnr.js",
+      "default": "./dist/at/vnr.js"
+    },
+    "./au/abn": {
+      "types": "./dist/au/abn.d.ts",
+      "import": "./dist/au/abn.js",
+      "default": "./dist/au/abn.js"
+    },
+    "./au/acn": {
+      "types": "./dist/au/acn.d.ts",
+      "import": "./dist/au/acn.js",
+      "default": "./dist/au/acn.js"
+    },
+    "./au/tfn": {
+      "types": "./dist/au/tfn.d.ts",
+      "import": "./dist/au/tfn.js",
+      "default": "./dist/au/tfn.js"
+    },
+    "./az/voen": {
+      "types": "./dist/az/voen.d.ts",
+      "import": "./dist/az/voen.js",
+      "default": "./dist/az/voen.js"
+    },
+    "./ba/jmbg": {
+      "types": "./dist/ba/jmbg.d.ts",
+      "import": "./dist/ba/jmbg.js",
+      "default": "./dist/ba/jmbg.js"
+    },
+    "./bd/nid": {
+      "types": "./dist/bd/nid.d.ts",
+      "import": "./dist/bd/nid.js",
+      "default": "./dist/bd/nid.js"
+    },
+    "./be/bis": {
+      "types": "./dist/be/bis.d.ts",
+      "import": "./dist/be/bis.js",
+      "default": "./dist/be/bis.js"
+    },
+    "./be/nn": {
+      "types": "./dist/be/nn.d.ts",
+      "import": "./dist/be/nn.js",
+      "default": "./dist/be/nn.js"
+    },
+    "./be/vat": {
+      "types": "./dist/be/vat.d.ts",
+      "import": "./dist/be/vat.js",
+      "default": "./dist/be/vat.js"
+    },
+    "./bg/egn": {
+      "types": "./dist/bg/egn.d.ts",
+      "import": "./dist/bg/egn.js",
+      "default": "./dist/bg/egn.js"
+    },
+    "./bg/pnf": {
+      "types": "./dist/bg/pnf.d.ts",
+      "import": "./dist/bg/pnf.js",
+      "default": "./dist/bg/pnf.js"
+    },
+    "./bg/vat": {
+      "types": "./dist/bg/vat.d.ts",
+      "import": "./dist/bg/vat.js",
+      "default": "./dist/bg/vat.js"
+    },
+    "./bh/cpr": {
+      "types": "./dist/bh/cpr.d.ts",
+      "import": "./dist/bh/cpr.js",
+      "default": "./dist/bh/cpr.js"
+    },
+    "./bic": {
+      "types": "./dist/bic.d.ts",
+      "import": "./dist/bic.js",
+      "default": "./dist/bic.js"
+    },
+    "./br/cnpj": {
+      "types": "./dist/br/cnpj.d.ts",
+      "import": "./dist/br/cnpj.js",
+      "default": "./dist/br/cnpj.js"
+    },
+    "./br/cpf": {
+      "types": "./dist/br/cpf.d.ts",
+      "import": "./dist/br/cpf.js",
+      "default": "./dist/br/cpf.js"
+    },
+    "./by/unp": {
+      "types": "./dist/by/unp.d.ts",
+      "import": "./dist/by/unp.js",
+      "default": "./dist/by/unp.js"
+    },
+    "./bz/tin": {
+      "types": "./dist/bz/tin.d.ts",
+      "import": "./dist/bz/tin.js",
+      "default": "./dist/bz/tin.js"
+    },
+    "./ca/bn": {
+      "types": "./dist/ca/bn.d.ts",
+      "import": "./dist/ca/bn.js",
+      "default": "./dist/ca/bn.js"
+    },
+    "./ca/sin": {
+      "types": "./dist/ca/sin.d.ts",
+      "import": "./dist/ca/sin.js",
+      "default": "./dist/ca/sin.js"
+    },
+    "./ch/ssn": {
+      "types": "./dist/ch/ssn.d.ts",
+      "import": "./dist/ch/ssn.js",
+      "default": "./dist/ch/ssn.js"
+    },
+    "./ch/uid": {
+      "types": "./dist/ch/uid.d.ts",
+      "import": "./dist/ch/uid.js",
+      "default": "./dist/ch/uid.js"
+    },
+    "./ch/vat": {
+      "types": "./dist/ch/vat.d.ts",
+      "import": "./dist/ch/vat.js",
+      "default": "./dist/ch/vat.js"
+    },
+    "./cl/rut": {
+      "types": "./dist/cl/rut.d.ts",
+      "import": "./dist/cl/rut.js",
+      "default": "./dist/cl/rut.js"
+    },
+    "./cn/ric": {
+      "types": "./dist/cn/ric.d.ts",
+      "import": "./dist/cn/ric.js",
+      "default": "./dist/cn/ric.js"
+    },
+    "./cn/uscc": {
+      "types": "./dist/cn/uscc.d.ts",
+      "import": "./dist/cn/uscc.js",
+      "default": "./dist/cn/uscc.js"
+    },
+    "./co/nit": {
+      "types": "./dist/co/nit.d.ts",
+      "import": "./dist/co/nit.js",
+      "default": "./dist/co/nit.js"
+    },
+    "./cr/cpf": {
+      "types": "./dist/cr/cpf.d.ts",
+      "import": "./dist/cr/cpf.js",
+      "default": "./dist/cr/cpf.js"
+    },
+    "./creditcard": {
+      "types": "./dist/creditcard.d.ts",
+      "import": "./dist/creditcard.js",
+      "default": "./dist/creditcard.js"
+    },
+    "./cu/ni": {
+      "types": "./dist/cu/ni.d.ts",
+      "import": "./dist/cu/ni.js",
+      "default": "./dist/cu/ni.js"
+    },
+    "./cy/vat": {
+      "types": "./dist/cy/vat.d.ts",
+      "import": "./dist/cy/vat.js",
+      "default": "./dist/cy/vat.js"
+    },
+    "./cz/dic": {
+      "types": "./dist/cz/dic.d.ts",
+      "import": "./dist/cz/dic.js",
+      "default": "./dist/cz/dic.js"
+    },
+    "./cz/ico": {
+      "types": "./dist/cz/ico.d.ts",
+      "import": "./dist/cz/ico.js",
+      "default": "./dist/cz/ico.js"
+    },
+    "./cz/rc": {
+      "types": "./dist/cz/rc.d.ts",
+      "import": "./dist/cz/rc.js",
+      "default": "./dist/cz/rc.js"
+    },
+    "./de/handelsreg": {
+      "types": "./dist/de/handelsreg.d.ts",
+      "import": "./dist/de/handelsreg.js",
+      "default": "./dist/de/handelsreg.js"
+    },
+    "./de/idnr": {
+      "types": "./dist/de/idnr.d.ts",
+      "import": "./dist/de/idnr.js",
+      "default": "./dist/de/idnr.js"
+    },
+    "./de/stnr": {
+      "types": "./dist/de/stnr.d.ts",
+      "import": "./dist/de/stnr.js",
+      "default": "./dist/de/stnr.js"
+    },
+    "./de/svnr": {
+      "types": "./dist/de/svnr.d.ts",
+      "import": "./dist/de/svnr.js",
+      "default": "./dist/de/svnr.js"
+    },
+    "./de/vat": {
+      "types": "./dist/de/vat.d.ts",
+      "import": "./dist/de/vat.js",
+      "default": "./dist/de/vat.js"
+    },
+    "./dk/cpr": {
+      "types": "./dist/dk/cpr.d.ts",
+      "import": "./dist/dk/cpr.js",
+      "default": "./dist/dk/cpr.js"
+    },
+    "./dk/cvr": {
+      "types": "./dist/dk/cvr.d.ts",
+      "import": "./dist/dk/cvr.js",
+      "default": "./dist/dk/cvr.js"
+    },
+    "./dk/vat": {
+      "types": "./dist/dk/vat.d.ts",
+      "import": "./dist/dk/vat.js",
+      "default": "./dist/dk/vat.js"
+    },
+    "./do/rnc": {
+      "types": "./dist/do/rnc.d.ts",
+      "import": "./dist/do/rnc.js",
+      "default": "./dist/do/rnc.js"
+    },
+    "./ec/ruc": {
+      "types": "./dist/ec/ruc.d.ts",
+      "import": "./dist/ec/ruc.js",
+      "default": "./dist/ec/ruc.js"
+    },
+    "./ee/ik": {
+      "types": "./dist/ee/ik.d.ts",
+      "import": "./dist/ee/ik.js",
+      "default": "./dist/ee/ik.js"
+    },
+    "./ee/registrikood": {
+      "types": "./dist/ee/registrikood.d.ts",
+      "import": "./dist/ee/registrikood.js",
+      "default": "./dist/ee/registrikood.js"
+    },
+    "./ee/vat": {
+      "types": "./dist/ee/vat.d.ts",
+      "import": "./dist/ee/vat.js",
+      "default": "./dist/ee/vat.js"
+    },
+    "./eg/tn": {
+      "types": "./dist/eg/tn.d.ts",
+      "import": "./dist/eg/tn.js",
+      "default": "./dist/eg/tn.js"
+    },
+    "./es/cif": {
+      "types": "./dist/es/cif.d.ts",
+      "import": "./dist/es/cif.js",
+      "default": "./dist/es/cif.js"
+    },
+    "./es/dni": {
+      "types": "./dist/es/dni.d.ts",
+      "import": "./dist/es/dni.js",
+      "default": "./dist/es/dni.js"
+    },
+    "./es/nie": {
+      "types": "./dist/es/nie.d.ts",
+      "import": "./dist/es/nie.js",
+      "default": "./dist/es/nie.js"
+    },
+    "./es/nss": {
+      "types": "./dist/es/nss.d.ts",
+      "import": "./dist/es/nss.js",
+      "default": "./dist/es/nss.js"
+    },
+    "./es/vat": {
+      "types": "./dist/es/vat.d.ts",
+      "import": "./dist/es/vat.js",
+      "default": "./dist/es/vat.js"
+    },
+    "./eu/vat": {
+      "types": "./dist/eu/vat.d.ts",
+      "import": "./dist/eu/vat.js",
+      "default": "./dist/eu/vat.js"
+    },
+    "./fi/hetu": {
+      "types": "./dist/fi/hetu.d.ts",
+      "import": "./dist/fi/hetu.js",
+      "default": "./dist/fi/hetu.js"
+    },
+    "./fi/vat": {
+      "types": "./dist/fi/vat.d.ts",
+      "import": "./dist/fi/vat.js",
+      "default": "./dist/fi/vat.js"
+    },
+    "./fi/ytunnus": {
+      "types": "./dist/fi/ytunnus.d.ts",
+      "import": "./dist/fi/ytunnus.js",
+      "default": "./dist/fi/ytunnus.js"
+    },
+    "./fr/nif": {
+      "types": "./dist/fr/nif.d.ts",
+      "import": "./dist/fr/nif.js",
+      "default": "./dist/fr/nif.js"
+    },
+    "./fr/nir": {
+      "types": "./dist/fr/nir.d.ts",
+      "import": "./dist/fr/nir.js",
+      "default": "./dist/fr/nir.js"
+    },
+    "./fr/siren": {
+      "types": "./dist/fr/siren.d.ts",
+      "import": "./dist/fr/siren.js",
+      "default": "./dist/fr/siren.js"
+    },
+    "./fr/siret": {
+      "types": "./dist/fr/siret.d.ts",
+      "import": "./dist/fr/siret.js",
+      "default": "./dist/fr/siret.js"
+    },
+    "./fr/tva": {
+      "types": "./dist/fr/tva.d.ts",
+      "import": "./dist/fr/tva.js",
+      "default": "./dist/fr/tva.js"
+    },
+    "./gb/nino": {
+      "types": "./dist/gb/nino.d.ts",
+      "import": "./dist/gb/nino.js",
+      "default": "./dist/gb/nino.js"
+    },
+    "./gb/sedol": {
+      "types": "./dist/gb/sedol.d.ts",
+      "import": "./dist/gb/sedol.js",
+      "default": "./dist/gb/sedol.js"
+    },
+    "./gb/utr": {
+      "types": "./dist/gb/utr.d.ts",
+      "import": "./dist/gb/utr.js",
+      "default": "./dist/gb/utr.js"
+    },
+    "./gb/vat": {
+      "types": "./dist/gb/vat.d.ts",
+      "import": "./dist/gb/vat.js",
+      "default": "./dist/gb/vat.js"
+    },
+    "./ge/pin": {
+      "types": "./dist/ge/pin.d.ts",
+      "import": "./dist/ge/pin.js",
+      "default": "./dist/ge/pin.js"
+    },
+    "./gh/tin": {
+      "types": "./dist/gh/tin.d.ts",
+      "import": "./dist/gh/tin.js",
+      "default": "./dist/gh/tin.js"
+    },
+    "./gr/amka": {
+      "types": "./dist/gr/amka.d.ts",
+      "import": "./dist/gr/amka.js",
+      "default": "./dist/gr/amka.js"
+    },
+    "./gr/vat": {
+      "types": "./dist/gr/vat.d.ts",
+      "import": "./dist/gr/vat.js",
+      "default": "./dist/gr/vat.js"
+    },
+    "./gt/nit": {
+      "types": "./dist/gt/nit.d.ts",
+      "import": "./dist/gt/nit.js",
+      "default": "./dist/gt/nit.js"
+    },
+    "./hk/hkid": {
+      "types": "./dist/hk/hkid.d.ts",
+      "import": "./dist/hk/hkid.js",
+      "default": "./dist/hk/hkid.js"
+    },
+    "./hr/vat": {
+      "types": "./dist/hr/vat.d.ts",
+      "import": "./dist/hr/vat.js",
+      "default": "./dist/hr/vat.js"
+    },
+    "./hu/vat": {
+      "types": "./dist/hu/vat.d.ts",
+      "import": "./dist/hu/vat.js",
+      "default": "./dist/hu/vat.js"
+    },
+    "./iban": {
+      "types": "./dist/iban.d.ts",
+      "import": "./dist/iban.js",
+      "default": "./dist/iban.js"
+    },
+    "./id/npwp": {
+      "types": "./dist/id/npwp.d.ts",
+      "import": "./dist/id/npwp.js",
+      "default": "./dist/id/npwp.js"
+    },
+    "./ie/pps": {
+      "types": "./dist/ie/pps.d.ts",
+      "import": "./dist/ie/pps.js",
+      "default": "./dist/ie/pps.js"
+    },
+    "./ie/vat": {
+      "types": "./dist/ie/vat.d.ts",
+      "import": "./dist/ie/vat.js",
+      "default": "./dist/ie/vat.js"
+    },
+    "./il/idnr": {
+      "types": "./dist/il/idnr.d.ts",
+      "import": "./dist/il/idnr.js",
+      "default": "./dist/il/idnr.js"
+    },
+    "./in/aadhaar": {
+      "types": "./dist/in/aadhaar.d.ts",
+      "import": "./dist/in/aadhaar.js",
+      "default": "./dist/in/aadhaar.js"
+    },
+    "./in/gstin": {
+      "types": "./dist/in/gstin.d.ts",
+      "import": "./dist/in/gstin.js",
+      "default": "./dist/in/gstin.js"
+    },
+    "./in/pan": {
+      "types": "./dist/in/pan.d.ts",
+      "import": "./dist/in/pan.js",
+      "default": "./dist/in/pan.js"
+    },
+    "./iq/nid": {
+      "types": "./dist/iq/nid.d.ts",
+      "import": "./dist/iq/nid.js",
+      "default": "./dist/iq/nid.js"
+    },
+    "./ir/nid": {
+      "types": "./dist/ir/nid.d.ts",
+      "import": "./dist/ir/nid.js",
+      "default": "./dist/ir/nid.js"
+    },
+    "./is/kennitala": {
+      "types": "./dist/is/kennitala.d.ts",
+      "import": "./dist/is/kennitala.js",
+      "default": "./dist/is/kennitala.js"
+    },
+    "./is/vsk": {
+      "types": "./dist/is/vsk.d.ts",
+      "import": "./dist/is/vsk.js",
+      "default": "./dist/is/vsk.js"
+    },
+    "./isin": {
+      "types": "./dist/isin.d.ts",
+      "import": "./dist/isin.js",
+      "default": "./dist/isin.js"
+    },
+    "./it/codicefiscale": {
+      "types": "./dist/it/codicefiscale.d.ts",
+      "import": "./dist/it/codicefiscale.js",
+      "default": "./dist/it/codicefiscale.js"
+    },
+    "./it/iva": {
+      "types": "./dist/it/iva.d.ts",
+      "import": "./dist/it/iva.js",
+      "default": "./dist/it/iva.js"
+    },
+    "./jp/cn": {
+      "types": "./dist/jp/cn.d.ts",
+      "import": "./dist/jp/cn.js",
+      "default": "./dist/jp/cn.js"
+    },
+    "./jp/mynumber": {
+      "types": "./dist/jp/mynumber.d.ts",
+      "import": "./dist/jp/mynumber.js",
+      "default": "./dist/jp/mynumber.js"
+    },
+    "./kr/brn": {
+      "types": "./dist/kr/brn.d.ts",
+      "import": "./dist/kr/brn.js",
+      "default": "./dist/kr/brn.js"
+    },
+    "./kr/rrn": {
+      "types": "./dist/kr/rrn.d.ts",
+      "import": "./dist/kr/rrn.js",
+      "default": "./dist/kr/rrn.js"
+    },
+    "./kw/civil": {
+      "types": "./dist/kw/civil.d.ts",
+      "import": "./dist/kw/civil.js",
+      "default": "./dist/kw/civil.js"
+    },
+    "./kz/iin": {
+      "types": "./dist/kz/iin.d.ts",
+      "import": "./dist/kz/iin.js",
+      "default": "./dist/kz/iin.js"
+    },
+    "./lei": {
+      "types": "./dist/lei.d.ts",
+      "import": "./dist/lei.js",
+      "default": "./dist/lei.js"
+    },
+    "./li/peid": {
+      "types": "./dist/li/peid.d.ts",
+      "import": "./dist/li/peid.js",
+      "default": "./dist/li/peid.js"
+    },
+    "./lk/nic": {
+      "types": "./dist/lk/nic.d.ts",
+      "import": "./dist/lk/nic.js",
+      "default": "./dist/lk/nic.js"
+    },
+    "./lt/asmens": {
+      "types": "./dist/lt/asmens.d.ts",
+      "import": "./dist/lt/asmens.js",
+      "default": "./dist/lt/asmens.js"
+    },
+    "./lt/vat": {
+      "types": "./dist/lt/vat.d.ts",
+      "import": "./dist/lt/vat.js",
+      "default": "./dist/lt/vat.js"
+    },
+    "./lu/vat": {
+      "types": "./dist/lu/vat.d.ts",
+      "import": "./dist/lu/vat.js",
+      "default": "./dist/lu/vat.js"
+    },
+    "./luhn": {
+      "types": "./dist/luhn.d.ts",
+      "import": "./dist/luhn.js",
+      "default": "./dist/luhn.js"
+    },
+    "./lv/vat": {
+      "types": "./dist/lv/vat.d.ts",
+      "import": "./dist/lv/vat.js",
+      "default": "./dist/lv/vat.js"
+    },
+    "./ma/ice": {
+      "types": "./dist/ma/ice.d.ts",
+      "import": "./dist/ma/ice.js",
+      "default": "./dist/ma/ice.js"
+    },
+    "./mc/tva": {
+      "types": "./dist/mc/tva.d.ts",
+      "import": "./dist/mc/tva.js",
+      "default": "./dist/mc/tva.js"
+    },
+    "./md/idno": {
+      "types": "./dist/md/idno.d.ts",
+      "import": "./dist/md/idno.js",
+      "default": "./dist/md/idno.js"
+    },
+    "./me/pib": {
+      "types": "./dist/me/pib.d.ts",
+      "import": "./dist/me/pib.js",
+      "default": "./dist/me/pib.js"
+    },
+    "./mk/edb": {
+      "types": "./dist/mk/edb.d.ts",
+      "import": "./dist/mk/edb.js",
+      "default": "./dist/mk/edb.js"
+    },
+    "./mt/vat": {
+      "types": "./dist/mt/vat.d.ts",
+      "import": "./dist/mt/vat.js",
+      "default": "./dist/mt/vat.js"
+    },
+    "./mu/brn": {
+      "types": "./dist/mu/brn.d.ts",
+      "import": "./dist/mu/brn.js",
+      "default": "./dist/mu/brn.js"
+    },
+    "./mx/clabe": {
+      "types": "./dist/mx/clabe.d.ts",
+      "import": "./dist/mx/clabe.js",
+      "default": "./dist/mx/clabe.js"
+    },
+    "./mx/curp": {
+      "types": "./dist/mx/curp.d.ts",
+      "import": "./dist/mx/curp.js",
+      "default": "./dist/mx/curp.js"
+    },
+    "./mx/rfc": {
+      "types": "./dist/mx/rfc.d.ts",
+      "import": "./dist/mx/rfc.js",
+      "default": "./dist/mx/rfc.js"
+    },
+    "./my/nric": {
+      "types": "./dist/my/nric.d.ts",
+      "import": "./dist/my/nric.js",
+      "default": "./dist/my/nric.js"
+    },
+    "./ng/nin": {
+      "types": "./dist/ng/nin.d.ts",
+      "import": "./dist/ng/nin.js",
+      "default": "./dist/ng/nin.js"
+    },
+    "./ni/ruc": {
+      "types": "./dist/ni/ruc.d.ts",
+      "import": "./dist/ni/ruc.js",
+      "default": "./dist/ni/ruc.js"
+    },
+    "./nl/bsn": {
+      "types": "./dist/nl/bsn.d.ts",
+      "import": "./dist/nl/bsn.js",
+      "default": "./dist/nl/bsn.js"
+    },
+    "./nl/kvk": {
+      "types": "./dist/nl/kvk.d.ts",
+      "import": "./dist/nl/kvk.js",
+      "default": "./dist/nl/kvk.js"
+    },
+    "./nl/vat": {
+      "types": "./dist/nl/vat.d.ts",
+      "import": "./dist/nl/vat.js",
+      "default": "./dist/nl/vat.js"
+    },
+    "./no/fodselsnummer": {
+      "types": "./dist/no/fodselsnummer.d.ts",
+      "import": "./dist/no/fodselsnummer.js",
+      "default": "./dist/no/fodselsnummer.js"
+    },
+    "./no/mva": {
+      "types": "./dist/no/mva.d.ts",
+      "import": "./dist/no/mva.js",
+      "default": "./dist/no/mva.js"
+    },
+    "./no/orgnr": {
+      "types": "./dist/no/orgnr.d.ts",
+      "import": "./dist/no/orgnr.js",
+      "default": "./dist/no/orgnr.js"
+    },
+    "./nz/ird": {
+      "types": "./dist/nz/ird.d.ts",
+      "import": "./dist/nz/ird.js",
+      "default": "./dist/nz/ird.js"
+    },
+    "./pa/ruc": {
+      "types": "./dist/pa/ruc.d.ts",
+      "import": "./dist/pa/ruc.js",
+      "default": "./dist/pa/ruc.js"
+    },
+    "./patterns": {
+      "types": "./dist/patterns.d.ts",
+      "import": "./dist/patterns.js",
+      "default": "./dist/patterns.js"
+    },
+    "./pe/ruc": {
+      "types": "./dist/pe/ruc.d.ts",
+      "import": "./dist/pe/ruc.js",
+      "default": "./dist/pe/ruc.js"
+    },
+    "./ph/philid": {
+      "types": "./dist/ph/philid.d.ts",
+      "import": "./dist/ph/philid.js",
+      "default": "./dist/ph/philid.js"
+    },
+    "./pk/cnic": {
+      "types": "./dist/pk/cnic.d.ts",
+      "import": "./dist/pk/cnic.js",
+      "default": "./dist/pk/cnic.js"
+    },
+    "./pl/nip": {
+      "types": "./dist/pl/nip.d.ts",
+      "import": "./dist/pl/nip.js",
+      "default": "./dist/pl/nip.js"
+    },
+    "./pl/pesel": {
+      "types": "./dist/pl/pesel.d.ts",
+      "import": "./dist/pl/pesel.js",
+      "default": "./dist/pl/pesel.js"
+    },
+    "./pl/regon": {
+      "types": "./dist/pl/regon.d.ts",
+      "import": "./dist/pl/regon.js",
+      "default": "./dist/pl/regon.js"
+    },
+    "./pt/cc": {
+      "types": "./dist/pt/cc.d.ts",
+      "import": "./dist/pt/cc.js",
+      "default": "./dist/pt/cc.js"
+    },
+    "./pt/vat": {
+      "types": "./dist/pt/vat.d.ts",
+      "import": "./dist/pt/vat.js",
+      "default": "./dist/pt/vat.js"
+    },
+    "./ro/cnp": {
+      "types": "./dist/ro/cnp.d.ts",
+      "import": "./dist/ro/cnp.js",
+      "default": "./dist/ro/cnp.js"
+    },
+    "./ro/vat": {
+      "types": "./dist/ro/vat.d.ts",
+      "import": "./dist/ro/vat.js",
+      "default": "./dist/ro/vat.js"
+    },
+    "./rs/pib": {
+      "types": "./dist/rs/pib.d.ts",
+      "import": "./dist/rs/pib.js",
+      "default": "./dist/rs/pib.js"
+    },
+    "./ru/inn": {
+      "types": "./dist/ru/inn.d.ts",
+      "import": "./dist/ru/inn.js",
+      "default": "./dist/ru/inn.js"
+    },
+    "./se/orgnr": {
+      "types": "./dist/se/orgnr.d.ts",
+      "import": "./dist/se/orgnr.js",
+      "default": "./dist/se/orgnr.js"
+    },
+    "./se/personnummer": {
+      "types": "./dist/se/personnummer.d.ts",
+      "import": "./dist/se/personnummer.js",
+      "default": "./dist/se/personnummer.js"
+    },
+    "./se/vat": {
+      "types": "./dist/se/vat.d.ts",
+      "import": "./dist/se/vat.js",
+      "default": "./dist/se/vat.js"
+    },
+    "./sg/uen": {
+      "types": "./dist/sg/uen.d.ts",
+      "import": "./dist/sg/uen.js",
+      "default": "./dist/sg/uen.js"
+    },
+    "./si/emso": {
+      "types": "./dist/si/emso.d.ts",
+      "import": "./dist/si/emso.js",
+      "default": "./dist/si/emso.js"
+    },
+    "./si/vat": {
+      "types": "./dist/si/vat.d.ts",
+      "import": "./dist/si/vat.js",
+      "default": "./dist/si/vat.js"
+    },
+    "./sk/dic": {
+      "types": "./dist/sk/dic.d.ts",
+      "import": "./dist/sk/dic.js",
+      "default": "./dist/sk/dic.js"
+    },
+    "./sk/ico": {
+      "types": "./dist/sk/ico.d.ts",
+      "import": "./dist/sk/ico.js",
+      "default": "./dist/sk/ico.js"
+    },
+    "./sk/rc": {
+      "types": "./dist/sk/rc.d.ts",
+      "import": "./dist/sk/rc.js",
+      "default": "./dist/sk/rc.js"
+    },
+    "./th/tin": {
+      "types": "./dist/th/tin.d.ts",
+      "import": "./dist/th/tin.js",
+      "default": "./dist/th/tin.js"
+    },
+    "./tr/tckimlik": {
+      "types": "./dist/tr/tckimlik.d.ts",
+      "import": "./dist/tr/tckimlik.js",
+      "default": "./dist/tr/tckimlik.js"
+    },
+    "./tr/vkn": {
+      "types": "./dist/tr/vkn.d.ts",
+      "import": "./dist/tr/vkn.js",
+      "default": "./dist/tr/vkn.js"
+    },
+    "./tw/ubn": {
+      "types": "./dist/tw/ubn.d.ts",
+      "import": "./dist/tw/ubn.js",
+      "default": "./dist/tw/ubn.js"
+    },
+    "./ua/edrpou": {
+      "types": "./dist/ua/edrpou.d.ts",
+      "import": "./dist/ua/edrpou.js",
+      "default": "./dist/ua/edrpou.js"
+    },
+    "./us/ein": {
+      "types": "./dist/us/ein.d.ts",
+      "import": "./dist/us/ein.js",
+      "default": "./dist/us/ein.js"
+    },
+    "./us/itin": {
+      "types": "./dist/us/itin.d.ts",
+      "import": "./dist/us/itin.js",
+      "default": "./dist/us/itin.js"
+    },
+    "./us/rtn": {
+      "types": "./dist/us/rtn.d.ts",
+      "import": "./dist/us/rtn.js",
+      "default": "./dist/us/rtn.js"
+    },
+    "./us/ssn": {
+      "types": "./dist/us/ssn.d.ts",
+      "import": "./dist/us/ssn.js",
+      "default": "./dist/us/ssn.js"
+    },
+    "./uy/rut": {
+      "types": "./dist/uy/rut.d.ts",
+      "import": "./dist/uy/rut.js",
+      "default": "./dist/uy/rut.js"
+    },
+    "./ve/rif": {
+      "types": "./dist/ve/rif.d.ts",
+      "import": "./dist/ve/rif.js",
+      "default": "./dist/ve/rif.js"
+    },
+    "./vn/mst": {
+      "types": "./dist/vn/mst.d.ts",
+      "import": "./dist/vn/mst.js",
+      "default": "./dist/vn/mst.js"
+    },
+    "./za/idnr": {
+      "types": "./dist/za/idnr.d.ts",
+      "import": "./dist/za/idnr.js",
+      "default": "./dist/za/idnr.js"
+    }
   },
   "scripts": {
+    "build": "tsup && tsc -p tsconfig.build.json",
+    "prepublishOnly": "bun run build",
     "catalog": "bun scripts/catalog.ts",
     "sync-exports": "bun scripts/sync-exports.ts",
     "test": "bun test",
@@ -227,6 +923,8 @@
     "oxfmt": "^0.41.0",
     "oxlint": "^1.55.0",
     "stdnum": "^1.11.7",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
     "validate-polish": "^2.1.40"
   },
   "engines": {

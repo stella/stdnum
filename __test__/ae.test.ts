@@ -84,9 +84,9 @@ describe("ae.eid", () => {
   });
 
   test("compact strips separators", () => {
-    expect(
-      ae.eid.compact("784-1980-1234567-8"),
-    ).toBe("784198012345678");
+    expect(ae.eid.compact("784-1980-1234567-8")).toBe(
+      "784198012345678",
+    );
   });
 
   test("generate produces valid IDs", () => {

@@ -10,12 +10,12 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import { validate as validateRc } from "../cz/rc";
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   const v = clean(value, " -");
@@ -77,7 +77,12 @@ const format = (value: string): string =>
   `SK${compact(value)}`;
 
 /** Generate a random valid Slovak DIČ. */
-const generate = (): string => { for (;;) { const c = randomDigits(10); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(10);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Slovak VAT Number. */
 const dic: Validator = {
@@ -85,10 +90,7 @@ const dic: Validator = {
   localName:
     "Identifikačné číslo pre daň z pridanej hodnoty",
   abbreviation: "IČ DPH",
-  aliases: [
-    "DIČ",
-    "daňové identifikačné číslo",
-  ] as const,
+  aliases: ["DIČ", "daňové identifikačné číslo"] as const,
   candidatePattern: "SK\\d{10}",
   country: "SK",
   entityType: "company",

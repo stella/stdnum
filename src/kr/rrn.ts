@@ -23,9 +23,7 @@ import type {
 const compact = (value: string): string =>
   clean(value, " -/");
 
-const CHECK_WEIGHTS = [
-  2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5,
-];
+const CHECK_WEIGHTS = [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5];
 
 /**
  * Compute the check digit for the first 12 digits.
@@ -34,7 +32,8 @@ const CHECK_WEIGHTS = [
 const checkDigit = (digits: string): number => {
   let sum = 0;
   for (let i = 0; i < 12; i++) {
-    sum += (CHECK_WEIGHTS[i] ?? 0) * Number(digits.charAt(i));
+    sum +=
+      (CHECK_WEIGHTS[i] ?? 0) * Number(digits.charAt(i));
   }
   return (11 - (sum % 11)) % 10;
 };
@@ -124,9 +123,7 @@ const format = (value: string): string => {
  *   5, 7 = male foreigner; 6, 8 = female foreigner
  *   0, 9 = pre-1800 (male/female by convention)
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -138,9 +135,7 @@ const parse = (
   const isMale = "13579".includes(genderDigit);
 
   return {
-    birthDate: new Date(
-      bd.year, bd.month - 1, bd.day,
-    ),
+    birthDate: new Date(bd.year, bd.month - 1, bd.day),
     gender: isMale ? "male" : "female",
   };
 };
@@ -155,8 +150,7 @@ const rrn: Validator = {
     "주민등록번호",
     "Resident Registration Number",
   ] as const,
-  candidatePattern:
-    "\\d{6}[\\s-]?\\d{7}",
+  candidatePattern: "\\d{6}[\\s-]?\\d{7}",
   country: "KR",
   entityType: "person",
   description:
@@ -166,10 +160,7 @@ const rrn: Validator = {
     "https://en.wikipedia.org/wiki/" +
     "Resident_registration_number",
   lengths: [13] as const,
-  examples: [
-    "9710139019902",
-    "9501011000109",
-  ] as const,
+  examples: ["9710139019902", "9501011000109"] as const,
   compact,
   format,
   validate,

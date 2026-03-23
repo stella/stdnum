@@ -11,6 +11,7 @@
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -19,7 +20,6 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
-import { randomInt } from "#util/generate";
 
 const WEIGHTS = [
   7, 6, 5, 4, 3, 2, 7, 6, 5, 4, 3, 2,
@@ -73,9 +73,7 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -117,7 +115,7 @@ const jmbg: Validator = {
   country: "BA",
   entityType: "person",
   lengths: [13] as const,
-  sourceUrl: 
+  sourceUrl:
     "https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/",
   examples: ["0101006500006"] as const,
   compact,

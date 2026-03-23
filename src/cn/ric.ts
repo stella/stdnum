@@ -96,16 +96,13 @@ const validate = (value: string): ValidateResult => {
   return { valid: true, compact: v };
 };
 
-const format = (value: string): string =>
-  compact(value);
+const format = (value: string): string => compact(value);
 
 /**
  * Extract birth date and gender from an RIC number.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -150,8 +147,7 @@ const generate = (): string => {
   const mStr = String(month).padStart(2, "0");
   const dStr = String(day).padStart(2, "0");
 
-  const payload =
-    `${area}${yStr}${mStr}${dStr}${seq}`;
+  const payload = `${area}${yStr}${mStr}${dStr}${seq}`;
   const check = mod112checkChar(payload);
   return `${payload}${check}`;
 };
@@ -161,11 +157,7 @@ const ric: Validator = {
   name: "Chinese Resident Identity Card",
   localName: "居民身份证号码",
   abbreviation: "RIC",
-  aliases: [
-    "身份证",
-    "居民身份证号码",
-    "RIC",
-  ] as const,
+  aliases: ["身份证", "居民身份证号码", "RIC"] as const,
   candidatePattern: "\\d{17}[\\dX]",
   country: "CN",
   entityType: "person",

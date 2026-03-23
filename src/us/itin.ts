@@ -25,14 +25,13 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
-const ITIN_RE =
-  /^(?<area>\d{3})-?(?<group>\d{2})-?\d{4}$/;
+const ITIN_RE = /^(?<area>\d{3})-?(?<group>\d{2})-?\d{4}$/;
 
 /** Groups 70-99 excluding 89 and 93. */
 const ALLOWED_GROUPS = new Set(
@@ -53,10 +52,7 @@ const validate = (value: string): ValidateResult => {
     );
   }
   if (v.length !== 9) {
-    return err(
-      "INVALID_LENGTH",
-      "ITIN must be 9 digits",
-    );
+    return err("INVALID_LENGTH", "ITIN must be 9 digits");
   }
 
   const match = ITIN_RE.exec(v);
@@ -70,10 +66,7 @@ const validate = (value: string): ValidateResult => {
 
   const { area, group } = match.groups;
   if (!area || !group) {
-    return err(
-      "INVALID_FORMAT",
-      "ITIN must be 9 digits",
-    );
+    return err("INVALID_FORMAT", "ITIN must be 9 digits");
   }
 
   if (area[0] !== "9") {
@@ -98,8 +91,7 @@ const format = (value: string): string => {
   const v = compact(value);
   if (v.length === 9) {
     return (
-      `${v.slice(0, 3)}-${v.slice(3, 5)}` +
-      `-${v.slice(5)}`
+      `${v.slice(0, 3)}-${v.slice(3, 5)}` + `-${v.slice(5)}`
     );
   }
   return v;
@@ -110,8 +102,7 @@ const format = (value: string): string => {
  */
 const itin: Validator = {
   name: "Individual Taxpayer Identification Number",
-  localName:
-    "Individual Taxpayer Identification Number",
+  localName: "Individual Taxpayer Identification Number",
   abbreviation: "ITIN",
   aliases: [
     "ITIN",

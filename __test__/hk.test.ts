@@ -68,21 +68,15 @@ describe("hk.hkid", () => {
   });
 
   test("format adds parentheses", () => {
-    expect(hk.hkid.format("G123456A")).toBe(
-      "G123456(A)",
-    );
+    expect(hk.hkid.format("G123456A")).toBe("G123456(A)");
   });
 
   test("format with two-letter prefix", () => {
-    expect(hk.hkid.format("AB9876543")).toBe(
-      "AB987654(3)",
-    );
+    expect(hk.hkid.format("AB9876543")).toBe("AB987654(3)");
   });
 
   test("compact strips separators", () => {
-    expect(hk.hkid.compact("G 123456(A)")).toBe(
-      "G123456A",
-    );
+    expect(hk.hkid.compact("G 123456(A)")).toBe("G123456A");
   });
 
   test("metadata", () => {

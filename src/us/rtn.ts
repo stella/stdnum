@@ -31,10 +31,7 @@ const validate = (value: string): ValidateResult => {
   const v = compact(value);
 
   if (v.length !== 9) {
-    return err(
-      "INVALID_LENGTH",
-      "RTN must be 9 digits",
-    );
+    return err("INVALID_LENGTH", "RTN must be 9 digits");
   }
 
   if (!isdigits(v)) {
@@ -47,10 +44,10 @@ const validate = (value: string): ValidateResult => {
   // Validate Federal Reserve prefix (first 2 digits)
   const prefix = Number(v.slice(0, 2));
   const validPrefixRanges =
-    (prefix >= 1 && prefix <= 12)
-    || (prefix >= 21 && prefix <= 32)
-    || (prefix >= 61 && prefix <= 72)
-    || prefix === 80;
+    (prefix >= 1 && prefix <= 12) ||
+    (prefix >= 21 && prefix <= 32) ||
+    (prefix >= 61 && prefix <= 72) ||
+    prefix === 80;
   if (!validPrefixRanges) {
     return err(
       "INVALID_COMPONENT",
@@ -86,9 +83,7 @@ const PREFIX_RANGES: readonly [number, number][] = [
 /** Generate a random valid U.S. RTN. */
 const generate = (): string => {
   const range =
-    PREFIX_RANGES[
-      randomInt(0, PREFIX_RANGES.length - 1)
-    ]!;
+    PREFIX_RANGES[randomInt(0, PREFIX_RANGES.length - 1)]!;
   const prefix = String(
     randomInt(range[0], range[1]),
   ).padStart(2, "0");

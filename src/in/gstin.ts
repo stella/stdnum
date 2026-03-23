@@ -10,22 +10,54 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { charValue } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const GSTIN_RE =
   /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]Z[0-9A-Z]$/;
 
 /** Valid Indian state/UT codes: 01-37. */
 const VALID_STATE_CODES = new Set([
-  "01", "02", "03", "04", "05", "06", "07", "08",
-  "09", "10", "11", "12", "13", "14", "15", "16",
-  "17", "18", "19", "20", "21", "22", "23", "24",
-  "25", "26", "27", "28", "29", "30", "31", "32",
-  "33", "34", "35", "36", "37",
+  "01",
+  "02",
+  "03",
+  "04",
+  "05",
+  "06",
+  "07",
+  "08",
+  "09",
+  "10",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+  "16",
+  "17",
+  "18",
+  "19",
+  "20",
+  "21",
+  "22",
+  "23",
+  "24",
+  "25",
+  "26",
+  "27",
+  "28",
+  "29",
+  "30",
+  "31",
+  "32",
+  "33",
+  "34",
+  "35",
+  "36",
+  "37",
 ]);
 
 const BASE = 36;
@@ -62,10 +94,7 @@ const validate = (value: string): ValidateResult => {
     );
   }
   if (!GSTIN_RE.test(v)) {
-    return err(
-      "INVALID_FORMAT",
-      "GSTIN format is invalid",
-    );
+    return err("INVALID_FORMAT", "GSTIN format is invalid");
   }
   const stateCode = v.slice(0, 2);
   if (!VALID_STATE_CODES.has(stateCode)) {
@@ -96,8 +125,11 @@ const generate = (): string => {
   for (;;) {
     const state = String(randomInt(1, 37)).padStart(2, "0");
     let pan = "";
-    for (let i = 0; i < 5; i++) pan += String.fromCharCode(65 + randomInt(0, 25));
-    pan += randomDigits(4) + String.fromCharCode(65 + randomInt(0, 25));
+    for (let i = 0; i < 5; i++)
+      pan += String.fromCharCode(65 + randomInt(0, 25));
+    pan +=
+      randomDigits(4) +
+      String.fromCharCode(65 + randomInt(0, 25));
     const entity = String(randomInt(1, 9));
     const partial = state + pan + entity + "Z";
     for (let d = 0; d <= 9; d++) {
@@ -114,8 +146,7 @@ const generate = (): string => {
 /** Indian Goods and Services Tax ID. */
 const gstin: Validator = {
   name: "Indian Goods and Services Tax ID",
-  localName:
-    "Goods and Services Tax Identification Number",
+  localName: "Goods and Services Tax Identification Number",
   abbreviation: "GSTIN",
   aliases: ["GSTIN", "GST number"] as const,
   candidatePattern:
