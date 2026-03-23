@@ -28,14 +28,14 @@ const compact = (value: string): string => {
 const checkNew = (v: string): boolean => {
   // New format: 7 digits + check letter + optional
   // trailing letter (W or A-Z)
-  const trailing = v.length === 9 ? v[8] : "W";
+  const trailing = v.length === 9 ? v.charAt(8) : "W";
   let sum = 0;
   for (let i = 0; i < 7; i++) {
-    sum += (8 - i) * Number(v[i]);
+    sum += (8 - i) * Number(v.charAt(i));
   }
   sum += 9 * ALPHABET.indexOf(trailing);
-  const expected = ALPHABET[sum % 23];
-  return v[7] === expected;
+  const expected = ALPHABET.charAt(sum % 23);
+  return v.charAt(7) === expected;
 };
 
 const checkOld = (v: string): boolean => {
@@ -43,13 +43,13 @@ const checkOld = (v: string): boolean => {
   // check letter (8 chars total).
   // Rearrange to 7-digit new-style layout:
   // 0 + d[2..6] + d[0]
-  const rearranged = `0${v.slice(2, 7)}${v[0]}`;
+  const rearranged = `0${v.slice(2, 7)}${v.charAt(0)}`;
   let sum = 0;
   for (let i = 0; i < 7; i++) {
-    sum += (8 - i) * Number(rearranged[i]);
+    sum += (8 - i) * Number(rearranged.charAt(i));
   }
-  const expected = ALPHABET[sum % 23];
-  return v[7] === expected;
+  const expected = ALPHABET.charAt(sum % 23);
+  return v.charAt(7) === expected;
 };
 
 const validate = (value: string): ValidateResult => {
@@ -62,8 +62,8 @@ const validate = (value: string): ValidateResult => {
   }
 
   // New format: 7 digits + letter [+ letter]
-  if (isdigits(v.slice(0, 7)) && /^[A-Z]$/.test(v[7])) {
-    if (v.length === 9 && !/^[A-Z+*]$/.test(v[8])) {
+  if (isdigits(v.slice(0, 7)) && /^[A-Z]$/.test(v.charAt(7))) {
+    if (v.length === 9 && !/^[A-Z+*]$/.test(v.charAt(8))) {
       return err(
         "INVALID_FORMAT",
         "Irish VAT trailing character must be a letter",
@@ -81,10 +81,10 @@ const validate = (value: string): ValidateResult => {
   // Old format: digit + letter + 5 digits + letter
   if (
     v.length === 8 &&
-    /^\d$/.test(v[0]) &&
-    /^[A-Z+*]$/.test(v[1]) &&
+    /^\d$/.test(v.charAt(0)) &&
+    /^[A-Z+*]$/.test(v.charAt(1)) &&
     isdigits(v.slice(2, 7)) &&
-    /^[A-Z]$/.test(v[7])
+    /^[A-Z]$/.test(v.charAt(7))
   ) {
     if (!checkOld(v)) {
       return err(

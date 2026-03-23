@@ -28,7 +28,7 @@ const WEIGHTS = [6, 5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
 const checkDigit = (payload: string): number => {
   let sum = 0;
   for (let i = 0; i < 11; i++) {
-    sum += WEIGHTS[i] * Number(payload[i]);
+    sum += (WEIGHTS[i] ?? 0) * Number(payload.charAt(i));
   }
   const remainder = sum % 11;
   return remainder <= 1 ? 0 : 11 - remainder;

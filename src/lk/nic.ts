@@ -59,7 +59,7 @@ const CHECK_WEIGHTS = [
 const checkDigit = (digits: string): number => {
   let sum = 0;
   for (let i = 0; i < 11; i++) {
-    sum += CHECK_WEIGHTS[i] * Number(digits[i]);
+    sum += (CHECK_WEIGHTS[i] ?? 0) * Number(digits.charAt(i));
   }
   const d = 11 - (sum % 11);
   return d > 9 ? d % 10 : d;

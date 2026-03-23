@@ -53,7 +53,7 @@ const validate = (value: string): ValidateResult => {
       "Cypriot VAT number must start with 8 digits",
     );
   }
-  if (!LETTERS.includes(checkLetter)) {
+  if (checkLetter === undefined || !LETTERS.includes(checkLetter)) {
     return err(
       "INVALID_FORMAT",
       "Cypriot VAT number must end with a letter",
@@ -68,16 +68,16 @@ const validate = (value: string): ValidateResult => {
   let odd = 0;
   let even = 0;
   for (let i = 0; i < 8; i++) {
-    const d = Number(digits[i]);
+    const d = Number(digits.charAt(i));
     if (i % 2 === 0) {
       // Odd position (1-indexed: 1,3,5,7)
-      odd += ODD_MAP[d];
+      odd += ODD_MAP[d] ?? 0;
     } else {
       // Even position (1-indexed: 2,4,6,8)
       even += d;
     }
   }
-  const expected = LETTERS[(odd + even) % 26];
+  const expected = LETTERS.charAt((odd + even) % 26);
   if (checkLetter !== expected) {
     return err(
       "INVALID_CHECKSUM",
@@ -97,10 +97,10 @@ const generate = (): string => {
     if (digits.startsWith("12")) continue;
     let odd = 0; let even = 0;
     for (let i = 0; i < 8; i++) {
-      const d = Number(digits[i]);
-      if (i % 2 === 0) odd += ODD_MAP[d]; else even += d;
+      const d = Number(digits.charAt(i));
+      if (i % 2 === 0) odd += ODD_MAP[d] ?? 0; else even += d;
     }
-    return digits + LETTERS[(odd + even) % 26];
+    return digits + LETTERS.charAt((odd + even) % 26);
   }
 };
 

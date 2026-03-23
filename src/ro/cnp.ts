@@ -20,7 +20,7 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomInt } from "#util/generate";
 
 const WEIGHTS = [
   2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9,

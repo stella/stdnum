@@ -30,7 +30,7 @@ const cifChecksum = (digits: string): number => {
   let even = 0;
   let odd = 0;
   for (let i = 0; i < 7; i++) {
-    const d = Number(digits[i]);
+    const d = Number(digits.charAt(i));
     if (i % 2 === 0) {
       // Odd positions (1-indexed): double and sum digits
       const doubled = d * 2;
@@ -51,13 +51,13 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  const first = v[0];
-  const last = v[8];
+  const first = v.charAt(0);
+  const last = v.charAt(8);
 
   // DNI: 8 digits + letter
   if (isdigits(v.slice(0, 8))) {
     const expected =
-      DNI_LETTERS[Number.parseInt(v.slice(0, 8), 10) % 23];
+      DNI_LETTERS.charAt(Number.parseInt(v.slice(0, 8), 10) % 23);
     if (last !== expected) {
       return err(
         "INVALID_CHECKSUM",
@@ -79,7 +79,7 @@ const validate = (value: string): ValidateResult => {
       );
     }
     const expected =
-      DNI_LETTERS[Number.parseInt(digits, 10) % 23];
+      DNI_LETTERS.charAt(Number.parseInt(digits, 10) % 23);
     if (last !== expected) {
       return err(
         "INVALID_CHECKSUM",
@@ -99,7 +99,7 @@ const validate = (value: string): ValidateResult => {
       );
     }
     const expected =
-      DNI_LETTERS[Number.parseInt(v.slice(1, 8), 10) % 23];
+      DNI_LETTERS.charAt(Number.parseInt(v.slice(1, 8), 10) % 23);
     if (last !== expected) {
       return err(
         "INVALID_CHECKSUM",
@@ -124,7 +124,7 @@ const validate = (value: string): ValidateResult => {
     // prefixes require which type)
     if (
       last !== String(check) &&
-      last !== CIF_LETTERS[check]
+      last !== CIF_LETTERS.charAt(check)
     ) {
       return err(
         "INVALID_CHECKSUM",
@@ -147,7 +147,7 @@ const format = (value: string): string =>
 const generate = (): string => {
   const letters = "TRWAGMYFPDXBNJZSQVHLCKE";
   const num = randomDigits(8);
-  return num + letters[Number(num) % 23];
+  return num + letters.charAt(Number(num) % 23);
 };
 
 /** Spanish VAT Number. */

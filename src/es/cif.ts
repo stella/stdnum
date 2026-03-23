@@ -37,7 +37,7 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  const first = v[0];
+  const first = v.charAt(0);
   if (!CIF_PREFIXES.includes(first)) {
     return err(
       "INVALID_FORMAT",
@@ -52,12 +52,12 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  const last = v[8];
+  const last = v.charAt(8);
   const check = cifChecksum(v.slice(1, 8));
 
   if (
     last !== String(check) &&
-    last !== CIF_LETTERS[check]
+    last !== CIF_LETTERS.charAt(check)
   ) {
     return err(
       "INVALID_CHECKSUM",
@@ -75,7 +75,7 @@ const generate = (): string => {
   const letter = CIF_PREFIXES[randomInt(0, CIF_PREFIXES.length - 1)]!;
   const payload = randomDigits(7);
   const check = cifChecksum(payload);
-  if ("KPQS".includes(letter)) return letter + payload + CIF_LETTERS[check];
+  if ("KPQS".includes(letter)) return letter + payload + CIF_LETTERS.charAt(check);
   return letter + payload + String(check);
 };
 

@@ -223,11 +223,11 @@ const parse = (
   if (v.length !== 16) return null;
 
   const yy =
-    decodeCfDigit(v[6]) * 10 + decodeCfDigit(v[7]);
-  const month = MONTH_LETTERS[v[8]];
+    decodeCfDigit(v.charAt(6)) * 10 + decodeCfDigit(v.charAt(7));
+  const month = MONTH_LETTERS[v.charAt(8)];
   if (month === undefined) return null;
   let dd =
-    decodeCfDigit(v[9]) * 10 + decodeCfDigit(v[10]);
+    decodeCfDigit(v.charAt(9)) * 10 + decodeCfDigit(v.charAt(10));
 
   const gender = dd > 40 ? "female" : "male";
   if (dd > 40) dd -= 40;

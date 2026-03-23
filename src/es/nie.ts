@@ -34,7 +34,7 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  const prefix = v[0];
+  const prefix = v.charAt(0);
   const replacement = PREFIX_MAP[prefix];
   if (replacement === undefined) {
     return err(
@@ -51,9 +51,9 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  const letter = v[8];
+  const letter = v.charAt(8);
   const num = Number(replacement + digits);
-  const expected = CHECK_LETTERS[num % 23];
+  const expected = CHECK_LETTERS.charAt(num % 23);
   if (letter !== expected) {
     return err(
       "INVALID_CHECKSUM",
@@ -73,7 +73,7 @@ const generate = (): string => {
   const prefix = prefixes[randomInt(0, 2)]!;
   const digits = randomDigits(7);
   const num = vals[prefix]! * 10000000 + Number(digits);
-  return prefix + digits + CHECK_LETTERS[num % 23];
+  return prefix + digits + CHECK_LETTERS.charAt(num % 23);
 };
 
 /** Spanish Foreigner Identification Number. */

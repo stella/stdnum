@@ -38,7 +38,7 @@ const validate = (value: string): ValidateResult => {
 
   let sum = 0;
   for (let i = 0; i < v.length; i++) {
-    sum += Number(v[i]) * WEIGHTS[i];
+    sum += Number(v.charAt(i)) * (WEIGHTS[i] ?? 0);
   }
   if (sum % 11 !== 0) {
     return err("INVALID_CHECKSUM", "TFN checksum mismatch");

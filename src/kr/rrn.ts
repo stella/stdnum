@@ -34,7 +34,7 @@ const CHECK_WEIGHTS = [
 const checkDigit = (digits: string): number => {
   let sum = 0;
   for (let i = 0; i < 12; i++) {
-    sum += CHECK_WEIGHTS[i] * Number(digits[i]);
+    sum += (CHECK_WEIGHTS[i] ?? 0) * Number(digits.charAt(i));
   }
   return (11 - (sum % 11)) % 10;
 };
@@ -60,7 +60,7 @@ const CENTURY_BY_GENDER: Record<string, number> = {
 const resolveBirthDate = (
   v: string,
 ): { year: number; month: number; day: number } | null => {
-  const century = CENTURY_BY_GENDER[v[6]];
+  const century = CENTURY_BY_GENDER[v.charAt(6)];
   if (century === undefined) return null;
 
   const year = century + Number(v.slice(0, 2));
@@ -134,7 +134,7 @@ const parse = (
   const bd = resolveBirthDate(v);
   if (bd === null) return null;
 
-  const genderDigit = v[6];
+  const genderDigit = v.charAt(6);
   const isMale = "13579".includes(genderDigit);
 
   return {

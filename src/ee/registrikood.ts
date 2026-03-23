@@ -34,7 +34,7 @@ const validate = (value: string): ValidateResult => {
       "Estonian Registrikood must contain only digits",
     );
   }
-  if (!VALID_FIRST.has(v[0])) {
+  if (!VALID_FIRST.has(v.charAt(0))) {
     return err(
       "INVALID_COMPONENT",
       "Estonian Registrikood must start with 1, 7, 8, or 9",
