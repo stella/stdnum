@@ -23,8 +23,7 @@ import { err } from "#util/result";
 import type { ValidateResult, Validator } from "../types";
 
 /** Alphabet for RFC check digit computation. */
-const ALPHABET =
-  "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ Ñ";
+const ALPHABET = "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ Ñ";
 
 const CHAR_MAP = new Map<string, number>();
 for (let i = 0; i < ALPHABET.length; i++) {
@@ -129,8 +128,7 @@ const rfc: Validator = {
     "RFC",
     "Registro Federal de Contribuyentes",
   ] as const,
-  candidatePattern:
-    "[A-ZÑ&]{3,4}\\d{6}[A-Z\\d]{3}",
+  candidatePattern: "[A-ZÑ&]{3,4}\\d{6}[A-Z\\d]{3}",
   country: "MX",
   entityType: "any",
   lengths: [12, 13] as const,

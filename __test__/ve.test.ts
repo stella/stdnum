@@ -34,28 +34,36 @@ describe("ve.rif", () => {
   test("invalid checksum", () => {
     const r = ve.rif.validate("J309876540");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_CHECKSUM");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
   });
   test("wrong length", () => {
     const r = ve.rif.validate("J30987654");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
   test("invalid prefix", () => {
     const r = ve.rif.validate("X309876543");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_COMPONENT");
   });
   test("non-digit body", () => {
     const r = ve.rif.validate("J30987654A");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_FORMAT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_FORMAT");
   });
   test("compact strips separators", () => {
-    expect(ve.rif.compact("V-30987654-3")).toBe("V309876543");
+    expect(ve.rif.compact("V-30987654-3")).toBe(
+      "V309876543",
+    );
   });
   test("format adds dashes", () => {
-    expect(ve.rif.format("V309876543")).toBe("V-30987654-3");
+    expect(ve.rif.format("V309876543")).toBe(
+      "V-30987654-3",
+    );
   });
   test("metadata", () => {
     expect(ve.rif.abbreviation).toBe("RIF");

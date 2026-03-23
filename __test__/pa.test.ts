@@ -65,9 +65,9 @@ describe("pa.ruc", () => {
     expect(pa.ruc.format("1-184-921 DV49")).toBe(
       "1-184-921 DV 49",
     );
-    expect(
-      pa.ruc.format("2588017-1-831938 DV20"),
-    ).toBe("2588017-1-831938 DV 20");
+    expect(pa.ruc.format("2588017-1-831938 DV20")).toBe(
+      "2588017-1-831938 DV 20",
+    );
   });
 
   test("metadata", () => {

@@ -42,9 +42,7 @@ describe("am.tin", () => {
   });
 
   test("compact strips spaces and dashes", () => {
-    expect(am.tin.compact("012-345-61")).toBe(
-      "01234561",
-    );
+    expect(am.tin.compact("012-345-61")).toBe("01234561");
   });
 
   test("format returns compact form", () => {

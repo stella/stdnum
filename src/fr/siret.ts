@@ -9,13 +9,16 @@
  * @see https://www.insee.fr/fr/information/2549588
  */
 
-import { luhnValidate, luhnChecksum } from "#checksums/luhn";
+import {
+  luhnValidate,
+  luhnChecksum,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.");
@@ -104,12 +107,10 @@ const siret: Validator = {
     "Système d'Identification du Répertoire des Établissements",
   abbreviation: "SIRET",
   aliases: ["SIRET", "numéro SIRET"] as const,
-  candidatePattern:
-    "\\d{3}\\s?\\d{3}\\s?\\d{3}\\s?\\d{5}",
+  candidatePattern: "\\d{3}\\s?\\d{3}\\s?\\d{3}\\s?\\d{5}",
   country: "FR",
   entityType: "company",
-  sourceUrl: 
-    "https://www.insee.fr/fr/information/2549588",
+  sourceUrl: "https://www.insee.fr/fr/information/2549588",
   examples: ["73282932000074"] as const,
   compact,
   format,

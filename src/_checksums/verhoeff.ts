@@ -40,9 +40,7 @@ const P: readonly (readonly number[])[] = [
 const INV = [0, 4, 3, 2, 1, 5, 6, 7, 8, 9] as const;
 
 /** Compute the Verhoeff checksum of a digit string. */
-export const verhoeffChecksum = (
-  value: string,
-): number => {
+export const verhoeffChecksum = (value: string): number => {
   let c = 0;
   for (let i = value.length - 1; i >= 0; i--) {
     const pos = (value.length - 1 - i) % 8;
@@ -53,9 +51,8 @@ export const verhoeffChecksum = (
 };
 
 /** Validate a digit string using Verhoeff. */
-export const verhoeffValidate = (
-  value: string,
-): boolean => verhoeffChecksum(value) === 0;
+export const verhoeffValidate = (value: string): boolean =>
+  verhoeffChecksum(value) === 0;
 
 /**
  * Calculate the Verhoeff check digit for a
@@ -66,7 +63,7 @@ export const verhoeffCheckDigit = (
 ): number => {
   let c = 0;
   for (let i = value.length - 1; i >= 0; i--) {
-    const pos = ((value.length - i) % 8);
+    const pos = (value.length - i) % 8;
     const digit = Number(value[i]);
     c = D[c]![P[pos]![digit]!]!;
   }

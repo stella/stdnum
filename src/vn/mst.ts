@@ -12,11 +12,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [31, 29, 23, 19, 17, 13, 7, 5, 3] as const;
 
@@ -31,7 +31,9 @@ const calcCheckDigit = (number: string): string => {
   // function correct as a digit calculator (mod 10
   // wrap) while still rejecting these numbers since
   // no real MST will have this combination.
-  return String(remainder >= 10 ? remainder - 10 : remainder);
+  return String(
+    remainder >= 10 ? remainder - 10 : remainder,
+  );
 };
 
 const compact = (value: string): string =>
@@ -91,7 +93,10 @@ const format = (value: string): string => {
 /** Generate a random valid Vietnamese MST. */
 const generate = (): string => {
   for (;;) {
-    const province = String(randomInt(1, 99)).padStart(2, "0");
+    const province = String(randomInt(1, 99)).padStart(
+      2,
+      "0",
+    );
     const payload = province + randomDigits(7);
     const c = payload + calcCheckDigit(payload);
     if (validate(c).valid) return c;

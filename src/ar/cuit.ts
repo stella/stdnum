@@ -17,16 +17,23 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const VALID_TYPES = new Set([
-  "20", "23", "24", "27",
-  "30", "33", "34",
-  "50", "51", "55",
+  "20",
+  "23",
+  "24",
+  "27",
+  "30",
+  "33",
+  "34",
+  "50",
+  "51",
+  "55",
 ]);
 
 const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
@@ -55,10 +62,7 @@ const validate = (value: string): ValidateResult => {
   const v = compact(value);
 
   if (v.length !== 11) {
-    return err(
-      "INVALID_LENGTH",
-      "CUIT must be 11 digits",
-    );
+    return err("INVALID_LENGTH", "CUIT must be 11 digits");
   }
 
   if (!isdigits(v)) {
@@ -95,7 +99,8 @@ const format = (value: string): string => {
 /** Generate a random valid CUIT. */
 const generate = (): string => {
   const types = ["20", "23", "24", "27", "30", "33", "34"];
-  const type = types[Math.floor(Math.random() * types.length)]!;
+  const type =
+    types[Math.floor(Math.random() * types.length)]!;
   const body = type + randomDigits(8);
   const check = calcCheckDigit(body);
   return body + String(check);
@@ -109,8 +114,7 @@ const generate = (): string => {
  */
 const cuit: Validator = {
   name: "Argentine Tax ID",
-  localName:
-    "Clave Única de Identificación Tributaria",
+  localName: "Clave Única de Identificación Tributaria",
   abbreviation: "CUIT",
   aliases: [
     "CUIT",

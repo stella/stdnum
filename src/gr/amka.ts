@@ -8,14 +8,17 @@
  * @see https://www.amka.gr/
  */
 
-import { luhnValidate, luhnChecksum } from "#checksums/luhn";
+import {
+  luhnValidate,
+  luhnChecksum,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");

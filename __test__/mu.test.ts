@@ -89,9 +89,7 @@ describe("mu.brn", () => {
   });
 
   test("format returns compact uppercase", () => {
-    expect(mu.brn.format("c07015330")).toBe(
-      "C07015330",
-    );
+    expect(mu.brn.format("c07015330")).toBe("C07015330");
   });
 
   test("metadata", () => {

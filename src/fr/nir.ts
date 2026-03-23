@@ -14,6 +14,7 @@
 
 import { clean } from "#util/clean";
 import { resolveTwoDigitYear } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type {
@@ -21,7 +22,6 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
-import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.");
@@ -52,10 +52,7 @@ const validate = (value: string): ValidateResult => {
   }
 
   const monthPart = v.slice(3, 5);
-  if (
-    !/^\d{2}$/.test(monthPart) ||
-    monthPart === "00"
-  ) {
+  if (!/^\d{2}$/.test(monthPart) || monthPart === "00") {
     return err(
       "INVALID_FORMAT",
       "French NIR month must be 01-99",
@@ -63,8 +60,7 @@ const validate = (value: string): ValidateResult => {
   }
 
   const deptPart = v.slice(5, 7);
-  const isCorsica =
-    deptPart === "2A" || deptPart === "2B";
+  const isCorsica = deptPart === "2A" || deptPart === "2B";
   if (!isCorsica && !/^\d{2}$/.test(deptPart)) {
     return err(
       "INVALID_FORMAT",
@@ -98,11 +94,9 @@ const validate = (value: string): ValidateResult => {
 
   let numericBase: string;
   if (deptPart === "2A") {
-    numericBase =
-      v.slice(0, 5) + "19" + v.slice(7, 13);
+    numericBase = v.slice(0, 5) + "19" + v.slice(7, 13);
   } else if (deptPart === "2B") {
-    numericBase =
-      v.slice(0, 5) + "18" + v.slice(7, 13);
+    numericBase = v.slice(0, 5) + "18" + v.slice(7, 13);
   } else {
     numericBase = v.slice(0, 13);
   }
@@ -131,9 +125,7 @@ const format = (value: string): string => {
   );
 };
 
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -145,8 +137,7 @@ const parse = (
   if (mm < 1 || mm > 12) return null;
 
   const year = resolveTwoDigitYear(yy);
-  const gender =
-    genderDigit === "1" ? "male" : "female";
+  const gender = genderDigit === "1" ? "male" : "female";
 
   return {
     birthDate: new Date(year, mm - 1, 1),
@@ -164,7 +155,10 @@ const generate = (): string => {
     const com = String(randomInt(1, 999)).padStart(3, "0");
     const s = String(randomInt(1, 999)).padStart(3, "0");
     const base = g + yy + mm + dept + com + s;
-    const check = String(97 - (Number(base) % 97)).padStart(2, "0");
+    const check = String(97 - (Number(base) % 97)).padStart(
+      2,
+      "0",
+    );
     const c = base + check;
     if (validate(c).valid) return c;
   }
@@ -173,8 +167,7 @@ const generate = (): string => {
 /** French Social Security Number. */
 const nir: Validator = {
   name: "French Social Security Number",
-  localName:
-    "Numero d'Inscription au Repertoire",
+  localName: "Numero d'Inscription au Repertoire",
   abbreviation: "NIR",
   aliases: [
     "NIR",
@@ -189,8 +182,7 @@ const nir: Validator = {
   description:
     "French social security number encoding " +
     "gender, birth date, and department",
-  sourceUrl:
-    "https://en.wikipedia.org/wiki/INSEE_code",
+  sourceUrl: "https://en.wikipedia.org/wiki/INSEE_code",
   lengths: [15] as const,
   examples: ["295117823456784"] as const,
   compact,

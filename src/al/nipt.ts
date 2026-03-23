@@ -1,12 +1,8 @@
 /** Generate a random valid Albanian NIPT. */
 const generate = (): string => {
-  const first = String.fromCodePoint(
-    65 + randomInt(0, 12),
-  ); // A-M
+  const first = String.fromCodePoint(65 + randomInt(0, 12)); // A-M
   const digits = randomDigits(8);
-  const last = String.fromCodePoint(
-    65 + randomInt(0, 25),
-  ); // A-Z
+  const last = String.fromCodePoint(65 + randomInt(0, 25)); // A-Z
   return `${first}${digits}${last}`;
 };
 
@@ -23,8 +19,8 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { err } from "#util/result";
 import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -51,8 +47,8 @@ const validate = (value: string): ValidateResult => {
   if (!NIPT_RE.test(v)) {
     return err(
       "INVALID_FORMAT",
-      "Albanian NIPT must be letter + 8 digits + letter"
-        + " (first letter A-M)",
+      "Albanian NIPT must be letter + 8 digits + letter" +
+        " (first letter A-M)",
     );
   }
   return { valid: true, compact: v };

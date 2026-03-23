@@ -90,9 +90,7 @@ describe("vn.mst", () => {
   });
 
   test("format 10-digit", () => {
-    expect(vn.mst.format("0100233488")).toBe(
-      "0100233488",
-    );
+    expect(vn.mst.format("0100233488")).toBe("0100233488");
   });
 
   test("format 13-digit", () => {
@@ -105,9 +103,9 @@ describe("vn.mst", () => {
     expect(vn.mst.compact("01.00.233.488")).toBe(
       "0100233488",
     );
-    expect(
-      vn.mst.compact("0312 68 78 78 - 001"),
-    ).toBe("0312687878001");
+    expect(vn.mst.compact("0312 68 78 78 - 001")).toBe(
+      "0312687878001",
+    );
   });
 
   test("metadata", () => {

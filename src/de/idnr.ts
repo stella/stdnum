@@ -10,13 +10,16 @@
  * @see https://www.bzst.de/DE/Privatpersonen/SteuerlicheIdentifikationsnummer/steuerlicheidentifikationsnummer_node.html
  */
 
-import { mod1110validate, mod1110checkDigit } from "#checksums/mod1110";
+import {
+  mod1110validate,
+  mod1110checkDigit,
+} from "#checksums/mod1110";
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -/");
@@ -121,11 +124,10 @@ const idnr: Validator = {
     "IdNr",
     "Steuer-ID",
   ] as const,
-  candidatePattern:
-    "\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}",
+  candidatePattern: "\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}",
   country: "DE",
   entityType: "person",
-  sourceUrl: 
+  sourceUrl:
     "https://www.bzst.de/DE/Privatpersonen/SteuerlicheIdentifikationsnummer/steuerlicheidentifikationsnummer_node.html",
   examples: ["36574261809"] as const,
   compact,

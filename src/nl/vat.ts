@@ -10,11 +10,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -118,17 +118,19 @@ const format = (value: string): string =>
   `NL${compact(value)}`;
 
 /** Generate a random valid Dutch VAT number. */
-const generate = (): string => { for (;;) { const c = randomDigits(9) + "B" + randomDigits(2); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(9) + "B" + randomDigits(2);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Dutch VAT Number. */
 const vat: Validator = {
   name: "Dutch VAT Number",
   localName: "BTW-identificatienummer",
   abbreviation: "BTW",
-  aliases: [
-    "BTW-nummer",
-    "BTW-id",
-  ] as const,
+  aliases: ["BTW-nummer", "BTW-id"] as const,
   candidatePattern: "NL\\d{9}B\\d{2}",
   country: "NL",
   entityType: "company",

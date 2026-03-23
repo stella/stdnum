@@ -11,6 +11,7 @@
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -19,7 +20,6 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
-import { randomInt } from "#util/generate";
 
 const WEIGHTS_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1] as const;
 const WEIGHTS_2 = [3, 4, 5, 6, 7, 8, 9, 1, 2, 3] as const;
@@ -102,9 +102,7 @@ const format = (value: string): string => compact(value);
  * Extract birth date and gender from an Isikukood.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -145,7 +143,7 @@ const ik: Validator = {
   candidatePattern: "[1-6]\\d{10}",
   country: "EE",
   entityType: "person",
-  sourceUrl: 
+  sourceUrl:
     "https://www.riigiteataja.ee/en/eli/512012015003/consolide",
   examples: ["36805280109"] as const,
   compact,

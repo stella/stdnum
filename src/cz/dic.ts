@@ -13,12 +13,12 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 import { validate as validateRc } from "./rc";
-import { randomDigits, randomInt } from "#util/generate";
 
 const ICO_WEIGHTS = [8, 7, 6, 5, 4, 3, 2] as const;
 
@@ -119,10 +119,7 @@ const dic: Validator = {
   name: "Czech VAT Number",
   localName: "Daňové identifikační číslo",
   abbreviation: "DIČ",
-  aliases: [
-    "DIČ",
-    "daňové identifikační číslo",
-  ] as const,
+  aliases: ["DIČ", "daňové identifikační číslo"] as const,
   candidatePattern: "CZ\\d{8,10}",
   country: "CZ",
   entityType: "any",

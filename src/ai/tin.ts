@@ -24,8 +24,8 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { err } from "#util/result";
 import { randomDigits } from "#util/generate";
+import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
 

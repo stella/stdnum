@@ -110,9 +110,7 @@ describe("lk.nic", () => {
     expect(lk.nic.format("197819202757")).toBe(
       "197819202757",
     );
-    expect(lk.nic.format("862348753v")).toBe(
-      "862348753V",
-    );
+    expect(lk.nic.format("862348753v")).toBe("862348753V");
   });
 
   // ─── Metadata ─────────────────────────────────

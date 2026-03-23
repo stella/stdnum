@@ -8,11 +8,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const ODD_MAP: Record<number, number> = {
   0: 1,
@@ -53,7 +53,10 @@ const validate = (value: string): ValidateResult => {
       "Cypriot VAT number must start with 8 digits",
     );
   }
-  if (checkLetter === undefined || !LETTERS.includes(checkLetter)) {
+  if (
+    checkLetter === undefined ||
+    !LETTERS.includes(checkLetter)
+  ) {
     return err(
       "INVALID_FORMAT",
       "Cypriot VAT number must end with a letter",
@@ -95,10 +98,12 @@ const generate = (): string => {
   for (;;) {
     const digits = randomDigits(8);
     if (digits.startsWith("12")) continue;
-    let odd = 0; let even = 0;
+    let odd = 0;
+    let even = 0;
     for (let i = 0; i < 8; i++) {
       const d = Number(digits.charAt(i));
-      if (i % 2 === 0) odd += ODD_MAP[d] ?? 0; else even += d;
+      if (i % 2 === 0) odd += ODD_MAP[d] ?? 0;
+      else even += d;
     }
     return digits + LETTERS.charAt((odd + even) % 26);
   }

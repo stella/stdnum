@@ -23,11 +23,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 /**
  * Check letter alphabet (mod 23). Excludes I, O, Z
@@ -118,8 +118,7 @@ const validate = (value: string): ValidateResult => {
   if (!isValidDate(datePart)) {
     return err(
       "INVALID_COMPONENT",
-      "Nicaragua RUC contains an invalid " +
-        "birth date",
+      "Nicaragua RUC contains an invalid " + "birth date",
     );
   }
 
@@ -147,8 +146,7 @@ const format = (value: string): string => {
     return `J-${v.slice(1)}`;
   }
   return (
-    `${v.slice(0, 3)}-${v.slice(3, 9)}` +
-    `-${v.slice(9)}`
+    `${v.slice(0, 3)}-${v.slice(3, 9)}` + `-${v.slice(9)}`
   );
 };
 
@@ -164,14 +162,10 @@ const ruc: Validator = {
   candidatePattern: "[JKME]\\d{13}",
   country: "NI",
   entityType: "any",
-  description:
-    "Tax identifier issued by Nicaragua's DGI",
+  description: "Tax identifier issued by Nicaragua's DGI",
   sourceUrl: "https://www.dgi.gob.ni/",
   lengths: [14] as const,
-  examples: [
-    "6071904680001F",
-    "2811505850012D",
-  ] as const,
+  examples: ["6071904680001F", "2811505850012D"] as const,
   compact,
   format,
   validate,

@@ -12,10 +12,7 @@
  */
 
 import * as all from "../src";
-import type {
-  CountryCode,
-  Validator,
-} from "../src/types";
+import type { CountryCode, Validator } from "../src/types";
 
 // ─── Country name lookup ────────────────────
 
@@ -182,8 +179,7 @@ type GroupKey = CountryCode | typeof INTERNATIONAL;
 const grouped = new Map<GroupKey, CatalogEntry[]>();
 
 for (const entry of entries) {
-  const group: GroupKey =
-    entry.country ?? INTERNATIONAL;
+  const group: GroupKey = entry.country ?? INTERNATIONAL;
   const list = grouped.get(group);
   if (list) {
     list.push(entry);
@@ -193,13 +189,11 @@ for (const entry of entries) {
 }
 
 // Sort groups: international first, then alphabetically
-const sortedGroups = [...grouped.keys()].sort(
-  (a, b) => {
-    if (a === INTERNATIONAL) return -1;
-    if (b === INTERNATIONAL) return 1;
-    return a.localeCompare(b);
-  },
-);
+const sortedGroups = [...grouped.keys()].sort((a, b) => {
+  if (a === INTERNATIONAL) return -1;
+  if (b === INTERNATIONAL) return 1;
+  return a.localeCompare(b);
+});
 
 // ─── Output ─────────────────────────────────
 
@@ -219,9 +213,7 @@ if (jsonMode) {
     summary: {
       total: entries.length,
       countries: new Set(
-        entries
-          .map((e) => e.country)
-          .filter(Boolean),
+        entries.map((e) => e.country).filter(Boolean),
       ).size,
       byEntityType: {
         person: entries.filter(
@@ -230,9 +222,8 @@ if (jsonMode) {
         company: entries.filter(
           (e) => e.entityType === "company",
         ).length,
-        any: entries.filter(
-          (e) => e.entityType === "any",
-        ).length,
+        any: entries.filter((e) => e.entityType === "any")
+          .length,
       },
     },
   };
@@ -275,8 +266,7 @@ if (jsonMode) {
     for (const entry of items) {
       const keyPart =
         entry.key.split(".").pop() ?? entry.key;
-      const nameLabel =
-        `${entry.name} (${entry.abbreviation})`;
+      const nameLabel = `${entry.name} (${entry.abbreviation})`;
       const line = [
         "  ",
         keyPart.padEnd(keyWidth + 2),

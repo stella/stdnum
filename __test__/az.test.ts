@@ -23,13 +23,15 @@ describe("az.voen", () => {
   test("wrong length", () => {
     const r = az.voen.validate("12345");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
 
   test("non-digit characters", () => {
     const r = az.voen.validate("ZZ00057421");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_FORMAT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_FORMAT");
   });
 
   test("invalid last digit (not 1 or 2)", () => {

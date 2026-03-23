@@ -14,11 +14,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [3, 7, 1] as const;
 
@@ -49,10 +49,7 @@ const validate = (value: string): ValidateResult => {
   const v = compact(value);
 
   if (v.length !== 18) {
-    return err(
-      "INVALID_LENGTH",
-      "CLABE must be 18 digits",
-    );
+    return err("INVALID_LENGTH", "CLABE must be 18 digits");
   }
 
   if (!isdigits(v)) {

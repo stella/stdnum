@@ -8,15 +8,13 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
-const WEIGHTS = [
-  21, 19, 17, 13, 11, 9, 7, 3, 1,
-] as const;
+const WEIGHTS = [21, 19, 17, 13, 11, 9, 7, 3, 1] as const;
 
 const compact = (value: string): string =>
   clean(value, " -.");

@@ -10,11 +10,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [7, 9, 10, 5, 8, 4, 2, 1];
 
@@ -54,22 +54,23 @@ const format = (value: string): string =>
   `FI${compact(value)}`;
 
 /** Generate a random valid Finnish VAT number. */
-const generate = (): string => { for (;;) { const c = randomDigits(8); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(8);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Finnish VAT Number. */
 const vat: Validator = {
   name: "Finnish VAT Number",
   localName: "Arvonlisäveronumero",
   abbreviation: "ALV nro",
-  aliases: [
-    "ALV-numero",
-    "Y-tunnus",
-  ] as const,
+  aliases: ["ALV-numero", "Y-tunnus"] as const,
   candidatePattern: "FI\\d{8}",
   country: "FI",
   entityType: "company",
-  sourceUrl: 
-    "https://www.ytj.fi/en/index/businessid.html",
+  sourceUrl: "https://www.ytj.fi/en/index/businessid.html",
   examples: ["20774740"] as const,
   compact,
   format,

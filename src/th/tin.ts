@@ -11,11 +11,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -73,7 +73,8 @@ const generate = (): string => {
   const first = String(randomInt(1, 8));
   const payload = first + randomDigits(11);
   let sum = 0;
-  for (let i = 0; i < 12; i++) sum += (13 - i) * Number(payload[i]);
+  for (let i = 0; i < 12; i++)
+    sum += (13 - i) * Number(payload[i]);
   return payload + String((11 - (sum % 11)) % 10);
 };
 
@@ -82,10 +83,7 @@ const tin: Validator = {
   name: "Thai Tax Identification Number",
   localName: "เลขประจำตัวผู้เสียภาษี",
   abbreviation: "TIN",
-  aliases: [
-    "เลขประจำตัวผู้เสียภาษี",
-    "TIN",
-  ] as const,
+  aliases: ["เลขประจำตัวผู้เสียภาษี", "TIN"] as const,
   candidatePattern: "\\d{13}",
   country: "TH",
   entityType: "any",
@@ -93,10 +91,7 @@ const tin: Validator = {
     "13-digit tax identifier for individuals and companies",
   sourceUrl: "https://www.rd.go.th/",
   lengths: [13] as const,
-  examples: [
-    "1101700230708",
-    "3100600445015",
-  ] as const,
+  examples: ["1101700230708", "3100600445015"] as const,
   compact,
   format,
   validate,

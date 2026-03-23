@@ -9,11 +9,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -54,17 +54,19 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Generate a random valid Serbian PIB. */
-const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(9);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Serbian Tax Identification Number. */
 const pib: Validator = {
   name: "Serbian Tax ID",
   localName: "Poreski identifikacioni broj",
   abbreviation: "PIB",
-  aliases: [
-    "PIB",
-    "poreski identifikacioni broj",
-  ] as const,
+  aliases: ["PIB", "poreski identifikacioni broj"] as const,
   candidatePattern: "\\d{9}",
   country: "RS",
   entityType: "any",

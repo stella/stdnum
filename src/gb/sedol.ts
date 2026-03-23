@@ -11,11 +11,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomInt } from "#util/generate";
 
 /**
  * Allowed characters in a SEDOL: digits and
@@ -24,8 +24,7 @@ import { randomInt } from "#util/generate";
  * I=18, O=24, U=30) so that indexOf returns
  * the correct SEDOL weight for each consonant.
  */
-const ALPHABET =
-  "0123456789 BCD FGH JKLMN PQRST VWXYZ";
+const ALPHABET = "0123456789 BCD FGH JKLMN PQRST VWXYZ";
 
 const WEIGHTS = [1, 3, 1, 7, 3, 9] as const;
 
@@ -41,9 +40,7 @@ const calcCheckDigit = (number: string): string => {
     const ch = number[i]!;
     const val = ALPHABET.indexOf(ch);
     if (val < 0) {
-      throw new Error(
-        `Invalid SEDOL character: ${ch}`,
-      );
+      throw new Error(`Invalid SEDOL character: ${ch}`);
     }
     // SAFETY: weights length matches loop bound
     sum += WEIGHTS[i]! * val;
@@ -95,24 +92,24 @@ const validate = (value: string): ValidateResult => {
   return { valid: true, compact: v };
 };
 
-const format = (value: string): string =>
-  compact(value);
+const format = (value: string): string => compact(value);
 
 /** Generate a random valid SEDOL. */
 const generate = (): string => {
   const consonants = "BCDFGHJKLMNPQRSTVWXYZ";
   const chars = "0123456789BCDFGHJKLMNPQRSTVWXYZ";
-  const first = consonants[randomInt(0, consonants.length - 1)]!;
+  const first =
+    consonants[randomInt(0, consonants.length - 1)]!;
   let payload = first;
-  for (let i = 1; i < 6; i++) payload += chars[randomInt(0, chars.length - 1)]!;
+  for (let i = 1; i < 6; i++)
+    payload += chars[randomInt(0, chars.length - 1)]!;
   return payload + calcCheckDigit(payload);
 };
 
 /** Stock Exchange Daily Official List number. */
 const sedol: Validator = {
   name: "Stock Exchange Daily Official List number",
-  localName:
-    "Stock Exchange Daily Official List number",
+  localName: "Stock Exchange Daily Official List number",
   abbreviation: "SEDOL",
   aliases: [
     "SEDOL",
@@ -131,4 +128,10 @@ const sedol: Validator = {
 };
 
 export default sedol;
-export { calcCheckDigit, compact, format, validate, generate };
+export {
+  calcCheckDigit,
+  compact,
+  format,
+  validate,
+  generate,
+};

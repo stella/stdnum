@@ -10,11 +10,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [3, 4, 6, 7, 8, 9, 10, 1];
 
@@ -60,7 +60,12 @@ const format = (value: string): string =>
   `MT${compact(value)}`;
 
 /** Generate a random valid Maltese VAT number. */
-const generate = (): string => { for (;;) { const c = String(randomInt(1, 9)) + randomDigits(7); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = String(randomInt(1, 9)) + randomDigits(7);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Maltese VAT Number. */
 const vat: Validator = {

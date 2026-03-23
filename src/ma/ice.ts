@@ -11,11 +11,11 @@
 
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " ");
@@ -43,11 +43,15 @@ const validate = (value: string): ValidateResult => {
   return { valid: true, compact: v };
 };
 
-const format = (value: string): string =>
-  compact(value);
+const format = (value: string): string => compact(value);
 
 /** Generate a random valid Moroccan ICE. */
-const generate = (): string => { for (;;) { const c = randomDigits(15); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(15);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Moroccan Company Identification Number. */
 const ice: Validator = {
@@ -64,14 +68,10 @@ const ice: Validator = {
   compact,
   format,
   validate,
-  description:
-    "Moroccan common enterprise identifier",
+  description: "Moroccan common enterprise identifier",
   sourceUrl: "https://www.ice.gov.ma/",
   lengths: [15] as const,
-  examples: [
-    "001561191000066",
-    "002136093000040",
-  ] as const,
+  examples: ["001561191000066", "002136093000040"] as const,
   generate,
 };
 

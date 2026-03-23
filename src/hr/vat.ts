@@ -7,13 +7,16 @@
  * @see https://www.porezna-uprava.hr/
  */
 
-import { mod1110validate, mod1110checkDigit } from "#checksums/mod1110";
+import {
+  mod1110validate,
+  mod1110checkDigit,
+} from "#checksums/mod1110";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -60,10 +63,7 @@ const vat: Validator = {
   name: "Croatian VAT Number",
   localName: "Osobni identifikacijski broj",
   abbreviation: "OIB",
-  aliases: [
-    "OIB",
-    "osobni identifikacijski broj",
-  ] as const,
+  aliases: ["OIB", "osobni identifikacijski broj"] as const,
   candidatePattern: "HR\\d{11}",
   country: "HR",
   entityType: "any",

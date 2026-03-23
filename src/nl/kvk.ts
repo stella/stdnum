@@ -10,9 +10,9 @@ const generate = (): string => randomDigits(8);
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -43,10 +43,7 @@ const kvk: Validator = {
   name: "Dutch Chamber of Commerce Number",
   localName: "KvK-nummer",
   abbreviation: "KvK",
-  aliases: [
-    "KVK-nummer",
-    "Kamer van Koophandel",
-  ] as const,
+  aliases: ["KVK-nummer", "Kamer van Koophandel"] as const,
   candidatePattern: "\\d{8}",
   country: "NL",
   entityType: "company",

@@ -10,14 +10,17 @@
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Indonesia-TIN.pdf
  */
 
-import { luhnValidate, luhnChecksum } from "#checksums/luhn";
+import {
+  luhnValidate,
+  luhnChecksum,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " .-");
@@ -27,11 +30,39 @@ const compact = (value: string): string =>
  * python-stdnum's id/loc numdb.
  */
 const NIK_PROVINCES = new Set([
-  "11", "12", "13", "14", "15", "16", "17", "18",
-  "19", "21", "31", "32", "33", "34", "35", "36",
-  "51", "52", "53", "61", "62", "63", "64",
-  "71", "72", "73", "74", "75", "76",
-  "81", "82", "91", "94",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+  "16",
+  "17",
+  "18",
+  "19",
+  "21",
+  "31",
+  "32",
+  "33",
+  "34",
+  "35",
+  "36",
+  "51",
+  "52",
+  "53",
+  "61",
+  "62",
+  "63",
+  "64",
+  "71",
+  "72",
+  "73",
+  "74",
+  "75",
+  "76",
+  "81",
+  "82",
+  "91",
+  "94",
 ]);
 
 /**
@@ -41,9 +72,7 @@ const NIK_PROVINCES = new Set([
  * DDMMYY = birth date (DD+40 for females),
  * XXXX = serial.
  */
-const validateNik = (
-  v: string,
-): ValidateResult => {
+const validateNik = (v: string): ValidateResult => {
   // Province code check
   if (!NIK_PROVINCES.has(v.slice(0, 2))) {
     return err(
@@ -58,8 +87,8 @@ const validateNik = (
   if (day > 40) day -= 40;
   // Validate the date (century is ambiguous in NIK)
   if (
-    !isValidDate(1900 + year, month, day)
-    && !isValidDate(2000 + year, month, day)
+    !isValidDate(1900 + year, month, day) &&
+    !isValidDate(2000 + year, month, day)
   ) {
     return err(
       "INVALID_COMPONENT",
@@ -114,9 +143,9 @@ const format = (value: string): string => {
     return v;
   }
   return (
-    `${v.slice(0, 2)}.${v.slice(2, 5)}.`
-    + `${v.slice(5, 8)}.${v.slice(8, 9)}`
-    + `-${v.slice(9, 12)}.${v.slice(12)}`
+    `${v.slice(0, 2)}.${v.slice(2, 5)}.` +
+    `${v.slice(5, 8)}.${v.slice(8, 9)}` +
+    `-${v.slice(9, 12)}.${v.slice(12)}`
   );
 };
 
@@ -135,10 +164,7 @@ const npwp: Validator = {
   name: "Indonesian Taxpayer Identification Number",
   localName: "Nomor Pokok Wajib Pajak",
   abbreviation: "NPWP",
-  aliases: [
-    "NPWP",
-    "Nomor Pokok Wajib Pajak",
-  ] as const,
+  aliases: ["NPWP", "Nomor Pokok Wajib Pajak"] as const,
   candidatePattern:
     "\\d{2}\\.?\\d{3}\\.?\\d{3}\\.?\\d-?\\d{3}\\.?\\d{3}",
   country: "ID",
@@ -146,11 +172,11 @@ const npwp: Validator = {
   lengths: [15, 16],
   examples: ["013000666091000", "016090524017000"],
   description:
-    "15 or 16-digit tax identification number issued by "
-    + "the Directorate General of Taxes",
+    "15 or 16-digit tax identification number issued by " +
+    "the Directorate General of Taxes",
   sourceUrl:
-    "https://en.wikipedia.org/wiki/"
-    + "Tax_identification_number#Indonesia",
+    "https://en.wikipedia.org/wiki/" +
+    "Tax_identification_number#Indonesia",
   compact,
   format,
   validate,

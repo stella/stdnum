@@ -8,13 +8,16 @@
  * @see https://en.wikipedia.org/wiki/Social_Insurance_Number
  */
 
-import { luhnValidate, luhnChecksum } from "#checksums/luhn";
+import {
+  luhnValidate,
+  luhnChecksum,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -75,7 +78,7 @@ const sin: Validator = {
   candidatePattern: "\\d{3}-?\\d{3}-?\\d{3}",
   country: "CA",
   entityType: "person",
-  sourceUrl: 
+  sourceUrl:
     "https://www.canada.ca/en/employment-social-development/services/sin.html",
   examples: ["123456782"] as const,
   compact,

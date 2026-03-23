@@ -5,9 +5,7 @@ const generate = (): string => {
   const first3 =
     randomLetter() + randomLetter() + randomLetter();
   const holderType =
-    HOLDER_TYPES[
-      randomInt(0, HOLDER_TYPES.length - 1)
-    ]!;
+    HOLDER_TYPES[randomInt(0, HOLDER_TYPES.length - 1)]!;
   const fifth = randomLetter();
   const digits = randomDigits(4);
   const last = randomLetter();
@@ -29,8 +27,8 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { err } from "#util/result";
 import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -71,17 +69,13 @@ const pan: Validator = {
   name: "Indian Permanent Account Number",
   localName: "Permanent Account Number",
   abbreviation: "PAN",
-  aliases: [
-    "PAN",
-    "Permanent Account Number",
-  ] as const,
+  aliases: ["PAN", "Permanent Account Number"] as const,
   candidatePattern: "[A-Z]{5}\\d{4}[A-Z]",
   country: "IN",
   entityType: "any",
   lengths: [10],
   examples: ["ABCPP1234C", "AAACR5055K"],
-  description:
-    "10-character alphanumeric tax identifier",
+  description: "10-character alphanumeric tax identifier",
   sourceUrl:
     "https://en.wikipedia.org/wiki/Permanent_account_number",
   compact,

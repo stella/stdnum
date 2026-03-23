@@ -10,11 +10,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [9, 8, 7, 6, 5, 4, 3, 2, -1] as const;
 
@@ -54,7 +54,12 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Generate a random valid Dutch BSN. */
-const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(9);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Dutch Citizen Service Number. */
 const bsn: Validator = {
@@ -69,7 +74,7 @@ const bsn: Validator = {
   candidatePattern: "\\d{9}",
   country: "NL",
   entityType: "person",
-  sourceUrl: 
+  sourceUrl:
     "https://www.government.nl/topics/personal-data/citizen-service-number-bsn",
   examples: ["111222333"] as const,
   compact,

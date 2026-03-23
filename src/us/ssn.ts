@@ -3,18 +3,13 @@ const generate = (): string => {
   for (;;) {
     let area: string;
     do {
-      area = String(randomInt(1, 899)).padStart(
-        3,
-        "0",
-      );
+      area = String(randomInt(1, 899)).padStart(3, "0");
     } while (area === "666");
-    const group = String(randomInt(1, 99)).padStart(
-      2,
+    const group = String(randomInt(1, 99)).padStart(2, "0");
+    const serial = String(randomInt(1, 9999)).padStart(
+      4,
       "0",
     );
-    const serial = String(
-      randomInt(1, 9999),
-    ).padStart(4, "0");
     const ssn = `${area}${group}${serial}`;
     if (!BLACKLIST.has(ssn)) return ssn;
   }
@@ -33,9 +28,9 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -106,15 +101,11 @@ const ssn: Validator = {
   name: "Social Security Number",
   localName: "Social Security Number",
   abbreviation: "SSN",
-  aliases: [
-    "SSN",
-    "Social Security Number",
-  ] as const,
+  aliases: ["SSN", "Social Security Number"] as const,
   candidatePattern: "\\d{3}-?\\d{2}-?\\d{4}",
   country: "US",
   entityType: "person",
-  sourceUrl: 
-    "https://www.ssa.gov/employer/verifySSN.htm",
+  sourceUrl: "https://www.ssa.gov/employer/verifySSN.htm",
   examples: ["536904399"] as const,
   compact,
   format,

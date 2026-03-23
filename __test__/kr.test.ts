@@ -4,10 +4,7 @@ import { kr } from "../src";
 import { parse } from "../src/kr/rrn";
 
 describe("kr.brn", () => {
-  const valid = [
-    "1168200131",
-    "2208162517",
-  ];
+  const valid = ["1168200131", "2208162517"];
 
   for (const v of valid) {
     test(`valid: ${v}`, () => {
@@ -83,10 +80,7 @@ describe("kr.brn", () => {
 // ─── RRN ────────────────────────────────────────
 
 describe("kr.rrn", () => {
-  const valid = [
-    "9710139019902",
-    "9501011000109",
-  ];
+  const valid = ["9710139019902", "9501011000109"];
 
   for (const v of valid) {
     test(`valid: ${v}`, () => {

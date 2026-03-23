@@ -13,6 +13,7 @@
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -21,7 +22,6 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3] as const;
 
@@ -93,9 +93,7 @@ const format = (value: string): string => compact(value);
  * Extract birth date and gender from a PESEL number.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -142,7 +140,7 @@ const pesel: Validator = {
   candidatePattern: "\\d{11}",
   country: "PL",
   entityType: "person",
-  sourceUrl: 
+  sourceUrl:
     "https://www.gov.pl/web/cyfryzacja/numer-pesel",
   examples: ["02070803628"] as const,
   compact,

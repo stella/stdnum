@@ -9,11 +9,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const CHECK_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE";
 
@@ -68,11 +68,10 @@ const dni: Validator = {
     "DNI",
     "documento nacional de identidad",
   ] as const,
-  candidatePattern:
-    "\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[A-Z]",
+  candidatePattern: "\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[A-Z]",
   country: "ES",
   entityType: "person",
-  sourceUrl: 
+  sourceUrl:
     "https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/dni/",
   examples: ["54362315K"] as const,
   compact,
@@ -82,4 +81,10 @@ const dni: Validator = {
 };
 
 export default dni;
-export { CHECK_LETTERS, compact, format, validate, generate };
+export {
+  CHECK_LETTERS,
+  compact,
+  format,
+  validate,
+  generate,
+};

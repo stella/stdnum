@@ -8,12 +8,12 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 import { twoPassCheck } from "./ik";
-import { randomDigits, randomInt } from "#util/generate";
 
 const VALID_FIRST = new Set(["1", "7", "8", "9"]);
 

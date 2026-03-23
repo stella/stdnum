@@ -27,7 +27,7 @@ const checkDigit = (payload: string): number => {
   let sum = 0;
   for (let i = 0; i < 12; i++) {
     const digit = Number(payload[11 - i]);
-    const weight = (i % 2 === 0) ? 1 : 2;
+    const weight = i % 2 === 0 ? 1 : 2;
     sum += digit * weight;
   }
   return 9 - (sum % 9);
@@ -57,8 +57,7 @@ const validate = (value: string): ValidateResult => {
   return { valid: true, compact: v };
 };
 
-const format = (value: string): string =>
-  compact(value);
+const format = (value: string): string => compact(value);
 
 /** Generate a random valid Corporate Number. */
 const generate = (): string => {
@@ -72,10 +71,7 @@ const cn: Validator = {
   name: "Japanese Corporate Number",
   localName: "法人番号",
   abbreviation: "CN",
-  aliases: [
-    "法人番号",
-    "Corporate Number",
-  ] as const,
+  aliases: ["法人番号", "Corporate Number"] as const,
   candidatePattern: "\\d{13}",
   country: "JP",
   entityType: "company",

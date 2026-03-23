@@ -30,48 +30,61 @@ describe("uy.rut", () => {
   test("invalid checksum", () => {
     const r = uy.rut.validate("010100010012");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_CHECKSUM");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
   });
   test("wrong length", () => {
     const r = uy.rut.validate("01010001001");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
   test("non-digit characters", () => {
     const r = uy.rut.validate("01010001001A");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_FORMAT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_FORMAT");
   });
   test("invalid document type (00)", () => {
     const r = uy.rut.validate("000100010013");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_COMPONENT");
   });
   test("invalid document type (> 22)", () => {
     const r = uy.rut.validate("230100010010");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_COMPONENT");
   });
   test("rejects number whose check formula yields 10", () => {
     // 01-000008-001-0: weighted sum produces check digit 10,
     // which cannot fit in a single digit position.
     const r = uy.rut.validate("010000080010");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_CHECKSUM");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
   });
   test("all-zero sequence", () => {
     const r = uy.rut.validate("010000000013");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_COMPONENT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_COMPONENT");
   });
   test("compact strips separators", () => {
-    expect(uy.rut.compact("01-010001-001-3")).toBe("010100010013");
+    expect(uy.rut.compact("01-010001-001-3")).toBe(
+      "010100010013",
+    );
   });
   test("compact strips UY prefix", () => {
-    expect(uy.rut.compact("UY010100010013")).toBe("010100010013");
+    expect(uy.rut.compact("UY010100010013")).toBe(
+      "010100010013",
+    );
   });
   test("format adds separators", () => {
-    expect(uy.rut.format("010100010013")).toBe("01-010001-001-3");
+    expect(uy.rut.format("010100010013")).toBe(
+      "01-010001-001-3",
+    );
   });
   test("metadata", () => {
     expect(uy.rut.abbreviation).toBe("RUT");

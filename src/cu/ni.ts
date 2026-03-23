@@ -76,9 +76,7 @@ const format = (value: string): string => compact(value);
  * Extract birth date and gender from a Cuban NI.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 

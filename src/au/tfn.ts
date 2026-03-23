@@ -10,11 +10,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [1, 4, 3, 7, 5, 8, 6, 9, 10] as const;
 
@@ -56,21 +56,23 @@ const format = (value: string): string => {
 };
 
 /** Generate a random valid TFN. */
-const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(9);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Australian Tax File Number. */
 const tfn: Validator = {
   name: "Tax File Number",
   localName: "Tax File Number",
   abbreviation: "TFN",
-  aliases: [
-    "TFN",
-    "Tax File Number",
-  ] as const,
+  aliases: ["TFN", "Tax File Number"] as const,
   candidatePattern: "\\d{8,9}",
   country: "AU",
   entityType: "person",
-  sourceUrl: 
+  sourceUrl:
     "https://www.ato.gov.au/individuals-and-families/tax-file-number",
   examples: ["87650006", "123456782"] as const,
   compact,

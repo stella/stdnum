@@ -11,11 +11,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS_A = [1, 2, 3, 4, 5, 6, 7] as const;
 const WEIGHTS_B = [7, 1, 2, 3, 4, 5, 6] as const;
@@ -52,12 +52,9 @@ const validate = (value: string): ValidateResult => {
   }
 
   const firstDigit = Number(v[0]);
-  const useA =
-    firstDigit < 3 || firstDigit >= 6;
-  const weightsFirst =
-    useA ? WEIGHTS_A : WEIGHTS_B;
-  const weightsSecond =
-    useA ? WEIGHTS_A2 : WEIGHTS_B2;
+  const useA = firstDigit < 3 || firstDigit >= 6;
+  const weightsFirst = useA ? WEIGHTS_A : WEIGHTS_B;
+  const weightsSecond = useA ? WEIGHTS_A2 : WEIGHTS_B2;
 
   let check = calcCheck(v, weightsFirst);
   if (check >= 10) {
@@ -77,7 +74,12 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Generate a random valid Ukrainian EDRPOU. */
-const generate = (): string => { for (;;) { const c = randomDigits(8); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(8);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Ukrainian Company Register Number. */
 const edrpou: Validator = {

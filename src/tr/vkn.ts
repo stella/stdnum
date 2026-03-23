@@ -20,11 +20,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -./");
@@ -81,10 +81,7 @@ const vkn: Validator = {
   name: "Turkish Tax ID",
   localName: "Vergi Kimlik Numarası",
   abbreviation: "VKN",
-  aliases: [
-    "VKN",
-    "Vergi Kimlik Numarası",
-  ] as const,
+  aliases: ["VKN", "Vergi Kimlik Numarası"] as const,
   candidatePattern: "\\d{10}",
   country: "TR",
   entityType: "company",

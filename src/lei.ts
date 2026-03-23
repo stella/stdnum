@@ -11,11 +11,11 @@
 
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
 
 import type { ValidateResult, Validator } from "./types";
-import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -").toUpperCase();
@@ -69,7 +69,8 @@ const format = (value: string): string => {
 const generate = (): string => {
   for (;;) {
     let base = "";
-    for (let i = 0; i < 18; i++) base += String(randomInt(0, 9));
+    for (let i = 0; i < 18; i++)
+      base += String(randomInt(0, 9));
     for (let cd = 0; cd < 100; cd++) {
       const c = base + String(cd).padStart(2, "0");
       if (validate(c).valid) return c;
@@ -82,10 +83,7 @@ const lei: Validator = {
   name: "Legal Entity Identifier",
   localName: "Legal Entity Identifier",
   abbreviation: "LEI",
-  aliases: [
-    "LEI",
-    "Legal Entity Identifier",
-  ] as const,
+  aliases: ["LEI", "Legal Entity Identifier"] as const,
   candidatePattern: "[A-Z0-9]{18}\\d{2}",
   entityType: "company",
   sourceUrl: "https://www.gleif.org/",

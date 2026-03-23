@@ -57,9 +57,7 @@ describe("eg.tn", () => {
   });
 
   test("format adds hyphens", () => {
-    expect(eg.tn.format("100531385")).toBe(
-      "100-531-385",
-    );
+    expect(eg.tn.format("100531385")).toBe("100-531-385");
   });
 
   test("metadata", () => {

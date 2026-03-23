@@ -26,10 +26,38 @@ import type {
 
 /** Valid Mexican state codes (2-letter). */
 const STATE_CODES = new Set([
-  "AS", "BC", "BS", "CC", "CL", "CM", "CS", "CH",
-  "DF", "DG", "GT", "GR", "HG", "JC", "MC", "MN",
-  "MS", "NT", "NL", "OC", "PL", "QT", "QR", "SP",
-  "SL", "SR", "TC", "TS", "TL", "VZ", "YN", "ZS",
+  "AS",
+  "BC",
+  "BS",
+  "CC",
+  "CL",
+  "CM",
+  "CS",
+  "CH",
+  "DF",
+  "DG",
+  "GT",
+  "GR",
+  "HG",
+  "JC",
+  "MC",
+  "MN",
+  "MS",
+  "NT",
+  "NL",
+  "OC",
+  "PL",
+  "QT",
+  "QR",
+  "SP",
+  "SL",
+  "SR",
+  "TC",
+  "TS",
+  "TL",
+  "VZ",
+  "YN",
+  "ZS",
   "NE", // Born abroad
 ]);
 
@@ -38,8 +66,7 @@ const STATE_CODES = new Set([
  * Matches python-stdnum: digits 0-9, then A-N,
  * ampersand, O-Z.
  */
-const ALPHABET =
-  "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ";
+const ALPHABET = "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ";
 
 const CHAR_MAP = new Map<string, number>();
 for (let i = 0; i < ALPHABET.length; i++) {
@@ -134,9 +161,7 @@ const format = (value: string): string => compact(value);
  * Extract birth date and gender from a CURP.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -170,8 +195,7 @@ const curp: Validator = {
     "CURP",
     "Clave Única de Registro de Población",
   ] as const,
-  candidatePattern:
-    "[A-Z]{4}\\d{6}[HM][A-Z]{5}[A-Z\\d]\\d",
+  candidatePattern: "[A-Z]{4}\\d{6}[HM][A-Z]{5}[A-Z\\d]\\d",
   country: "MX",
   entityType: "person",
   lengths: [18] as const,

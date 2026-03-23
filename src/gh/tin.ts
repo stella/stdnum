@@ -15,10 +15,10 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const FORMAT_RE = /^[PCGQV]00[0-9]{7}[0-9X]$/;
 
@@ -63,8 +63,7 @@ const validate = (value: string): ValidateResult => {
   return { valid: true, compact: v };
 };
 
-const format = (value: string): string =>
-  compact(value);
+const format = (value: string): string => compact(value);
 
 /** Generate a random valid Ghana TIN. */
 const generate = (): string => {
@@ -83,18 +82,14 @@ const tin: Validator = {
   name: "Ghanaian Tax Identification Number",
   localName: "Tax Identification Number",
   abbreviation: "TIN",
-  aliases: [
-    "TIN",
-    "Tax Identification Number",
-  ] as const,
+  aliases: ["TIN", "Tax Identification Number"] as const,
   candidatePattern: "[A-Z]\\d{9,10}",
   country: "GH",
   entityType: "any",
   compact,
   format,
   validate,
-  description:
-    "Ghanaian tax identification number",
+  description: "Ghanaian tax identification number",
   sourceUrl: "https://gra.gov.gh/",
   lengths: [11] as const,
   examples: ["C0000803561"] as const,

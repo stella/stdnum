@@ -14,11 +14,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -.").trim();
@@ -98,10 +98,7 @@ const cpf: Validator = {
   name: "Brazilian CPF",
   localName: "Cadastro de Pessoas Físicas",
   abbreviation: "CPF",
-  aliases: [
-    "CPF",
-    "Cadastro de Pessoas Físicas",
-  ] as const,
+  aliases: ["CPF", "Cadastro de Pessoas Físicas"] as const,
   candidatePattern: "\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}",
   country: "BR",
   entityType: "person",

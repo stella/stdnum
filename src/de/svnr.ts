@@ -14,10 +14,10 @@ import {
   isValidDate,
   resolveTwoDigitYear,
 } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomInt } from "#util/generate";
 
 const letterValue = (ch: string): number => {
   const code = ch.charCodeAt(0);
@@ -50,8 +50,7 @@ const computeCheck = (v: string): number => {
   for (let i = 0; i < 12; i++) {
     const product = digits[i]! * WEIGHTS[i]!;
     if (product >= 10) {
-      sum +=
-        Math.floor(product / 10) + (product % 10);
+      sum += Math.floor(product / 10) + (product % 10);
     } else {
       sum += product;
     }
@@ -119,8 +118,13 @@ const generate = (): string => {
     const dd = String(randomInt(1, 28)).padStart(2, "0");
     const mm = String(randomInt(1, 12)).padStart(2, "0");
     const yy = String(randomInt(40, 99)).padStart(2, "0");
-    const letter = String.fromCharCode(65 + randomInt(0, 25));
-    const serial = String(randomInt(0, 49)).padStart(2, "0");
+    const letter = String.fromCharCode(
+      65 + randomInt(0, 25),
+    );
+    const serial = String(randomInt(0, 49)).padStart(
+      2,
+      "0",
+    );
     const partial = area + dd + mm + yy + letter + serial;
     const c = partial + String(computeCheck(partial));
     if (validate(c).valid) return c;
@@ -137,8 +141,7 @@ const svnr: Validator = {
     "SVNR",
     "Versicherungsnummer",
   ] as const,
-  candidatePattern:
-    "\\d{2}\\s?\\d{6}\\s?[A-Z]\\s?\\d{3}",
+  candidatePattern: "\\d{2}\\s?\\d{6}\\s?[A-Z]\\s?\\d{3}",
   country: "DE",
   entityType: "person",
   description:

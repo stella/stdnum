@@ -55,9 +55,7 @@ describe("nz.ird", () => {
     // may fail checksum but must not fail range check
     const r = nz.ird.validate("10000000");
     if (!r.valid) {
-      expect(r.error.code).not.toBe(
-        "INVALID_COMPONENT",
-      );
+      expect(r.error.code).not.toBe("INVALID_COMPONENT");
     }
   });
 
@@ -78,15 +76,11 @@ describe("nz.ird", () => {
   });
 
   test("format 8-digit", () => {
-    expect(nz.ird.format("49091850")).toBe(
-      "49-091-850",
-    );
+    expect(nz.ird.format("49091850")).toBe("49-091-850");
   });
 
   test("format 9-digit", () => {
-    expect(nz.ird.format("136410132")).toBe(
-      "136-410-132",
-    );
+    expect(nz.ird.format("136410132")).toBe("136-410-132");
   });
 
   test("metadata", () => {

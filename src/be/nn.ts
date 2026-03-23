@@ -11,11 +11,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " .-");
@@ -87,7 +87,10 @@ const generate = (): string => {
     const yy = String(randomInt(0, 99)).padStart(2, "0");
     const mm = String(randomInt(1, 12)).padStart(2, "0");
     const dd = String(randomInt(1, 28)).padStart(2, "0");
-    const serial = String(randomInt(1, 997)).padStart(3, "0");
+    const serial = String(randomInt(1, 997)).padStart(
+      3,
+      "0",
+    );
     const base = yy + mm + dd + serial;
     const n1 = Number(base);
     const check1 = 97 - (n1 % 97);

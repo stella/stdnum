@@ -4,10 +4,7 @@ import { my } from "../src";
 import { parse } from "../src/my/nric";
 
 describe("my.nric", () => {
-  const valid = [
-    "770305021234",
-    "880715141234",
-  ];
+  const valid = ["770305021234", "880715141234"];
 
   for (const v of valid) {
     test(`valid: ${v}`, () => {
@@ -47,9 +44,7 @@ describe("my.nric", () => {
     const r = my.nric.validate("771305021234");
     expect(r.valid).toBe(false);
     if (!r.valid) {
-      expect(r.error.code).toBe(
-        "INVALID_COMPONENT",
-      );
+      expect(r.error.code).toBe("INVALID_COMPONENT");
     }
   });
 
@@ -57,9 +52,7 @@ describe("my.nric", () => {
     const r = my.nric.validate("770305001234");
     expect(r.valid).toBe(false);
     if (!r.valid) {
-      expect(r.error.code).toBe(
-        "INVALID_COMPONENT",
-      );
+      expect(r.error.code).toBe("INVALID_COMPONENT");
     }
   });
 
@@ -70,12 +63,12 @@ describe("my.nric", () => {
   });
 
   test("compact strips spaces and dashes", () => {
-    expect(
-      my.nric.compact("770305-02-1234"),
-    ).toBe("770305021234");
-    expect(
-      my.nric.compact("770305 02 1234"),
-    ).toBe("770305021234");
+    expect(my.nric.compact("770305-02-1234")).toBe(
+      "770305021234",
+    );
+    expect(my.nric.compact("770305 02 1234")).toBe(
+      "770305021234",
+    );
   });
 
   test("metadata", () => {

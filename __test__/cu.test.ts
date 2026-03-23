@@ -23,13 +23,15 @@ describe("cu.ni", () => {
   test("wrong length", () => {
     const r = cu.ni.validate("9102102777");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_LENGTH");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_LENGTH");
   });
 
   test("non-digit characters", () => {
     const r = cu.ni.validate("9102102777A");
     expect(r.valid).toBe(false);
-    if (!r.valid) expect(r.error.code).toBe("INVALID_FORMAT");
+    if (!r.valid)
+      expect(r.error.code).toBe("INVALID_FORMAT");
   });
 
   test("invalid date (month 13)", () => {
@@ -53,9 +55,7 @@ describe("cu.ni", () => {
   });
 
   test("format returns compact form", () => {
-    expect(cu.ni.format("91021027775")).toBe(
-      "91021027775",
-    );
+    expect(cu.ni.format("91021027775")).toBe("91021027775");
   });
 
   test("metadata", () => {

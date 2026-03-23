@@ -10,10 +10,10 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 /** Strip spaces, parentheses, and dashes. */
 const compact = (value: string): string =>
@@ -28,8 +28,7 @@ const compact = (value: string): string =>
  * so the weights stay the same.
  */
 const computeCheck = (body: string): string => {
-  const padded =
-    body.length === 7 ? ` ${body}` : body;
+  const padded = body.length === 7 ? ` ${body}` : body;
 
   let sum = 0;
   for (let i = 0; i < 8; i++) {
@@ -64,8 +63,8 @@ const validate = (value: string): ValidateResult => {
   if (!HKID_RE.test(v)) {
     return err(
       "INVALID_FORMAT",
-      "HKID must be 1-2 letters, 6 digits, "
-        + "and a check character",
+      "HKID must be 1-2 letters, 6 digits, " +
+        "and a check character",
     );
   }
 
@@ -92,7 +91,9 @@ const format = (value: string): string => {
 /** Generate a random valid HKID. */
 const generate = (): string => {
   for (;;) {
-    const letter = String.fromCharCode(65 + randomInt(0, 25));
+    const letter = String.fromCharCode(
+      65 + randomInt(0, 25),
+    );
     const digits = randomDigits(6);
     for (let d = 0; d <= 9; d++) {
       const c = letter + digits + String(d);
@@ -109,18 +110,17 @@ const hkid: Validator = {
   localName: "Hong Kong Identity Card Number",
   abbreviation: "HKID",
   aliases: ["HKID", "香港身份證"] as const,
-  candidatePattern:
-    "[A-Z]{1,2}\\d{6}[\\dA]",
+  candidatePattern: "[A-Z]{1,2}\\d{6}[\\dA]",
   country: "HK",
   entityType: "person",
   lengths: [8, 9],
   examples: ["G123456A", "AB9876543"],
   description:
-    "Identity card number issued by the Hong Kong "
-    + "Immigration Department",
+    "Identity card number issued by the Hong Kong " +
+    "Immigration Department",
   sourceUrl:
-    "https://en.wikipedia.org/wiki/"
-    + "Hong_Kong_identity_card",
+    "https://en.wikipedia.org/wiki/" +
+    "Hong_Kong_identity_card",
   compact,
   format,
   validate,

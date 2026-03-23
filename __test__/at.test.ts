@@ -132,9 +132,7 @@ describe("at.tin", () => {
   });
 
   test("format groups as 2-6-1", () => {
-    expect(at.tin.format("591199013")).toBe(
-      "59-119901/3",
-    );
+    expect(at.tin.format("591199013")).toBe("59-119901/3");
   });
 
   test("metadata", () => {
@@ -198,9 +196,7 @@ describe("at.vnr", () => {
   });
 
   test("format adds space", () => {
-    expect(at.vnr.format("1237010180")).toBe(
-      "1237 010180",
-    );
+    expect(at.vnr.format("1237010180")).toBe("1237 010180");
   });
 
   test("metadata", () => {

@@ -12,6 +12,7 @@
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -20,7 +21,6 @@ import type {
   ValidateResult,
   Validator,
 } from "../types";
-import { randomInt } from "#util/generate";
 
 const WEIGHTS = [2, 4, 8, 5, 10, 9, 7, 3, 6] as const;
 
@@ -84,9 +84,7 @@ const format = (value: string): string => compact(value);
  * Extract birth date and gender from an EGN.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedPersonId | null => {
+const parse = (value: string): ParsedPersonId | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -121,7 +119,10 @@ const generate = (): string => {
     const yy = String(randomInt(0, 99)).padStart(2, "0");
     const mm = String(randomInt(1, 12)).padStart(2, "0");
     const dd = String(randomInt(1, 28)).padStart(2, "0");
-    const serial = String(randomInt(0, 999)).padStart(3, "0");
+    const serial = String(randomInt(0, 999)).padStart(
+      3,
+      "0",
+    );
     const payload = yy + mm + dd + serial;
     const sum = weightedSum(payload, WEIGHTS, 11);
     const c = payload + String(sum % 10);

@@ -72,9 +72,7 @@ describe("cl.rut", () => {
   });
 
   test("format adds separators", () => {
-    expect(cl.rut.format("760864285")).toBe(
-      "76.086.428-5",
-    );
+    expect(cl.rut.format("760864285")).toBe("76.086.428-5");
   });
 
   test("format round-trips with compact (8-digit body)", () => {

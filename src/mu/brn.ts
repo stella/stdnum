@@ -30,8 +30,8 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { err } from "#util/result";
 import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -75,18 +75,14 @@ const validate = (value: string): ValidateResult => {
   return { valid: true, compact: v };
 };
 
-const format = (value: string): string =>
-  compact(value);
+const format = (value: string): string => compact(value);
 
 /** Mauritius Business Registration Number. */
 const brn: Validator = {
   name: "Mauritius Business Registration Number",
   localName: "Business Registration Number",
   abbreviation: "BRN",
-  aliases: [
-    "BRN",
-    "Business Registration Number",
-  ] as const,
+  aliases: ["BRN", "Business Registration Number"] as const,
   candidatePattern: "[A-Z]\\d{8}",
   country: "MU",
   entityType: "any",

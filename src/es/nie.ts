@@ -9,12 +9,12 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 import { CHECK_LETTERS } from "./dni";
-import { randomDigits, randomInt } from "#util/generate";
 
 const PREFIX_MAP: Record<string, string> = {
   X: "0",
@@ -89,7 +89,7 @@ const nie: Validator = {
   candidatePattern: "[XYZ]-?\\d{7}-?[A-Z]",
   country: "ES",
   entityType: "person",
-  sourceUrl: 
+  sourceUrl:
     "https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/nie/",
   examples: ["X5253868R"] as const,
   compact,

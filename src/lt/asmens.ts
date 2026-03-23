@@ -12,12 +12,12 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import { twoPassCheck } from "../ee/ik";
 import type { ValidateResult, Validator } from "../types";
-import { randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");

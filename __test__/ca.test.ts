@@ -116,9 +116,7 @@ describe("ca.bn", () => {
   });
 
   test("format BN9", () => {
-    expect(ca.bn.format("123026635")).toBe(
-      "123 026 635",
-    );
+    expect(ca.bn.format("123026635")).toBe("123 026 635");
   });
 
   test("format BN15", () => {

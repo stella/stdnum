@@ -26,9 +26,9 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -94,14 +94,11 @@ const nrt: Validator = {
   name: "Andorra Tax Number",
   localName: "Número de Registre Tributari",
   abbreviation: "NRT",
-  aliases: [
-    "NRT",
-    "Número de Registre Tributari",
-  ] as const,
+  aliases: ["NRT", "Número de Registre Tributari"] as const,
   candidatePattern: "[A-Z]-?\\d{6}-?[A-Z]",
   country: "AD",
   entityType: "any",
-  sourceUrl: 
+  sourceUrl:
     "https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Andorra-TIN.pdf",
   examples: ["U132950X", "D059888N", "F123456M"] as const,
   compact,

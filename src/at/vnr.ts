@@ -56,8 +56,7 @@ const validate = (value: string): ValidateResult => {
   // Check digit at position 3: weighted sum of the
   // other 9 digits mod 11. If remainder is 10 the
   // number is invalid.
-  const digits =
-    v.slice(0, 3) + v.slice(4);
+  const digits = v.slice(0, 3) + v.slice(4);
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     sum += Number(digits[i]) * WEIGHTS[i]!;
@@ -66,8 +65,8 @@ const validate = (value: string): ValidateResult => {
   if (check === 10) {
     return err(
       "INVALID_CHECKSUM",
-      "Austrian VNR check digit is invalid (mod 11 "
-        + "remainder is 10)",
+      "Austrian VNR check digit is invalid (mod 11 " +
+        "remainder is 10)",
     );
   }
   if (check !== Number(v[3])) {

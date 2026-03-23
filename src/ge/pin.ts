@@ -15,9 +15,9 @@ const generate = (): string => randomDigits(11);
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -51,10 +51,7 @@ const pin: Validator = {
   name: "Georgian Personal ID",
   localName: "პირადი ნომერი",
   abbreviation: "PIN",
-  aliases: [
-    "პირადი ნომერი",
-    "PIN",
-  ] as const,
+  aliases: ["პირადი ნომერი", "PIN"] as const,
   candidatePattern: "\\d{11}",
   country: "GE",
   entityType: "any",
@@ -64,9 +61,9 @@ const pin: Validator = {
   format,
   validate,
   sourceUrl:
-    "https://www.oecd.org/tax/automatic-exchange/"
-    + "crs-implementation-and-assistance/"
-    + "tax-identification-numbers/Georgia-TIN.pdf",
+    "https://www.oecd.org/tax/automatic-exchange/" +
+    "crs-implementation-and-assistance/" +
+    "tax-identification-numbers/Georgia-TIN.pdf",
   generate,
 };
 

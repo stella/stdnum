@@ -43,15 +43,11 @@ describe("ge.pin", () => {
   });
 
   test("compact strips spaces and dashes", () => {
-    expect(ge.pin.compact("010-043-120")).toBe(
-      "010043120",
-    );
+    expect(ge.pin.compact("010-043-120")).toBe("010043120");
   });
 
   test("format returns compact form", () => {
-    expect(ge.pin.format("010 043 120")).toBe(
-      "010043120",
-    );
+    expect(ge.pin.format("010 043 120")).toBe("010043120");
   });
 
   test("metadata", () => {

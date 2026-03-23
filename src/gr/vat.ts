@@ -10,11 +10,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -66,7 +66,8 @@ const format = (value: string): string =>
 const generate = (): string => {
   const payload = randomDigits(8);
   let cs = 0;
-  for (let i = 0; i < 8; i++) cs = cs * 2 + Number(payload[i]);
+  for (let i = 0; i < 8; i++)
+    cs = cs * 2 + Number(payload[i]);
   return payload + String(((cs * 2) % 11) % 10);
 };
 

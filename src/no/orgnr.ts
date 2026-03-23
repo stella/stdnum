@@ -8,11 +8,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [3, 2, 7, 6, 5, 4, 3, 2, 1] as const;
 
@@ -51,17 +51,19 @@ const format = (value: string): string => {
 };
 
 /** Generate a random valid Norwegian org number. */
-const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(9);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** Norwegian Organization Number. */
 const orgnr: Validator = {
   name: "Norwegian Organization Number",
   localName: "Organisasjonsnummer",
   abbreviation: "Orgnr",
-  aliases: [
-    "organisasjonsnummer",
-    "org.nr",
-  ] as const,
+  aliases: ["organisasjonsnummer", "org.nr"] as const,
   candidatePattern: "\\d{9}",
   country: "NO",
   entityType: "company",

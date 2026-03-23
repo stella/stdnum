@@ -3,3 +3,4 @@ dist/
 .venv/
 scripts/rust-oracle/target/
 *.tgz
+dist

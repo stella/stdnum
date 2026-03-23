@@ -27,9 +27,9 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -42,70 +42,25 @@ import type { ValidateResult, Validator } from "../types";
  *         leading digits are literal.
  */
 const STATES = {
-  "Baden-Württemberg": [
-    "FFBBBUUUUP",
-    "28FF0BBBUUUUP",
-  ],
-  Bayern: [
-    "FFFBBBUUUUP",
-    "9FFF0BBBUUUUP",
-  ],
-  Berlin: [
-    "FFBBBUUUUP",
-    "11FF0BBBUUUUP",
-  ],
-  Brandenburg: [
-    "0FFBBBUUUUP",
-    "30FF0BBBUUUUP",
-  ],
-  Bremen: [
-    "FFBBBUUUUP",
-    "24FF0BBBUUUUP",
-  ],
-  Hamburg: [
-    "FFBBBUUUUP",
-    "22FF0BBBUUUUP",
-  ],
-  Hessen: [
-    "0FFBBBUUUUP",
-    "26FF0BBBUUUUP",
-  ],
+  "Baden-Württemberg": ["FFBBBUUUUP", "28FF0BBBUUUUP"],
+  Bayern: ["FFFBBBUUUUP", "9FFF0BBBUUUUP"],
+  Berlin: ["FFBBBUUUUP", "11FF0BBBUUUUP"],
+  Brandenburg: ["0FFBBBUUUUP", "30FF0BBBUUUUP"],
+  Bremen: ["FFBBBUUUUP", "24FF0BBBUUUUP"],
+  Hamburg: ["FFBBBUUUUP", "22FF0BBBUUUUP"],
+  Hessen: ["0FFBBBUUUUP", "26FF0BBBUUUUP"],
   "Mecklenburg-Vorpommern": [
     "0FFBBBUUUUP",
     "40FF0BBBUUUUP",
   ],
-  Niedersachsen: [
-    "FFBBBUUUUP",
-    "23FF0BBBUUUUP",
-  ],
-  "Nordrhein-Westfalen": [
-    "FFFBBBBUUUP",
-    "5FFF0BBBBUUUP",
-  ],
-  "Rheinland-Pfalz": [
-    "FFBBBUUUUP",
-    "27FF0BBBUUUUP",
-  ],
-  Saarland: [
-    "0FFBBBUUUUP",
-    "10FF0BBBUUUUP",
-  ],
-  Sachsen: [
-    "2FFBBBUUUUP",
-    "32FF0BBBUUUUP",
-  ],
-  "Sachsen-Anhalt": [
-    "1FFBBBUUUUP",
-    "31FF0BBBUUUUP",
-  ],
-  "Schleswig-Holstein": [
-    "FFBBBUUUUP",
-    "21FF0BBBUUUUP",
-  ],
-  Thüringen: [
-    "1FFBBBUUUUP",
-    "41FF0BBBUUUUP",
-  ],
+  Niedersachsen: ["FFBBBUUUUP", "23FF0BBBUUUUP"],
+  "Nordrhein-Westfalen": ["FFFBBBBUUUP", "5FFF0BBBBUUUP"],
+  "Rheinland-Pfalz": ["FFBBBUUUUP", "27FF0BBBUUUUP"],
+  Saarland: ["0FFBBBUUUUP", "10FF0BBBUUUUP"],
+  Sachsen: ["2FFBBBUUUUP", "32FF0BBBUUUUP"],
+  "Sachsen-Anhalt": ["1FFBBBUUUUP", "31FF0BBBUUUUP"],
+  "Schleswig-Holstein": ["FFBBBUUUUP", "21FF0BBBUUUUP"],
+  Thüringen: ["1FFBBBUUUUP", "41FF0BBBUUUUP"],
 } as const;
 
 type StateName = keyof typeof STATES;
@@ -167,7 +122,11 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  if (v.length !== 10 && v.length !== 11 && v.length !== 13) {
+  if (
+    v.length !== 10 &&
+    v.length !== 11 &&
+    v.length !== 13
+  ) {
     return err(
       "INVALID_LENGTH",
       "German Steuernummer must be 10, 11, or 13 digits",
@@ -235,18 +194,14 @@ const stnr: Validator = {
   name: "German Tax Number",
   localName: "Steuernummer",
   abbreviation: "StNr",
-  aliases: [
-    "Steuernummer",
-    "St.Nr.",
-  ] as const,
+  aliases: ["Steuernummer", "St.Nr."] as const,
   candidatePattern: "\\d{2,4}/\\d{3,4}/\\d{4,5}",
   country: "DE",
   entityType: "any",
   description:
     "German tax number assigned by the local " +
     "tax office, varies by federal state",
-  sourceUrl:
-    "https://de.wikipedia.org/wiki/Steuernummer",
+  sourceUrl: "https://de.wikipedia.org/wiki/Steuernummer",
   lengths: [10, 11, 13] as const,
   examples: ["2181508150", "18181508155"] as const,
   compact,

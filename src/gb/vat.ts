@@ -11,11 +11,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const WEIGHTS = [8, 7, 6, 5, 4, 3, 2] as const;
 
@@ -127,7 +127,12 @@ const format = (value: string): string => {
 };
 
 /** Generate a random valid UK VAT number. */
-const generate = (): string => { for (;;) { const c = randomDigits(9); if (validate(c).valid) return c; } };
+const generate = (): string => {
+  for (;;) {
+    const c = randomDigits(9);
+    if (validate(c).valid) return c;
+  }
+};
 
 /** UK VAT Registration Number. */
 const vat: Validator = {

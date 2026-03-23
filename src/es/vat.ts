@@ -9,11 +9,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const DNI_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE";
 const CIF_LETTERS = "JABCDEFGHI";
@@ -56,8 +56,9 @@ const validate = (value: string): ValidateResult => {
 
   // DNI: 8 digits + letter
   if (isdigits(v.slice(0, 8))) {
-    const expected =
-      DNI_LETTERS.charAt(Number.parseInt(v.slice(0, 8), 10) % 23);
+    const expected = DNI_LETTERS.charAt(
+      Number.parseInt(v.slice(0, 8), 10) % 23,
+    );
     if (last !== expected) {
       return err(
         "INVALID_CHECKSUM",
@@ -78,8 +79,9 @@ const validate = (value: string): ValidateResult => {
         "Spanish NIE must have 7 digits after prefix",
       );
     }
-    const expected =
-      DNI_LETTERS.charAt(Number.parseInt(digits, 10) % 23);
+    const expected = DNI_LETTERS.charAt(
+      Number.parseInt(digits, 10) % 23,
+    );
     if (last !== expected) {
       return err(
         "INVALID_CHECKSUM",
@@ -98,8 +100,9 @@ const validate = (value: string): ValidateResult => {
         "Spanish K/L/M number must have 7 digits",
       );
     }
-    const expected =
-      DNI_LETTERS.charAt(Number.parseInt(v.slice(1, 8), 10) % 23);
+    const expected = DNI_LETTERS.charAt(
+      Number.parseInt(v.slice(1, 8), 10) % 23,
+    );
     if (last !== expected) {
       return err(
         "INVALID_CHECKSUM",
@@ -160,8 +163,7 @@ const vat: Validator = {
     "CIF",
     "número de identificación fiscal",
   ] as const,
-  candidatePattern:
-    "ES[A-Z]\\d{7}[A-Z\\d]",
+  candidatePattern: "ES[A-Z]\\d{7}[A-Z\\d]",
   country: "ES",
   entityType: "any",
   sourceUrl: "https://www.agenciatributaria.es/",

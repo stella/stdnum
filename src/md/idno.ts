@@ -15,7 +15,9 @@ import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 
-const WEIGHTS = [7, 3, 1, 7, 3, 1, 7, 3, 1, 7, 3, 1] as const;
+const WEIGHTS = [
+  7, 3, 1, 7, 3, 1, 7, 3, 1, 7, 3, 1,
+] as const;
 
 const calcCheckDigit = (number: string): number => {
   let sum = 0;
@@ -67,10 +69,7 @@ const idno: Validator = {
   name: "Moldavian Company Identification Number",
   localName: "IDNO",
   abbreviation: "IDNO",
-  aliases: [
-    "IDNO",
-    "cod de identificare",
-  ] as const,
+  aliases: ["IDNO", "cod de identificare"] as const,
   candidatePattern: "\\d{13}",
   country: "MD",
   entityType: "company",

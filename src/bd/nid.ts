@@ -31,9 +31,9 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits, randomInt } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -68,7 +68,11 @@ const validateCore = (
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
-  if (v.length !== 10 && v.length !== 13 && v.length !== 17) {
+  if (
+    v.length !== 10 &&
+    v.length !== 13 &&
+    v.length !== 17
+  ) {
     return err(
       "INVALID_LENGTH",
       "NID must be 10, 13, or 17 digits",
@@ -106,7 +110,11 @@ const nid: Validator = {
   name: "National Identity Number",
   localName: "জাতীয় পরিচয়পত্র",
   abbreviation: "NID",
-  aliases: ["NID", "জাতীয় পরিচয়পত্র", "National ID Card"] as const,
+  aliases: [
+    "NID",
+    "জাতীয় পরিচয়পত্র",
+    "National ID Card",
+  ] as const,
   candidatePattern: "\\d{10,17}",
   country: "BD",
   entityType: "person",

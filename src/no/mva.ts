@@ -57,10 +57,7 @@ const mva: Validator = {
   name: "Norwegian VAT Number",
   localName: "Merverdiavgift",
   abbreviation: "MVA",
-  aliases: [
-    "MVA-nummer",
-    "organisasjonsnummer",
-  ] as const,
+  aliases: ["MVA-nummer", "organisasjonsnummer"] as const,
   candidatePattern: "NO\\d{9}MVA",
   country: "NO",
   entityType: "company",

@@ -45,12 +45,8 @@ describe("tw.ubn", () => {
   });
 
   test("compact strips spaces and dashes", () => {
-    expect(tw.ubn.compact("0050 1503")).toBe(
-      "00501503",
-    );
-    expect(tw.ubn.compact("0050-1503")).toBe(
-      "00501503",
-    );
+    expect(tw.ubn.compact("0050 1503")).toBe("00501503");
+    expect(tw.ubn.compact("0050-1503")).toBe("00501503");
   });
 
   test("generate produces valid UBN", () => {

@@ -9,11 +9,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const ALPHABET = "WABCDEFGHIJKLMNOPQRSTUV";
 
@@ -62,7 +62,10 @@ const validate = (value: string): ValidateResult => {
   }
 
   // New format: 7 digits + letter [+ letter]
-  if (isdigits(v.slice(0, 7)) && /^[A-Z]$/.test(v.charAt(7))) {
+  if (
+    isdigits(v.slice(0, 7)) &&
+    /^[A-Z]$/.test(v.charAt(7))
+  ) {
     if (v.length === 9 && !/^[A-Z+*]$/.test(v.charAt(8))) {
       return err(
         "INVALID_FORMAT",
@@ -119,9 +122,7 @@ const vat: Validator = {
   name: "Irish VAT Number",
   localName: "Value Added Tax Number",
   abbreviation: "VAT",
-  aliases: [
-    "VAT number IE",
-  ] as const,
+  aliases: ["VAT number IE"] as const,
   candidatePattern: "IE\\d[A-Z+*]\\d{5}[A-Z]",
   country: "IE",
   entityType: "any",

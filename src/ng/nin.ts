@@ -14,9 +14,9 @@ const generate = (): string => randomDigits(11);
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -50,7 +50,10 @@ const nin: Validator = {
   name: "National Identification Number",
   localName: "National Identification Number",
   abbreviation: "NIN",
-  aliases: ["NIN", "National Identification Number"] as const,
+  aliases: [
+    "NIN",
+    "National Identification Number",
+  ] as const,
   candidatePattern: "\\d{11}",
   country: "NG",
   entityType: "person",

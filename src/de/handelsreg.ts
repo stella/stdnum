@@ -1,8 +1,7 @@
 /** Generate a random valid Handelsregisternummer. */
 const generate = (): string => {
   const types = ["HRA", "HRB", "GNR", "PR", "VR"];
-  const type =
-    types[randomInt(0, types.length - 1)]!;
+  const type = types[randomInt(0, types.length - 1)]!;
   const number = randomDigits(5);
   return `${type}${number}`;
 };
@@ -26,8 +25,8 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { err } from "#util/result";
 import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -45,9 +44,7 @@ const REGISTER_TYPES = new Set([
  */
 const compact = (value: string): string => {
   const v = clean(value, " -.").trim().toUpperCase();
-  const match = v.match(
-    /^(HRA|HRB|GNR|PR|VR)(\d{1,7})$/,
-  );
+  const match = v.match(/^(HRA|HRB|GNR|PR|VR)(\d{1,7})$/);
   if (!match) return v;
   return `${match[1]} ${match[2]}`;
 };
@@ -59,9 +56,9 @@ const validate = (value: string): ValidateResult => {
   if (!match) {
     return err(
       "INVALID_FORMAT",
-      "Handelsregisternummer must be a register type "
-        + "(HRA, HRB, GnR, PR, VR) followed by "
-        + "1-7 digits",
+      "Handelsregisternummer must be a register type " +
+        "(HRA, HRB, GnR, PR, VR) followed by " +
+        "1-7 digits",
     );
   }
 
@@ -81,8 +78,7 @@ const validate = (value: string): ValidateResult => {
   };
 };
 
-const format = (value: string): string =>
-  compact(value);
+const format = (value: string): string => compact(value);
 
 /** German Company Register Number. */
 const handelsreg: Validator = {
@@ -95,8 +91,7 @@ const handelsreg: Validator = {
     "HRB",
     "HRA",
   ] as const,
-  candidatePattern:
-    "(?:HRA|HRB|GnR|PR|VR)\\s*\\d{1,7}",
+  candidatePattern: "(?:HRA|HRB|GnR|PR|VR)\\s*\\d{1,7}",
   country: "DE",
   entityType: "company",
   sourceUrl:

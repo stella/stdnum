@@ -37,7 +37,7 @@ const calcCheckChar = (body: string): string => {
   for (let i = 0; i < len; i++) {
     sum += (len - i + 1) * Number(body[i]);
   }
-  const remainder = (-sum % 11 + 11) % 11;
+  const remainder = ((-sum % 11) + 11) % 11;
   return remainder === 10 ? "K" : String(remainder);
 };
 
@@ -102,8 +102,7 @@ const nit: Validator = {
   candidatePattern: "\\d{7,8}-?\\d",
   country: "GT",
   entityType: "any",
-  description:
-    "Tax identifier issued by Guatemala's SAT",
+  description: "Tax identifier issued by Guatemala's SAT",
   sourceUrl: "https://portal.sat.gob.gt/portal/",
   lengths: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const,
   examples: ["576937K", "39525503", "71080"] as const,

@@ -16,11 +16,11 @@
 
 import { luhnValidate } from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 /**
  * Weights for the 9-digit RNC check digit.

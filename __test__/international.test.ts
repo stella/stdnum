@@ -379,9 +379,7 @@ describe("detectNetwork", () => {
   });
 
   test("Mastercard: 2721 is not Mastercard", () => {
-    expect(
-      detectNetwork("2721000000000000"),
-    ).toBeNull();
+    expect(detectNetwork("2721000000000000")).toBeNull();
   });
 
   test("Amex: 34", () => {
@@ -491,11 +489,11 @@ describe("detectNetwork", () => {
   });
 
   test("handles dashes and dots", () => {
-    expect(
-      detectNetwork("4111-1111-1111-1111"),
-    ).toBe("visa");
-    expect(
-      detectNetwork("4111.1111.1111.1111"),
-    ).toBe("visa");
+    expect(detectNetwork("4111-1111-1111-1111")).toBe(
+      "visa",
+    );
+    expect(detectNetwork("4111.1111.1111.1111")).toBe(
+      "visa",
+    );
   });
 });

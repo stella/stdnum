@@ -17,9 +17,9 @@ const generate = (): string => randomDigits(8);
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-import { randomDigits } from "#util/generate";
 
 import type { ValidateResult, Validator } from "../types";
 
@@ -63,9 +63,9 @@ const tin: Validator = {
   format,
   validate,
   sourceUrl:
-    "https://www.oecd.org/tax/automatic-exchange/"
-    + "crs-implementation-and-assistance/"
-    + "tax-identification-numbers/Armenia-TIN.pdf",
+    "https://www.oecd.org/tax/automatic-exchange/" +
+    "crs-implementation-and-assistance/" +
+    "tax-identification-numbers/Armenia-TIN.pdf",
   generate,
 };
 

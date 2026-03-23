@@ -11,11 +11,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 /** Luhn-variant doubling table: position-dependent. */
 const DOUBLE = "0246813579";
@@ -73,11 +73,7 @@ const tin: Validator = {
   name: "Austrian Tax Identification Number",
   localName: "Abgabenkontonummer",
   abbreviation: "TIN",
-  aliases: [
-    "Steuernummer",
-    "St.Nr.",
-    "TIN",
-  ] as const,
+  aliases: ["Steuernummer", "St.Nr.", "TIN"] as const,
   candidatePattern: "\\d{2}-?\\d{3}/\\d{4}",
   country: "AT",
   entityType: "any",

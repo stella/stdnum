@@ -11,11 +11,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [9, 1, 4, 8, 3, 10, 2, 5, 7, 6, 1];
 
@@ -123,10 +123,7 @@ const vat: Validator = {
   name: "Latvian VAT Number",
   localName: "PVN reģistrācijas numurs",
   abbreviation: "PVN",
-  aliases: [
-    "PVN reģistrācijas numurs",
-    "PVN",
-  ] as const,
+  aliases: ["PVN reģistrācijas numurs", "PVN"] as const,
   candidatePattern: "LV\\d{11}",
   country: "LV",
   entityType: "any",

@@ -12,9 +12,7 @@ describe("ma.ice", () => {
   });
 
   test("valid with spaces", () => {
-    const r = ma.ice.validate(
-      "00 21 36 09 30 00 040",
-    );
+    const r = ma.ice.validate("00 21 36 09 30 00 040");
     expect(r.valid).toBe(true);
     if (r.valid) {
       expect(r.compact).toBe("002136093000040");

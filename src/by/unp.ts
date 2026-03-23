@@ -12,11 +12,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 /** Cyrillic to Latin mapping for the letter positions. */
 const CYRILLIC_TO_LATIN: Record<string, string> = {
@@ -35,8 +35,7 @@ const CYRILLIC_TO_LATIN: Record<string, string> = {
 const WEIGHTS = [29, 23, 19, 17, 13, 7, 5, 3] as const;
 const ALPHA_SET = "ABCEHKMOPT";
 const VALID_FIRST = "1234567ABCEHKM";
-const ALPHABET =
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 const compact = (value: string): string => {
   let v = clean(value, " ").toUpperCase().trim();
@@ -55,8 +54,7 @@ const calcCheckDigit = (number: string): number | null => {
   if (!isdigits(number)) {
     const idx = ALPHA_SET.indexOf(number[1]!);
     if (idx === -1) return null;
-    work =
-      number[0] + String(idx) + number.slice(2);
+    work = number[0] + String(idx) + number.slice(2);
   }
   let sum = 0;
   for (let i = 0; i < 8; i++) {
@@ -91,8 +89,8 @@ const validate = (value: string): ValidateResult => {
   ) {
     return err(
       "INVALID_FORMAT",
-      "Belarus UNP first two characters must be"
-        + " digits or letters from ABCEHKMOPT",
+      "Belarus UNP first two characters must be" +
+        " digits or letters from ABCEHKMOPT",
     );
   }
   if (!VALID_FIRST.includes(v[0]!)) {
@@ -105,8 +103,8 @@ const validate = (value: string): ValidateResult => {
   if (expected === null) {
     return err(
       "INVALID_CHECKSUM",
-      "Belarus UNP check digit is invalid"
-        + " (mod 11 remainder > 9)",
+      "Belarus UNP check digit is invalid" +
+        " (mod 11 remainder > 9)",
     );
   }
   if (v[8] !== String(expected)) {

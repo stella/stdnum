@@ -10,13 +10,16 @@
  * @see https://www.economie.gouv.fr/
  */
 
-import { luhnValidate, luhnChecksum } from "#checksums/luhn";
+import {
+  luhnValidate,
+  luhnChecksum,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const ALPHABET = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
@@ -112,7 +115,9 @@ const generate = (): string => {
   const sp = randomDigits(8);
   const cs = luhnChecksum(sp + "0");
   const siren = sp + String((10 - cs) % 10);
-  const prefix = String((12 + 3 * (Number(siren) % 97)) % 97).padStart(2, "0");
+  const prefix = String(
+    (12 + 3 * (Number(siren) % 97)) % 97,
+  ).padStart(2, "0");
   return prefix + siren;
 };
 

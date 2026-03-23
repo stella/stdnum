@@ -18,11 +18,11 @@
  */
 
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const compact = (value: string): string =>
   clean(value, " -");
@@ -53,9 +53,7 @@ const mod11Checksum = (
 };
 
 const PUBLIC_WEIGHTS = [3, 2, 7, 6, 5, 4, 3, 2, 1];
-const JURIDICAL_WEIGHTS = [
-  4, 3, 2, 7, 6, 5, 4, 3, 2, 1,
-];
+const JURIDICAL_WEIGHTS = [4, 3, 2, 7, 6, 5, 4, 3, 2, 1];
 
 const isValidProvince = (v: string): boolean => {
   const province = v.slice(0, 2);
@@ -161,7 +159,10 @@ const format = (value: string): string => compact(value);
 /** Generate a random valid Ecuadorian RUC. */
 const generate = (): string => {
   for (;;) {
-    const province = String(randomInt(1, 24)).padStart(2, "0");
+    const province = String(randomInt(1, 24)).padStart(
+      2,
+      "0",
+    );
     const c = province + randomDigits(11);
     if (validate(c).valid) return c;
   }

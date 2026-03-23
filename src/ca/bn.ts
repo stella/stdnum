@@ -8,13 +8,16 @@
  * @see https://www.canada.ca/en/services/taxes/business-number.html
  */
 
-import { luhnValidate, luhnChecksum } from "#checksums/luhn";
+import {
+  luhnValidate,
+  luhnChecksum,
+} from "#checksums/luhn";
 import { clean } from "#util/clean";
+import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits } from "#util/generate";
 
 const VALID_PROGRAMS = new Set(["RC", "RM", "RP", "RT"]);
 
@@ -88,11 +91,10 @@ const bn: Validator = {
     "Business Number",
     "numéro d'entreprise",
   ] as const,
-  candidatePattern:
-    "\\d{9}\\s?[A-Z]{2}\\s?\\d{4}",
+  candidatePattern: "\\d{9}\\s?[A-Z]{2}\\s?\\d{4}",
   country: "CA",
   entityType: "company",
-  sourceUrl: 
+  sourceUrl:
     "https://www.canada.ca/en/services/taxes/business-number.html",
   examples: ["123026635", "123026635RC0001"] as const,
   compact,

@@ -18,8 +18,7 @@ import { isdigits } from "#util/strings";
 import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [
-  3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59,
-  67, 71,
+  3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71,
 ] as const;
 
 /** Lookup table: remainder -> check digit. */
@@ -69,11 +68,7 @@ const format = (value: string): string => {
   const body = v.slice(0, -1);
   const checkChar = v.slice(-1);
   const groups: string[] = [];
-  for (
-    let i = body.length;
-    i > 0;
-    i -= 3
-  ) {
+  for (let i = body.length; i > 0; i -= 3) {
     groups.unshift(body.slice(Math.max(0, i - 3), i));
   }
   return `${groups.join(".")}-${checkChar}`;
@@ -98,8 +93,7 @@ const nit: Validator = {
   candidatePattern: "\\d{9,10}-?\\d",
   country: "CO",
   entityType: "any",
-  description:
-    "Tax identifier issued by the DIAN",
+  description: "Tax identifier issued by the DIAN",
   sourceUrl:
     "https://es.wikipedia.org/wiki/N%C3%BAmero_de_identificaci%C3%B3n_tributaria",
   lengths: [8, 9, 10, 11, 12, 13, 14, 15, 16] as const,

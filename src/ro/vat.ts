@@ -11,11 +11,11 @@
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
-import { randomDigits, randomInt } from "#util/generate";
 
 const WEIGHTS = [7, 5, 3, 2, 1, 7, 5, 3, 2];
 
@@ -61,7 +61,9 @@ const format = (value: string): string =>
 /** Generate a random valid Romanian VAT number. */
 const generate = (): string => {
   for (;;) {
-    const c = String(randomInt(1, 9)) + randomDigits(randomInt(1, 9));
+    const c =
+      String(randomInt(1, 9)) +
+      randomDigits(randomInt(1, 9));
     if (validate(c).valid) return c;
   }
 };

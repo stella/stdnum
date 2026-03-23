@@ -271,8 +271,7 @@ const format = (value: string): string => {
  */
 const GENERATE_COUNTRIES = ["CZ", "DE", "SK"] as const;
 
-type GenerateCountry =
-  (typeof GENERATE_COUNTRIES)[number];
+type GenerateCountry = (typeof GENERATE_COUNTRIES)[number];
 
 /** BBAN lengths for generate()-supported countries. */
 const BBAN_LENGTHS: Record<GenerateCountry, number> = {
@@ -306,10 +305,7 @@ const computeCheckDigits = (
  * Generate a random valid IBAN for CZ, DE, or SK.
  */
 const generate = (): string => {
-  const idx = randomInt(
-    0,
-    GENERATE_COUNTRIES.length - 1,
-  );
+  const idx = randomInt(0, GENERATE_COUNTRIES.length - 1);
   const cc = GENERATE_COUNTRIES[idx] as GenerateCountry;
   const bbanLen = BBAN_LENGTHS[cc];
   const bban = randomDigits(bbanLen);
