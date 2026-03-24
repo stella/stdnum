@@ -903,7 +903,7 @@
     }
   },
   "scripts": {
-    "build": "tsup && tsc -p tsconfig.build.json",
+    "build": "tsdown",
     "prepublishOnly": "bun run build",
     "catalog": "bun scripts/catalog.ts",
     "sync-exports": "bun scripts/sync-exports.ts",
@@ -923,7 +923,7 @@
     "oxfmt": "^0.41.0",
     "oxlint": "^1.55.0",
     "stdnum": "^1.11.7",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.12.4",
     "typescript": "^5.9.3",
     "validate-polish": "^2.1.40"
   },
