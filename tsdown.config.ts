@@ -1,6 +1,6 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsdown";
 
 const collectEntries = (dir: string): string[] => {
   const results: string[] = [];
@@ -20,9 +20,10 @@ const collectEntries = (dir: string): string[] => {
 export default defineConfig({
   entry: collectEntries("src"),
   format: ["esm"],
-  dts: false,
+  bundle: false,
+  dts: true,
   clean: true,
   target: "es2022",
   outDir: "dist",
-  bundle: false,
+  sourcemap: true,
 });
