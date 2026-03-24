@@ -20,7 +20,8 @@ const collectEntries = (dir: string): string[] => {
 export default defineConfig({
   entry: collectEntries("src"),
   format: ["esm"],
-  dts: { resolve: true },
+  bundle: false,
+  dts: true,
   clean: true,
   target: "es2022",
   outDir: "dist",
