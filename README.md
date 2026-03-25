@@ -60,7 +60,7 @@ iban.validate("CZ65 0800 0000 1920 0014 5399");
 ### Countries
 
 <details>
-<summary>97 countries supported (click to expand)</summary>
+<summary>96 countries supported (click to expand)</summary>
 
 | Country                   | Module             | Identifier   |
 | ------------------------- | ------------------ | ------------ |
@@ -290,14 +290,14 @@ IT CF, KR RRN, KW Civil ID, KZ IIN, LK NIC,
 MX CURP, MY NRIC, NO Fødselsnr, PL PESEL, RO CNP,
 SE PN, SI EMŠO, SK RČ, ZA SA ID.
 
-The `creditcard` module also exports `detectNetwork()`
-and a `CardNetwork` type:
+`detectNetwork()` and the `CardNetwork` type are
+top-level named exports:
 
 ```typescript
-import { creditcard } from "@stll/stdnum";
+import { detectNetwork } from "@stll/stdnum";
 import type { CardNetwork } from "@stll/stdnum";
 
-creditcard.detectNetwork("4111111111111111");
+detectNetwork("4111111111111111");
 // "visa"
 ```
 
