@@ -3,7 +3,7 @@ const generate = (): string => {
   const types = ["HRA", "HRB", "GNR", "PR", "VR"];
   const type = types[randomInt(0, types.length - 1)]!;
   const number = randomDigits(5);
-  return `${type}${number}`;
+  return `${type} ${number}`;
 };
 
 /**
