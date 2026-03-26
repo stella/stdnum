@@ -81,7 +81,10 @@ const validate = (value: string): ValidateResult => {
       "EMŠO contains an invalid date",
     );
   }
-  if (new Date(yyyy, mm - 1, dd) > new Date()) {
+  const birthDate = new Date(yyyy, mm - 1, dd);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (birthDate > today) {
     return err(
       "INVALID_COMPONENT",
       "EMŠO cannot contain a future birth date",

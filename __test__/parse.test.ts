@@ -231,6 +231,145 @@ describe("it.codicefiscale parse", () => {
     expect(result?.birthDate.getMonth()).toBe(10);
     expect(result?.birthDate.getDate()).toBe(18);
   });
+
+  test("returns null for 11-digit IVA", () => {
+    expect(validator.parse("00743110157")).toBeNull();
+  });
+});
+
+describe("no.fodselsnummer parse", () => {
+  const validator = discovered.find(
+    (entry) => entry.name === "no.fodselsnummer",
+  )?.validator;
+  if (!validator)
+    throw new Error("no.fodselsnummer not discovered");
+
+  test("extracts female born 1986-10-15", () => {
+    const result = validator.parse("15108695088");
+    expect(result).not.toBeNull();
+    expect(result && "gender" in result && result.gender).toBe(
+      "female",
+    );
+    expect(result?.birthDate.getFullYear()).toBe(1986);
+    expect(result?.birthDate.getMonth()).toBe(9);
+    expect(result?.birthDate.getDate()).toBe(15);
+  });
+});
+
+describe("pl.pesel parse", () => {
+  const validator = discovered.find(
+    (entry) => entry.name === "pl.pesel",
+  )?.validator;
+  if (!validator) throw new Error("pl.pesel not discovered");
+
+  test("extracts male born 1944-05-14", () => {
+    const result = validator.parse("44051401359");
+    expect(result).not.toBeNull();
+    expect(result && "gender" in result && result.gender).toBe(
+      "male",
+    );
+    expect(result?.birthDate.getFullYear()).toBe(1944);
+    expect(result?.birthDate.getMonth()).toBe(4);
+    expect(result?.birthDate.getDate()).toBe(14);
+  });
+
+  test("extracts 1900s date from month <= 12", () => {
+    const result = validator.parse("02070803628");
+    expect(result).not.toBeNull();
+    expect(result?.birthDate.getFullYear()).toBe(1902);
+    expect(result?.birthDate.getMonth()).toBe(6);
+  });
+
+  test("returns null for checksum mismatch", () => {
+    expect(validator.parse("44051401358")).toBeNull();
+  });
+});
+
+describe("ro.cnp parse", () => {
+  const validator = discovered.find(
+    (entry) => entry.name === "ro.cnp",
+  )?.validator;
+  if (!validator) throw new Error("ro.cnp not discovered");
+
+  test("extracts male born 1963-06-15", () => {
+    const result = validator.parse("1630615123457");
+    expect(result).not.toBeNull();
+    expect(result && "gender" in result && result.gender).toBe(
+      "male",
+    );
+    expect(result?.birthDate.getFullYear()).toBe(1963);
+    expect(result?.birthDate.getMonth()).toBe(5);
+    expect(result?.birthDate.getDate()).toBe(15);
+  });
+});
+
+describe("se.personnummer parse", () => {
+  const validator = discovered.find(
+    (entry) => entry.name === "se.personnummer",
+  )?.validator;
+  if (!validator)
+    throw new Error("se.personnummer not discovered");
+
+  test("extracts from valid personnummer", () => {
+    const result = validator.parse("8803200016");
+    expect(result).not.toBeNull();
+    expect(result?.birthDate.getFullYear()).toBe(1988);
+    expect(result?.birthDate.getMonth()).toBe(2);
+    expect(result?.birthDate.getDate()).toBe(20);
+    expect(result && "gender" in result && result.gender).toBe(
+      "male",
+    );
+  });
+});
+
+describe("si.emso parse", () => {
+  const validator = discovered.find(
+    (entry) => entry.name === "si.emso",
+  )?.validator;
+  if (!validator) throw new Error("si.emso not discovered");
+
+  test("extracts male born 2006-01-01", () => {
+    const result = validator.parse("0101006500006");
+    expect(result).not.toBeNull();
+    expect(result && "gender" in result && result.gender).toBe(
+      "male",
+    );
+    expect(result?.birthDate.getFullYear()).toBe(2006);
+    expect(result?.birthDate.getMonth()).toBe(0);
+    expect(result?.birthDate.getDate()).toBe(1);
+  });
+});
+
+describe("fr.nir parse", () => {
+  const validator = discovered.find(
+    (entry) => entry.name === "fr.nir",
+  )?.validator;
+  if (!validator) throw new Error("fr.nir not discovered");
+
+  test("extracts female born 1995-11-01", () => {
+    const result = validator.parse("295117823456784");
+    expect(result).not.toBeNull();
+    expect(result && "gender" in result && result.gender).toBe(
+      "female",
+    );
+    expect(result?.birthDate.getFullYear()).toBe(1995);
+    expect(result?.birthDate.getMonth()).toBe(10);
+    expect(result?.birthDate.getDate()).toBe(1);
+  });
+
+  test("extracts male", () => {
+    const base = 1850578123456n;
+    const check = 97n - (base % 97n);
+    const full =
+      base.toString() + check.toString().padStart(2, "0");
+    const result = validator.parse(full);
+    expect(result).not.toBeNull();
+    expect(result && "gender" in result && result.gender).toBe(
+      "male",
+    );
+    expect(result?.birthDate.getFullYear()).toBe(1985);
+    expect(result?.birthDate.getMonth()).toBe(4);
+  });
 });
 
 describe("kw.civil parse", () => {

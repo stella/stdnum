@@ -133,10 +133,12 @@ const format = (value: string): string =>
 
 /** Generate a random valid Latvian VAT number. */
 const generate = (): string => {
-  const prefixes = ["4", "5", "9"] as const;
+  const entityPrefixes = ["4", "5", "9"] as const;
   for (;;) {
-    const prefix = prefixes[randomInt(0, prefixes.length - 1)] ?? "4";
-    const c = prefix + randomDigits(10);
+    const c =
+      randomInt(0, 1) === 0
+        ? `3${randomInt(2, 9)}${randomDigits(9)}`
+        : `${entityPrefixes[randomInt(0, entityPrefixes.length - 1)] ?? "4"}${randomDigits(10)}`;
     if (validate(c).valid) return c;
   }
 };
@@ -152,7 +154,7 @@ const vat: Validator = {
   entityType: "any",
   sourceUrl:
     "https://www.pmlp.gov.lv/en/change-personal-identity-number",
-  examples: ["40003521600"] as const,
+  examples: ["40003521600", "32999999999"] as const,
   compact,
   format,
   validate,
