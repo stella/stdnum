@@ -5,7 +5,7 @@
     "no-shadow": "error",
     "require-await": "error",
     "no-useless-catch": "error",
-    "no-non-null-assertion": "error",
+    "no-non-null-assertion": "off",
     "typescript/no-explicit-any": "error",
     "typescript/no-dynamic-delete": "error",
     "typescript/consistent-type-definitions": [

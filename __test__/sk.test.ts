@@ -12,6 +12,14 @@ describe("sk.rc", () => {
     expect(sk.rc.country).toBe("SK");
     expect(sk.rc.name).toBe("Slovak Birth Number");
   });
+
+  test("rejects 9-digit numbers using modern +20 month overflow", () => {
+    const r = sk.rc.validate("913216323");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
 });
 
 describe("sk.dic", () => {

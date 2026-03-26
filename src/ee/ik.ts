@@ -5,7 +5,16 @@
  * gender/century digit, YYMMDD, 3-digit serial, and
  * a check digit computed with two-pass weighted sums.
  *
+ * Canonical sources:
+ * - Estonian legislation for the personal code format
+ * - OECD Estonia TIN sheet summarising the same
+ *   first-digit ranges for cross-border tax use
+ *
+ * These sources are why we restrict the first digit
+ * to 1-6 rather than accepting speculative 7/8 forms.
+ *
  * @see https://www.riigiteataja.ee/en/eli/512012015003/consolide
+ * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Estonia-TIN.pdf
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -31,8 +40,6 @@ const centuryMap: Record<number, number> = {
   4: 1900,
   5: 2000,
   6: 2000,
-  7: 2100,
-  8: 2100,
 };
 
 const compact = (value: string): string =>
@@ -65,7 +72,9 @@ const validate = (value: string): ValidateResult => {
   }
 
   const g = Number(v[0]);
-  if (g < 1 || g > 8) {
+  // Official Estonian structure uses 1-6:
+  // 1-2 = 1800s, 3-4 = 1900s, 5-6 = 2000s.
+  if (g < 1 || g > 6) {
     return err(
       "INVALID_COMPONENT",
       "Isikukood gender/century digit is invalid",
@@ -135,7 +144,7 @@ const generate = (): string => {
 };
 
 /** Estonian Personal Identification Code. */
-const ik: Validator = {
+const ik: Validator<ParsedPersonId> = {
   name: "Estonian Personal ID",
   localName: "Isikukood",
   abbreviation: "IK",
@@ -148,6 +157,7 @@ const ik: Validator = {
   examples: ["36805280109"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

@@ -132,7 +132,7 @@ const generate = (): string => {
 };
 
 /** South African Identity Number. */
-const idnr: Validator = {
+const idnr: Validator<ParsedPersonId> = {
   name: "South African Identity Number",
   localName: "South African Identity Number",
   abbreviation: "SA ID",
@@ -142,6 +142,7 @@ const idnr: Validator = {
   entityType: "person",
   compact,
   format,
+  parse,
   validate,
   description:
     "South African personal identification number",

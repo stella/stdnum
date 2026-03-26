@@ -21,6 +21,7 @@
  */
 
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -260,8 +261,47 @@ const parse = (value: string): ParsedPersonId | null => {
   };
 };
 
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const MONTH_CODES = Object.keys(MONTH_LETTERS);
+
+const randomLetter = (): string =>
+  LETTERS.charAt(randomInt(0, LETTERS.length - 1));
+
+/** Generate a random valid 16-character Codice Fiscale. */
+const generate = (): string => {
+  let body = "";
+
+  for (let i = 0; i < 6; i++) {
+    body += randomLetter();
+  }
+
+  body += String(randomInt(0, 99)).padStart(2, "0");
+  body +=
+    MONTH_CODES[randomInt(0, MONTH_CODES.length - 1)] ??
+    "A";
+
+  const day =
+    randomInt(1, 28) +
+    (randomInt(0, 1) === 0 ? 0 : 40);
+  body += String(day).padStart(2, "0");
+  body += randomLetter();
+  body += String(randomInt(0, 999)).padStart(3, "0");
+
+  let sum = 0;
+  for (let i = 0; i < body.length; i++) {
+    const ch = body[i];
+    if (ch === undefined) continue;
+    sum +=
+      i % 2 === 0
+        ? (ODD[ch] ?? 0)
+        : (EVEN[ch] ?? 0);
+  }
+
+  return `${body}${CHECK_LETTERS.charAt(sum % 26)}`;
+};
+
 /** Italian Tax Code. */
-const codiceFiscale: Validator = {
+const codiceFiscale: Validator<ParsedPersonId> = {
   name: "Italian Tax Code",
   localName: "Codice Fiscale",
   abbreviation: "CF",
@@ -283,8 +323,10 @@ const codiceFiscale: Validator = {
   examples: ["RCCMNL83S18D969H"] as const,
   compact,
   format,
+  parse,
   validate,
+  generate,
 };
 
 export default codiceFiscale;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

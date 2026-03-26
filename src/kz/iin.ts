@@ -155,7 +155,7 @@ const generate = (): string => {
  *
  * Examples sourced from identique/idnumbers test suite.
  */
-const iin: Validator = {
+const iin: Validator<ParsedPersonId> = {
   name: "Kazakhstan Individual ID",
   localName: "Жеке сәйкестендіру нөмірі",
   abbreviation: "IIN",
@@ -171,6 +171,7 @@ const iin: Validator = {
   examples: ["880515300120", "950101400012"] as const,
   compact,
   format,
+  parse,
   validate,
   sourceUrl:
     "https://www.oecd.org/tax/automatic-exchange/" +

@@ -20,7 +20,7 @@ const collectEntries = (dir: string): string[] => {
 export default defineConfig({
   entry: collectEntries("src"),
   format: ["esm"],
-  bundle: false,
+  unbundle: true,
   dts: true,
   clean: true,
   target: "es2022",

@@ -53,6 +53,22 @@ describe("si.emso", () => {
     }
   });
 
+  test("rejects register codes outside 50-59", () => {
+    const r = si.emso.validate("0101006490006");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("rejects future birth dates", () => {
+    const r = si.emso.validate("1312094569988");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
   test("metadata", () => {
     expect(si.emso.country).toBe("SI");
     expect(si.emso.entityType).toBe("person");

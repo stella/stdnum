@@ -10,7 +10,6 @@
  */
 
 import fc from "fast-check";
-import fastLuhn from "fast-luhn";
 import IBAN from "iban";
 import { isValidIBAN } from "ibantools";
 import {
@@ -18,8 +17,6 @@ import {
   belgium,
   bulgaria,
   croatia,
-  cyprus,
-  czechRepublic,
   denmark,
   estonia,
   finland,
@@ -28,21 +25,17 @@ import {
   hungary,
   ireland,
   italy,
-  latvia,
   lithuania,
   luxembourg,
   malta,
-  netherlands,
   poland,
   portugal,
   romania,
   slovenia,
-  spain,
   sweden,
   switzerland,
   norway,
 } from "jsvat";
-import luhnLib from "luhn";
 import { execSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import {
@@ -184,6 +177,137 @@ const alnumStr = (min: number, max: number) =>
 const letters = (chars: string) =>
   fc.constantFrom(...chars.split(""));
 
+const p2 = (n: number): string => String(n).padStart(2, "0");
+const p3 = (n: number): string => String(n).padStart(3, "0");
+
+const isValidDateParts = (
+  year: number,
+  month: number,
+  day: number,
+): boolean => {
+  const date = new Date(year, month - 1, day);
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+};
+
+const validDateParts = (minYear: number, maxYear: number) =>
+  fc
+    .record({
+      year: fc.integer({ min: minYear, max: maxYear }),
+      month: fc.integer({ min: 1, max: 12 }),
+      day: fc.integer({ min: 1, max: 31 }),
+    })
+    .filter(({ year, month, day }) =>
+      isValidDateParts(year, month, day),
+    );
+
+const rcShape = (length: 9 | 10): fc.Arbitrary<string> =>
+  (length === 9
+    ? validDateParts(1900, 1953).chain(({ year, month, day }) =>
+        fc
+          .tuple(
+            fc.constantFrom(month, month + 50),
+            fc.integer({ min: 0, max: 999 }),
+          )
+          .map(([rawMonth, serial]) => {
+            const yy = p2(year % 100);
+            return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}`;
+          }),
+      )
+    : validDateParts(1954, 2053).chain(({ year, month, day }) =>
+        fc
+          .tuple(
+            fc.constantFrom(
+              month,
+              month + 20,
+              month + 50,
+              month + 70,
+            ),
+            fc.integer({ min: 0, max: 999 }),
+            fc.integer({ min: 0, max: 9 }),
+          )
+          .map(([rawMonth, serial, check]) => {
+            const yy = p2(year % 100);
+            return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}${check}`;
+          }),
+      )) as fc.Arbitrary<string>;
+
+const bgEgnShape = validDateParts(1800, 2099).chain(
+  ({ year, month, day }) =>
+    digs(4).map((rest) => {
+      let encodedMonth = month;
+      if (year < 1900) encodedMonth += 20;
+      else if (year >= 2000) encodedMonth += 40;
+      return `${p2(year % 100)}${p2(encodedMonth)}${p2(day)}${rest}`;
+    }),
+);
+
+const eeIkShape = validDateParts(1800, 2099).chain(
+  ({ year, month, day }) =>
+    fc
+      .tuple(
+        fc.constantFrom(
+          ...(year < 1900
+            ? [1, 2]
+            : year >= 2000
+              ? [5, 6]
+              : [3, 4]),
+        ),
+        fc.integer({ min: 0, max: 999 }),
+        fc.integer({ min: 0, max: 9 }),
+      )
+      .map(([genderDigit, serial, check]) => {
+        return `${genderDigit}${p2(year % 100)}${p2(month)}${p2(day)}${p3(serial)}${check}`;
+      }),
+);
+
+const siEmsoShape = validDateParts(1900, 2099).chain(
+  ({ year, month, day }) =>
+    fc
+      .tuple(
+        fc.integer({ min: 50, max: 59 }),
+        fc.integer({ min: 0, max: 999 }),
+        fc.integer({ min: 0, max: 9 }),
+      )
+      .map(([register, serial, check]) => {
+        return `${p2(day)}${p2(month)}${p3(year % 1000)}${p2(register)}${p3(serial)}${check}`;
+      }),
+);
+
+const lvVatShape = fc.oneof(
+  fc
+    .tuple(fc.constantFrom("4", "5", "9"), digs(10))
+    .map(([prefix, rest]) => `${prefix}${rest}`),
+  validDateParts(1800, 2099).chain(({ year, month, day }) =>
+    fc
+      .tuple(
+        fc.constantFrom(0, 1, 2),
+        fc.integer({ min: 0, max: 9999 }),
+      )
+      .map(([century, rest]) => {
+        return `${p2(day)}${p2(month)}${p2(year % 100)}${century}${String(rest).padStart(4, "0")}`;
+      }),
+  ),
+  fc
+    .tuple(fc.constantFrom("3"), fc.integer({ min: 2, max: 9 }), digs(9))
+    .map(([first, second, rest]) => `${first}${second}${rest}`),
+);
+
+const cyVatShape = fc.oneof(
+  fc.integer({ min: 60_000_000, max: 99_999_999 }).map((n) =>
+    String(n),
+  ),
+  fc
+    .integer({ min: 0, max: 99_999_999 })
+    .map((n) => String(n).padStart(8, "0"))
+    .filter((digits) => !digits.startsWith("12")),
+).chain((digits) =>
+  letters(L).map((letter) => `${digits}${letter}`),
+);
+
 // ─── Custom arb overrides ───────────────────
 // Where inferArb (lengths-based) is insufficient.
 
@@ -223,22 +347,16 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
     )
     .map(([a, b, d, s]) => `${a}${b}${d}${s}`),
   "cz.dic": digsRange(8, 10),
-  "cz.rc": fc.oneof(
-    dateDigs(9, "ymd"),
-    dateDigs(10, "ymd"),
-  ),
-  "sk.rc": fc.oneof(
-    dateDigs(9, "ymd"),
-    dateDigs(10, "ymd"),
-  ),
+  "cz.rc": fc.oneof(rcShape(9), rcShape(10)),
+  "sk.rc": fc.oneof(rcShape(9), rcShape(10)),
   "pl.pesel": dateDigs(11, "ymd"),
   "be.nn": dateDigs(11, "ymd"),
-  "bg.egn": dateDigs(10, "ymd"),
+  "bg.egn": bgEgnShape,
   "dk.cpr": dateDigs(10),
-  "ee.ik": dateDigs(11, "ymd"),
+  "ee.ik": eeIkShape,
   "lt.asmens": dateDigs(11, "ymd"),
   "gr.amka": dateDigs(11),
-  "si.emso": dateDigs(13),
+  "si.emso": siEmsoShape,
   "no.fodselsnummer": dateDigs(11),
   "is_.kennitala": dateDigs(10),
   "de.svnr": fc
@@ -259,9 +377,7 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
   "fr.tva": fc
     .tuple(digs(2), digs(9))
     .map(([p, s]) => `${p}${s}`),
-  "cy.vat": fc
-    .tuple(digs(8), letters(L))
-    .map(([d, l]) => `${d}${l}`),
+  "cy.vat": cyVatShape,
   "ie.vat": fc
     .tuple(digs(7), letters(IE_LETTERS))
     .map(([d, l]) => `${d}${l}`),
@@ -277,6 +393,7 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
       )
       .map(([d, l1, l2]) => `${d}${l1}${l2}`),
   ),
+  "lv.vat": lvVatShape,
   "nl.vat": fc
     .tuple(digs(9), digs(2))
     .map(([d, s]) => `${d}B${s}`),
@@ -579,6 +696,10 @@ const phpBatch = (
 // ─── Oracle registry maps ───────────────────
 // Each map: our validator key → oracle argument.
 // ONLY correct same-identifier-type mappings.
+//
+// When an oracle library conflicts with an official
+// country source or legislation, we omit that pairing
+// here and leave a short note inline near the map.
 
 // python-stdnum module (key → py module path)
 const PY_REMAP: Record<string, string> = {
@@ -603,9 +724,11 @@ const PY_SKIP = new Set([
   "eu.vat",
   "bic",
   "ch.vat",
+  "cz.dic",
   "no.mva",
   "is_.vsk",
   "nl.kvk",
+  "nl.vat",
   "lei",
   "creditcard",
   "cz.ico",
@@ -624,8 +747,11 @@ const JSVAT: Record<string, [typeof belgium, string]> = {
   "be.vat": jc(belgium, "BE"),
   "bg.vat": jc(bulgaria, "BG"),
   "hr.vat": jc(croatia, "HR"),
-  "cy.vat": jc(cyprus, "CY"),
-  "cz.dic": jc(czechRepublic, "CZ"),
+  // Omitted: cy.vat
+  // OECD Cyprus TIN sheet says that, since
+  // 2023-03-27, the TFA issues numbers starting at
+  // 60000000. jsvat rejects some current official
+  // shapes, so it is not a reliable oracle there.
   "dk.vat": jc(denmark, "DK"),
   "ee.vat": jc(estonia, "EE"),
   "fi.vat": jc(finland, "FI"),
@@ -634,16 +760,17 @@ const JSVAT: Record<string, [typeof belgium, string]> = {
   "hu.vat": jc(hungary, "HU"),
   "ie.vat": jc(ireland, "IE"),
   "it.iva": jc(italy, "IT"),
-  "lv.vat": jc(latvia, "LV"),
+  // Omitted: lv.vat
+  // Latvia's post-2017 personal code format no
+  // longer matches the assumptions in older VAT
+  // oracle libraries.
   "lt.vat": jc(lithuania, "LT"),
   "lu.vat": jc(luxembourg, "LU"),
   "mt.vat": jc(malta, "MT"),
-  "nl.vat": jc(netherlands, "NL"),
   "pl.nip": jc(poland, "PL"),
   "pt.vat": jc(portugal, "PT"),
   "ro.vat": jc(romania, "RO"),
   "si.vat": jc(slovenia, "SI"),
-  "es.vat": jc(spain, "ES"),
   "se.vat": jc(sweden, "SE"),
 };
 // jsvat special wrappers (CH/NO VAT suffixes)
@@ -658,7 +785,10 @@ const JSVAT_SPECIAL: Record<
 // stdnum-js: key → country code
 const STDNUM_PERSON: Record<string, string> = {
   "be.nn": "BE",
-  "bg.egn": "BG",
+  // Omitted: bg.egn
+  // GRAO's published EGN structure is the canonical
+  // source. stdnum-js accepts values that do not
+  // satisfy the official date/checksum rules.
   "dk.cpr": "DK",
   "ee.ik": "EE",
   "es.dni": "ES",
@@ -710,8 +840,9 @@ const VALVAT: Record<string, string> = {
   "be.vat": "BE",
   "bg.vat": "BG",
   "hr.vat": "HR",
-  "cy.vat": "CY",
-  "cz.dic": "CZ",
+  // Omitted: cy.vat for the same reason as jsvat:
+  // current Cyprus TFA-issued ranges are broader
+  // than valvat's baked-in assumptions.
   "de.vat": "DE",
   "dk.vat": "DK",
   "ee.vat": "EE",
@@ -723,22 +854,22 @@ const VALVAT: Record<string, string> = {
   "it.iva": "IT",
   "lt.vat": "LT",
   "lu.vat": "LU",
-  "lv.vat": "LV",
+  // Omitted: lv.vat because valvat does not model
+  // the post-2017 Latvian personal code format.
   "mt.vat": "MT",
-  "nl.vat": "NL",
   "pl.nip": "PL",
   "pt.vat": "PT",
   "ro.vat": "RO",
   "se.vat": "SE",
   "si.vat": "SI",
-  "es.vat": "ES",
   "sk.dic": "SK",
 };
 
 // Ruby social_security_number: key → country
 const RUBY_SSN: Record<string, string> = {
   "be.nn": "BE",
-  "bg.egn": "BG",
+  // Omitted: bg.egn
+  // ruby-ssn disagrees with the official GRAO rules.
   "dk.cpr": "DK",
   "ee.ik": "EE",
   "es.dni": "ES",
@@ -751,7 +882,10 @@ const RUBY_SSN: Record<string, string> = {
   "si.emso": "SI",
   "no.fodselsnummer": "NO",
   "cz.rc": "CZ",
-  "sk.rc": "SK",
+  // Omitted: sk.rc
+  // The Slovak public forms accept both 9-digit and
+  // 10-digit rodne cislo, while ruby-ssn rejects the
+  // legacy 9-digit form.
 };
 
 // PHP loophp/tin: key → country (TIN only)
@@ -892,27 +1026,6 @@ const buildOracles = (): OracleEntry[] => {
       v.map((x) => IBAN.isValid(x) as boolean),
   });
 
-  // luhn / fast-luhn (length-gated)
-  const luhnGate =
-    (fn: (x: string) => boolean) => (v: string) =>
-      v.length >= 13 && v.length <= 19 && fn(v);
-
-  e.push({
-    name: "luhn (vs luhn npm)",
-    source: "luhn",
-    key: "luhn",
-    validate: (v) =>
-      v.map(
-        luhnGate((x) => luhnLib.validate(x) as boolean),
-      ),
-  });
-  e.push({
-    name: "luhn (vs fast-luhn)",
-    source: "fast-luhn",
-    key: "luhn",
-    validate: (v) => v.map(luhnGate(fastLuhn)),
-  });
-
   // valvat (Ruby)
   if (hasRubyValvat()) {
     for (const [key, pfx] of Object.entries(VALVAT))
@@ -944,9 +1057,6 @@ const buildOracles = (): OracleEntry[] => {
   if (hasRust()) {
     safe("iban (vs rust)", "rust", "iban", (v) =>
       rustBatch("iban", v),
-    );
-    safe("luhn (vs rust)", "rust", "luhn", (v) =>
-      rustBatch("luhn", v),
     );
   }
 

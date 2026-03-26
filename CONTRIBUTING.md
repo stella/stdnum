@@ -15,6 +15,7 @@ a pull request.
 ```bash
 # Prerequisites: Bun
 bun install
+bun run typecheck   # type-check source
 bun test            # run tests
 bun run lint        # oxlint
 bun run format      # oxfmt
@@ -25,7 +26,7 @@ bun run format      # oxfmt
 1. Create `src/{cc}/{id}.ts` implementing the
    `Validator` type from `src/types.ts`.
 2. Export from `src/{cc}/mod.ts`.
-3. Add an entry point in `package.json` exports.
+3. Run `bun run sync-exports`.
 4. Write tests in `__test__/{cc}.test.ts`.
 5. Update `src/types.ts` if the country is new
    (add to `CountryCode` union).
@@ -41,7 +42,7 @@ Each validator must export:
 
 - One logical change per PR.
 - Include tests for all validators.
-- Run `bun test && bun run lint && bun run format`
+- Run `bun run typecheck && bun test && bun run lint && bun run format`
   before submitting.
 - Use [Conventional Commits](https://www.conventionalcommits.org/):
   `feat:`, `fix:`, `chore:`, `docs:`.

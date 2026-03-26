@@ -1,12 +1,29 @@
 /**
  * PVN (Latvian VAT number).
  *
- * 11 digits. Legal entities (first digit > 3):
- * weights [9,1,4,8,3,10,2,5,7,6,1], sum % 11 === 3.
- * Personal (first digit <= 3): 11-digit format only.
+ * 11 digits.
  *
- * @see https://www.vatify.eu/latvia-vat-number.html
- * @see https://www.vid.gov.lv/en
+ * Individuals:
+ * - legacy personal codes: DDMMYY + century digit 0/1/2 + 4 digits
+ * - since 1 July 2017: codes start with 3, the second digit is 2-9,
+ *   and the remaining digits are random
+ *
+ * Entities:
+ * - tax administration issued: 9XXXXXXXXXX
+ * - enterprise register issued: 4XXXXXXXXXX / 5XXXXXXXXXX
+ *
+ * Canonical sources:
+ * - OECD Latvia TIN sheet for the tax-facing formats
+ * - PMLP page documenting the post-2017 personal code
+ *
+ * These are the reasons we accept the new personal
+ * code shape (`3` + second digit `2-9`) without the
+ * legacy birth-date checksum, and why we reject
+ * legacy personal codes with century digits outside
+ * 0/1/2.
+ *
+ * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Latvia-TIN.pdf
+ * @see https://www.pmlp.gov.lv/en/change-personal-identity-number
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -46,6 +63,9 @@ const validateBirthDate = (v: string): boolean => {
   const month = Number(v.slice(2, 4));
   const year2 = Number(v.slice(4, 6));
   const century = Number(v[6]);
+  if (century < 0 || century > 2) {
+    return false;
+  }
   const fullYear = 1800 + century * 100 + year2;
   const date = new Date(fullYear, month - 1, day);
   return (
@@ -69,23 +89,24 @@ const validate = (value: string): ValidateResult => {
       "Latvian VAT number must contain only digits",
     );
   }
-  const first = Number(v[0]);
-  // Legal entity: first digit > 3
-  if (first > 3) {
+  if (
+    v[0] === "3" &&
+    v[1] !== undefined &&
+    v[1] >= "2" &&
+    v[1] <= "9"
+  ) {
+    // Since 1 July 2017, new personal codes start with 3
+    // and are syntactic identifiers only.
+    return { valid: true, compact: v };
+  }
+
+  const first = v[0];
+  if (first === "4" || first === "5" || first === "9") {
     const sum = weightedSum(v, WEIGHTS, 11);
     if (sum !== 3) {
       return err(
         "INVALID_CHECKSUM",
         "Latvian VAT number check digit mismatch",
-      );
-    }
-  } else if (v.startsWith("32")) {
-    // New-format personal code (from July 2017),
-    // no birth date; checksum only
-    if (!checkPersonal(v)) {
-      return err(
-        "INVALID_CHECKSUM",
-        "Latvian personal code check digit mismatch",
       );
     }
   } else {
@@ -112,8 +133,12 @@ const format = (value: string): string =>
 
 /** Generate a random valid Latvian VAT number. */
 const generate = (): string => {
+  const entityPrefixes = ["4", "5", "9"] as const;
   for (;;) {
-    const c = String(randomInt(4, 9)) + randomDigits(10);
+    const c =
+      randomInt(0, 1) === 0
+        ? `3${randomInt(2, 9)}${randomDigits(9)}`
+        : `${entityPrefixes[randomInt(0, entityPrefixes.length - 1)] ?? "4"}${randomDigits(10)}`;
     if (validate(c).valid) return c;
   }
 };
@@ -127,8 +152,9 @@ const vat: Validator = {
   candidatePattern: "LV\\d{11}",
   country: "LV",
   entityType: "any",
-  sourceUrl: "https://www.vid.gov.lv/en",
-  examples: ["40003521600"] as const,
+  sourceUrl:
+    "https://www.pmlp.gov.lv/en/change-personal-identity-number",
+  examples: ["40003521600", "32999999999"] as const,
   compact,
   format,
   validate,

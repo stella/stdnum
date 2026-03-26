@@ -6,9 +6,19 @@
  * and gender. 10-digit numbers (post-1954) must
  * be divisible by 11.
  *
- * Women have 50 added to the month. Since 2004,
- * an extra +20 offset is used when the serial
- * range is exhausted.
+ * Women have 50 added to the month. For modern
+ * 10-digit numbers, an additional +20 offset may
+ * be used when the daily serial range is exhausted
+ * (+70 for women).
+ *
+ * Canonical source:
+ * - Czech Ministry of the Interior guidance on rodne
+ *   cislo, with the modern overflow-month rules
+ *
+ * We use this to keep the 9-digit historical form
+ * valid while rejecting modern +20/+70 month offsets
+ * on 9-digit numbers. Those overflow offsets are a
+ * modern rule for 10-digit values.
  *
  * @see https://www.mvcr.cz/mvcren/docDetail.aspx?docid=21975362&doctype=ART
  * @see Law 133/2000 Sb.
@@ -29,6 +39,22 @@ import type {
 const compact = (value: string): string =>
   clean(value, " /");
 
+const decodeMonth = (
+  rawMonth: number,
+  year: number,
+  length: number,
+): number | null => {
+  const candidates =
+    length === 10 && year >= 2004 ? [0, 50, 20, 70] : [0, 50];
+  for (const offset of candidates) {
+    const month = rawMonth - offset;
+    if (month >= 1 && month <= 12) {
+      return month;
+    }
+  }
+  return null;
+};
+
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
   if (v.length !== 9 && v.length !== 10) {
@@ -48,22 +74,6 @@ const validate = (value: string): ValidateResult => {
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
 
-  // Strip gender (+50) and overflow (+20) offsets
-  const month = (mm % 50) % 20 || mm % 50;
-  if (month < 1 || month > 12) {
-    return err(
-      "INVALID_COMPONENT",
-      "Birth number contains an invalid month",
-    );
-  }
-
-  if (dd < 1 || dd > 31) {
-    return err(
-      "INVALID_COMPONENT",
-      "Birth number contains an invalid day",
-    );
-  }
-
   // Resolve full year
   let year = yy + 1900;
   if (v.length === 9) {
@@ -78,6 +88,21 @@ const validate = (value: string): ValidateResult => {
   } else {
     // 10-digit: if year < 1954, it's 2000s
     if (year < 1954) year += 100;
+  }
+
+  const month = decodeMonth(mm, year, v.length);
+  if (month === null) {
+    return err(
+      "INVALID_COMPONENT",
+      "Birth number contains an invalid month",
+    );
+  }
+
+  if (dd < 1 || dd > 31) {
+    return err(
+      "INVALID_COMPONENT",
+      "Birth number contains an invalid day",
+    );
   }
 
   // Validate the actual date
@@ -122,12 +147,15 @@ const parse = (value: string): ParsedPersonId | null => {
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
 
-  const gender = mm > 50 ? "female" : "male";
-  const month = (mm % 50) % 20 || mm % 50;
-
+  const gender = mm >= 50 ? "female" : "male";
   let year = yy + 1900;
   if (v.length === 10 && year < 1954) year += 100;
   if (v.length === 9 && year >= 1980) year -= 100;
+
+  const month = decodeMonth(mm, year, v.length);
+  if (month === null) {
+    return null;
+  }
 
   return {
     birthDate: new Date(year, month - 1, dd),
@@ -166,7 +194,7 @@ const generate = (): string => {
 };
 
 /** Czech/Slovak Birth Number. */
-const rc: Validator = {
+const rc: Validator<ParsedPersonId> = {
   name: "Czech Birth Number",
   localName: "Rodné číslo",
   abbreviation: "RČ",
@@ -182,6 +210,7 @@ const rc: Validator = {
   examples: ["7103192745"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

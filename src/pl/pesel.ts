@@ -131,7 +131,7 @@ const generate = (): string => {
 };
 
 /** Polish National Identification Number. */
-const pesel: Validator = {
+const pesel: Validator<ParsedPersonId> = {
   name: "Polish National ID",
   localName:
     "Powszechny Elektroniczny System Ewidencji Ludności",
@@ -145,6 +145,7 @@ const pesel: Validator = {
   examples: ["02070803628"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

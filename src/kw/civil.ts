@@ -14,11 +14,15 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import {
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type {
-  ParsedPersonId,
+  ParsedBirthDate,
   ValidateResult,
   Validator,
 } from "../types";
@@ -103,7 +107,7 @@ const format = (value: string): string => {
  */
 const parse = (
   value: string,
-): Omit<ParsedPersonId, "gender"> | null => {
+): ParsedBirthDate | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
@@ -120,8 +124,24 @@ const parse = (
   };
 };
 
+/** Generate a random valid Kuwait civil number. */
+const generate = (): string => {
+  for (;;) {
+    const year = randomInt(1950, 2024);
+    const month = String(randomInt(1, 12)).padStart(2, "0");
+    const day = String(randomInt(1, 28)).padStart(2, "0");
+    const body =
+      `${year >= 2000 ? "3" : "2"}` +
+      `${String(year % 100).padStart(2, "0")}` +
+      `${month}${day}${randomDigits(4)}`;
+    const check = calcCheckDigit(body);
+    if (check > 9) continue;
+    return `${body}${String(check)}`;
+  }
+};
+
 /** Kuwait Civil Number (الرقم المدني). */
-const civil: Validator = {
+const civil: Validator<ParsedBirthDate> = {
   name: "Civil Number",
   localName: "الرقم المدني",
   abbreviation: "Civil ID",
@@ -137,8 +157,10 @@ const civil: Validator = {
     "https://kuwaitsexpat.com/kuwait-civil-id-format/",
   compact,
   format,
+  parse,
   validate,
+  generate,
 };
 
 export default civil;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

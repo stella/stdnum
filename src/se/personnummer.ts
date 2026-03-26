@@ -154,7 +154,7 @@ const generate = (): string => {
 };
 
 /** Swedish Personal Identity Number. */
-const personnummer: Validator = {
+const personnummer: Validator<ParsedPersonId> = {
   name: "Swedish Personal ID",
   localName: "Personnummer",
   abbreviation: "PN",
@@ -172,6 +172,7 @@ const personnummer: Validator = {
   examples: ["880320-0016"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

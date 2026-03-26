@@ -1,7 +1,10 @@
 export type {
   CountryCode,
   ErrorCode,
+  ParsedBirthDate,
+  ParsedIdentifier,
   ParsedPersonId,
+  ParsableValidator,
   StdnumError,
   ValidateResult,
   Validator,

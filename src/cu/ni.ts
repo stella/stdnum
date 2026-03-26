@@ -17,6 +17,10 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import {
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 
 import type {
@@ -96,12 +100,25 @@ const parse = (value: string): ParsedPersonId | null => {
   };
 };
 
+/** Generate a random valid Cuban NI. */
+const generate = (): string => {
+  const year = randomInt(1950, 2024);
+  const month = String(randomInt(1, 12)).padStart(2, "0");
+  const day = String(randomInt(1, 28)).padStart(2, "0");
+  const yy = String(year % 100).padStart(2, "0");
+  const century =
+    year >= 2000
+      ? String(randomInt(6, 8))
+      : String(randomInt(0, 5));
+  return `${yy}${month}${day}${century}${randomDigits(4)}`;
+};
+
 /**
  * Cuban identity card number (NI).
  *
  * Examples sourced from python-stdnum test suite.
  */
-const ni: Validator = {
+const ni: Validator<ParsedPersonId> = {
   name: "Cuban Identity Card Number",
   localName: "Número de Identidad",
   abbreviation: "NI",
@@ -117,9 +134,11 @@ const ni: Validator = {
   examples: ["91021027775", "72062506561"] as const,
   compact,
   format,
+  parse,
   validate,
+  generate,
   sourceUrl: "https://www.ecured.cu/Carnet_de_Identidad",
 };
 
 export default ni;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

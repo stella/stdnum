@@ -8,11 +8,17 @@
  * @see https://www.minv.sk/
  */
 
-import { compact, format, parse, validate } from "../cz/rc";
-import type { Validator } from "../types";
+import {
+  compact,
+  format,
+  generate,
+  parse,
+  validate,
+} from "../cz/rc";
+import type { ParsedPersonId, Validator } from "../types";
 
 /** Slovak Birth Number. */
-const rc: Validator = {
+const rc: Validator<ParsedPersonId> = {
   name: "Slovak Birth Number",
   localName: "Rodné číslo",
   abbreviation: "RČ",
@@ -21,11 +27,14 @@ const rc: Validator = {
   country: "SK",
   entityType: "person",
   sourceUrl: "https://www.minv.sk/",
+  lengths: [9, 10] as const,
   examples: ["7103192745"] as const,
   compact,
   format,
+  generate,
+  parse,
   validate,
 };
 
 export default rc;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

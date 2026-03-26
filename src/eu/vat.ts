@@ -13,6 +13,7 @@
  */
 
 import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import atUid from "../at/uid";
@@ -152,6 +153,49 @@ const format = (value: string): string => {
   return `${parts.cc}${validator.compact(parts.rest)}`;
 };
 
+const GENERATORS = [
+  ["AT", atUid],
+  ["BE", beVat],
+  ["BG", bgVat],
+  ["CY", cyVat],
+  ["CZ", czDic],
+  ["DE", deVat],
+  ["DK", dkVat],
+  ["EE", eeVat],
+  ["ES", esVat],
+  ["FI", fiVat],
+  ["FR", frTva],
+  ["GR", grVat],
+  ["HR", hrVat],
+  ["HU", huVat],
+  ["IE", ieVat],
+  ["IT", itIva],
+  ["LT", ltVat],
+  ["LU", luVat],
+  ["LV", lvVat],
+  ["MT", mtVat],
+  ["NL", nlVat],
+  ["PL", plNip],
+  ["PT", ptVat],
+  ["RO", roVat],
+  ["SE", seVat],
+  ["SI", siVat],
+  ["SK", skDic],
+] as const;
+
+/** Generate a random EU VAT number from a member validator. */
+const generate = (): string => {
+  for (;;) {
+    const candidate =
+      GENERATORS[randomInt(0, GENERATORS.length - 1)];
+    if (!candidate) continue;
+
+    const [prefix, validator] = candidate;
+    if (validator.generate === undefined) continue;
+    return `${prefix}${validator.generate()}`;
+  }
+};
+
 /** European Union VAT Number. */
 const euVat: Validator = {
   name: "EU VAT Number",
@@ -165,7 +209,8 @@ const euVat: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default euVat;
-export { compact, format, validate };
+export { compact, format, generate, validate };

@@ -11,6 +11,10 @@
  */
 
 import { clean } from "#util/clean";
+import {
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -84,6 +88,26 @@ const format = (value: string): string => {
   return `${v.slice(0, 4)} ${v.slice(4, 6)}${v.slice(6, 8)}${v.slice(8)}`;
 };
 
+/** Generate a random valid Austrian VNR. */
+const generate = (): string => {
+  for (;;) {
+    const serial = randomDigits(3);
+    const day = String(randomInt(1, 28)).padStart(2, "0");
+    const month = String(randomInt(1, 12)).padStart(2, "0");
+    const year = String(randomInt(0, 99)).padStart(2, "0");
+    const digits = `${serial}${day}${month}${year}`;
+
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      sum += Number(digits[i]) * (WEIGHTS[i] ?? 0);
+    }
+
+    const check = sum % 11;
+    if (check === 10) continue;
+    return `${serial}${String(check)}${day}${month}${year}`;
+  }
+};
+
 /** Austrian Social Insurance Number. */
 const vnr: Validator = {
   name: "Austrian Social Insurance Number",
@@ -105,7 +129,8 @@ const vnr: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default vnr;
-export { compact, format, validate };
+export { compact, format, generate, validate };

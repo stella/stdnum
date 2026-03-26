@@ -75,22 +75,24 @@ describe("toRegex", () => {
     // Groups must use \d for digit positions and
     // [A-Z] for the letter.
     const { source } = toRegex(de.svnr);
-    const test = (s: string) =>
+    const matches = (s: string) =>
       new RegExp(source, "g").test(s);
-    expect(test("12 010188 M 01 1")).toBe(true);
-    expect(test("12010188M011")).toBe(true);
-    expect(test("12.010188.M.01.1")).toBe(true);
+    expect(matches("12 010188 M 01 1")).toBe(true);
+    expect(matches("12010188M011")).toBe(true);
+    expect(matches("12.010188.M.01.1")).toBe(true);
   });
 
   test("de.svnr rejects all-caps prose (regression)", () => {
     // The old pattern used [A-Z0-9] for all positions,
     // which matched "OF NOVEMBER 6" as a candidate.
     const { source } = toRegex(de.svnr);
-    const test = (s: string) =>
+    const matches = (s: string) =>
       new RegExp(source, "g").test(s);
-    expect(test("OF NOVEMBER 6")).toBe(false);
-    expect(test("AS OF NOVEMBER 6, 2024, BY")).toBe(false);
-    expect(test("AMENDMENT DATED NOVEMBER 6")).toBe(false);
+    expect(matches("OF NOVEMBER 6")).toBe(false);
+    expect(matches("AS OF NOVEMBER 6, 2024, BY")).toBe(false);
+    expect(matches("AMENDMENT DATED NOVEMBER 6")).toBe(
+      false,
+    );
   });
 });
 

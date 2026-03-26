@@ -18,6 +18,7 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -60,6 +61,8 @@ const calcCheckDigit = (value: string): string => {
 
 const PERSON_RE = /^[A-ZÑ&]{4}\d{6}[A-Z\d]{3}$/;
 const COMPANY_RE = /^[A-ZÑ&]{3}\d{6}[A-Z\d]{3}$/;
+const PREFIX_ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZÑ&";
+const RFC_ALNUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
@@ -115,6 +118,32 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+const randomCharFrom = (chars: string): string =>
+  chars.charAt(randomInt(0, chars.length - 1));
+
+/** Generate a random valid RFC. */
+const generate = (): string => {
+  const isPerson = Math.random() < 0.5;
+  const prefixLength = isPerson ? 4 : 3;
+  let prefix = "";
+  for (let i = 0; i < prefixLength; i++) {
+    prefix += randomCharFrom(PREFIX_ALPHA);
+  }
+
+  const year = randomInt(2000, 2099);
+  const month = String(randomInt(1, 12)).padStart(2, "0");
+  const day = String(randomInt(1, 28)).padStart(2, "0");
+  let homoclave = "";
+  for (let i = 0; i < 2; i++) {
+    homoclave += randomCharFrom(RFC_ALNUM);
+  }
+
+  const body =
+    `${prefix}${String(year % 100).padStart(2, "0")}` +
+    `${month}${day}${homoclave}`;
+  return `${body}${calcCheckDigit(body)}`;
+};
+
 /**
  * Mexican RFC (tax identification number).
  *
@@ -136,9 +165,10 @@ const rfc: Validator = {
   compact,
   format,
   validate,
+  generate,
   sourceUrl:
     "https://en.wikipedia.org/wiki/Tax_Identification_Number_(Mexico)",
 };
 
 export default rfc;
-export { compact, format, validate };
+export { compact, format, generate, validate };

@@ -16,6 +16,7 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type {
@@ -60,6 +61,8 @@ const STATE_CODES = new Set([
   "ZS",
   "NE", // Born abroad
 ]);
+const STATE_CODE_LIST = [...STATE_CODES];
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 /**
  * Alphabet for CURP check digit computation.
@@ -182,12 +185,38 @@ const parse = (value: string): ParsedPersonId | null => {
   };
 };
 
+const randomLetter = (): string =>
+  LETTERS.charAt(randomInt(0, LETTERS.length - 1));
+
+/** Generate a random valid CURP. */
+const generate = (): string => {
+  const year = randomInt(1980, 2024);
+  const month = String(randomInt(1, 12)).padStart(2, "0");
+  const day = String(randomInt(1, 28)).padStart(2, "0");
+  const yy = String(year % 100).padStart(2, "0");
+  const gender = Math.random() < 0.5 ? "H" : "M";
+  const state =
+    STATE_CODE_LIST[randomInt(0, STATE_CODE_LIST.length - 1)] ??
+    "NE";
+  const centuryChar =
+    year >= 2000
+      ? randomLetter()
+      : String(randomInt(0, 9));
+  const body =
+    `${randomLetter()}${randomLetter()}` +
+    `${randomLetter()}${randomLetter()}` +
+    `${yy}${month}${day}${gender}${state}` +
+    `${randomLetter()}${randomLetter()}${randomLetter()}` +
+    `${centuryChar}`;
+  return `${body}${calcCheckDigit(body)}`;
+};
+
 /**
  * Mexican CURP (personal identification number).
  *
  * Example sourced from python-stdnum test suite.
  */
-const curp: Validator = {
+const curp: Validator<ParsedPersonId> = {
   name: "Mexican Personal ID",
   localName: "Clave Única de Registro de Población",
   abbreviation: "CURP",
@@ -202,9 +231,11 @@ const curp: Validator = {
   examples: ["BOXW310820HNERXN09"] as const,
   compact,
   format,
+  parse,
   validate,
+  generate,
   sourceUrl: "https://en.wikipedia.org/wiki/CURP",
 };
 
 export default curp;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

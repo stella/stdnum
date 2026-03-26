@@ -165,7 +165,7 @@ const generate = (): string => {
 };
 
 /** French Social Security Number. */
-const nir: Validator = {
+const nir: Validator<ParsedPersonId> = {
   name: "French Social Security Number",
   localName: "Numero d'Inscription au Repertoire",
   abbreviation: "NIR",
@@ -187,6 +187,7 @@ const nir: Validator = {
   examples: ["295117823456784"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

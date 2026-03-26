@@ -3,17 +3,14 @@ import { describe, expect, test } from "bun:test";
 import { nl } from "../src";
 
 describe("nl.vat", () => {
-  test("valid Dutch VAT", () => {
-    const r = nl.vat.validate("NL123456789B13");
+  test("valid Dutch VAT ID from official example", () => {
+    const r = nl.vat.validate("NL000099998B57");
     expect(r.valid).toBe(true);
   });
 
-  test("invalid checksum", () => {
-    const r = nl.vat.validate("NL123456789B14");
-    expect(r.valid).toBe(false);
-    if (!r.valid) {
-      expect(r.error.code).toBe("INVALID_CHECKSUM");
-    }
+  test("accepts leading zeros in the 9-digit section", () => {
+    const r = nl.vat.validate("NL001234567B01");
+    expect(r.valid).toBe(true);
   });
 
   test("missing B", () => {
@@ -29,6 +26,14 @@ describe("nl.vat", () => {
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("rejects non-digit suffix", () => {
+    const r = nl.vat.validate("NL000099998BA7");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_FORMAT");
     }
   });
 

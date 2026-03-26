@@ -106,7 +106,7 @@ const generate = (): string => {
 };
 
 /** Bosnian Unique Master Citizen Number. */
-const jmbg: Validator = {
+const jmbg: Validator<ParsedPersonId> = {
   name: "Bosnian Personal ID",
   localName: "Jedinstveni matični broj građana",
   abbreviation: "JMBG",
@@ -120,6 +120,7 @@ const jmbg: Validator = {
   examples: ["0101006500006"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

@@ -10,6 +10,7 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -158,8 +159,21 @@ const parse = (value: string): ParsedPersonId | null => {
   };
 };
 
+/** Generate a random valid HETU. */
+const generate = (): string => {
+  const year = randomInt(1900, 2024);
+  const month = String(randomInt(1, 12)).padStart(2, "0");
+  const day = String(randomInt(1, 28)).padStart(2, "0");
+  const yy = String(year % 100).padStart(2, "0");
+  const separator = year >= 2000 ? "A" : "-";
+  const serial = String(randomInt(2, 899)).padStart(3, "0");
+  const checkNum = Number(`${day}${month}${yy}${serial}`);
+  const checkChar = CHECK_CHARS.charAt(checkNum % 31);
+  return `${day}${month}${yy}${separator}${serial}${checkChar}`;
+};
+
 /** Finnish Personal Identity Code. */
-const hetu: Validator = {
+const hetu: Validator<ParsedPersonId> = {
   name: "Finnish Personal ID",
   localName: "Henkilötunnus",
   abbreviation: "HETU",
@@ -172,11 +186,14 @@ const hetu: Validator = {
   country: "FI",
   entityType: "person",
   sourceUrl: "https://dvv.fi/en/personal-identity-code",
+  lengths: [11] as const,
   examples: ["131052-308T"] as const,
   compact,
   format,
+  parse,
   validate,
+  generate,
 };
 
 export default hetu;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

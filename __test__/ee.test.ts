@@ -61,6 +61,14 @@ describe("ee.ik", () => {
     }
   });
 
+  test("rejects 7/8 century digits not used by the official format", () => {
+    const r = ee.ik.validate("76805280109");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
   test("metadata", () => {
     expect(ee.ik.country).toBe("EE");
     expect(ee.ik.entityType).toBe("person");

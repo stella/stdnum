@@ -10,6 +10,10 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import {
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -102,8 +106,18 @@ const parse = (value: string): ParsedPersonId | null => {
   };
 };
 
+/** Generate a random valid Danish CPR. */
+const generate = (): string => {
+  const year = randomInt(1900, 2024);
+  const month = String(randomInt(1, 12)).padStart(2, "0");
+  const day = String(randomInt(1, 28)).padStart(2, "0");
+  const yy = String(year % 100).padStart(2, "0");
+  const serialPrefix = String(randomInt(0, 3));
+  return `${day}${month}${yy}${serialPrefix}${randomDigits(3)}`;
+};
+
 /** Danish Personal Identification Number. */
-const cpr: Validator = {
+const cpr: Validator<ParsedPersonId> = {
   name: "Danish Personal ID",
   localName: "Det Centrale Personregister",
   abbreviation: "CPR",
@@ -112,11 +126,14 @@ const cpr: Validator = {
   country: "DK",
   entityType: "person",
   sourceUrl: "https://cpr.dk/",
+  lengths: [10] as const,
   examples: ["2110625629"] as const,
   compact,
   format,
+  parse,
   validate,
+  generate,
 };
 
 export default cpr;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };
