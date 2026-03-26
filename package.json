@@ -31,6 +31,10 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "scripts": {
+    "sync-ai": "bash scripts/sync-ai-skills.sh",
+    "link-codex": "bash scripts/link-codex-skills.sh"
+  },
   "imports": {
     "#checksums/*": "./dist/_checksums/*.js",
     "#util/*": "./dist/_util/*.js"

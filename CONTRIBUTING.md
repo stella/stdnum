@@ -48,6 +48,16 @@ git submodule update --init
 bun run sync-ai
 ```
 
+To expose the generated agent skills in Codex's `/` picker:
+
+```bash
+bun run link-codex
+```
+
+This links `.agents/skills/<skill>/SKILL.md` into
+`${CODEX_HOME:-$HOME/.codex}/skills` using a safe default
+prefix (`stdnum-`). Set `CODEX_SKILL_PREFIX=""` if you want
+unprefixed global names.
 ## Adding a new identifier
 
 1. Create `src/{cc}/{id}.ts` implementing the

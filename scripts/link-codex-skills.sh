@@ -7,9 +7,10 @@ if [[ ! -d ".ai/shared" ]] || [[ -z "$(ls -A .ai/shared 2>/dev/null)" ]]; then
   exit 1
 fi
 
-if [[ ! -f ".ai/shared/scripts/sync-ai-skills.sh" ]]; then
-  echo "error: .ai/shared/scripts/sync-ai-skills.sh not found." >&2
+if [[ ! -f ".ai/shared/scripts/link-codex-skills.sh" ]]; then
+  echo "error: .ai/shared/scripts/link-codex-skills.sh not found." >&2
   echo "The submodule may be pinned to an incompatible commit." >&2
   exit 1
 fi
-bash .ai/shared/scripts/sync-ai-skills.sh .
+
+bash .ai/shared/scripts/link-codex-skills.sh .
