@@ -16,6 +16,7 @@ a pull request.
 # Prerequisites: Bun
 bun install
 bun run typecheck   # type-check source
+bun run sync-ai      # sync shared/local AI commands
 bun test            # run tests
 bun run lint        # oxlint
 bun run format      # oxfmt
