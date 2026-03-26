@@ -128,29 +128,10 @@ const inferPrefix = (v: Validator): string | null => {
 };
 
 /**
- * Determine the character class needed for the
- * compact form: `\d` if all digits, `[A-Z0-9]`
- * if alphanumeric, etc.
+ * Character class for a string fragment:
+ * `\d` if all digits, `[A-Z]` if all letters,
+ * `[A-Z0-9]` if mixed.
  */
-const inferCharClass = (v: Validator): string => {
-  if (!v.examples || v.examples.length === 0) {
-    return "\\d";
-  }
-  let hasLetter = false;
-  let hasDigit = false;
-  for (const ex of v.examples) {
-    const c = v.compact(ex);
-    for (const ch of c) {
-      if (/[a-zA-Z]/.test(ch)) hasLetter = true;
-      if (/\d/.test(ch)) hasDigit = true;
-    }
-  }
-  if (hasLetter && hasDigit) return "[A-Z0-9]";
-  if (hasLetter) return "[A-Z]";
-  return "\\d";
-};
-
-/** Character class from a string fragment. */
 const charClassFor = (s: string): string => {
   let hasLetter = false;
   let hasDigit = false;
@@ -161,6 +142,21 @@ const charClassFor = (s: string): string => {
   if (hasLetter && hasDigit) return "[A-Z0-9]";
   if (hasLetter) return "[A-Z]";
   return "\\d";
+};
+
+/**
+ * Determine the character class needed for the
+ * compact form: `\d` if all digits, `[A-Z0-9]`
+ * if alphanumeric, etc.
+ */
+const inferCharClass = (v: Validator): string => {
+  if (!v.examples || v.examples.length === 0) {
+    return "\\d";
+  }
+  const combined = v.examples
+    .map((ex) => v.compact(ex))
+    .join("");
+  return charClassFor(combined);
 };
 
 type PerGroupInfo = {

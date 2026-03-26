@@ -69,6 +69,29 @@ describe("toRegex", () => {
     expect(matches).toHaveLength(1);
     expect(matches[0]![0]).toBe("DE136695976");
   });
+
+  test("per-group char classes for mixed-position validators", () => {
+    // de.svnr format: "12 010188 M 01 1"
+    // Groups must use \d for digit positions and
+    // [A-Z] for the letter.
+    const { source } = toRegex(de.svnr);
+    const test = (s: string) =>
+      new RegExp(source, "g").test(s);
+    expect(test("12 010188 M 01 1")).toBe(true);
+    expect(test("12010188M011")).toBe(true);
+    expect(test("12.010188.M.01.1")).toBe(true);
+  });
+
+  test("de.svnr rejects all-caps prose (regression)", () => {
+    // The old pattern used [A-Z0-9] for all positions,
+    // which matched "OF NOVEMBER 6" as a candidate.
+    const { source } = toRegex(de.svnr);
+    const test = (s: string) =>
+      new RegExp(source, "g").test(s);
+    expect(test("OF NOVEMBER 6")).toBe(false);
+    expect(test("AS OF NOVEMBER 6, 2024, BY")).toBe(false);
+    expect(test("AMENDMENT DATED NOVEMBER 6")).toBe(false);
+  });
 });
 
 describe("toPatterns", () => {
