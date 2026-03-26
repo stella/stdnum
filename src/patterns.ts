@@ -128,6 +128,23 @@ const inferPrefix = (v: Validator): string | null => {
 };
 
 /**
+ * Character class for a string fragment:
+ * `\d` if all digits, `[A-Z]` if all letters,
+ * `[A-Z0-9]` if mixed.
+ */
+const charClassFor = (s: string): string => {
+  let hasLetter = false;
+  let hasDigit = false;
+  for (const ch of s) {
+    if (/[a-zA-Z]/.test(ch)) hasLetter = true;
+    if (/\d/.test(ch)) hasDigit = true;
+  }
+  if (hasLetter && hasDigit) return "[A-Z0-9]";
+  if (hasLetter) return "[A-Z]";
+  return "\\d";
+};
+
+/**
  * Determine the character class needed for the
  * compact form: `\d` if all digits, `[A-Z0-9]`
  * if alphanumeric, etc.
@@ -136,18 +153,82 @@ const inferCharClass = (v: Validator): string => {
   if (!v.examples || v.examples.length === 0) {
     return "\\d";
   }
-  let hasLetter = false;
-  let hasDigit = false;
-  for (const ex of v.examples) {
-    const c = v.compact(ex);
-    for (const ch of c) {
-      if (/[a-zA-Z]/.test(ch)) hasLetter = true;
-      if (/\d/.test(ch)) hasDigit = true;
+  const combined = v.examples
+    .map((ex) => v.compact(ex))
+    .join("");
+  return charClassFor(combined);
+};
+
+type PerGroupInfo = {
+  sizes: number[];
+  classes: string[];
+};
+
+/**
+ * Infer per-group sizes AND character classes from
+ * format(). Returns groups with per-position char
+ * classes, e.g., "12 010188 M 01 1" →
+ *   sizes: [2, 6, 1, 2, 1]
+ *   classes: ["\d", "\d", "[A-Z]", "\d", "\d"]
+ *
+ * Only returns non-null when per-group classes
+ * differ (some groups are letters, some digits).
+ * Letter-only groups before the first digit group
+ * are treated as prefixes and excluded (handled
+ * by inferPrefix separately).
+ */
+const inferPerGroupInfo = (
+  v: Validator,
+): PerGroupInfo | null => {
+  if (!v.examples || v.examples.length === 0) {
+    return null;
+  }
+  const compact = v.compact(v.examples[0]!);
+  const formatted = v.format(compact);
+  if (formatted === compact) return null;
+
+  // Only applies to mixed validators (compact has
+  // both letters and digits in separate positions,
+  // like German SVNR "12010188M011").
+  const compactMixed =
+    /[a-zA-Z]/.test(compact) && /\d/.test(compact);
+  if (!compactMixed) return null;
+
+  // Also skip if any single part mixes letters and
+  // digits (IBAN, ISIN) — inferGroups already
+  // handles those correctly with the global class.
+  const parts = formatted.split(/[^a-zA-Z0-9]+/);
+  const isAlphanumeric = parts.some(
+    (p) => /[a-zA-Z]/.test(p) && /\d/.test(p),
+  );
+  if (isAlphanumeric) return null;
+
+  // Keep digit groups and letter-only groups that
+  // appear AFTER the first digit group (embedded
+  // letters). Skip letter-only groups before the
+  // first digit group (prefix like "CHE").
+  const filtered: string[] = [];
+  let seenDigitGroup = false;
+  for (const p of parts) {
+    if (p.length === 0) continue;
+    if (/\d/.test(p)) {
+      seenDigitGroup = true;
+      filtered.push(p);
+    } else if (seenDigitGroup) {
+      filtered.push(p);
     }
   }
-  if (hasLetter && hasDigit) return "[A-Z0-9]";
-  if (hasLetter) return "[A-Z]";
-  return "\\d";
+
+  if (filtered.length <= 1) return null;
+
+  const classes = filtered.map(charClassFor);
+  const allSame = classes.every((c) => c === classes[0]);
+  if (allSame) return null;
+
+  return {
+    sizes: filtered.map((p) => p.length),
+    classes,
+  };
 };
 
 /**
@@ -158,6 +239,17 @@ const groupsToPattern = (
   groups: number[],
   cc: string,
 ): string => groups.map((g) => `${cc}{${g}}`).join(SEP);
+
+/**
+ * Build a group regex with per-group char classes.
+ * Produces tighter patterns when groups have different
+ * character types (e.g., digits vs letters).
+ */
+const groupsToPatternPerClass = (
+  groups: number[],
+  classes: string[],
+): string =>
+  groups.map((g, i) => `${classes[i]!}{${g}}`).join(SEP);
 
 /**
  * Derive a loose candidate-matching regex from
@@ -175,7 +267,19 @@ export const toRegex = (v: Validator): RegExp => {
 
   let pattern: string;
 
-  if (groups && lengths.length <= 1) {
+  // Use per-group char classes when groups mix
+  // digits and letters (e.g., German SVNR:
+  // "12 010188 M 01 1" → [\d, \d, [A-Z], \d, \d]).
+  // This prevents overly broad [A-Z0-9] from
+  // matching all-caps prose as identifiers.
+  const perGroup = inferPerGroupInfo(v);
+
+  if (perGroup && lengths.length <= 1) {
+    pattern = groupsToPatternPerClass(
+      perGroup.sizes,
+      perGroup.classes,
+    );
+  } else if (groups && lengths.length <= 1) {
     pattern = groupsToPattern(groups, cc);
   } else if (lengths.length === 1) {
     pattern = `${cc}{${lengths[0]}}`;
