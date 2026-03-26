@@ -906,6 +906,7 @@
     "build": "tsdown",
     "prepublishOnly": "bun run typecheck && bun run build && bun run sync-exports:check",
     "catalog": "bun scripts/catalog.ts",
+    "sync-ai": "bash scripts/sync-ai-skills.sh",
     "sync-exports": "bun scripts/sync-exports.ts",
     "sync-exports:check": "bun scripts/sync-exports.ts --check",
     "test": "bun test",
