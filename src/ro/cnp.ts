@@ -150,7 +150,7 @@ const generate = (): string => {
 };
 
 /** Romanian Personal Identification Number. */
-const cnp: Validator = {
+const cnp: Validator<ParsedPersonId> = {
   name: "Romanian Personal ID",
   localName: "Cod Numeric Personal",
   abbreviation: "CNP",
@@ -163,6 +163,7 @@ const cnp: Validator = {
   examples: ["1630615123457"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

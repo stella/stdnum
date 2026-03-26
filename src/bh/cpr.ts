@@ -17,6 +17,10 @@
  */
 
 import { clean } from "#util/clean";
+import {
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -59,6 +63,13 @@ const format = (value: string): string => {
   return `${v.slice(0, 2)}-${v.slice(2, 4)}-${v.slice(4)}`;
 };
 
+/** Generate a random structurally valid Bahrain CPR. */
+const generate = (): string => {
+  const yy = String(randomInt(0, 99)).padStart(2, "0");
+  const mm = String(randomInt(1, 12)).padStart(2, "0");
+  return `${yy}${mm}${randomDigits(5)}`;
+};
+
 /** Bahrain Central Population Registration number. */
 const cpr: Validator = {
   name: "Central Population Registration Number",
@@ -75,7 +86,8 @@ const cpr: Validator = {
   compact,
   format,
   validate,
+  generate,
 };
 
 export default cpr;
-export { compact, format, validate };
+export { compact, format, generate, validate };

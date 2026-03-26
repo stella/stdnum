@@ -153,7 +153,7 @@ const generate = (): string => {
 };
 
 /** Chinese Resident Identity Card number. */
-const ric: Validator = {
+const ric: Validator<ParsedPersonId> = {
   name: "Chinese Resident Identity Card",
   localName: "居民身份证号码",
   abbreviation: "RIC",
@@ -172,6 +172,7 @@ const ric: Validator = {
   ] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

@@ -172,7 +172,7 @@ const generate = (): string => {
 };
 
 /** Norwegian Birth Number. */
-const fodselsnummer: Validator = {
+const fodselsnummer: Validator<ParsedPersonId> = {
   name: "Norwegian Birth Number",
   localName: "Fødselsnummer",
   abbreviation: "Fødselsnr",
@@ -184,6 +184,7 @@ const fodselsnummer: Validator = {
   examples: ["15108695088"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

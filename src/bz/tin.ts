@@ -26,6 +26,10 @@
  */
 
 import { clean } from "#util/clean";
+import {
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -79,6 +83,15 @@ const format = (value: string): string => {
   return `${v.slice(0, 6)}-${v.slice(6)}`;
 };
 
+/** Generate a random valid Belize TIN. */
+const generate = (): string => {
+  const base = randomDigits(6);
+  const suffixes = ["", ...SUFFIX_CODES] as const;
+  const suffix =
+    suffixes[randomInt(0, suffixes.length - 1)] ?? "";
+  return `${base}${suffix}`;
+};
+
 /**
  * Belize Tax Identification Number.
  *
@@ -97,6 +110,7 @@ const tin: Validator = {
   compact,
   format,
   validate,
+  generate,
   description:
     "Belize tax number issued by the Belize Tax Service Department",
   sourceUrl:
@@ -104,4 +118,4 @@ const tin: Validator = {
 };
 
 export default tin;
-export { compact, format, validate };
+export { compact, format, generate, validate };

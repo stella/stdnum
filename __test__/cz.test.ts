@@ -70,6 +70,14 @@ describe("cz.rc", () => {
     expect(r.valid).toBe(true);
   });
 
+  test("rejects 9-digit numbers using modern +20 month overflow", () => {
+    const r = cz.rc.validate("913216323");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
   test("invalid component (bad date)", () => {
     const r = cz.rc.validate("1103492745");
     expect(r.valid).toBe(false);

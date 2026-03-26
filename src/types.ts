@@ -116,16 +116,28 @@ export type ValidateResult =
   | { valid: false; error: StdnumError };
 
 /**
- * Structured data extracted from a personal ID number.
- * Returned by `parse()` on validators that encode
- * birth date and gender.
+ * Structured data extracted from an identifier that
+ * encodes a birth date.
  */
-export type ParsedPersonId = {
+export type ParsedBirthDate = {
   birthDate: Date;
+};
+
+/**
+ * Structured data extracted from a personal ID number
+ * that also encodes gender.
+ */
+export type ParsedPersonId = ParsedBirthDate & {
   gender: "male" | "female";
 };
 
-export type Validator = {
+export type ParsedIdentifier =
+  | ParsedBirthDate
+  | ParsedPersonId;
+
+export type Validator<
+  TParsed extends ParsedIdentifier | undefined = undefined,
+> = {
   /** English name. */
   name: string;
   /** Name in the local language. */
@@ -197,4 +209,10 @@ export type Validator = {
    * passed to validate() for confirmation.
    */
   candidatePattern?: string;
-};
+} & ([TParsed] extends [undefined]
+  ? { parse?: undefined }
+  : { parse: (value: string) => TParsed | null });
+
+export type ParsableValidator<
+  TParsed extends ParsedIdentifier = ParsedIdentifier,
+> = Validator<TParsed>;

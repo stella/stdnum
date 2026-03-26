@@ -5,8 +5,14 @@
  * 10 digits encoding date of birth, serial number,
  * and a check digit.
  *
- * @see https://en.wikipedia.org/wiki/Unique_citizenship_number
- * @see https://www.grao.bg/
+ * Canonical source:
+ * - GRAO regulation PDF describing the EGN structure.
+ *
+ * We treat this as authoritative over third-party
+ * oracle libraries when the checksum or date rules
+ * disagree.
+ *
+ * @see https://www.grao.bg/normact/NaredbaFunkcESGR.pdf
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -131,7 +137,7 @@ const generate = (): string => {
 };
 
 /** Bulgarian Personal Identification Number. */
-const egn: Validator = {
+const egn: Validator<ParsedPersonId> = {
   name: "Bulgarian Personal ID",
   localName: "Единен граждански номер",
   abbreviation: "ЕГН",
@@ -143,10 +149,11 @@ const egn: Validator = {
   candidatePattern: "\\d{10}",
   country: "BG",
   entityType: "person",
-  sourceUrl: "https://www.grao.bg/",
+  sourceUrl: "https://www.grao.bg/normact/NaredbaFunkcESGR.pdf",
   examples: ["7523169263"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

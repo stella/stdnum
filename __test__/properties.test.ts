@@ -88,23 +88,31 @@ const GARBAGE = [
 
 for (const [name, v] of validators) {
   describe(`properties: ${name}`, () => {
-    // Use examples if available, otherwise try
-    // random generation
-    const seeds: string[] = v.examples
-      ? [...v.examples]
-      : [];
+    const seedSet = new Set<string>();
+
+    for (const example of v.examples ?? []) {
+      seedSet.add(v.compact(example));
+    }
+
+    if (v.generate) {
+      for (let i = 0; i < 5; i++) {
+        seedSet.add(v.generate());
+      }
+    }
 
     // Also try to find valid values by random
-    if (seeds.length < 3) {
+    if (seedSet.size < 5) {
       const randoms = fc.sample(randomStr, 500);
       for (const r of randoms) {
-        if (seeds.length >= 5) break;
+        if (seedSet.size >= 5) break;
         const result = v.validate(r);
         if (result.valid) {
-          seeds.push(result.compact);
+          seedSet.add(result.compact);
         }
       }
     }
+
+    const seeds = [...seedSet];
 
     if (seeds.length > 0) {
       test("roundtrip: compact(format(compact(x))) === compact(x)", () => {

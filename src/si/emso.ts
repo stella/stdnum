@@ -5,8 +5,14 @@
  * encoding DDMMYYY (7-digit birth year), region code,
  * serial number, and a check digit.
  *
- * @see https://en.wikipedia.org/wiki/Unique_Master_Citizen_Number
- * @see https://www.gov.si/
+ * Canonical source:
+ * - Slovenia government registry overview
+ *
+ * This is the source behind the stricter register
+ * code check (50-59) and the decision to reject
+ * future birth dates in the embedded date field.
+ *
+ * @see https://www.gov.si/teme/registri-in-evidence-prebivalstva/
  */
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -75,6 +81,20 @@ const validate = (value: string): ValidateResult => {
       "EMŠO contains an invalid date",
     );
   }
+  if (new Date(yyyy, mm - 1, dd) > new Date()) {
+    return err(
+      "INVALID_COMPONENT",
+      "EMŠO cannot contain a future birth date",
+    );
+  }
+
+  const register = Number(v.slice(7, 9));
+  if (register < 50 || register > 59) {
+    return err(
+      "INVALID_COMPONENT",
+      "EMSO register code must be between 50 and 59",
+    );
+  }
 
   if (calcCheckDigit(v) !== Number(v[12])) {
     return err(
@@ -120,7 +140,7 @@ const generate = (): string => {
     const dd = String(randomInt(1, 28)).padStart(2, "0");
     const mm = String(randomInt(1, 12)).padStart(2, "0");
     const yyy = String(randomInt(900, 999));
-    const rr = String(randomInt(50, 99));
+    const rr = String(randomInt(50, 59));
     const sss = String(randomInt(0, 999)).padStart(3, "0");
     const partial = dd + mm + yyy + rr + sss;
     const c = partial + String(calcCheckDigit(partial));
@@ -129,7 +149,7 @@ const generate = (): string => {
 };
 
 /** Slovenian Unique Master Citizen Number. */
-const emso: Validator = {
+const emso: Validator<ParsedPersonId> = {
   name: "Slovenian Personal ID",
   localName: "Enotna matična številka občana",
   abbreviation: "EMŠO",
@@ -140,10 +160,12 @@ const emso: Validator = {
   candidatePattern: "\\d{13}",
   country: "SI",
   entityType: "person",
-  sourceUrl: "https://www.gov.si/",
+  sourceUrl:
+    "https://www.gov.si/teme/registri-in-evidence-prebivalstva/",
   examples: ["0101006500006"] as const,
   compact,
   format,
+  parse,
   validate,
   generate,
 };

@@ -14,6 +14,7 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -211,8 +212,29 @@ const parse = (value: string): ParsedPersonId | null => {
   };
 };
 
+const PB_CODES = [...VALID_PB_CODES];
+
+/** Generate a random valid Malaysian NRIC. */
+const generate = (): string => {
+  const year = randomInt(1950, 2024);
+  const month = String(randomInt(1, 12)).padStart(2, "0");
+  const day = String(randomInt(1, 28)).padStart(2, "0");
+  const pb =
+    PB_CODES[randomInt(0, PB_CODES.length - 1)] ?? "01";
+  const serial = String(randomInt(0, 999)).padStart(3, "0");
+  const isMale = Math.random() < 0.5;
+  const lastDigit = isMale
+    ? String(randomInt(0, 4) * 2 + 1)
+    : String(randomInt(0, 4) * 2);
+
+  return (
+    `${String(year % 100).padStart(2, "0")}` +
+    `${month}${day}${pb}${serial}${lastDigit}`
+  );
+};
+
 /** Malaysian National Registration Identity Card. */
-const nric: Validator = {
+const nric: Validator<ParsedPersonId> = {
   name: "Malaysian National Registration Identity Card Number",
   localName: "Nombor Kad Pengenalan",
   abbreviation: "NRIC",
@@ -228,8 +250,10 @@ const nric: Validator = {
   examples: ["770305021234", "880715141234"] as const,
   compact,
   format,
+  parse,
   validate,
+  generate,
 };
 
 export default nric;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

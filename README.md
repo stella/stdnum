@@ -313,7 +313,8 @@ handled automatically.
 
 ```bash
 bun install
-bun test         # 4,185 tests
+bun run typecheck
+bun test
 bun run lint     # oxlint
 bun run format   # oxfmt
 ```

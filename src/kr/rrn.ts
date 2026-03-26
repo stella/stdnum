@@ -11,6 +11,10 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import {
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -140,8 +144,23 @@ const parse = (value: string): ParsedPersonId | null => {
   };
 };
 
+/** Generate a random valid Korean RRN. */
+const generate = (): string => {
+  const year = randomInt(1900, 2024);
+  const month = String(randomInt(1, 12)).padStart(2, "0");
+  const day = String(randomInt(1, 28)).padStart(2, "0");
+  const yy = String(year % 100).padStart(2, "0");
+  const genderDigit =
+    year >= 2000
+      ? String(randomInt(3, 4))
+      : String(randomInt(1, 2));
+  const place = String(randomInt(0, 96)).padStart(2, "0");
+  const body = `${yy}${month}${day}${genderDigit}${place}${randomDigits(3)}`;
+  return `${body}${String(checkDigit(body))}`;
+};
+
 /** Korean Resident Registration Number. */
-const rrn: Validator = {
+const rrn: Validator<ParsedPersonId> = {
   name: "Korean Resident Registration Number",
   localName: "주민등록번호",
   abbreviation: "RRN",
@@ -163,8 +182,10 @@ const rrn: Validator = {
   examples: ["9710139019902", "9501011000109"] as const,
   compact,
   format,
+  parse,
   validate,
+  generate,
 };
 
 export default rrn;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

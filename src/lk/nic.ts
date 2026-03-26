@@ -14,6 +14,10 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
+import {
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -184,8 +188,27 @@ const parse = (value: string): ParsedPersonId | null => {
   };
 };
 
+/** Generate a random valid Sri Lankan NIC. */
+const generate = (): string => {
+  const year = randomInt(1950, 2024);
+  const start = new Date(year, 0, 1);
+  const end = new Date(year, 11, 31);
+  const maxDay =
+    Math.round(
+      (end.getTime() - start.getTime()) / 86_400_000,
+    ) + 1;
+  const dayOfYear = randomInt(1, maxDay);
+  const genderOffset = Math.random() < 0.5 ? 0 : 500;
+  const ddd = String(dayOfYear + genderOffset).padStart(
+    3,
+    "0",
+  );
+  const body = `${year}${ddd}0${randomDigits(3)}`;
+  return `${body}${String(checkDigit(body))}`;
+};
+
 /** Sri Lankan National Identity Card. */
-const nic: Validator = {
+const nic: Validator<ParsedPersonId> = {
   name: "National Identity Card",
   localName: "ජාතික හැඳුනුම්පත",
   abbreviation: "NIC",
@@ -203,8 +226,10 @@ const nic: Validator = {
   examples: ["197819202757", "862348753V"] as const,
   compact,
   format,
+  parse,
   validate,
+  generate,
 };
 
 export default nic;
-export { compact, format, parse, validate };
+export { compact, format, generate, parse, validate };

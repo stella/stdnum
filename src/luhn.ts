@@ -60,7 +60,15 @@ const luhn: Validator = {
   name: "Luhn",
   localName: "Luhn",
   abbreviation: "Luhn",
+  aliases: [
+    "Luhn",
+    "Luhn algorithm",
+    "mod 10",
+  ] as const,
+  candidatePattern: "\\d{2,}",
   entityType: "any",
+  sourceUrl:
+    "https://en.wikipedia.org/wiki/Luhn_algorithm",
   examples: ["4111111111111111", "18"] as const,
   compact,
   format,
