@@ -23,6 +23,7 @@ export default defineConfig({
   unbundle: true,
   dts: true,
   clean: true,
+  fixedExtension: false,
   target: "es2022",
   outDir: "dist",
   sourcemap: true,
