@@ -31,10 +31,6 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "sync-ai": "bash scripts/sync-ai-skills.sh",
-    "link-codex": "bash scripts/link-codex-skills.sh"
-  },
   "imports": {
     "#checksums/*": "./dist/_checksums/*.js",
     "#util/*": "./dist/_util/*.js"
@@ -910,6 +906,7 @@
     "build": "tsdown",
     "prepublishOnly": "bun run typecheck && bun run build && bun run sync-exports:check",
     "catalog": "bun scripts/catalog.ts",
+    "link-codex": "bash scripts/link-codex-skills.sh",
     "sync-ai": "bash scripts/sync-ai-skills.sh",
     "sync-exports": "bun scripts/sync-exports.ts",
     "sync-exports:check": "bun scripts/sync-exports.ts --check",
