@@ -23,6 +23,7 @@ export default defineConfig({
   unbundle: true,
   dts: true,
   clean: true,
+  // Keep .js/.d.ts outputs so package exports stay aligned after tsdown 0.21.
   fixedExtension: false,
   target: "es2022",
   outDir: "dist",
