@@ -927,7 +927,7 @@
     "oxfmt": "^0.41.0",
     "oxlint": "^1.55.0",
     "stdnum": "^1.11.7",
-    "tsdown": "^0.12.4",
+    "tsdown": "0.21.6",
     "typescript": "^5.9.3",
     "validate-polish": "^2.1.40"
   },
