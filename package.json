@@ -925,9 +925,9 @@
     "luhn": "^2.4.1",
     "oxfmt": "^0.41.0",
     "oxlint": "^1.55.0",
-    "stdnum": "^1.11.7",
-    "tsdown": "^0.12.4",
-    "typescript": "^5.9.3",
+    "stdnum": "^1.11.13",
+    "tsdown": "^0.21.7",
+    "typescript": "^6.0.2",
     "validate-polish": "^2.1.40"
   },
   "publishConfig": {
