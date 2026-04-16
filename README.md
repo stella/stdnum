@@ -4,9 +4,12 @@
 
 # @stll/stdnum
 
-Validate, compact, and format standard
-identifiers. Pure TypeScript, zero dependencies,
-tree-shakeable.
+Validate, compact, and format standard identifiers
+for Node.js and Bun. Pure TypeScript, zero
+dependencies, tree-shakeable per identifier.
+
+This package covers 7 international identifiers and
+96 countries through per-module entry points.
 
 ## Install
 
@@ -15,6 +18,9 @@ npm install @stll/stdnum
 # or
 bun add @stll/stdnum
 ```
+
+Tagged releases are published from GitHub Actions
+with npm provenance enabled.
 
 ## Usage
 
