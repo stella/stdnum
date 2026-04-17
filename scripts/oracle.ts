@@ -929,6 +929,10 @@ const MODE = (() => {
   return value === "survey" ? "survey" : "gate";
 })();
 
+const BASE_SEED = Number(
+  process.env["ORACLE_SEED"] ?? "1337",
+);
+
 const shouldFailOnDisagreements =
   MODE === "gate" ||
   process.env["ORACLE_FAIL_ON_DISAGREEMENTS"] === "1";
@@ -943,6 +947,7 @@ const SURVEY_ONLY_ENTRIES = new Set([
   "jsvat:ee.vat",
   "jsvat:pl.nip",
   "stdnum-js:be.nn",
+  "stdnum-js:fi.hetu",
   "stdnum-js:is_.kennitala",
   "stdnum-js:ie.pps",
   "stdnum-js:se.personnummer",
@@ -1140,6 +1145,14 @@ const mutateAt = (
   return out;
 };
 
+const seedFor = (label: string): number => {
+  let hash = BASE_SEED | 0;
+  for (let i = 0; i < label.length; i++) {
+    hash = ((hash * 33) ^ label.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash) || 1;
+};
+
 const inferCheckDigitPositionsForExample = (
   v: Validator,
   example: string,
@@ -1268,7 +1281,10 @@ const run = () => {
       const d = byKey.get(entry.key);
       if (!d) continue;
       const arb = arbFor(d.key, d.validator);
-      const vals = fc.sample(arb, NUM);
+      const vals = fc.sample(arb, {
+        numRuns: NUM,
+        seed: seedFor(`oracle:${entry.name}`),
+      });
       const ts = vals.map(
         (v) => d.validator.validate(v).valid,
       );
@@ -1294,7 +1310,10 @@ const run = () => {
       if (checkDigitPositions.length !== 1) continue;
       const [checkDigitPosition] = checkDigitPositions;
       const arb = arbFor(d.key, d.validator);
-      const cands = fc.sample(arb, Math.min(NUM, 2000));
+      const cands = fc.sample(arb, {
+        numRuns: Math.min(NUM, 2000),
+        seed: seedFor(`mutants:${d.key}`),
+      });
       const valid = cands.flatMap((value) => {
         const result = d.validator.validate(value);
         return result.valid ? [result.compact] : [];

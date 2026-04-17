@@ -934,7 +934,7 @@
     "validate-polish": "^2.1.40"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "engines": {
     "node": ">= 18"
