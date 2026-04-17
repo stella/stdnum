@@ -1,0 +1,182 @@
+name: Release
+
+env:
+  NODE_VERSION: "22"
+  NPM_VERSION: "11.11.1"
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing git tag to release, e.g. v0.0.1
+        required: true
+        type: string
+      publish_to_npm:
+        description: Publish the package to npm after creating the GitHub release
+        required: true
+        default: false
+        type: boolean
+
+concurrency:
+  group: release-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify release inputs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+
+      - name: Validate tag and package version
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          git rev-parse --verify "refs/tags/${RELEASE_TAG}" >/dev/null
+
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          TAG_VERSION="${RELEASE_TAG#v}"
+          if [[ "$PKG_VERSION" != "$TAG_VERSION" ]]; then
+            echo "::error::Tag version (${TAG_VERSION}) does not match package.json version (${PKG_VERSION})."
+            exit 1
+          fi
+
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun test
+      - run: bun run typecheck
+      - run: bun run build
+      - run: bun run sync-exports:check
+      - run: ORACLE_SAMPLES=500 bun run oracle
+      - run: npm pack --json --ignore-scripts --dry-run
+
+  publish:
+    name: Publish
+    needs: [verify]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org
+
+      - name: Install npm for release publishing
+        run: npm install --global "npm@${{ env.NPM_VERSION }}"
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+
+      - name: Pack release tarball
+        id: pack
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p release-artifacts
+
+          pack_json="$(npm pack --json --ignore-scripts --pack-destination release-artifacts)"
+          tarball_file="$(echo "$pack_json" | jq -r '.[0].filename')"
+          sha256sum "release-artifacts/$tarball_file" > release-artifacts/SHA256SUMS
+
+          echo "tarball=release-artifacts/$tarball_file" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+
+          assets=(
+            "${{ steps.pack.outputs.tarball }}"
+            release-artifacts/SHA256SUMS
+          )
+
+          prerelease_flag=()
+          if [[ "$RELEASE_TAG" == *-* ]]; then
+            prerelease_flag+=(--prerelease)
+          fi
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "${assets[@]}" --clobber
+          else
+            gh release create "$RELEASE_TAG" "${assets[@]}" \
+              "${prerelease_flag[@]}" \
+              --title "$RELEASE_TAG"
+          fi
+
+      - name: Publish to npm
+        if: inputs.publish_to_npm
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [[ -n "${NPM_TOKEN:-}" ]]; then
+            printf "//registry.npmjs.org/:_authToken=%s\n" "$NPM_TOKEN" > "$HOME/.npmrc"
+          fi
+
+          publish_tarball() {
+            local tarball="$1"
+            local package_json
+            local package_name
+            local package_version
+            local attempt
+            local published=false
+
+            tarball="$(realpath "$tarball")"
+            package_json="$(tar -xOf "$tarball" package/package.json)"
+            package_name="$(jq -r '.name' <<<"$package_json")"
+            package_version="$(jq -r '.version' <<<"$package_json")"
+
+            if npm view "${package_name}@${package_version}" version --json >/dev/null 2>&1; then
+              echo "Skipping already-published ${package_name}@${package_version}"
+              published=true
+            fi
+
+            if [[ "$published" != "true" ]]; then
+              for attempt in 1 2 3 4 5; do
+                if npm publish "$tarball" --provenance --access public --tag latest; then
+                  published=true
+                  break
+                fi
+
+                if npm view "${package_name}@${package_version}" version --json >/dev/null 2>&1; then
+                  echo "Detected ${package_name}@${package_version} after publish attempt ${attempt}"
+                  published=true
+                  break
+                fi
+
+                if [[ "$attempt" -eq 5 ]]; then
+                  echo "Failed to publish ${package_name}@${package_version} after ${attempt} attempts" >&2
+                  return 1
+                fi
+
+                sleep $((attempt * 10))
+              done
+            fi
+
+            return 0
+          }
+
+          publish_tarball "${{ steps.pack.outputs.tarball }}"

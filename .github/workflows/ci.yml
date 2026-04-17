@@ -1,0 +1,132 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types:
+      [
+        opened,
+        synchronize,
+        reopened,
+        ready_for_review,
+        labeled,
+      ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  trust-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      trusted: ${{ steps.check.outputs.trusted }}
+    steps:
+      - name: Check if PR is trusted
+        id: check
+        env:
+          HEAD_REPO: >-
+            ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+          HAS_RUN_CI_LABEL: >-
+            ${{ contains(github.event.pull_request.labels.*.name, 'run-ci') }}
+        run: |
+          if [[ "$HEAD_REPO" == "$BASE_REPO" ]]; then
+            echo "trusted=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$HAS_RUN_CI_LABEL" == "true" ]]; then
+            echo "trusted=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "trusted=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Fork PR without 'run-ci' label — CI skipped."
+          fi
+
+  lint:
+    name: Lint
+    if: >-
+      always()
+      && (github.event_name != 'pull_request'
+          || needs.trust-check.outputs.trusted == 'true')
+    needs: [trust-check]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+
+  test:
+    name: Test
+    if: >-
+      always()
+      && (github.event_name != 'pull_request'
+          || needs.trust-check.outputs.trusted == 'true')
+    needs: [trust-check]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: bun test
+
+  oracle:
+    name: Oracle
+    if: >-
+      always()
+      && (github.event_name != 'pull_request'
+          || needs.trust-check.outputs.trusted == 'true')
+    needs: [trust-check]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: ORACLE_SAMPLES=500 bun run oracle
+
+  build:
+    name: Build
+    if: >-
+      always()
+      && (github.event_name != 'pull_request'
+          || needs.trust-check.outputs.trusted == 'true')
+    needs: [trust-check]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun run build
+      - run: bun run sync-exports:check
+
+  pack:
+    name: Pack
+    if: >-
+      always()
+      && (github.event_name != 'pull_request'
+          || needs.trust-check.outputs.trusted == 'true')
+    needs: [trust-check]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: "22.21.1"
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: npm pack --json --ignore-scripts --dry-run

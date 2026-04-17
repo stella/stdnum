@@ -1,0 +1,74 @@
+/**
+ * n° TVA (taxe sur la valeur ajoutée, Monacan VAT).
+ *
+ * For VAT purposes Monaco is treated as French
+ * territory. The number follows the French TVA
+ * format but the SIREN part starts with "000"
+ * (not a real SIREN). The compact form is
+ * prefixed with "FR".
+ *
+ * @see https://www.economie.gouv.fr/
+ */
+
+import { randomDigits } from "#util/generate";
+import { err } from "#util/result";
+
+import {
+  compact as frCompact,
+  validate as frValidate,
+} from "../fr/tva";
+import type { ValidateResult, Validator } from "../types";
+
+const compact = (value: string): string => {
+  const v = frCompact(value);
+  return `FR${v}`;
+};
+
+const validate = (value: string): ValidateResult => {
+  const frResult = frValidate(value);
+  if (!frResult.valid) {
+    return frResult;
+  }
+
+  // Monaco SIREN part must start with "000"
+  const siren = frResult.compact.slice(2);
+  if (!siren.startsWith("000")) {
+    return err(
+      "INVALID_COMPONENT",
+      "Monacan TVA SIREN part must start with 000",
+    );
+  }
+
+  return { valid: true, compact: `FR${frResult.compact}` };
+};
+
+const format = (value: string): string => compact(value);
+
+/** Generate a random valid Monacan TVA number. */
+const generate = (): string => {
+  const siren = "000" + randomDigits(6);
+  const prefix = String(
+    (12 + 3 * (Number(siren) % 97)) % 97,
+  ).padStart(2, "0");
+  return "FR" + prefix + siren;
+};
+
+/** Monacan VAT Number. */
+const tva: Validator = {
+  name: "Monacan VAT Number",
+  localName: "Numéro de TVA",
+  abbreviation: "TVA",
+  aliases: ["numéro de TVA", "TVA"] as const,
+  candidatePattern: "FR\\d{11}",
+  country: "MC",
+  entityType: "company",
+  sourceUrl: "https://www.economie.gouv.fr/",
+  examples: ["FR53000004605"] as const,
+  compact,
+  format,
+  validate,
+  generate,
+};
+
+export default tva;
+export { compact, format, validate, generate };

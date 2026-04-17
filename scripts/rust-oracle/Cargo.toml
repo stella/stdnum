@@ -1,0 +1,9 @@
+[package]
+name = "stdnum-oracle"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+iban_validate = "5"
+luhn = "1"
+serde_json = "1"

@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 60,
+  "sortImports": {
+    "customGroups": [
+      {
+        "groupName": "stella",
+        "elementNamePattern": ["@stella/**", "@stll/**"]
+      }
+    ],
+    "groups": [
+      [
+        "value-builtin",
+        "value-external",
+        "type-builtin",
+        "type-external"
+      ],
+      "stella",
+      [
+        "value-parent",
+        "value-sibling",
+        "value-index",
+        "type-parent",
+        "type-sibling",
+        "type-index"
+      ]
+    ],
+    "newlinesBetween": true
+  }
+}
