@@ -4,9 +4,12 @@
 
 # @stll/stdnum
 
-Validate, compact, and format standard
-identifiers. Pure TypeScript, zero dependencies,
-tree-shakeable.
+Validate, compact, and format standard identifiers
+for Node.js and Bun. Pure TypeScript, zero
+dependencies, tree-shakeable per identifier.
+
+This package covers 7 international identifiers and
+96 countries through per-module entry points.
 
 ## Install
 
@@ -15,6 +18,9 @@ npm install @stll/stdnum
 # or
 bun add @stll/stdnum
 ```
+
+Tagged releases are published from GitHub Actions
+with npm provenance enabled.
 
 ## Usage
 
@@ -42,6 +48,23 @@ import iban from "@stll/stdnum/iban";
 ico.validate("25596641");
 iban.validate("CZ65 0800 0000 1920 0014 5399");
 ```
+
+## Oracle Validation
+
+The repo ships two oracle modes:
+
+- `bun run oracle`
+  Runs the strict gate. It keeps only
+  high-confidence cross-checks that are stable enough
+  for CI.
+- `bun run oracle:survey`
+  Runs the broader ecosystem survey. It includes
+  noisier third-party validators and mutation probes to
+  surface drift without treating every disagreement as a
+  release blocker.
+
+Both commands accept `ORACLE_SAMPLES=<n>` to trade off
+runtime against coverage.
 
 ## Supported Identifiers
 

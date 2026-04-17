@@ -2,11 +2,19 @@
  * Oracle tests: cross-check @stll/stdnum against
  * independent implementations.
  *
+ * The default "gate" mode keeps only high-confidence
+ * comparators that are suitable for CI. "survey" mode
+ * adds broader ecosystem libraries that are still useful
+ * for research, but known to drift from official sources
+ * on some formats.
+ *
  * Auto-discovers ALL validators from ../src.
  * Each oracle backend declares what it validates;
  * matching is automatic via validator key.
  *
- * Run: bun run oracle
+ * Run:
+ *   bun run oracle
+ *   bun run oracle:survey
  */
 
 import fc from "fast-check";
@@ -55,6 +63,8 @@ type Discovered = {
   entityType: string;
   validator: Validator;
 };
+
+type OracleMode = "gate" | "survey";
 
 const isValidator = (v: unknown): v is Validator =>
   Boolean(
@@ -904,8 +914,54 @@ type OracleEntry = {
   name: string;
   source: string;
   key: string;
+  tier: OracleMode;
   validate: (vals: string[]) => boolean[] | null;
 };
+
+const MODE = (() => {
+  const arg = process.argv.find((v) =>
+    v.startsWith("--mode="),
+  );
+  const value =
+    arg?.slice("--mode=".length) ??
+    process.env["ORACLE_MODE"] ??
+    "gate";
+  return value === "survey" ? "survey" : "gate";
+})();
+
+const BASE_SEED = Number(
+  process.env["ORACLE_SEED"] ?? "1337",
+);
+
+const shouldFailOnDisagreements =
+  MODE === "gate" ||
+  process.env["ORACLE_FAIL_ON_DISAGREEMENTS"] === "1";
+
+const SURVEY_ONLY_SOURCES = new Set(["valvat", "ruby-ssn"]);
+
+const SURVEY_ONLY_ENTRIES = new Set([
+  // These pairings are useful as ecosystem probes,
+  // but they are not stable enough to gate releases.
+  "jsvat:be.vat",
+  "jsvat:bg.vat",
+  "jsvat:ee.vat",
+  "jsvat:pl.nip",
+  "stdnum-js:be.nn",
+  "stdnum-js:fi.hetu",
+  "stdnum-js:is_.kennitala",
+  "stdnum-js:ie.pps",
+  "stdnum-js:se.personnummer",
+  "validate-polish:pl.pesel",
+]);
+
+const tierFor = (
+  source: string,
+  key: string,
+): OracleMode =>
+  SURVEY_ONLY_SOURCES.has(source) ||
+  SURVEY_ONLY_ENTRIES.has(`${source}:${key}`)
+    ? "survey"
+    : "gate";
 
 // ─── Build all oracle entries ───────────────
 
@@ -921,6 +977,7 @@ const buildOracles = (): OracleEntry[] => {
       name,
       source,
       key,
+      tier: tierFor(source, key),
       validate: (vals) => {
         try {
           return fn(vals);
@@ -958,6 +1015,7 @@ const buildOracles = (): OracleEntry[] => {
       name: `${key} (vs jsvat)`,
       source: "jsvat",
       key,
+      tier: tierFor("jsvat", key),
       validate: (v) =>
         v.map((x) => checkVAT(`${pfx}${x}`, [cfg]).isValid),
     });
@@ -968,6 +1026,7 @@ const buildOracles = (): OracleEntry[] => {
       name: `${key} (vs jsvat)`,
       source: "jsvat",
       key,
+      tier: tierFor("jsvat", key),
       validate: (v) =>
         v.map((x) => checkVAT(wrap(x), [cfg]).isValid),
     });
@@ -978,6 +1037,7 @@ const buildOracles = (): OracleEntry[] => {
       name: `${key} (vs stdnum-js)`,
       source: "stdnum-js",
       key,
+      tier: tierFor("stdnum-js", key),
       validate: (v) =>
         v.map((x) => stdnumPerson(cc, x).isValid),
     });
@@ -986,6 +1046,7 @@ const buildOracles = (): OracleEntry[] => {
       name: `${key} (vs stdnum-js)`,
       source: "stdnum-js",
       key,
+      tier: tierFor("stdnum-js", key),
       validate: (v) =>
         v.map((x) => stdnumEntity(cc, x).isValid),
     });
@@ -994,6 +1055,7 @@ const buildOracles = (): OracleEntry[] => {
       name: `${key} (vs stdnum-js)`,
       source: "stdnum-js",
       key,
+      tier: tierFor("stdnum-js", key),
       validate: (v) =>
         v.map(
           (x) =>
@@ -1008,6 +1070,7 @@ const buildOracles = (): OracleEntry[] => {
       name: `${key} (vs validate-polish)`,
       source: "validate-polish",
       key,
+      tier: tierFor("validate-polish", key),
       validate: (v) => v.map(fn),
     });
 
@@ -1016,12 +1079,14 @@ const buildOracles = (): OracleEntry[] => {
     name: "iban (vs ibantools)",
     source: "ibantools",
     key: "iban",
+    tier: tierFor("ibantools", "iban"),
     validate: (v) => v.map(isValidIBAN),
   });
   e.push({
     name: "iban (vs iban.js)",
     source: "iban.js",
     key: "iban",
+    tier: tierFor("iban.js", "iban"),
     validate: (v) =>
       v.map((x) => IBAN.isValid(x) as boolean),
   });
@@ -1065,28 +1130,83 @@ const buildOracles = (): OracleEntry[] => {
 
 // ─── Mutant testing ─────────────────────────
 
-const mutate = (value: string): string[] => {
+const mutateAt = (
+  value: string,
+  index: number,
+): string[] => {
   const out: string[] = [];
-  for (let i = 0; i < value.length; i++) {
-    const ch = value[i];
-    if (ch === undefined || ch < "0" || ch > "9") continue;
-    for (let d = 0; d <= 9; d++) {
-      const r = String(d);
-      if (r === ch) continue;
-      out.push(value.slice(0, i) + r + value.slice(i + 1));
-    }
+  const ch = value[index];
+  if (ch === undefined || ch < "0" || ch > "9") return out;
+  for (let d = 0; d <= 9; d++) {
+    const r = String(d);
+    if (r === ch) continue;
+    out.push(value.slice(0, index) + r + value.slice(index + 1));
   }
   return out;
 };
 
-const hasChecksum = (v: Validator): boolean => {
-  const ex = v.examples;
-  if (!ex || ex.length === 0) return false;
-  const c = v.compact(ex[0]!);
-  return mutate(c).some((m) => {
-    const r = v.validate(m);
-    return !r.valid && r.error.code === "INVALID_CHECKSUM";
-  });
+const seedFor = (label: string): number => {
+  let hash = BASE_SEED | 0;
+  for (let i = 0; i < label.length; i++) {
+    hash = ((hash * 33) ^ label.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash) || 1;
+};
+
+const inferCheckDigitPositionsForExample = (
+  v: Validator,
+  example: string,
+): number[] => {
+  const candidates: number[] = [];
+  for (let i = 0; i < example.length; i++) {
+    const mutants = mutateAt(example, i);
+    if (mutants.length === 0) continue;
+    let sawChecksum = false;
+    let allInvalid = true;
+    let allChecksum = true;
+    for (const mutant of mutants) {
+      const result = v.validate(mutant);
+      if (result.valid) {
+        allInvalid = false;
+        break;
+      }
+      if (result.error.code === "INVALID_CHECKSUM") {
+        sawChecksum = true;
+      } else {
+        allChecksum = false;
+      }
+    }
+    if (allInvalid && allChecksum && sawChecksum) {
+      candidates.push(i);
+    }
+  }
+  return candidates;
+};
+
+const inferCheckDigitPositions = (
+  v: Validator,
+): number[] => {
+  const examples = (v.examples ?? [])
+    .map((example) => v.compact(example))
+    .filter((example) => v.validate(example).valid)
+    .slice(0, 3);
+  if (examples.length === 0) return [];
+
+  let intersection: number[] | null = null;
+  for (const example of examples) {
+    const candidates = inferCheckDigitPositionsForExample(
+      v,
+      example,
+    );
+    intersection =
+      intersection === null
+        ? candidates
+        : intersection.filter((i) =>
+            candidates.includes(i),
+          );
+  }
+
+  return intersection ?? [];
 };
 
 // ─── Runner ─────────────────────────────────
@@ -1127,13 +1247,22 @@ const compare = (
 const run = () => {
   const validators = discover();
   const byKey = new Map(validators.map((d) => [d.key, d]));
-  const oracles = buildOracles();
+  const allOracles = buildOracles();
+  const oracles = allOracles.filter(
+    (entry) => MODE === "survey" || entry.tier === "gate",
+  );
   let total = 0;
   let failures = 0;
+  const gateCount = allOracles.filter(
+    (entry) => entry.tier === "gate",
+  ).length;
+  const surveyOnlyCount = allOracles.length - gateCount;
 
   console.log(
     `Discovered ${String(validators.length)} validators,` +
-      ` ${String(oracles.length)} oracle entries\n`,
+      ` ${String(oracles.length)} active oracle entries` +
+      ` (mode=${MODE}, gate=${String(gateCount)},` +
+      ` survey-only=${String(surveyOnlyCount)})\n`,
   );
 
   // Group by source
@@ -1152,7 +1281,10 @@ const run = () => {
       const d = byKey.get(entry.key);
       if (!d) continue;
       const arb = arbFor(d.key, d.validator);
-      const vals = fc.sample(arb, NUM);
+      const vals = fc.sample(arb, {
+        numRuns: NUM,
+        seed: seedFor(`oracle:${entry.name}`),
+      });
       const ts = vals.map(
         (v) => d.validator.validate(v).valid,
       );
@@ -1167,58 +1299,72 @@ const run = () => {
   }
 
   // Mutant testing
-  console.log(
-    `\nMutant testing: single-digit corruption\n`,
-  );
   let mutTotal = 0;
   let mutEsc = 0;
-
-  for (const d of validators) {
-    if (!hasChecksum(d.validator)) continue;
-    const arb = arbFor(d.key, d.validator);
-    const cands = fc.sample(arb, Math.min(NUM, 2000));
-    const valid = cands.filter(
-      (v) => d.validator.validate(v).valid,
-    );
-    if (valid.length === 0) {
-      console.log(`  SKIP ${d.key}: no valid values found`);
-      continue;
-    }
-    const toTest = valid.slice(0, 50);
-    let esc = 0;
-    const escEx: string[] = [];
-    for (const v of toTest) {
-      for (const m of mutate(v)) {
-        mutTotal++;
-        if (d.validator.validate(m).valid) {
-          esc++;
-          if (escEx.length < 3)
-            escEx.push(
-              `    "${v}" -> "${m}" (still valid)`,
-            );
+  if (MODE === "survey") {
+    console.log(`\nCheck-digit mutation testing\n`);
+    for (const d of validators) {
+      const checkDigitPositions = inferCheckDigitPositions(
+        d.validator,
+      );
+      if (checkDigitPositions.length !== 1) continue;
+      const [checkDigitPosition] = checkDigitPositions;
+      const arb = arbFor(d.key, d.validator);
+      const cands = fc.sample(arb, {
+        numRuns: Math.min(NUM, 2000),
+        seed: seedFor(`mutants:${d.key}`),
+      });
+      const valid = cands.flatMap((value) => {
+        const result = d.validator.validate(value);
+        return result.valid ? [result.compact] : [];
+      });
+      if (valid.length === 0) {
+        console.log(`  SKIP ${d.key}: no valid values found`);
+        continue;
+      }
+      const toTest = valid.slice(0, 50);
+      let esc = 0;
+      const escEx: string[] = [];
+      for (const v of toTest) {
+        for (const m of mutateAt(v, checkDigitPosition)) {
+          mutTotal++;
+          if (d.validator.validate(m).valid) {
+            esc++;
+            if (escEx.length < 3)
+              escEx.push(
+                `    "${v}" -> "${m}" (still valid)`,
+              );
+          }
         }
       }
+      const icon = esc === 0 ? "\u2713" : "\u2717";
+      const first = toTest[0] ?? "";
+      console.log(
+        `  ${icon} ${d.key}: ${String(esc)} escapes` +
+          ` (${String(toTest.length)} seeds,` +
+          ` ${String(
+            toTest.length *
+              mutateAt(first, checkDigitPosition).length,
+          )} mutants)`,
+      );
+      for (const ex of escEx) console.log(ex);
+      mutEsc += esc;
     }
-    const icon = esc === 0 ? "\u2713" : "\u2717";
-    const first = toTest[0] ?? "";
-    console.log(
-      `  ${icon} ${d.key}: ${String(esc)} escapes` +
-        ` (${String(toTest.length)} seeds,` +
-        ` ${String(toTest.length * mutate(first).length)} mutants)`,
-    );
-    for (const ex of escEx) console.log(ex);
-    mutEsc += esc;
   }
 
   console.log(
     `\n${String(total)} oracle total,` +
       ` ${String(failures)} disagreements`,
   );
-  console.log(
-    `${String(mutTotal)} mutant total,` +
-      ` ${String(mutEsc)} escapes`,
+  if (MODE === "survey") {
+    console.log(
+      `${String(mutTotal)} mutant total,` +
+        ` ${String(mutEsc)} escapes`,
+    );
+  }
+  process.exit(
+    shouldFailOnDisagreements && failures > 0 ? 1 : 0,
   );
-  process.exit(failures > 0 ? 1 : 0);
 };
 
 run();

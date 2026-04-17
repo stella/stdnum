@@ -88,9 +88,12 @@ const format = (value: string): string => {
 
 /** Generate a random valid NIT (7 body digits). */
 const generate = (): string => {
-  const body = randomDigits(7);
-  const check = calcCheckChar(body);
-  return `${body}${check}`;
+  for (;;) {
+    const body = randomDigits(7);
+    if (body.startsWith("0")) continue;
+    const check = calcCheckChar(body);
+    return `${body}${check}`;
+  }
 };
 
 /** Guatemala tax identification number. */
