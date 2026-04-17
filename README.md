@@ -49,6 +49,23 @@ ico.validate("25596641");
 iban.validate("CZ65 0800 0000 1920 0014 5399");
 ```
 
+## Oracle Validation
+
+The repo ships two oracle modes:
+
+- `bun run oracle`
+  Runs the strict gate. It keeps only
+  high-confidence cross-checks that are stable enough
+  for CI.
+- `bun run oracle:survey`
+  Runs the broader ecosystem survey. It includes
+  noisier third-party validators and mutation probes to
+  surface drift without treating every disagreement as a
+  release blocker.
+
+Both commands accept `ORACLE_SAMPLES=<n>` to trade off
+runtime against coverage.
+
 ## Supported Identifiers
 
 ### International

@@ -911,7 +911,9 @@
     "sync-exports": "bun scripts/sync-exports.ts",
     "sync-exports:check": "bun scripts/sync-exports.ts --check",
     "test": "bun test",
-    "oracle": "bun scripts/oracle.ts",
+    "oracle": "bun scripts/oracle.ts --mode=gate",
+    "oracle:gate": "bun scripts/oracle.ts --mode=gate",
+    "oracle:survey": "bun scripts/oracle.ts --mode=survey",
     "lint": "oxlint .",
     "format": "oxfmt .",
     "typecheck": "tsc -p tsconfig.json"
