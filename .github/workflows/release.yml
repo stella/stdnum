@@ -127,6 +127,6 @@ jobs:
 
       - name: Publish to npm
         if: inputs.publish_to_npm
-        uses: stella/.github/.github/actions/npm-publish-hardened@9845e4f5f671bbc9b38133b93bb00435ee4b6d82
+        uses: stella/.github/.github/actions/npm-publish-hardened@96b8912e0786548c4e62046ce3965769991dd0e0
         with:
           tarball: ${{ steps.pack.outputs.tarball }}
