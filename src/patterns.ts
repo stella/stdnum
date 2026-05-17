@@ -113,7 +113,10 @@ const inferPrefix = (v: Validator): string | null => {
       v.compact(ex).startsWith(compactPrefix),
     );
     if (allSame) return compactPrefix;
-  } else if (compactPrefix !== undefined && examples.length === 1) {
+  } else if (
+    compactPrefix !== undefined &&
+    examples.length === 1
+  ) {
     return compactPrefix;
   }
   // Prefix added only by format()
@@ -177,9 +180,7 @@ type PerGroup = { size: number; charClass: string };
  * are treated as prefixes and excluded (handled
  * by inferPrefix separately).
  */
-const inferPerGroup = (
-  v: Validator,
-): PerGroup[] | null => {
+const inferPerGroup = (v: Validator): PerGroup[] | null => {
   const first = v.examples?.[0];
   if (first === undefined) return null;
   const compact = v.compact(first);
@@ -212,9 +213,15 @@ const inferPerGroup = (
     if (p.length === 0) continue;
     if (/\d/.test(p)) {
       seenDigitGroup = true;
-      filtered.push({ size: p.length, charClass: charClassFor(p) });
+      filtered.push({
+        size: p.length,
+        charClass: charClassFor(p),
+      });
     } else if (seenDigitGroup) {
-      filtered.push({ size: p.length, charClass: charClassFor(p) });
+      filtered.push({
+        size: p.length,
+        charClass: charClassFor(p),
+      });
     }
   }
 

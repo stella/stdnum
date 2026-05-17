@@ -31,10 +31,10 @@ type Discovered = {
 const isValidator = (value: unknown): value is Validator =>
   Boolean(
     value &&
-      typeof value === "object" &&
-      "validate" in value &&
-      "compact" in value &&
-      "format" in value,
+    typeof value === "object" &&
+    "validate" in value &&
+    "compact" in value &&
+    "format" in value,
   );
 
 const hasParse = (
@@ -102,9 +102,9 @@ describe("cz.rc parse", () => {
   test("extracts male born 1971-03-19", () => {
     const result = validator.parse("7103192745");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(1971);
     expect(result?.birthDate.getMonth()).toBe(2);
     expect(result?.birthDate.getDate()).toBe(19);
@@ -113,9 +113,9 @@ describe("cz.rc parse", () => {
   test("extracts female (month + 50)", () => {
     const result = validator.parse("715319/1001");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "female",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("female");
     expect(result?.birthDate.getMonth()).toBe(2);
   });
 
@@ -133,9 +133,9 @@ describe("sk.rc parse", () => {
   test("delegates to cz.rc parse", () => {
     const result = validator.parse("7103192745");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(1971);
   });
 });
@@ -168,9 +168,9 @@ describe("dk.cpr parse", () => {
   test("extracts male born 1862-10-21", () => {
     const result = validator.parse("2110625629");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(1862);
     expect(result?.birthDate.getMonth()).toBe(9);
     expect(result?.birthDate.getDate()).toBe(21);
@@ -186,9 +186,9 @@ describe("ee.ik parse", () => {
   test("extracts male born 1968-05-28", () => {
     const result = validator.parse("36805280109");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(1968);
     expect(result?.birthDate.getMonth()).toBe(4);
     expect(result?.birthDate.getDate()).toBe(28);
@@ -204,9 +204,9 @@ describe("fi.hetu parse", () => {
   test("extracts female born 1952-10-13", () => {
     const result = validator.parse("131052-308T");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "female",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("female");
     expect(result?.birthDate.getFullYear()).toBe(1952);
     expect(result?.birthDate.getMonth()).toBe(9);
     expect(result?.birthDate.getDate()).toBe(13);
@@ -223,9 +223,9 @@ describe("it.codicefiscale parse", () => {
   test("extracts male born 1983-11-18", () => {
     const result = validator.parse("RCCMNL83S18D969H");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(1983);
     expect(result?.birthDate.getMonth()).toBe(10);
     expect(result?.birthDate.getDate()).toBe(18);
@@ -246,9 +246,9 @@ describe("no.fodselsnummer parse", () => {
   test("extracts female born 1986-10-15", () => {
     const result = validator.parse("15108695088");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "female",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("female");
     expect(result?.birthDate.getFullYear()).toBe(1986);
     expect(result?.birthDate.getMonth()).toBe(9);
     expect(result?.birthDate.getDate()).toBe(15);
@@ -259,14 +259,15 @@ describe("pl.pesel parse", () => {
   const validator = discovered.find(
     (entry) => entry.name === "pl.pesel",
   )?.validator;
-  if (!validator) throw new Error("pl.pesel not discovered");
+  if (!validator)
+    throw new Error("pl.pesel not discovered");
 
   test("extracts male born 1944-05-14", () => {
     const result = validator.parse("44051401359");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(1944);
     expect(result?.birthDate.getMonth()).toBe(4);
     expect(result?.birthDate.getDate()).toBe(14);
@@ -293,9 +294,9 @@ describe("ro.cnp parse", () => {
   test("extracts male born 1963-06-15", () => {
     const result = validator.parse("1630615123457");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(1963);
     expect(result?.birthDate.getMonth()).toBe(5);
     expect(result?.birthDate.getDate()).toBe(15);
@@ -315,9 +316,9 @@ describe("se.personnummer parse", () => {
     expect(result?.birthDate.getFullYear()).toBe(1988);
     expect(result?.birthDate.getMonth()).toBe(2);
     expect(result?.birthDate.getDate()).toBe(20);
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
   });
 });
 
@@ -330,9 +331,9 @@ describe("si.emso parse", () => {
   test("extracts male born 2006-01-01", () => {
     const result = validator.parse("0101006500006");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(2006);
     expect(result?.birthDate.getMonth()).toBe(0);
     expect(result?.birthDate.getDate()).toBe(1);
@@ -348,9 +349,9 @@ describe("fr.nir parse", () => {
   test("extracts female born 1995-11-01", () => {
     const result = validator.parse("295117823456784");
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "female",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("female");
     expect(result?.birthDate.getFullYear()).toBe(1995);
     expect(result?.birthDate.getMonth()).toBe(10);
     expect(result?.birthDate.getDate()).toBe(1);
@@ -363,9 +364,9 @@ describe("fr.nir parse", () => {
       base.toString() + check.toString().padStart(2, "0");
     const result = validator.parse(full);
     expect(result).not.toBeNull();
-    expect(result && "gender" in result && result.gender).toBe(
-      "male",
-    );
+    expect(
+      result && "gender" in result && result.gender,
+    ).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(1985);
     expect(result?.birthDate.getMonth()).toBe(4);
   });
@@ -375,7 +376,8 @@ describe("kw.civil parse", () => {
   const validator = discovered.find(
     (entry) => entry.name === "kw.civil",
   )?.validator;
-  if (!validator) throw new Error("kw.civil not discovered");
+  if (!validator)
+    throw new Error("kw.civil not discovered");
 
   test("extracts birth date without gender", () => {
     const result = validator.parse("289011200032");

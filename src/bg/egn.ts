@@ -149,7 +149,8 @@ const egn: Validator<ParsedPersonId> = {
   candidatePattern: "\\d{10}",
   country: "BG",
   entityType: "person",
-  sourceUrl: "https://www.grao.bg/normact/NaredbaFunkcESGR.pdf",
+  sourceUrl:
+    "https://www.grao.bg/normact/NaredbaFunkcESGR.pdf",
   examples: ["7523169263"] as const,
   compact,
   format,

@@ -1,11 +1,4 @@
-const RMO_VALUES = [
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "9",
-] as const;
+const RMO_VALUES = ["1", "2", "3", "4", "5", "9"] as const;
 
 /** Generate a random valid Bangladesh NID (13-digit). */
 const generate = (): string => {

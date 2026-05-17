@@ -72,9 +72,7 @@ const compact = (value: string): string =>
  * Validate Business (ROB) UEN (9 chars):
  * 8 digits + 1 check letter.
  */
-const BUSINESS_WEIGHTS = [
-  10, 4, 9, 3, 8, 2, 7, 1,
-] as const;
+const BUSINESS_WEIGHTS = [10, 4, 9, 3, 8, 2, 7, 1] as const;
 const BUSINESS_CHECK_ALPHA = "XMKECAWLJDB";
 
 const validateBusiness = (v: string): ValidateResult => {
@@ -112,9 +110,7 @@ const validateBusiness = (v: string): ValidateResult => {
  * Validate Local Company (ROC) UEN (10 chars):
  * 9 digits (year prefix) + 1 check letter.
  */
-const LOCAL_WEIGHTS = [
-  10, 8, 6, 4, 9, 7, 5, 3, 1,
-] as const;
+const LOCAL_WEIGHTS = [10, 8, 6, 4, 9, 7, 5, 3, 1] as const;
 const LOCAL_CHECK_ALPHA = "ZKCMDNERGWH";
 
 const validateLocalCompany = (
@@ -155,9 +151,7 @@ const validateLocalCompany = (
  * R/S/T + 2 digits + 2-letter type + 4 digits
  * + 1 check letter.
  */
-const OTHER_WEIGHTS = [
-  4, 3, 5, 3, 10, 2, 2, 5, 7,
-] as const;
+const OTHER_WEIGHTS = [4, 3, 5, 3, 10, 2, 2, 5, 7] as const;
 
 const validateOther = (v: string): ValidateResult => {
   // SAFETY: caller routes to this only when

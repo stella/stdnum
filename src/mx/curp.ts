@@ -202,12 +202,11 @@ const generate = (): string => {
   const yy = String(year % 100).padStart(2, "0");
   const gender = Math.random() < 0.5 ? "H" : "M";
   const state =
-    STATE_CODE_LIST[randomInt(0, STATE_CODE_LIST.length - 1)] ??
-    "NE";
+    STATE_CODE_LIST[
+      randomInt(0, STATE_CODE_LIST.length - 1)
+    ] ?? "NE";
   const centuryChar =
-    year >= 2000
-      ? randomLetter()
-      : String(randomInt(0, 9));
+    year >= 2000 ? randomLetter() : String(randomInt(0, 9));
   const body =
     `${randomLetter()}${randomLetter()}` +
     `${randomLetter()}${randomLetter()}` +

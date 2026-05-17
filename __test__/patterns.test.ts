@@ -89,7 +89,9 @@ describe("toRegex", () => {
     const matches = (s: string) =>
       new RegExp(source, "g").test(s);
     expect(matches("OF NOVEMBER 6")).toBe(false);
-    expect(matches("AS OF NOVEMBER 6, 2024, BY")).toBe(false);
+    expect(matches("AS OF NOVEMBER 6, 2024, BY")).toBe(
+      false,
+    );
     expect(matches("AMENDMENT DATED NOVEMBER 6")).toBe(
       false,
     );

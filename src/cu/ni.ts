@@ -17,10 +17,7 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
-import {
-  randomDigits,
-  randomInt,
-} from "#util/generate";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type {

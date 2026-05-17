@@ -187,8 +187,10 @@ const alnumStr = (min: number, max: number) =>
 const letters = (chars: string) =>
   fc.constantFrom(...chars.split(""));
 
-const p2 = (n: number): string => String(n).padStart(2, "0");
-const p3 = (n: number): string => String(n).padStart(3, "0");
+const p2 = (n: number): string =>
+  String(n).padStart(2, "0");
+const p3 = (n: number): string =>
+  String(n).padStart(3, "0");
 
 const isValidDateParts = (
   year: number,
@@ -216,33 +218,35 @@ const validDateParts = (minYear: number, maxYear: number) =>
 
 const rcShape = (length: 9 | 10): fc.Arbitrary<string> =>
   (length === 9
-    ? validDateParts(1900, 1953).chain(({ year, month, day }) =>
-        fc
-          .tuple(
-            fc.constantFrom(month, month + 50),
-            fc.integer({ min: 0, max: 999 }),
-          )
-          .map(([rawMonth, serial]) => {
-            const yy = p2(year % 100);
-            return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}`;
-          }),
+    ? validDateParts(1900, 1953).chain(
+        ({ year, month, day }) =>
+          fc
+            .tuple(
+              fc.constantFrom(month, month + 50),
+              fc.integer({ min: 0, max: 999 }),
+            )
+            .map(([rawMonth, serial]) => {
+              const yy = p2(year % 100);
+              return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}`;
+            }),
       )
-    : validDateParts(1954, 2053).chain(({ year, month, day }) =>
-        fc
-          .tuple(
-            fc.constantFrom(
-              month,
-              month + 20,
-              month + 50,
-              month + 70,
-            ),
-            fc.integer({ min: 0, max: 999 }),
-            fc.integer({ min: 0, max: 9 }),
-          )
-          .map(([rawMonth, serial, check]) => {
-            const yy = p2(year % 100);
-            return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}${check}`;
-          }),
+    : validDateParts(1954, 2053).chain(
+        ({ year, month, day }) =>
+          fc
+            .tuple(
+              fc.constantFrom(
+                month,
+                month + 20,
+                month + 50,
+                month + 70,
+              ),
+              fc.integer({ min: 0, max: 999 }),
+              fc.integer({ min: 0, max: 9 }),
+            )
+            .map(([rawMonth, serial, check]) => {
+              const yy = p2(year % 100);
+              return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}${check}`;
+            }),
       )) as fc.Arbitrary<string>;
 
 const bgEgnShape = validDateParts(1800, 2099).chain(
@@ -302,21 +306,29 @@ const lvVatShape = fc.oneof(
       }),
   ),
   fc
-    .tuple(fc.constantFrom("3"), fc.integer({ min: 2, max: 9 }), digs(9))
-    .map(([first, second, rest]) => `${first}${second}${rest}`),
+    .tuple(
+      fc.constantFrom("3"),
+      fc.integer({ min: 2, max: 9 }),
+      digs(9),
+    )
+    .map(
+      ([first, second, rest]) => `${first}${second}${rest}`,
+    ),
 );
 
-const cyVatShape = fc.oneof(
-  fc.integer({ min: 60_000_000, max: 99_999_999 }).map((n) =>
-    String(n),
-  ),
-  fc
-    .integer({ min: 0, max: 99_999_999 })
-    .map((n) => String(n).padStart(8, "0"))
-    .filter((digits) => !digits.startsWith("12")),
-).chain((digits) =>
-  letters(L).map((letter) => `${digits}${letter}`),
-);
+const cyVatShape = fc
+  .oneof(
+    fc
+      .integer({ min: 60_000_000, max: 99_999_999 })
+      .map((n) => String(n)),
+    fc
+      .integer({ min: 0, max: 99_999_999 })
+      .map((n) => String(n).padStart(8, "0"))
+      .filter((digits) => !digits.startsWith("12")),
+  )
+  .chain((digits) =>
+    letters(L).map((letter) => `${digits}${letter}`),
+  );
 
 // ─── Custom arb overrides ───────────────────
 // Where inferArb (lengths-based) is insufficient.
@@ -957,10 +969,7 @@ const SURVEY_ONLY_ENTRIES = new Set([
   "validate-polish:pl.pesel",
 ]);
 
-const tierFor = (
-  source: string,
-  key: string,
-): OracleMode =>
+const tierFor = (source: string, key: string): OracleMode =>
   SURVEY_ONLY_SOURCES.has(source) ||
   SURVEY_ONLY_ENTRIES.has(`${source}:${key}`)
     ? "survey"
@@ -1143,7 +1152,9 @@ const mutateAt = (
   for (let d = 0; d <= 9; d++) {
     const r = String(d);
     if (r === ch) continue;
-    out.push(value.slice(0, index) + r + value.slice(index + 1));
+    out.push(
+      value.slice(0, index) + r + value.slice(index + 1),
+    );
   }
   return out;
 };
@@ -1322,7 +1333,9 @@ const run = () => {
         return result.valid ? [result.compact] : [];
       });
       if (valid.length === 0) {
-        console.log(`  SKIP ${d.key}: no valid values found`);
+        console.log(
+          `  SKIP ${d.key}: no valid values found`,
+        );
         continue;
       }
       const toTest = valid.slice(0, 50);

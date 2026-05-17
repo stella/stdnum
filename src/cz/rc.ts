@@ -45,7 +45,9 @@ const decodeMonth = (
   length: number,
 ): number | null => {
   const candidates =
-    length === 10 && year >= 2004 ? [0, 50, 20, 70] : [0, 50];
+    length === 10 && year >= 2004
+      ? [0, 50, 20, 70]
+      : [0, 50];
   for (const offset of candidates) {
     const month = rawMonth - offset;
     if (month >= 1 && month <= 12) {

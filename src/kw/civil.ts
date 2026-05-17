@@ -14,10 +14,7 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
-import {
-  randomDigits,
-  randomInt,
-} from "#util/generate";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -104,9 +101,7 @@ const format = (value: string): string => {
  * Gender is not encoded in the number.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedBirthDate | null => {
+const parse = (value: string): ParsedBirthDate | null => {
   const result = validate(value);
   if (!result.valid) return null;
 
