@@ -40,8 +40,7 @@ const isValidator = (value: unknown): value is Validator =>
 const hasParse = (
   value: unknown,
 ): value is ParseValidator =>
-  isValidator(value) &&
-  typeof (value as { parse?: unknown }).parse === "function";
+  isValidator(value) && typeof value.parse === "function";
 
 const discovered: Discovered[] = [];
 
