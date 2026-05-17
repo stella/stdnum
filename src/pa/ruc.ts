@@ -111,11 +111,14 @@ const computeDV = (
 ): string | null => {
   const len = segments.length;
 
-  if (
-    len < 3 ||
-    len > 4 ||
-    (len === 4 && segments[1] !== "NT")
-  ) {
+  if (len < 3 || len > 4) {
+    return null;
+  }
+  // The NT designation requires exactly 4 segments
+  // (xxNT-NT-xxx-xxx); any other 4-segment shape is
+  // unrecognized, and a 3-segment "NT" in position 1
+  // is malformed.
+  if ((len === 4) !== (segments[1] === "NT")) {
     return null;
   }
 
@@ -142,8 +145,8 @@ const computeDV = (
       z(5 - s2.length) +
       s2;
   } else if (s1 === "NT") {
-    // NT designation (xxNT-xxx-xxx)
-    // SAFETY: NT branch requires len === 4 (checked above).
+    // NT designation (xxNT-NT-xxx-xxx)
+    // SAFETY: NT branch implies len === 4 (checked above).
     // eslint-disable-next-line no-non-null-assertion
     const s3 = segments[3]!;
     const prefix = s0.slice(0, -2);
@@ -226,7 +229,9 @@ const computeDV = (
       s1 +
       z(6 - s2.length) +
       s2;
-    // SAFETY: juridical branch produces buf of length 20.
+    // SAFETY: juridical branch zero-pads s0 to at least
+    // 10 chars (z(10 - s0.length)), so buf[3..6] are
+    // always defined.
     isOld =
       buf[3] === "0" &&
       buf[4] === "0" &&

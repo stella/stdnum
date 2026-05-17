@@ -30,6 +30,7 @@ describe("pa.ruc", () => {
     "abc", // no segments
     "155-1-100 DV00", // old-format wrong DV
     "a-b-c-d-e DV00", // 5 segments rejected
+    "1-NT-100 DV00", // 3 segments with NT in pos 1 rejected
   ];
 
   for (const v of invalid) {
