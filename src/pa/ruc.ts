@@ -122,8 +122,12 @@ const computeDV = (
   let buf: string;
   let isOld = false;
 
+  // SAFETY: length check above ensures 3..4 segments.
+  // eslint-disable-next-line no-non-null-assertion
   const s0 = segments[0]!;
+  // eslint-disable-next-line no-non-null-assertion
   const s1 = segments[1]!;
+  // eslint-disable-next-line no-non-null-assertion
   const s2 = segments[2]!;
 
   if (raw[0] === "E") {
@@ -139,6 +143,8 @@ const computeDV = (
       s2;
   } else if (s1 === "NT") {
     // NT designation (xxNT-xxx-xxx)
+    // SAFETY: NT branch requires len === 4 (checked above).
+    // eslint-disable-next-line no-non-null-assertion
     const s3 = segments[3]!;
     const prefix = s0.slice(0, -2);
     buf =
@@ -220,8 +226,12 @@ const computeDV = (
       s1 +
       z(6 - s2.length) +
       s2;
+    // SAFETY: juridical branch produces buf of length 20.
     isOld =
-      buf[3] === "0" && buf[4] === "0" && buf[5]! < "5";
+      buf[3] === "0" &&
+      buf[4] === "0" &&
+      // eslint-disable-next-line no-non-null-assertion
+      buf[5]! < "5";
   }
 
   // Apply legacy cross-reference for old format
@@ -270,7 +280,10 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
+  // SAFETY: both DV regex capture groups are required.
+  // eslint-disable-next-line no-non-null-assertion
   const rucPart = dvMatch[1]!;
+  // eslint-disable-next-line no-non-null-assertion
   const dvPart = dvMatch[2]!;
 
   // The RUC part should be hyphen-separated segments
@@ -318,7 +331,10 @@ const format = (value: string): string => {
   const dvMatch = v.match(/^(.+?)-?\s*DV[:\s]*(\d{2})$/);
   if (!dvMatch) return v;
 
+  // SAFETY: both DV regex capture groups are required.
+  // eslint-disable-next-line no-non-null-assertion
   const rucPart = dvMatch[1]!.replace(/-+$/, "");
+  // eslint-disable-next-line no-non-null-assertion
   const dvPart = dvMatch[2]!;
   const segments = rucPart.split("-");
   return `${segments.join("-")} DV ${dvPart}`;
@@ -330,7 +346,10 @@ const generate = (): string => {
   const volume = String(randomInt(1, 9999));
   const folio = String(randomInt(1, 99999));
   const segments = [province, volume, folio];
-  const dv = computeDV(segments, segments.join("-"))!;
+  const dv = computeDV(segments, segments.join("-"));
+  if (dv === null) {
+    throw new Error("Failed to compute Panama RUC DV");
+  }
   return `${segments.join("-")} DV${dv}`;
 };
 

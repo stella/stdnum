@@ -1,7 +1,14 @@
+const GENERATE_TYPES = [
+  "HRA",
+  "HRB",
+  "GNR",
+  "PR",
+  "VR",
+] as const;
+
 /** Generate a random valid Handelsregisternummer. */
 const generate = (): string => {
-  const types = ["HRA", "HRB", "GNR", "PR", "VR"];
-  const type = types[randomInt(0, types.length - 1)]!;
+  const type = randomPick(GENERATE_TYPES);
   const number = randomDigits(5);
   return `${type} ${number}`;
 };
@@ -25,7 +32,7 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -62,7 +69,11 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
+  // SAFETY: both capture groups are required, so a
+  // successful match always populates [1] and [2].
+  // eslint-disable-next-line no-non-null-assertion
   const type = match[1]!;
+  // eslint-disable-next-line no-non-null-assertion
   const number = match[2]!;
 
   if (!REGISTER_TYPES.has(type)) {

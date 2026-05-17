@@ -14,7 +14,7 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -48,12 +48,14 @@ const calcCheckDigit = (
   prefix: string,
   body: string,
 ): string => {
-  const pv = PREFIX_VALUES[prefix]!;
+  const pv = PREFIX_VALUES[prefix] ?? 0;
   let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += Number(body[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += Number(body[i]) * weight;
   }
   const digit = (pv + (sum % 11)) % 11;
+  // SAFETY: digit ∈ [0, 10] and CHECK_LOOKUP has 11 chars.
+  // eslint-disable-next-line no-non-null-assertion
   return CHECK_LOOKUP[digit]!;
 };
 
@@ -67,6 +69,8 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
+  // SAFETY: length check above guarantees v[0] exists.
+  // eslint-disable-next-line no-non-null-assertion
   const prefix = v[0]!;
   if (!(prefix in PREFIX_VALUES)) {
     return err(
@@ -100,10 +104,11 @@ const format = (value: string): string => {
   return `${v[0]}-${v.slice(1, 9)}-${v.slice(9)}`;
 };
 
+const GENERATE_TYPES = ["V", "E", "J", "P", "G"] as const;
+
 /** Generate a random valid Venezuelan RIF. */
 const generate = (): string => {
-  const types = ["V", "E", "J", "P", "G"] as const;
-  const prefix = types[randomInt(0, types.length - 1)]!;
+  const prefix = randomPick(GENERATE_TYPES);
   const body = randomDigits(8);
   return (
     prefix + body + String(calcCheckDigit(prefix, body))

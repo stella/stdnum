@@ -10,7 +10,11 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import {
+  randomChar,
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -28,10 +32,14 @@ const compact = (value: string): string =>
 
 const calcCheckChar = (value: string): string => {
   let total = 0;
-  for (let i = 0; i < 17; i++) {
-    const idx = ALPHABET.indexOf(value[i]!);
-    total += idx * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    const ch = value[i];
+    if (ch === undefined) continue;
+    total += ALPHABET.indexOf(ch) * weight;
   }
+  // SAFETY: (31 - total % 31) % 31 is in 0..30 and
+  // ALPHABET has 31 characters.
+  // eslint-disable-next-line no-non-null-assertion
   return ALPHABET[(31 - (total % 31)) % 31]!;
 };
 
@@ -45,8 +53,8 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  for (let i = 0; i < 18; i++) {
-    if (!ALPHABET.includes(v[i]!)) {
+  for (const ch of v) {
+    if (!ALPHABET.includes(ch)) {
       return err(
         "INVALID_FORMAT",
         "USCC contains invalid character",
@@ -75,12 +83,16 @@ const format = (value: string): string => compact(value);
 
 /** Generate a random valid USCC. */
 const generate = (): string => {
+  // SAFETY: indices 1..9 are within ALPHABET (31 chars).
+  // eslint-disable-next-line no-non-null-assertion
   const reg = ALPHABET[randomInt(1, 9)]!;
+  // eslint-disable-next-line no-non-null-assertion
   const etype = ALPHABET[randomInt(1, 9)]!;
   const region = randomDigits(6);
   let org = "";
-  for (let i = 0; i < 9; i++)
-    org += ALPHABET[randomInt(0, ALPHABET.length - 1)]!;
+  for (let i = 0; i < 9; i++) {
+    org += randomChar(ALPHABET);
+  }
   const payload = reg + etype + region + org;
   return payload + calcCheckChar(payload);
 };

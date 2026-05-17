@@ -12,7 +12,7 @@
 
 import { luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
-import { randomInt } from "#util/generate";
+import { randomInt, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
 
@@ -73,12 +73,18 @@ const format = (value: string): string => {
   return `${v.slice(0, 2)} ${v.slice(2, 6)} ${v.slice(6, 10)} ${v.slice(10)}`;
 };
 
+const ISIN_COUNTRIES = [
+  "US",
+  "GB",
+  "DE",
+  "FR",
+  "JP",
+] as const;
+
 /** Generate a random valid ISIN. */
 const generate = (): string => {
-  const countries = ["US", "GB", "DE", "FR", "JP"];
   for (;;) {
-    const cc =
-      countries[randomInt(0, countries.length - 1)]!;
+    const cc = randomPick(ISIN_COUNTRIES);
     let nsin = "";
     for (let i = 0; i < 9; i++)
       nsin += String(randomInt(0, 9));

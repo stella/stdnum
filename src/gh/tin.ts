@@ -15,7 +15,7 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -65,11 +65,12 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+const TIN_PREFIXES = ["P", "C", "G", "Q", "V"] as const;
+
 /** Generate a random valid Ghana TIN. */
 const generate = (): string => {
-  const prefixes = ["P", "C", "G", "Q", "V"] as const;
   for (;;) {
-    const p = prefixes[randomInt(0, 4)]!;
+    const p = randomPick(TIN_PREFIXES);
     const d = randomDigits(9);
     const partial = p + d;
     const c = partial + calcCheckDigit(partial);

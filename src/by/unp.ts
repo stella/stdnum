@@ -52,16 +52,19 @@ const compact = (value: string): string => {
 const calcCheckDigit = (number: string): number | null => {
   let work = number;
   if (!isdigits(number)) {
-    const idx = ALPHA_SET.indexOf(number[1]!);
+    const second = number[1];
+    if (second === undefined) return null;
+    const idx = ALPHA_SET.indexOf(second);
     if (idx === -1) return null;
     work = number[0] + String(idx) + number.slice(2);
   }
   let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    const ch = work[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    const ch = work[i];
+    if (ch === undefined) return null;
     const val = ALPHABET.indexOf(ch);
     if (val === -1) return null;
-    sum += (WEIGHTS[i] ?? 0) * val;
+    sum += weight * val;
   }
   const remainder = sum % 11;
   if (remainder > 9) return null;
@@ -93,6 +96,8 @@ const validate = (value: string): ValidateResult => {
         " digits or letters from ABCEHKMOPT",
     );
   }
+  // SAFETY: v.length === 9 guarantees v[0] exists.
+  // eslint-disable-next-line no-non-null-assertion
   if (!VALID_FIRST.includes(v[0]!)) {
     return err(
       "INVALID_COMPONENT",

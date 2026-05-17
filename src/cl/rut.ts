@@ -35,10 +35,12 @@ const compact = (value: string): string => {
  * 11 -> "0", 10 -> "K", else the digit as string.
  */
 const calcCheckDigit = (body: string): string => {
-  const weights = [2, 3, 4, 5, 6, 7];
+  const weights = [2, 3, 4, 5, 6, 7] as const;
   let sum = 0;
   for (let i = body.length - 1, w = 0; i >= 0; i--, w++) {
-    sum += Number(body[i]) * weights[w % 6]!;
+    // SAFETY: w % weights.length is a valid index.
+    // eslint-disable-next-line no-non-null-assertion
+    sum += Number(body[i]) * weights[w % weights.length]!;
   }
   const remainder = 11 - (sum % 11);
   if (remainder === 11) return "0";

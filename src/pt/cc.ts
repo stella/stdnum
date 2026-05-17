@@ -9,7 +9,7 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomChar, randomDigits } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -24,8 +24,10 @@ const compact = (value: string): string =>
 const calcCheckDigit = (value: string): string => {
   let sum = 0;
   for (let i = value.length - 1; i >= 0; i--) {
+    const ch = value[i];
+    if (ch === undefined) continue;
     const pos = value.length - 1 - i;
-    let n = ALPHABET.indexOf(value[i]!);
+    let n = ALPHABET.indexOf(ch);
     if (pos % 2 === 0) {
       n *= 2;
       if (n > 9) n = Math.floor(n / 10) + (n % 10);
@@ -70,8 +72,8 @@ const format = (value: string): string => {
 /** Generate a random valid Portuguese CC number. */
 const generate = (): string => {
   const digits = randomDigits(9);
-  const v0 = ALPHABET[randomInt(0, 35)]!;
-  const v1 = ALPHABET[randomInt(0, 35)]!;
+  const v0 = randomChar(ALPHABET);
+  const v1 = randomChar(ALPHABET);
   const body = digits + v0 + v1;
   const check = calcCheckDigit(body);
   return body + check;

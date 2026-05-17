@@ -15,7 +15,7 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -29,7 +29,8 @@ import type { ValidateResult, Validator } from "../types";
  */
 const VALID_PREFIXES = new Set(["10", "15", "17", "20"]);
 
-const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2] as const;
+const GENERATE_PREFIXES = ["10", "15", "17", "20"] as const;
 
 const compact = (value: string): string =>
   clean(value, " -.").trim();
@@ -42,8 +43,8 @@ const compact = (value: string): string =>
  */
 const calcCheckDigit = (body: string): number => {
   let sum = 0;
-  for (let i = 0; i < 10; i++) {
-    sum += Number(body[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += Number(body[i]) * weight;
   }
   const remainder = 11 - (sum % 11);
   if (remainder >= 10) return remainder - 10;
@@ -87,9 +88,7 @@ const format = (value: string): string => compact(value);
 
 /** Generate a random valid Peruvian RUC. */
 const generate = (): string => {
-  const prefixes = ["10", "15", "17", "20"] as const;
-  const prefix =
-    prefixes[Math.floor(Math.random() * prefixes.length)]!;
+  const prefix = randomPick(GENERATE_PREFIXES);
   const body = prefix + randomDigits(8);
   return body + String(calcCheckDigit(body));
 };

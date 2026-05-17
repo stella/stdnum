@@ -72,6 +72,11 @@ const compact = (value: string): string =>
  * Validate Business (ROB) UEN (9 chars):
  * 8 digits + 1 check letter.
  */
+const BUSINESS_WEIGHTS = [
+  10, 4, 9, 3, 8, 2, 7, 1,
+] as const;
+const BUSINESS_CHECK_ALPHA = "XMKECAWLJDB";
+
 const validateBusiness = (v: string): ValidateResult => {
   if (!isdigits(v.slice(0, 8))) {
     return err(
@@ -79,6 +84,9 @@ const validateBusiness = (v: string): ValidateResult => {
       "Business UEN must start with 8 digits",
     );
   }
+  // SAFETY: caller routes to this only when
+  // v.length === 9.
+  // eslint-disable-next-line no-non-null-assertion
   if (!/^[A-Z]$/.test(v[8]!)) {
     return err(
       "INVALID_FORMAT",
@@ -86,13 +94,11 @@ const validateBusiness = (v: string): ValidateResult => {
     );
   }
 
-  const weights = [10, 4, 9, 3, 8, 2, 7, 1];
-  const checkAlpha = "XMKECAWLJDB";
   let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += Number(v[i]) * weights[i]!;
+  for (const [i, weight] of BUSINESS_WEIGHTS.entries()) {
+    sum += Number(v[i]) * weight;
   }
-  const expected = checkAlpha[sum % 11];
+  const expected = BUSINESS_CHECK_ALPHA[sum % 11];
   if (v[8] !== expected) {
     return err(
       "INVALID_CHECKSUM",
@@ -106,6 +112,11 @@ const validateBusiness = (v: string): ValidateResult => {
  * Validate Local Company (ROC) UEN (10 chars):
  * 9 digits (year prefix) + 1 check letter.
  */
+const LOCAL_WEIGHTS = [
+  10, 8, 6, 4, 9, 7, 5, 3, 1,
+] as const;
+const LOCAL_CHECK_ALPHA = "ZKCMDNERGWH";
+
 const validateLocalCompany = (
   v: string,
 ): ValidateResult => {
@@ -115,6 +126,9 @@ const validateLocalCompany = (
       "Company UEN must have 9 digits",
     );
   }
+  // SAFETY: caller routes to this only when
+  // v.length === 10.
+  // eslint-disable-next-line no-non-null-assertion
   if (!/^[A-Z]$/.test(v[9]!)) {
     return err(
       "INVALID_FORMAT",
@@ -122,13 +136,11 @@ const validateLocalCompany = (
     );
   }
 
-  const weights = [10, 8, 6, 4, 9, 7, 5, 3, 1];
-  const checkAlpha = "ZKCMDNERGWH";
   let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += Number(v[i]) * weights[i]!;
+  for (const [i, weight] of LOCAL_WEIGHTS.entries()) {
+    sum += Number(v[i]) * weight;
   }
-  const expected = checkAlpha[sum % 11];
+  const expected = LOCAL_CHECK_ALPHA[sum % 11];
   if (v[9] !== expected) {
     return err(
       "INVALID_CHECKSUM",
@@ -143,7 +155,14 @@ const validateLocalCompany = (
  * R/S/T + 2 digits + 2-letter type + 4 digits
  * + 1 check letter.
  */
+const OTHER_WEIGHTS = [
+  4, 3, 5, 3, 10, 2, 2, 5, 7,
+] as const;
+
 const validateOther = (v: string): ValidateResult => {
+  // SAFETY: caller routes to this only when
+  // v.length === 10.
+  // eslint-disable-next-line no-non-null-assertion
   const prefix = v[0]!;
   if (prefix !== "R" && prefix !== "S" && prefix !== "T") {
     return err(
@@ -171,17 +190,18 @@ const validateOther = (v: string): ValidateResult => {
     );
   }
 
-  const weights = [4, 3, 5, 3, 10, 2, 2, 5, 7];
   let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    const idx = OTHER_ALPHA.indexOf(v[i]!);
+  for (const [i, weight] of OTHER_WEIGHTS.entries()) {
+    const ch = v[i];
+    if (ch === undefined) continue;
+    const idx = OTHER_ALPHA.indexOf(ch);
     if (idx === -1) {
       return err(
         "INVALID_FORMAT",
-        `Unexpected character at position ${i + 1}: ${v[i]}`,
+        `Unexpected character at position ${i + 1}: ${ch}`,
       );
     }
-    sum += idx * weights[i]!;
+    sum += idx * weight;
   }
   const expected =
     OTHER_ALPHA[(((sum - 5) % 11) + 11) % 11];
@@ -218,6 +238,8 @@ const validate = (value: string): ValidateResult => {
 
   // 10 chars: first char digit => local company,
   // otherwise "other" entity
+  // SAFETY: v.length === 10 here.
+  // eslint-disable-next-line no-non-null-assertion
   if (isdigits(v[0]!)) {
     return validateLocalCompany(v);
   }
@@ -228,14 +250,15 @@ const format = (value: string): string => compact(value);
 
 /** Generate a random valid Singapore UEN (business format). */
 const generate = (): string => {
-  const weights = [10, 4, 9, 3, 8, 2, 7, 1];
-  const checkAlpha = "XMKECAWLJDB";
   const body = randomDigits(8);
   let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += Number(body[i]) * weights[i]!;
+  for (const [i, weight] of BUSINESS_WEIGHTS.entries()) {
+    sum += Number(body[i]) * weight;
   }
-  const check = checkAlpha[sum % 11]!;
+  // SAFETY: sum % 11 is in 0..10 and BUSINESS_CHECK_ALPHA
+  // has 11 characters.
+  // eslint-disable-next-line no-non-null-assertion
+  const check = BUSINESS_CHECK_ALPHA[sum % 11]!;
   return body + check;
 };
 

@@ -46,8 +46,8 @@ const mod11Checksum = (
   weights: readonly number[],
 ): number => {
   let sum = 0;
-  for (let i = 0; i < weights.length; i++) {
-    sum += Number(digits[i]) * weights[i]!;
+  for (const [i, weight] of weights.entries()) {
+    sum += Number(digits[i]) * weight;
   }
   return sum % 11;
 };

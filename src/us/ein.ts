@@ -1,6 +1,4 @@
-/** Generate a random valid U.S. EIN. */
-const generate = (): string => {
-  const prefixes = [
+const EIN_PREFIXES = [
     "01",
     "02",
     "03",
@@ -84,9 +82,11 @@ const generate = (): string => {
     "95",
     "98",
     "99",
-  ];
-  const prefix =
-    prefixes[randomInt(0, prefixes.length - 1)]!;
+] as const;
+
+/** Generate a random valid U.S. EIN. */
+const generate = (): string => {
+  const prefix = randomPick(EIN_PREFIXES);
   return prefix + randomDigits(7);
 };
 
@@ -102,7 +102,7 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 

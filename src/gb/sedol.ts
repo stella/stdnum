@@ -11,7 +11,7 @@
  */
 
 import { clean } from "#util/clean";
-import { randomInt } from "#util/generate";
+import { randomChar } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -36,14 +36,14 @@ const calcCheckDigit = (number: string): string => {
     );
   }
   let sum = 0;
-  for (let i = 0; i < 6; i++) {
-    const ch = number[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    const ch = number[i];
+    if (ch === undefined) continue;
     const val = ALPHABET.indexOf(ch);
     if (val < 0) {
       throw new Error(`Invalid SEDOL character: ${ch}`);
     }
-    // SAFETY: weights length matches loop bound
-    sum += WEIGHTS[i]! * val;
+    sum += weight * val;
   }
   return String((10 - (sum % 10)) % 10);
 };
@@ -74,6 +74,8 @@ const validate = (value: string): ValidateResult => {
   // Old-style SEDOLs are fully numeric; new-style
   // SEDOLs start with a letter. A number that starts
   // with a digit but contains letters is invalid.
+  // SAFETY: v.length === 7 here.
+  // eslint-disable-next-line no-non-null-assertion
   if (isdigits(v[0]!) && !isdigits(v)) {
     return err(
       "INVALID_FORMAT",
@@ -94,15 +96,15 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+const SEDOL_CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
+const SEDOL_CHARS = "0123456789BCDFGHJKLMNPQRSTVWXYZ";
+
 /** Generate a random valid SEDOL. */
 const generate = (): string => {
-  const consonants = "BCDFGHJKLMNPQRSTVWXYZ";
-  const chars = "0123456789BCDFGHJKLMNPQRSTVWXYZ";
-  const first =
-    consonants[randomInt(0, consonants.length - 1)]!;
-  let payload = first;
-  for (let i = 1; i < 6; i++)
-    payload += chars[randomInt(0, chars.length - 1)]!;
+  let payload = randomChar(SEDOL_CONSONANTS);
+  for (let i = 1; i < 6; i++) {
+    payload += randomChar(SEDOL_CHARS);
+  }
   return payload + calcCheckDigit(payload);
 };
 

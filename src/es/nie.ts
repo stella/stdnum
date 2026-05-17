@@ -9,7 +9,7 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -66,13 +66,18 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+const NIE_PREFIXES = ["X", "Y", "Z"] as const;
+const NIE_PREFIX_VALUES: Record<
+  (typeof NIE_PREFIXES)[number],
+  number
+> = { X: 0, Y: 1, Z: 2 };
+
 /** Generate a random valid Spanish NIE. */
 const generate = (): string => {
-  const prefixes = ["X", "Y", "Z"] as const;
-  const vals: Record<string, number> = { X: 0, Y: 1, Z: 2 };
-  const prefix = prefixes[randomInt(0, 2)]!;
+  const prefix = randomPick(NIE_PREFIXES);
   const digits = randomDigits(7);
-  const num = vals[prefix]! * 10000000 + Number(digits);
+  const num =
+    NIE_PREFIX_VALUES[prefix] * 10000000 + Number(digits);
   return prefix + digits + CHECK_LETTERS.charAt(num % 23);
 };
 

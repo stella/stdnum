@@ -552,7 +552,10 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
 const inferArb = (v: Validator): fc.Arbitrary<string> => {
   const lens = v.lengths;
   if (lens && lens.length > 0) {
-    if (lens.length === 1) return digs(lens[0]!);
+    const first = lens[0];
+    if (lens.length === 1 && first !== undefined) {
+      return digs(first);
+    }
     return fc.oneof(...lens.map((l) => digs(l)));
   }
   return digs(10);

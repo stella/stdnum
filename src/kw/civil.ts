@@ -39,9 +39,8 @@ const compact = (value: string): string =>
 
 const calcCheckDigit = (digits: string): number => {
   let sum = 0;
-  for (let i = 0; i < 11; i++) {
-    // SAFETY: loop bound guarantees valid index
-    sum += Number(digits[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += Number(digits[i]) * weight;
   }
   return (11 - (sum % 11)) % 11;
 };

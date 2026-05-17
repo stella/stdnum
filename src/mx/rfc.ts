@@ -27,8 +27,8 @@ import type { ValidateResult, Validator } from "../types";
 const ALPHABET = "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ Ñ";
 
 const CHAR_MAP = new Map<string, number>();
-for (let i = 0; i < ALPHABET.length; i++) {
-  CHAR_MAP.set(ALPHABET[i]!, i);
+for (const [i, ch] of [...ALPHABET].entries()) {
+  CHAR_MAP.set(ch, i);
 }
 
 const compact = (value: string): string =>
@@ -49,7 +49,8 @@ const calcCheckDigit = (value: string): string => {
   const padded = value.length === 11 ? ` ${value}` : value;
   let sum = 0;
   for (let i = 0; i < 12; i++) {
-    const ch = padded[i]!;
+    const ch = padded[i];
+    if (ch === undefined) continue;
     const v = CHAR_MAP.get(ch) ?? 0;
     sum += v * (13 - i);
   }

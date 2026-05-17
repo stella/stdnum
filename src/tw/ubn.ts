@@ -48,8 +48,8 @@ const validate = (value: string): ValidateResult => {
   }
 
   let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += digitSum(Number(v[i]) * WEIGHTS[i]!);
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += digitSum(Number(v[i]) * weight);
   }
 
   const checksum = sum % 10;

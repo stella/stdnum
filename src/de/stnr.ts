@@ -166,9 +166,13 @@ const format = (value: string): string => {
     // category: literal digits, F, B, U, P
     const segments: string[] = [];
     let segStart = 0;
+    // SAFETY: fmt is a non-empty literal from COMPILED.
+    // eslint-disable-next-line no-non-null-assertion
     let prevCat = charCat(fmt[0]!);
 
     for (let i = 1; i < fmt.length; i++) {
+      // SAFETY: i < fmt.length.
+      // eslint-disable-next-line no-non-null-assertion
       const cat = charCat(fmt[i]!);
       if (cat !== prevCat) {
         segments.push(v.slice(segStart, i));
