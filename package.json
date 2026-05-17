@@ -1,6 +1,6 @@
 {
   "name": "@stll/stdnum",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Validate, compact, and format standard identifiers for Node.js and Bun. Pure TypeScript, zero dependencies, tree-shakeable per identifier.",
   "keywords": [
     "credit-card",
