@@ -30,9 +30,13 @@ const compact = (value: string): string =>
 const calcCheckDigit = (body: string): number => {
   let sum = 0;
   const len = body.length;
-  for (let i = 0; i < len; i++) {
-    sum += Number(body[len - 1 - i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    if (i >= len) break;
+    sum += Number(body[len - 1 - i]) * weight;
   }
+  // SAFETY: sum % 11 is in 0..10 and CHECK_DIGITS has
+  // 11 entries.
+  // eslint-disable-next-line no-non-null-assertion
   return CHECK_DIGITS[sum % 11]!;
 };
 

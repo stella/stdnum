@@ -38,8 +38,8 @@ const compact = (value: string): string =>
  */
 const calcRncCheckDigit = (value: string): string => {
   let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += Number(value[i]) * RNC_WEIGHTS[i]!;
+  for (const [i, weight] of RNC_WEIGHTS.entries()) {
+    sum += Number(value[i]) * weight;
   }
   const remainder = sum % 11;
   return String(((10 - remainder) % 9) + 1);

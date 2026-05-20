@@ -63,6 +63,8 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
+  // SAFETY: regex above guarantees length === 10.
+  // eslint-disable-next-line no-non-null-assertion
   const lastDigit = v[9]!;
   if (lastDigit !== "1" && lastDigit !== "2") {
     return err(

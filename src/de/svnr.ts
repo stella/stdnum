@@ -39,6 +39,8 @@ const computeCheck = (v: string): number => {
     digits.push(Number(v[i]));
   }
 
+  // SAFETY: caller guarantees v.length === 12.
+  // eslint-disable-next-line no-non-null-assertion
   const lv = letterValue(v[8]!);
   digits.push(Math.floor(lv / 10));
   digits.push(lv % 10);
@@ -47,8 +49,11 @@ const computeCheck = (v: string): number => {
   digits.push(Number(v[10]));
 
   let sum = 0;
-  for (let i = 0; i < 12; i++) {
-    const product = digits[i]! * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    // SAFETY: WEIGHTS.length === 12 and we just pushed
+    // 12 entries onto `digits`.
+    // eslint-disable-next-line no-non-null-assertion
+    const product = digits[i]! * weight;
     if (product >= 10) {
       sum += Math.floor(product / 10) + (product % 10);
     } else {

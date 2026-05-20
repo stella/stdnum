@@ -8,7 +8,7 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -52,10 +52,11 @@ const validate = (value: string): ValidateResult => {
 
 const format = (value: string): string => compact(value);
 
+const REGISTRIKOOD_FIRSTS = [1, 7, 8, 9] as const;
+
 /** Generate a random valid Estonian Registrikood. */
 const generate = (): string => {
-  const firsts = [1, 7, 8, 9];
-  const first = String(firsts[randomInt(0, 3)]!);
+  const first = String(randomPick(REGISTRIKOOD_FIRSTS));
   const payload = first + randomDigits(6);
   return payload + String(twoPassCheck(payload));
 };

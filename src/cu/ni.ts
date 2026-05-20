@@ -17,10 +17,7 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
-import {
-  randomDigits,
-  randomInt,
-} from "#util/generate";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 
 import type {
@@ -62,6 +59,8 @@ const validate = (value: string): ValidateResult => {
   const yy = Number(v.slice(0, 2));
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
+  // SAFETY: regex check above guarantees v.length === 11.
+  // eslint-disable-next-line no-non-null-assertion
   const year = centuryOffset(v[6]!) + yy;
 
   if (!isValidDate(year, mm, dd)) {
@@ -88,6 +87,8 @@ const parse = (value: string): ParsedPersonId | null => {
   const yy = Number(v.slice(0, 2));
   const mm = Number(v.slice(2, 4));
   const dd = Number(v.slice(4, 6));
+  // SAFETY: regex check above guarantees v.length === 11.
+  // eslint-disable-next-line no-non-null-assertion
   const year = centuryOffset(v[6]!) + yy;
 
   const genderDigit = Number(v[9]);

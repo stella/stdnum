@@ -28,15 +28,15 @@ const SECONDARY_WEIGHTS = [7, 4, 3, 2, 5, 2, 7, 6] as const;
 const calcCheckDigit = (payload: string): number | null => {
   const padded = payload.padStart(8, "0");
   let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += PRIMARY_WEIGHTS[i]! * Number(padded[i]);
+  for (const [i, weight] of PRIMARY_WEIGHTS.entries()) {
+    sum += weight * Number(padded[i]);
   }
   let remainder = ((-sum % 11) + 11) % 11;
   if (remainder !== 10) return remainder;
 
   sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += SECONDARY_WEIGHTS[i]! * Number(padded[i]);
+  for (const [i, weight] of SECONDARY_WEIGHTS.entries()) {
+    sum += weight * Number(padded[i]);
   }
   remainder = ((-sum % 11) + 11) % 11;
   if (remainder === 10) return null;

@@ -27,8 +27,9 @@ const calcCheck = (
   weights: readonly number[],
 ): number => {
   let sum = 0;
-  for (let i = 0; i < 7; i++) {
-    sum += Number(value[i]) * weights[i]!;
+  for (const [i, weight] of weights.entries()) {
+    if (i >= 7) break;
+    sum += Number(value[i]) * weight;
   }
   return sum % 11;
 };

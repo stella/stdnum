@@ -28,8 +28,8 @@ const checkDigit = (
   weights: readonly number[],
 ): number => {
   let sum = 0;
-  for (let i = 0; i < weights.length; i++) {
-    sum += Number(value[i]) * weights[i]!;
+  for (const [i, weight] of weights.entries()) {
+    sum += Number(value[i]) * weight;
   }
   return (sum % 11) % 10;
 };

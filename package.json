@@ -1,6 +1,6 @@
 {
   "name": "@stll/stdnum",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Validate, compact, and format standard identifiers for Node.js and Bun. Pure TypeScript, zero dependencies, tree-shakeable per identifier.",
   "keywords": [
     "credit-card",
@@ -23,7 +23,6 @@
     "type": "git",
     "url": "https://github.com/stella/stdnum"
   },
-  "packageManager": "bun@1.3.12",
   "files": [
     "src",
     "dist"
@@ -32,10 +31,6 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "imports": {
-    "#checksums/*": "./dist/_checksums/*.js",
-    "#util/*": "./dist/_util/*.js"
-  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -903,6 +898,9 @@
       "default": "./dist/za/idnr.js"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown",
     "prepublishOnly": "bun run typecheck && bun run build && bun run sync-exports:check",
@@ -914,8 +912,9 @@
     "oracle": "bun scripts/oracle.ts --mode=gate",
     "oracle:gate": "bun scripts/oracle.ts --mode=gate",
     "oracle:survey": "bun scripts/oracle.ts --mode=survey",
-    "lint": "oxlint .",
+    "lint": "oxlint . --deny-warnings",
     "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
     "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {
@@ -933,10 +932,8 @@
     "typescript": "^5.9.3",
     "validate-polish": "^2.1.40"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "engines": {
     "node": ">= 18"
-  }
+  },
+  "packageManager": "bun@1.3.12"
 }

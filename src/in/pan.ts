@@ -4,8 +4,7 @@ const generate = (): string => {
     String.fromCodePoint(65 + randomInt(0, 25));
   const first3 =
     randomLetter() + randomLetter() + randomLetter();
-  const holderType =
-    HOLDER_TYPES[randomInt(0, HOLDER_TYPES.length - 1)]!;
+  const holderType = randomChar(HOLDER_TYPES);
   const fifth = randomLetter();
   const digits = randomDigits(4);
   const last = randomLetter();
@@ -27,7 +26,11 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import {
+  randomChar,
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -53,6 +56,8 @@ const validate = (value: string): ValidateResult => {
       "PAN must be 5 letters + 4 digits + 1 letter",
     );
   }
+  // SAFETY: regex above guarantees v.length === 10.
+  // eslint-disable-next-line no-non-null-assertion
   if (!HOLDER_TYPES.includes(v[3]!)) {
     return err(
       "INVALID_COMPONENT",

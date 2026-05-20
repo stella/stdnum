@@ -39,8 +39,8 @@ const pymod = (a: number, b: number): number =>
 
 const calcCheckDigit = (value: string): string | null => {
   let sum = 0;
-  for (let i = 0; i < 11; i++) {
-    sum += Number(value[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += Number(value[i]) * weight;
   }
   const result = pymod(-sum, 11);
   // A result of 10 means no valid single-digit check

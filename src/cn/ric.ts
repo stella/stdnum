@@ -67,6 +67,8 @@ const validate = (value: string): ValidateResult => {
       "RIC must contain only digits (plus check char)",
     );
   }
+  // SAFETY: 18-character branch guarantees v[17] exists.
+  // eslint-disable-next-line no-non-null-assertion
   const lastChar = v[17]!;
   if (!isdigits(lastChar) && lastChar !== "X") {
     return err(

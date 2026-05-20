@@ -28,8 +28,8 @@ const calcCheck = (
   weights: readonly number[],
 ): number => {
   let sum = 0;
-  for (let i = 0; i < digits.length; i++) {
-    sum += Number(digits[i]) * weights[i]!;
+  for (const [i, weight] of weights.entries()) {
+    sum += Number(digits[i]) * weight;
   }
   return (10 - (sum % 10)) % 10;
 };

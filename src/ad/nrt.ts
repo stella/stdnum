@@ -1,8 +1,8 @@
+const NRT_PREFIXES = "CDEGOPU";
+
 /** Generate a random valid Andorra NRT. */
 const generate = (): string => {
-  const prefixes = "CDEGOPU";
-  const prefix =
-    prefixes[randomInt(0, prefixes.length - 1)]!;
+  const prefix = randomChar(NRT_PREFIXES);
   const digits = randomDigits(6);
   const suffix = String.fromCodePoint(
     65 + randomInt(0, 25),
@@ -26,7 +26,11 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import {
+  randomChar,
+  randomDigits,
+  randomInt,
+} from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -45,7 +49,11 @@ const validate = (value: string): ValidateResult => {
       "Andorra NRT must be 8 characters",
     );
   }
+  // SAFETY: v.length === 8 guarantees both positions
+  // exist; oxlint cannot see the length guard.
+  // eslint-disable-next-line no-non-null-assertion
   const prefix = v[0]!;
+  // eslint-disable-next-line no-non-null-assertion
   const tail = v[7]!;
   const digits = v.slice(1, 7);
   if (!/^[A-Z]$/.test(prefix) || !/^[A-Z]$/.test(tail)) {

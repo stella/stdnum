@@ -16,13 +16,17 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import {
+  randomDigits,
+  randomInt,
+  randomPick,
+} from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
 import type { ValidateResult, Validator } from "../types";
 
-const WEIGHTS = [3, 7, 1, 3, 7, 1, 3, 7, 1];
+const WEIGHTS = [3, 7, 1, 3, 7, 1, 3, 7, 1] as const;
 
 const compact = (value: string): string =>
   clean(value, " -").trim();
@@ -57,8 +61,8 @@ const validate = (value: string): ValidateResult => {
 
   // Weighted checksum must be divisible by 10
   let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += Number(v[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += Number(v[i]) * weight;
   }
   if (sum % 10 !== 0) {
     return err(
@@ -82,16 +86,17 @@ const PREFIX_RANGES: readonly [number, number][] = [
 
 /** Generate a random valid U.S. RTN. */
 const generate = (): string => {
-  const range =
-    PREFIX_RANGES[randomInt(0, PREFIX_RANGES.length - 1)]!;
-  const prefix = String(
-    randomInt(range[0], range[1]),
-  ).padStart(2, "0");
+  const [low, high] = randomPick(PREFIX_RANGES);
+  const prefix = String(randomInt(low, high)).padStart(
+    2,
+    "0",
+  );
   const mid = randomDigits(6);
   const body = prefix + mid;
   let sum = 0;
-  for (let i = 0; i < 8; i++) {
-    sum += Number(body[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    if (i >= 8) break;
+    sum += Number(body[i]) * weight;
   }
   const check = (10 - (sum % 10)) % 10;
   return body + String(check);

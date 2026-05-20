@@ -23,10 +23,11 @@ export const mod112checkChar = (
   payload: string,
 ): string => {
   let sum = 0;
-  for (let i = 0; i < 17; i++) {
-    sum += Number(payload[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += Number(payload[i]) * weight;
   }
-  return CHECK_CHARS[sum % 11]!;
+  // SAFETY: sum % 11 is in 0..10 and CHECK_CHARS has 11 chars.
+  return CHECK_CHARS[sum % 11] ?? "";
 };
 
 /**
@@ -34,7 +35,7 @@ export const mod112checkChar = (
  * check character (last char is 0-9 or X).
  */
 export const mod112validate = (value: string): boolean => {
-  const payload = value.slice(0, 17);
-  const check = value[17]!.toUpperCase();
-  return mod112checkChar(payload) === check;
+  const check = value[17]?.toUpperCase();
+  if (check === undefined) return false;
+  return mod112checkChar(value.slice(0, 17)) === check;
 };

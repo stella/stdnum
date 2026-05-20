@@ -11,10 +11,7 @@
  */
 
 import { clean } from "#util/clean";
-import {
-  randomDigits,
-  randomInt,
-} from "#util/generate";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -25,7 +22,7 @@ import type { ValidateResult, Validator } from "../types";
  * 0,1,2, then 4,5,6,7,8,9). Check digit is at
  * position 3 and equals the weighted sum mod 11.
  */
-const WEIGHTS = [3, 7, 9, 5, 8, 4, 2, 1, 6];
+const WEIGHTS = [3, 7, 9, 5, 8, 4, 2, 1, 6] as const;
 
 const compact = (value: string): string =>
   clean(value, " -/").trim();
@@ -62,8 +59,8 @@ const validate = (value: string): ValidateResult => {
   // number is invalid.
   const digits = v.slice(0, 3) + v.slice(4);
   let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += Number(digits[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += Number(digits[i]) * weight;
   }
   const check = sum % 11;
   if (check === 10) {
@@ -98,8 +95,8 @@ const generate = (): string => {
     const digits = `${serial}${day}${month}${year}`;
 
     let sum = 0;
-    for (let i = 0; i < 9; i++) {
-      sum += Number(digits[i]) * (WEIGHTS[i] ?? 0);
+    for (const [i, weight] of WEIGHTS.entries()) {
+      sum += Number(digits[i]) * weight;
     }
 
     const check = sum % 11;

@@ -1,13 +1,12 @@
+const ITIN_ALLOWED_GROUPS = Array.from(
+  { length: 30 },
+  (_, i) => i + 70,
+).filter((g) => g !== 89 && g !== 93);
+
 /** Generate a random valid U.S. ITIN. */
 const generate = (): string => {
   const area = "9" + randomDigits(2);
-  const allowed = Array.from(
-    { length: 30 },
-    (_, i) => i + 70,
-  ).filter((g) => g !== 89 && g !== 93);
-  const group = String(
-    allowed[randomInt(0, allowed.length - 1)]!,
-  );
+  const group = String(randomPick(ITIN_ALLOWED_GROUPS));
   const serial = randomDigits(4);
   return `${area}${group}${serial}`;
 };
@@ -25,7 +24,7 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 

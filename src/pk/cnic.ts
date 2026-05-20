@@ -53,6 +53,8 @@ const validate = (value: string): ValidateResult => {
     );
   }
   // First digit must be a valid province code
+  // SAFETY: v.length === 13 above guarantees v[0] exists.
+  // eslint-disable-next-line no-non-null-assertion
   if (!VALID_PROVINCES.has(v[0]!)) {
     return err(
       "INVALID_COMPONENT",

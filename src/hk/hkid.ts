@@ -32,7 +32,8 @@ const computeCheck = (body: string): string => {
 
   let sum = 0;
   for (let i = 0; i < 8; i++) {
-    const ch = padded[i]!;
+    const ch = padded[i];
+    if (ch === undefined) continue;
     let val: number;
     if (ch === " ") {
       val = 36;

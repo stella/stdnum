@@ -72,8 +72,8 @@ const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const ALPHABET = "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ";
 
 const CHAR_MAP = new Map<string, number>();
-for (let i = 0; i < ALPHABET.length; i++) {
-  CHAR_MAP.set(ALPHABET[i]!, i);
+for (const [i, ch] of [...ALPHABET].entries()) {
+  CHAR_MAP.set(ch, i);
 }
 
 const compact = (value: string): string =>
@@ -87,7 +87,9 @@ const compact = (value: string): string =>
 const calcCheckDigit = (value: string): string => {
   let sum = 0;
   for (let i = 0; i < 17; i++) {
-    sum += (CHAR_MAP.get(value[i]!) ?? 0) * (18 - i);
+    const ch = value[i];
+    if (ch === undefined) continue;
+    sum += (CHAR_MAP.get(ch) ?? 0) * (18 - i);
   }
   return String((10 - (sum % 10)) % 10);
 };
@@ -129,6 +131,8 @@ const validate = (value: string): ValidateResult => {
   const mm = Number(v.slice(6, 8));
   const dd = Number(v.slice(8, 10));
 
+  // SAFETY: regex validation ensures v.length === 18.
+  // eslint-disable-next-line no-non-null-assertion
   const year = resolveCurpYear(yy, v[16]!);
   if (!isValidDate(year, mm, dd)) {
     return err(
@@ -173,6 +177,8 @@ const parse = (value: string): ParsedPersonId | null => {
   const mm = Number(v.slice(6, 8));
   const dd = Number(v.slice(8, 10));
 
+  // SAFETY: regex validation ensures v.length === 18.
+  // eslint-disable-next-line no-non-null-assertion
   const year = resolveCurpYear(yy, v[16]!);
 
   const genderChar = v[10];
@@ -196,12 +202,11 @@ const generate = (): string => {
   const yy = String(year % 100).padStart(2, "0");
   const gender = Math.random() < 0.5 ? "H" : "M";
   const state =
-    STATE_CODE_LIST[randomInt(0, STATE_CODE_LIST.length - 1)] ??
-    "NE";
+    STATE_CODE_LIST[
+      randomInt(0, STATE_CODE_LIST.length - 1)
+    ] ?? "NE";
   const centuryChar =
-    year >= 2000
-      ? randomLetter()
-      : String(randomInt(0, 9));
+    year >= 2000 ? randomLetter() : String(randomInt(0, 9));
   const body =
     `${randomLetter()}${randomLetter()}` +
     `${randomLetter()}${randomLetter()}` +

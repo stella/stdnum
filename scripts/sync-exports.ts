@@ -21,7 +21,8 @@ const isExcluded = (relPath: string): boolean => {
   if (relPath.startsWith("_util/")) return true;
   if (relPath.startsWith("_checksums/")) return true;
 
-  const filename = relPath.split("/").at(-1)!;
+  const filename = relPath.split("/").at(-1);
+  if (filename === undefined) return false;
   if (filename === "mod.ts") return true;
   if (filename === "index.ts") return true;
   if (filename === "types.ts") return true;

@@ -17,7 +17,7 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -36,7 +36,17 @@ const VALID_TYPES = new Set([
   "55",
 ]);
 
-const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+const WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2] as const;
+
+const GENERATE_TYPES = [
+  "20",
+  "23",
+  "24",
+  "27",
+  "30",
+  "33",
+  "34",
+] as const;
 
 const compact = (value: string): string =>
   clean(value, " -.").trim();
@@ -49,8 +59,8 @@ const compact = (value: string): string =>
  */
 const calcCheckDigit = (body: string): number => {
   let sum = 0;
-  for (let i = 0; i < 10; i++) {
-    sum += Number(body[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += Number(body[i]) * weight;
   }
   const remainder = 11 - (sum % 11);
   if (remainder === 11) return 0;
@@ -98,9 +108,7 @@ const format = (value: string): string => {
 
 /** Generate a random valid CUIT. */
 const generate = (): string => {
-  const types = ["20", "23", "24", "27", "30", "33", "34"];
-  const type =
-    types[Math.floor(Math.random() * types.length)]!;
+  const type = randomPick(GENERATE_TYPES);
   const body = type + randomDigits(8);
   const check = calcCheckDigit(body);
   return body + String(check);

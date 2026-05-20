@@ -1,9 +1,9 @@
+const RMO_VALUES = ["1", "2", "3", "4", "5", "9"] as const;
+
 /** Generate a random valid Bangladesh NID (13-digit). */
 const generate = (): string => {
   const district = randomDigits(2);
-  const rmoValues = ["1", "2", "3", "4", "5", "9"];
-  const rmo =
-    rmoValues[randomInt(0, rmoValues.length - 1)]!;
+  const rmo = randomPick(RMO_VALUES);
   const rest = randomDigits(10);
   return `${district}${rmo}${rest}`;
 };
@@ -31,7 +31,7 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 

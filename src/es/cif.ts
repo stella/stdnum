@@ -10,7 +10,7 @@
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomChar, randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -72,8 +72,7 @@ const format = (value: string): string => compact(value);
 
 /** Generate a random valid Spanish CIF. */
 const generate = (): string => {
-  const letter =
-    CIF_PREFIXES[randomInt(0, CIF_PREFIXES.length - 1)]!;
+  const letter = randomChar(CIF_PREFIXES);
   const payload = randomDigits(7);
   const check = cifChecksum(payload);
   if ("KPQS".includes(letter))

@@ -281,8 +281,7 @@ const generate = (): string => {
     "A";
 
   const day =
-    randomInt(1, 28) +
-    (randomInt(0, 1) === 0 ? 0 : 40);
+    randomInt(1, 28) + (randomInt(0, 1) === 0 ? 0 : 40);
   body += String(day).padStart(2, "0");
   body += randomLetter();
   body += String(randomInt(0, 999)).padStart(3, "0");
@@ -291,10 +290,7 @@ const generate = (): string => {
   for (let i = 0; i < body.length; i++) {
     const ch = body[i];
     if (ch === undefined) continue;
-    sum +=
-      i % 2 === 0
-        ? (ODD[ch] ?? 0)
-        : (EVEN[ch] ?? 0);
+    sum += i % 2 === 0 ? (ODD[ch] ?? 0) : (EVEN[ch] ?? 0);
   }
 
   return `${body}${CHECK_LETTERS.charAt(sum % 26)}`;

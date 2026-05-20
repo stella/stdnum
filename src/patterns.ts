@@ -66,10 +66,9 @@ const inferLengths = (v: Validator): number[] => {
  * "25 123 891" → [2, 3, 3].
  */
 const inferGroups = (v: Validator): number[] | null => {
-  if (!v.examples || v.examples.length === 0) {
-    return null;
-  }
-  const compact = v.compact(v.examples[0]!);
+  const first = v.examples?.[0];
+  if (first === undefined) return null;
+  const compact = v.compact(first);
   const formatted = v.format(compact);
   if (formatted === compact) return null;
 
@@ -98,31 +97,38 @@ const inferGroups = (v: Validator): number[] | null => {
  * (e.g., "CZ" for DIČ, "CHE" for Swiss UID).
  */
 const inferPrefix = (v: Validator): string | null => {
-  if (!v.examples || v.examples.length === 0) {
-    return null;
-  }
-  const compact = v.compact(v.examples[0]!);
+  const examples = v.examples;
+  const first = examples?.[0];
+  if (!examples || first === undefined) return null;
+  const compact = v.compact(first);
   // Prefix already present in compact form.
   // But only if ALL examples share the same prefix
   // (e.g., "CHE" for Swiss UID). If examples have
   // different prefixes (IBAN: GB/DE/FR), there's
   // no fixed prefix — it's part of the value.
   const compactMatch = compact.match(/^([A-Z]+)\d/);
-  if (compactMatch && v.examples!.length > 1) {
-    const pfx = compactMatch[1]!;
-    const allSame = v.examples!.every((ex) =>
-      v.compact(ex).startsWith(pfx),
+  const compactPrefix = compactMatch?.[1];
+  if (compactPrefix !== undefined && examples.length > 1) {
+    const allSame = examples.every((ex) =>
+      v.compact(ex).startsWith(compactPrefix),
     );
-    if (allSame) return pfx;
-  } else if (compactMatch && v.examples!.length === 1) {
-    return compactMatch[1]!;
+    if (allSame) return compactPrefix;
+  } else if (
+    compactPrefix !== undefined &&
+    examples.length === 1
+  ) {
+    return compactPrefix;
   }
   // Prefix added only by format()
   // (e.g., "DE" for de.vat, "CZ" for cz.dic)
   const formatted = v.format(compact);
   const fmtMatch = formatted.match(/^([A-Z]+)[\s\-./]?\d/);
-  if (fmtMatch && !compact.startsWith(fmtMatch[1]!)) {
-    return fmtMatch[1]!;
+  const fmtPrefix = fmtMatch?.[1];
+  if (
+    fmtPrefix !== undefined &&
+    !compact.startsWith(fmtPrefix)
+  ) {
+    return fmtPrefix;
   }
   return null;
 };
@@ -159,10 +165,7 @@ const inferCharClass = (v: Validator): string => {
   return charClassFor(combined);
 };
 
-type PerGroupInfo = {
-  sizes: number[];
-  classes: string[];
-};
+type PerGroup = { size: number; charClass: string };
 
 /**
  * Infer per-group sizes AND character classes from
@@ -177,13 +180,10 @@ type PerGroupInfo = {
  * are treated as prefixes and excluded (handled
  * by inferPrefix separately).
  */
-const inferPerGroupInfo = (
-  v: Validator,
-): PerGroupInfo | null => {
-  if (!v.examples || v.examples.length === 0) {
-    return null;
-  }
-  const compact = v.compact(v.examples[0]!);
+const inferPerGroup = (v: Validator): PerGroup[] | null => {
+  const first = v.examples?.[0];
+  if (first === undefined) return null;
+  const compact = v.compact(first);
   const formatted = v.format(compact);
   if (formatted === compact) return null;
 
@@ -207,28 +207,33 @@ const inferPerGroupInfo = (
   // appear AFTER the first digit group (embedded
   // letters). Skip letter-only groups before the
   // first digit group (prefix like "CHE").
-  const filtered: string[] = [];
+  const filtered: PerGroup[] = [];
   let seenDigitGroup = false;
   for (const p of parts) {
     if (p.length === 0) continue;
     if (/\d/.test(p)) {
       seenDigitGroup = true;
-      filtered.push(p);
+      filtered.push({
+        size: p.length,
+        charClass: charClassFor(p),
+      });
     } else if (seenDigitGroup) {
-      filtered.push(p);
+      filtered.push({
+        size: p.length,
+        charClass: charClassFor(p),
+      });
     }
   }
 
   if (filtered.length <= 1) return null;
 
-  const classes = filtered.map(charClassFor);
-  const allSame = classes.every((c) => c === classes[0]);
+  const firstClass = filtered[0]?.charClass;
+  const allSame = filtered.every(
+    (g) => g.charClass === firstClass,
+  );
   if (allSame) return null;
 
-  return {
-    sizes: filtered.map((p) => p.length),
-    classes,
-  };
+  return filtered;
 };
 
 /**
@@ -246,10 +251,11 @@ const groupsToPattern = (
  * character types (e.g., digits vs letters).
  */
 const groupsToPatternPerClass = (
-  groups: number[],
-  classes: string[],
+  groups: readonly { size: number; charClass: string }[],
 ): string =>
-  groups.map((g, i) => `${classes[i]!}{${g}}`).join(SEP);
+  groups
+    .map(({ size, charClass }) => `${charClass}{${size}}`)
+    .join(SEP);
 
 /**
  * Derive a loose candidate-matching regex from
@@ -272,13 +278,10 @@ export const toRegex = (v: Validator): RegExp => {
   // "12 010188 M 01 1" → [\d, \d, [A-Z], \d, \d]).
   // This prevents overly broad [A-Z0-9] from
   // matching all-caps prose as identifiers.
-  const perGroup = inferPerGroupInfo(v);
+  const perGroup = inferPerGroup(v);
 
   if (perGroup && lengths.length <= 1) {
-    pattern = groupsToPatternPerClass(
-      perGroup.sizes,
-      perGroup.classes,
-    );
+    pattern = groupsToPatternPerClass(perGroup);
   } else if (groups && lengths.length <= 1) {
     pattern = groupsToPattern(groups, cc);
   } else if (lengths.length === 1) {

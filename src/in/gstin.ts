@@ -70,7 +70,9 @@ const luhn36Checksum = (value: string): number => {
   let sum = 0;
   let double = false;
   for (let i = value.length - 1; i >= 0; i--) {
-    let v = charValue(value[i]!);
+    const ch = value[i];
+    if (ch === undefined) continue;
+    let v = charValue(ch);
     if (double) {
       v *= 2;
       sum += Math.floor(v / BASE) + (v % BASE);

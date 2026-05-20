@@ -1,28 +1,26 @@
+const BIC_ALPHANUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const BIC_COUNTRIES = [
+  "DE",
+  "GB",
+  "US",
+  "FR",
+  "CH",
+  "NL",
+  "AT",
+] as const;
+
 /** Generate a random valid BIC (8-character). */
 const generate = (): string => {
   const randomLetter = (): string =>
     String.fromCodePoint(65 + randomInt(0, 25));
-  const randomAlphaNum = (): string => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    return chars[randomInt(0, chars.length - 1)]!;
-  };
-  const countries = [
-    "DE",
-    "GB",
-    "US",
-    "FR",
-    "CH",
-    "NL",
-    "AT",
-  ];
-  const country =
-    countries[randomInt(0, countries.length - 1)]!;
+  const country = randomPick(BIC_COUNTRIES);
   const bank =
     randomLetter() +
     randomLetter() +
     randomLetter() +
     randomLetter();
-  const location = randomAlphaNum() + randomAlphaNum();
+  const location =
+    randomChar(BIC_ALPHANUM) + randomChar(BIC_ALPHANUM);
   return `${bank}${country}${location}`;
 };
 
@@ -39,7 +37,11 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { randomInt } from "#util/generate";
+import {
+  randomChar,
+  randomInt,
+  randomPick,
+} from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "./types";

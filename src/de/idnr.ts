@@ -103,6 +103,9 @@ const generate = (): string => {
     while (pool.length < 10) pool.push(randomInt(0, 9));
     for (let i = pool.length - 1; i > 0; i--) {
       const j = randomInt(0, i);
+      // SAFETY: i and j are valid indices of `pool`
+      // (i > 0, j ∈ [0, i]).
+      // eslint-disable-next-line no-non-null-assertion
       [pool[i], pool[j]] = [pool[j]!, pool[i]!];
     }
     if (pool[0] === 0) continue;

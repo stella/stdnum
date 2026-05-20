@@ -209,8 +209,21 @@ export type Validator<
    * passed to validate() for confirmation.
    */
   candidatePattern?: string;
+
+  /**
+   * Extract structured data (e.g. birth date,
+   * gender) from a known-valid identifier.
+   * Available on personal IDs that encode such
+   * data. Returns null if the input cannot be
+   * parsed.
+   *
+   * On the base `Validator` type this is optional
+   * with a widened return; narrow it by typing the
+   * validator as `Validator<ParsedPersonId>` etc.
+   */
+  parse?: (value: string) => ParsedIdentifier | null;
 } & ([TParsed] extends [undefined]
-  ? { parse?: undefined }
+  ? unknown
   : { parse: (value: string) => TParsed | null });
 
 export type ParsableValidator<

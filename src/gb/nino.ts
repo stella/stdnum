@@ -1,21 +1,19 @@
+const NINO_VALID_FIRST = "ABCEGHJKLMNOPRSTWXYZ";
+const NINO_VALID_SECOND = "ABCEGHJKLMNPRSTWXYZ";
+const NINO_SUFFIXES = "ABCD";
+
 /** Generate a random valid UK NINO. */
 const generate = (): string => {
-  const validFirst = "ABCEGHJKLMNOPRSTWXYZ";
-  const validSecond = "ABCEGHJKLMNPRSTWXYZ";
-  const suffixes = "ABCD";
   let first: string;
   let second: string;
   let prefix: string;
   do {
-    first =
-      validFirst[randomInt(0, validFirst.length - 1)]!;
-    second =
-      validSecond[randomInt(0, validSecond.length - 1)]!;
+    first = randomChar(NINO_VALID_FIRST);
+    second = randomChar(NINO_VALID_SECOND);
     prefix = first + second;
   } while (INVALID_PREFIX.has(prefix));
   const digits = randomDigits(6);
-  const suffix =
-    suffixes[randomInt(0, suffixes.length - 1)]!;
+  const suffix = randomChar(NINO_SUFFIXES);
   return `${prefix}${digits}${suffix}`;
 };
 
@@ -31,7 +29,7 @@ const generate = (): string => {
  */
 
 import { clean } from "#util/clean";
-import { randomDigits, randomInt } from "#util/generate";
+import { randomChar, randomDigits } from "#util/generate";
 import { err } from "#util/result";
 
 import type { ValidateResult, Validator } from "../types";
@@ -85,7 +83,10 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
+  // SAFETY: regex above guarantees v.length === 9.
+  // eslint-disable-next-line no-non-null-assertion
   const first = v[0]!;
+  // eslint-disable-next-line no-non-null-assertion
   const second = v[1]!;
   const prefix = v.slice(0, 2);
 

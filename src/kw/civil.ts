@@ -14,10 +14,7 @@
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
-import {
-  randomDigits,
-  randomInt,
-} from "#util/generate";
+import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
@@ -39,9 +36,8 @@ const compact = (value: string): string =>
 
 const calcCheckDigit = (digits: string): number => {
   let sum = 0;
-  for (let i = 0; i < 11; i++) {
-    // SAFETY: loop bound guarantees valid index
-    sum += Number(digits[i]) * WEIGHTS[i]!;
+  for (const [i, weight] of WEIGHTS.entries()) {
+    sum += Number(digits[i]) * weight;
   }
   return (11 - (sum % 11)) % 11;
 };
@@ -105,9 +101,7 @@ const format = (value: string): string => {
  * Gender is not encoded in the number.
  * Returns null if the value is not valid.
  */
-const parse = (
-  value: string,
-): ParsedBirthDate | null => {
+const parse = (value: string): ParsedBirthDate | null => {
   const result = validate(value);
   if (!result.valid) return null;
 

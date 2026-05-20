@@ -38,9 +38,10 @@ const compact = (value: string): string => {
 
   const parts = number.split("-");
   if (parts.length === 3) {
-    const p0 = parts[0]!.padStart(2, "0");
-    const p1 = parts[1]!.padStart(4, "0");
-    const p2 = parts[2]!.padStart(4, "0");
+    const [raw0, raw1, raw2] = parts;
+    const p0 = (raw0 ?? "").padStart(2, "0");
+    const p1 = (raw1 ?? "").padStart(4, "0");
+    const p2 = (raw2 ?? "").padStart(4, "0");
     number = p0 + p1 + p2;
   } else {
     number = number.replaceAll("-", "");
