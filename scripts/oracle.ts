@@ -260,22 +260,24 @@ const bgEgnShape = validDateParts(1800, 2099).chain(
 );
 
 const eeIkShape = validDateParts(1800, 2099).chain(
-  ({ year, month, day }) =>
-    fc
+  ({ year, month, day }) => {
+    let genderDigits = [3, 4] as const;
+    if (year < 1900) {
+      genderDigits = [1, 2] as const;
+    } else if (year >= 2000) {
+      genderDigits = [5, 6] as const;
+    }
+
+    return fc
       .tuple(
-        fc.constantFrom(
-          ...(year < 1900
-            ? [1, 2]
-            : year >= 2000
-              ? [5, 6]
-              : [3, 4]),
-        ),
+        fc.constantFrom(...genderDigits),
         fc.integer({ min: 0, max: 999 }),
         fc.integer({ min: 0, max: 9 }),
       )
       .map(([genderDigit, serial, check]) => {
         return `${genderDigit}${p2(year % 100)}${p2(month)}${p2(day)}${p3(serial)}${check}`;
-      }),
+      });
+  },
 );
 
 const siEmsoShape = validDateParts(1900, 2099).chain(
@@ -837,12 +839,10 @@ const STDNUM_MIXED: Record<string, string> = {
   "is_.kennitala": "IS",
 };
 
-// validate-polish
-const { nip, pesel, regon } = validatePolish;
 const POLISH: Record<string, (v: string) => boolean> = {
-  "pl.nip": nip,
-  "pl.pesel": pesel,
-  "pl.regon": regon,
+  "pl.nip": (value) => validatePolish.nip(value),
+  "pl.pesel": (value) => validatePolish.pesel(value),
+  "pl.regon": (value) => validatePolish.regon(value),
 };
 
 // idnumbers: key → "Country.ClassName"
@@ -939,18 +939,16 @@ const MODE = (() => {
   );
   const value =
     arg?.slice("--mode=".length) ??
-    process.env["ORACLE_MODE"] ??
+    process.env.ORACLE_MODE ??
     "gate";
   return value === "survey" ? "survey" : "gate";
 })();
 
-const BASE_SEED = Number(
-  process.env["ORACLE_SEED"] ?? "1337",
-);
+const BASE_SEED = Number(process.env.ORACLE_SEED ?? "1337");
 
 const shouldFailOnDisagreements =
   MODE === "gate" ||
-  process.env["ORACLE_FAIL_ON_DISAGREEMENTS"] === "1";
+  process.env.ORACLE_FAIL_ON_DISAGREEMENTS === "1";
 
 const SURVEY_ONLY_SOURCES = new Set(["valvat", "ruby-ssn"]);
 
@@ -1225,9 +1223,7 @@ const inferCheckDigitPositions = (
 
 // ─── Runner ─────────────────────────────────
 
-const NUM = Number(
-  process.env["ORACLE_SAMPLES"] ?? "10000",
-);
+const NUM = Number(process.env.ORACLE_SAMPLES ?? "10000");
 
 const compare = (
   label: string,
@@ -1242,7 +1238,7 @@ const compare = (
       dis++;
       if (ex.length < 3)
         ex.push(
-          `    "${String(vals[i])}"` +
+          `    "${vals[i] ?? ""}"` +
             ` ts=${String(ts[i])}` +
             ` oracle=${String(oracle[i])}`,
         );

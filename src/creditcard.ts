@@ -74,9 +74,9 @@ const format = (value: string): string => {
   return groups.join(" ");
 };
 
-const MAESTRO_PREFIXES: readonly number[] = [
+const MAESTRO_PREFIXES = new Set([
   5018, 5020, 5038, 5893, 6304, 6759, 6761, 6762, 6763,
-];
+]);
 
 /**
  * Detect the card network from the BIN/IIN prefix.
@@ -112,7 +112,7 @@ const detectNetwork = (
 
   // Maestro (check before Mastercard; some share
   // the 50xx prefix space)
-  if (MAESTRO_PREFIXES.includes(d4)) return "maestro";
+  if (MAESTRO_PREFIXES.has(d4)) return "maestro";
 
   // Mastercard: 51-55 or 2221-2720
   if (d2 >= 51 && d2 <= 55) return "mastercard";

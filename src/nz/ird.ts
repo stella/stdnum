@@ -80,7 +80,7 @@ const validate = (value: string): ValidateResult => {
       "IRD number cannot have a valid check digit",
     );
   }
-  if (expected !== Number(v[v.length - 1])) {
+  if (expected !== Number(v.at(-1))) {
     return err(
       "INVALID_CHECKSUM",
       "IRD check digit does not match",

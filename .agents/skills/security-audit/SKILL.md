@@ -1,3 +1,8 @@
+---
+name: security-audit
+description: 'Run a security-focused code audit with a generic checklist first, then layer on repo-specific risks.'
+---
+
 # Security Audit
 
 Run a security-focused code audit with a generic checklist first, then
@@ -41,10 +46,11 @@ layer on repo-specific risks.
 7. **Review dependency risk**:
 
    ```bash
-   # use the repo's package manager or tooling
+   bun audit
    ```
 
-   Also check GitHub security or Dependabot alerts when available.
+   Use the repo's equivalent audit command if it does not use Bun. Also check
+   GitHub security or Dependabot alerts when available.
 
 8. **Review AI-specific risks** when applicable:
    - prompt injection exposure
@@ -57,18 +63,16 @@ layer on repo-specific risks.
    - explicitly call out the domain assumptions you used
 
 10. **Report findings by severity**:
+   - Critical
+   - High
+   - Medium
+   - Low
 
-- Critical
-- High
-- Medium
-- Low
-
-For each finding include:
-
-- file and line
-- issue
-- likely impact
-- recommended fix
+   For each finding include:
+   - file and line
+   - issue
+   - likely impact
+   - recommended fix
 
 11. **If there are no findings**, say so explicitly and mention what was checked
-    plus any residual gaps in verification.
+   plus any residual gaps in verification.

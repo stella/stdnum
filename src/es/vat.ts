@@ -70,8 +70,12 @@ const validate = (value: string): ValidateResult => {
 
   // NIE: X/Y/Z + 7 digits + letter
   if (first === "X" || first === "Y" || first === "Z") {
-    const prefix =
-      first === "X" ? "0" : first === "Y" ? "1" : "2";
+    let prefix = "2";
+    if (first === "X") {
+      prefix = "0";
+    } else if (first === "Y") {
+      prefix = "1";
+    }
     const digits = prefix + v.slice(1, 8);
     if (!isdigits(digits) || !isdigits(v.slice(1, 8))) {
       return err(

@@ -57,7 +57,7 @@ const validate = (value: string): ValidateResult => {
 
   const body = v.slice(0, -1);
   const check = calcCheckDigit(body);
-  if (check !== Number(v[v.length - 1])) {
+  if (check !== Number(v.at(-1))) {
     return err(
       "INVALID_CHECKSUM",
       "NIT check digit does not match",
