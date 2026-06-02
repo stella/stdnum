@@ -23,11 +23,11 @@ const generate = (): string => {
  * @see https://www.tse.go.cr/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 /**
  * Compact: strip spaces, pad hyphen-separated parts

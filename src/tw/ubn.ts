@@ -10,12 +10,12 @@
  * @see https://zh.wikipedia.org/wiki/統一編號
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [1, 2, 1, 2, 1, 2, 4, 1] as const;
 

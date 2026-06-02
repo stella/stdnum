@@ -13,12 +13,12 @@
  * @see https://en.wikipedia.org/wiki/Tax_Identification_Number#Venezuela
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /**
  * Map prefix letter to its numeric offset used

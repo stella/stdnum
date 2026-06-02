@@ -7,13 +7,13 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/bulgaria-tin.pdf
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");

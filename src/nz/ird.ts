@@ -9,12 +9,12 @@
  * @see https://www.ird.govt.nz/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const PRIMARY_WEIGHTS = [3, 2, 7, 6, 5, 4, 3, 2] as const;
 

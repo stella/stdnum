@@ -10,12 +10,12 @@
  * @see https://service.bmf.gv.at/Service/Anwend/Behoerden/show_mast.asp
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /** Luhn-variant doubling table: position-dependent. */
 const DOUBLE = "0246813579";

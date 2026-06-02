@@ -8,11 +8,11 @@
  * @see https://pt.wikipedia.org/wiki/Cartão_de_cidadão
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomChar, randomDigits } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const CC_RE = /^\d{9}[A-Z0-9]{2}\d$/;
 

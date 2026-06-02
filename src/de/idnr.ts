@@ -10,6 +10,8 @@
  * @see https://www.bzst.de/DE/Privatpersonen/SteuerlicheIdentifikationsnummer/steuerlicheidentifikationsnummer_node.html
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import {
   mod1110validate,
   mod1110checkDigit,
@@ -18,8 +20,6 @@ import { clean } from "#util/clean";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   clean(value, " -/");

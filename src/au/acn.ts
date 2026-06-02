@@ -9,12 +9,12 @@
  * @see https://asic.gov.au/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [8, 7, 6, 5, 4, 3, 2, 1] as const;
 

@@ -15,18 +15,18 @@
  * @see https://www.grao.bg/normact/NaredbaFunkcESGR.pdf
  */
 
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
+
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type {
-  ParsedPersonId,
-  ValidateResult,
-  Validator,
-} from "../types";
 
 const WEIGHTS = [2, 4, 8, 5, 10, 9, 7, 3, 6] as const;
 

@@ -25,6 +25,8 @@ const generate = (): string => {
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Andorra-TIN.pdf
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import {
   randomChar,
@@ -33,8 +35,6 @@ import {
 } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const VALID_PREFIXES = "ACDEFGLOPU";
 

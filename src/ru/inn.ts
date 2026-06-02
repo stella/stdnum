@@ -10,12 +10,12 @@
  * @see https://www.nalog.gov.ru/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS_10 = [2, 4, 10, 3, 5, 9, 4, 6, 8] as const;
 const WEIGHTS_11 = [7, 2, 4, 10, 3, 5, 9, 4, 6, 8] as const;

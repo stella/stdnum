@@ -7,13 +7,13 @@
  * @see https://www.rik.ee/
  */
 
+import type { ValidateResult, Validator } from "../types";
+import { twoPassCheck } from "./ik";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
-import { twoPassCheck } from "./ik";
 
 const VALID_FIRST = new Set(["1", "7", "8", "9"]);
 

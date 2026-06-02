@@ -17,11 +17,11 @@
  * @see https://dgi.mef.gob.pa/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 /**
  * Legacy cross-reference table: maps two-digit codes

@@ -28,11 +28,11 @@ const generate = (): string => {
  * @see https://www.gov.uk/hmrc-internal-manuals/national-insurance-manual/nim39110
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomChar, randomDigits } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const INVALID_FIRST = new Set([
   "D",

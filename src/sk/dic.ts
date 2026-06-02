@@ -9,13 +9,13 @@
  * @see https://www.financnasprava.sk/
  */
 
+import { validate as validateRc } from "../cz/rc";
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import { validate as validateRc } from "../cz/rc";
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string => {
   const v = clean(value, " -");

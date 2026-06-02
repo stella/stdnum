@@ -11,12 +11,12 @@
  * @see https://easyinvoice.vn/ma-so-thue/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [31, 29, 23, 19, 17, 13, 7, 5, 3] as const;
 

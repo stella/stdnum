@@ -8,17 +8,17 @@
  * @see https://www.skatteetaten.no/
  */
 
-import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
-import { randomDigits, randomInt } from "#util/generate";
-import { err } from "#util/result";
-import { isdigits } from "#util/strings";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
 
 const WEIGHTS_D1 = [3, 7, 6, 1, 8, 9, 4, 5, 2] as const;
 const WEIGHTS_D2 = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2] as const;

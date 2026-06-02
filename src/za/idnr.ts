@@ -13,6 +13,12 @@
  * @see https://en.wikipedia.org/wiki/South_African_identity_document
  */
 
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
+
 import {
   luhnValidate,
   luhnChecksum,
@@ -22,12 +28,6 @@ import { isValidDate } from "#util/date";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type {
-  ParsedPersonId,
-  ValidateResult,
-  Validator,
-} from "../types";
 
 const compact = (value: string): string =>
   clean(value, " ");

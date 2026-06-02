@@ -8,13 +8,13 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/poland-tin.pdf
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [6, 5, 7, 2, 3, 4, 5, 6, 7] as const;
 

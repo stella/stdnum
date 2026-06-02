@@ -14,11 +14,11 @@
  * @see https://gra.gov.gh/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const FORMAT_RE = /^[PCGQV]00[0-9]{7}[0-9X]$/;
 

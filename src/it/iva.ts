@@ -7,6 +7,8 @@
  * @see https://www.agenziaentrate.gov.it/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import {
   luhnValidate,
   luhnChecksum,
@@ -15,8 +17,6 @@ import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const VALID_PROVINCES = new Set([
   ...Array.from({ length: 100 }, (_, i) =>

@@ -19,11 +19,11 @@
  * @see https://en.wikipedia.org/wiki/CNPJ
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const CNPJ_RE = /^[\dA-Z]+$/;
 

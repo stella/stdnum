@@ -26,13 +26,13 @@
  * @see https://www.pmlp.gov.lv/en/change-personal-identity-number
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [9, 1, 4, 8, 3, 10, 2, 5, 7, 6, 1];
 

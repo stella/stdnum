@@ -13,11 +13,11 @@
  * @see https://www.taxes.gov.az/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 /** Weights for check digit computation (positions 0-7). */
 const WEIGHTS = [4, 1, 8, 6, 2, 7, 5, 3] as const;

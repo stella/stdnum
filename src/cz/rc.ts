@@ -24,17 +24,17 @@
  * @see Law 133/2000 Sb.
  */
 
-import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
-import { randomInt } from "#util/generate";
-import { err } from "#util/result";
-import { isdigits } from "#util/strings";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
 
 const compact = (value: string): string =>
   clean(value, " /");

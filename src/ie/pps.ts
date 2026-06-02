@@ -9,12 +9,12 @@
  * @see https://www.gov.ie/en/service/12e6de-get-a-personal-public-service-pps-number/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const ALPHABET = "WABCDEFGHIJKLMNOPQRSTUV";
 

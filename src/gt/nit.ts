@@ -11,12 +11,12 @@
  * @see https://portal.sat.gob.gt/portal/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /**
  * Compact: strip spaces, hyphens, leading zeros,

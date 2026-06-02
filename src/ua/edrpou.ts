@@ -10,12 +10,12 @@
  * @see https://usr.minjust.gov.ua/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS_A = [1, 2, 3, 4, 5, 6, 7] as const;
 const WEIGHTS_B = [7, 1, 2, 3, 4, 5, 6] as const;

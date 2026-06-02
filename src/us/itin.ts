@@ -23,12 +23,12 @@ const generate = (): string => {
  * @see https://www.irs.gov/individuals/individual-taxpayer-identification-number
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const ITIN_RE = /^(?<area>\d{3})-?(?<group>\d{2})-?\d{4}$/;
 

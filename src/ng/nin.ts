@@ -13,12 +13,12 @@ const generate = (): string => randomDigits(11);
  * @see https://nimc.gov.ng/about-nin/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   clean(value, " -");

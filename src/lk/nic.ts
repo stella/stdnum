@@ -12,17 +12,17 @@
  * @see https://drp.gov.lk/Templates/Artical%20-%20English%20new%20number.html
  */
 
-import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
-import { randomDigits, randomInt } from "#util/generate";
-import { err } from "#util/result";
-import { isdigits } from "#util/strings";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
 
 /** Old format: 9 digits + V or X (case-insensitive). */
 const OLD_RE = /^\d{9}[VvXx]$/;

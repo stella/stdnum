@@ -9,13 +9,13 @@
  * @see https://www.gleif.org/
  */
 
+import type { ValidateResult, Validator } from "./types";
+
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
-
-import type { ValidateResult, Validator } from "./types";
 
 const compact = (value: string): string =>
   clean(value, " -").toUpperCase();

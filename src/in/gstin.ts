@@ -9,12 +9,12 @@
  * @see https://en.wikipedia.org/wiki/Goods_and_Services_Tax_Identification_Number
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { charValue } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const GSTIN_RE =
   /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]Z[0-9A-Z]$/;

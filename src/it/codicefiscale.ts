@@ -20,17 +20,17 @@
  * @see https://it.wikipedia.org/wiki/Codice_fiscale#Omocodia
  */
 
-import { clean } from "#util/clean";
-import { randomInt } from "#util/generate";
-import { err } from "#util/result";
-import { isdigits } from "#util/strings";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
 import { validate as validateIva } from "./iva";
+
+import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
 
 // Values for odd-positioned characters (0-based
 // index 0, 2, 4, ...)

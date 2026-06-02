@@ -16,11 +16,11 @@ const generate = (): string => {
  * @see https://www.justiz.gv.at/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const FN_RE = /^\d+[a-z]$/i;
 

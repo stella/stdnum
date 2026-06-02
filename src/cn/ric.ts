@@ -11,6 +11,12 @@
  * @see https://en.wikipedia.org/wiki/Resident_Identity_Card
  */
 
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
+
 import {
   mod112checkChar,
   mod112validate,
@@ -20,12 +26,6 @@ import { isValidDate } from "#util/date";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type {
-  ParsedPersonId,
-  ValidateResult,
-  Validator,
-} from "../types";
 
 const compact = (value: string): string =>
   clean(value, " -").toUpperCase();

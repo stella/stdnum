@@ -8,13 +8,13 @@
  * @see https://www.gov.uk/find-utr-number
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [6, 7, 8, 9, 10, 5, 4, 3, 2] as const;
 const CHECK_LOOKUP = "21987654321";

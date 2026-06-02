@@ -9,6 +9,8 @@
  * @see https://www.iso.org/standard/70484.html
  */
 
+import type { ValidateResult, Validator } from "./types";
+
 import {
   luhnChecksum,
   luhnValidate,
@@ -17,8 +19,6 @@ import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "./types";
 
 /**
  * Card network identifiers returned by

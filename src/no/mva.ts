@@ -7,14 +7,14 @@
  * @see https://www.skatteetaten.no/
  */
 
-import { clean } from "#util/clean";
-import { err } from "#util/result";
-
 import type { ValidateResult, Validator } from "../types";
 import {
   validate as validateOrgnr,
   generate as generateOrgnr,
 } from "./orgnr";
+
+import { clean } from "#util/clean";
+import { err } from "#util/result";
 
 const compact = (value: string): string => {
   let v = clean(value, " -").toUpperCase();

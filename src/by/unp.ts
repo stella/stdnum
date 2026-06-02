@@ -11,12 +11,12 @@
  * @see https://www.nalog.gov.by/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /** Cyrillic to Latin mapping for the letter positions. */
 const CYRILLIC_TO_LATIN: Record<string, string> = {

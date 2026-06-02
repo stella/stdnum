@@ -9,18 +9,18 @@
  * @see https://www.cnp.ro/
  */
 
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
+
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type {
-  ParsedPersonId,
-  ValidateResult,
-  Validator,
-} from "../types";
 
 const WEIGHTS = [
   2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9,

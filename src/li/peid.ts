@@ -15,12 +15,12 @@ const generate = (): string => {
  * @see https://www.oera.li/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   clean(value, " .").replace(/^0+/, "");

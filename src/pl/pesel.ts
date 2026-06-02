@@ -10,18 +10,18 @@
  * @see https://www.gov.pl/web/cyfryzacja/numer-pesel
  */
 
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
+
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type {
-  ParsedPersonId,
-  ValidateResult,
-  Validator,
-} from "../types";
 
 const WEIGHTS = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3] as const;
 

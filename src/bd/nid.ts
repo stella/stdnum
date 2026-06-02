@@ -30,12 +30,12 @@ const generate = (): string => {
  * @see https://www.nidw.gov.bd/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /**
  * Valid RMO (residential/municipal/other) codes.

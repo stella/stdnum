@@ -18,11 +18,11 @@ const generate = (): string => {
  * @see https://www.tatime.gov.al/eng/c/4/103/business-lifecycle
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const NIPT_RE = /^[A-M]\d{8}[A-Z]$/;
 
