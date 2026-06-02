@@ -22,13 +22,13 @@
  * @see https://persian-tools.js.org/functions/verifyIranianNationalId.html
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { normalizeArabicDigits } from "#util/arabic";
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /** All-same-digit patterns (0000000000 .. 9999999999). */
 const ALL_SAME = new Set(

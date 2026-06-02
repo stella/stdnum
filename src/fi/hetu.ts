@@ -8,17 +8,17 @@
  * @see https://dvv.fi/en/personal-identity-code
  */
 
-import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
-import { randomInt } from "#util/generate";
-import { err } from "#util/result";
-import { isdigits } from "#util/strings";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
 
 const CHECK_CHARS = "0123456789ABCDEFHJKLMNPRSTUVWXY";
 

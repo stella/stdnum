@@ -9,13 +9,13 @@
  * @see https://bip.stat.gov.pl/en/regon/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS_9 = [8, 9, 2, 3, 4, 5, 6, 7] as const;
 const WEIGHTS_14 = [

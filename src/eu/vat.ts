@@ -12,10 +12,6 @@
  * @see https://ec.europa.eu/taxation_customs/vies/
  */
 
-import { clean } from "#util/clean";
-import { randomInt } from "#util/generate";
-import { err } from "#util/result";
-
 import atUid from "../at/uid";
 import beVat from "../be/vat";
 import bgVat from "../bg/vat";
@@ -45,6 +41,10 @@ import seVat from "../se/vat";
 import siVat from "../si/vat";
 import skDic from "../sk/dic";
 import type { Validator, ValidateResult } from "../types";
+
+import { clean } from "#util/clean";
+import { randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 type CountryValidator = {
   compact: (value: string) => string;

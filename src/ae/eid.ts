@@ -10,6 +10,8 @@
  * @see https://u.ae/en/information-and-services/visa-and-emirates-id/emirates-id
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import {
   luhnChecksum,
   luhnValidate,
@@ -18,8 +20,6 @@ import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   clean(value, " -/");

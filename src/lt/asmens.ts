@@ -10,14 +10,14 @@
  * @see https://www.registrucentras.lt/
  */
 
+import { twoPassCheck } from "../ee/ik";
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import { twoPassCheck } from "../ee/ik";
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   clean(value, " -");

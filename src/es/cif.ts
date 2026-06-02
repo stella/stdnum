@@ -9,13 +9,13 @@
  * @see https://www.agenciatributaria.es/
  */
 
+import type { ValidateResult, Validator } from "../types";
+import { cifChecksum } from "./vat";
+
 import { clean } from "#util/clean";
 import { randomChar, randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
-import { cifChecksum } from "./vat";
 
 const CIF_PREFIXES = "ABCDEFGHJNPQRSUVW";
 const CIF_LETTERS = "JABCDEFGHI";

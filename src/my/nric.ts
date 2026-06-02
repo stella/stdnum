@@ -12,17 +12,17 @@
  * @see https://en.wikipedia.org/wiki/Malaysian_identity_card
  */
 
-import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
-import { randomInt } from "#util/generate";
-import { err } from "#util/result";
-import { isdigits } from "#util/strings";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
 
 /**
  * Valid place-of-birth codes (2-digit).

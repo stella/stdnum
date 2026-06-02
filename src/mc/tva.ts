@@ -10,14 +10,14 @@
  * @see https://www.economie.gouv.fr/
  */
 
-import { randomDigits } from "#util/generate";
-import { err } from "#util/result";
-
 import {
   compact as frCompact,
   validate as frValidate,
 } from "../fr/tva";
 import type { ValidateResult, Validator } from "../types";
+
+import { randomDigits } from "#util/generate";
+import { err } from "#util/result";
 
 const compact = (value: string): string => {
   const v = frCompact(value);

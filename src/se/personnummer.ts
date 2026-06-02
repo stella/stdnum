@@ -8,6 +8,12 @@
  * @see https://www.skatteverket.se/privat/folkbokforing/personnummer.4.3810a01c150939e893f18c29.html
  */
 
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
+
 import {
   luhnValidate,
   luhnChecksum,
@@ -17,12 +23,6 @@ import { isValidDate } from "#util/date";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type {
-  ParsedPersonId,
-  ValidateResult,
-  Validator,
-} from "../types";
 
 /**
  * Match python-stdnum's compact: preserve the '-' or '+'

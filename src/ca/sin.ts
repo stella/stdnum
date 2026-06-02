@@ -8,6 +8,8 @@
  * @see https://en.wikipedia.org/wiki/Social_Insurance_Number
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import {
   luhnValidate,
   luhnChecksum,
@@ -16,8 +18,6 @@ import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   clean(value, " -");

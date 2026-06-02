@@ -29,11 +29,11 @@ const generate = (): string => {
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/mauritius-tin.pdf
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 /** Entity BRN: letter + 8 digits. */
 const ENTITY_RE = /^[A-Z]\d{8}$/;

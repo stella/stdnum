@@ -16,13 +16,13 @@ const generate = (): string => randomDigits(12);
  * @see https://mofa.gov.iq/the-civil-status-id/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { normalizeArabicDigits } from "#util/arabic";
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   normalizeArabicDigits(clean(value, " -./"));

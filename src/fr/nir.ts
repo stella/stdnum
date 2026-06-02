@@ -12,16 +12,16 @@
  * @see https://en.wikipedia.org/wiki/INSEE_code
  */
 
-import { clean } from "#util/clean";
-import { resolveTwoDigitYear } from "#util/date";
-import { randomInt } from "#util/generate";
-import { err } from "#util/result";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { resolveTwoDigitYear } from "#util/date";
+import { randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 const compact = (value: string): string =>
   clean(value, " -.");

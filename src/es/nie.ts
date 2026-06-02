@@ -8,13 +8,13 @@
  * @see https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/nie/
  */
 
+import type { ValidateResult, Validator } from "../types";
+import { CHECK_LETTERS } from "./dni";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
-import { CHECK_LETTERS } from "./dni";
 
 const PREFIX_MAP: Record<string, string> = {
   X: "0",

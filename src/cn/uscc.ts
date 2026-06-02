@@ -9,6 +9,8 @@
  * @see https://zh.wikipedia.org/wiki/统一社会信用代码
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import {
   randomChar,
@@ -17,8 +19,6 @@ import {
 } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const ALPHABET = "0123456789ABCDEFGHJKLMNPQRTUWXY";
 

@@ -26,12 +26,12 @@ const generate = (): string => {
  * @see https://de.wikipedia.org/wiki/Steuernummer
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /**
  * Format patterns per federal state.

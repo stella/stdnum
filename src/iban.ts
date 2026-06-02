@@ -6,13 +6,13 @@
  * characters. Validated using ISO 7064 Mod 97-10.
  */
 
+import type { ValidateResult, Validator } from "./types";
+
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
-
-import type { ValidateResult, Validator } from "./types";
 
 /**
  * BBAN format regex by country code.

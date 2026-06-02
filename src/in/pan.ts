@@ -25,6 +25,8 @@ const generate = (): string => {
  * @see https://en.wikipedia.org/wiki/Permanent_account_number
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import {
   randomChar,
@@ -32,8 +34,6 @@ import {
   randomInt,
 } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const PAN_RE = /^[A-Z]{5}\d{4}[A-Z]$/;
 

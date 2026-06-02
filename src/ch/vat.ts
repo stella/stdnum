@@ -8,14 +8,14 @@
  * @see https://www.estv.admin.ch/
  */
 
-import { clean } from "#util/clean";
-import { err } from "#util/result";
-
 import type { ValidateResult, Validator } from "../types";
 import {
   validate as validateUid,
   generate as generateUid,
 } from "./uid";
+
+import { clean } from "#util/clean";
+import { err } from "#util/result";
 
 const SUFFIXES = ["MWST", "TVA", "IVA", "TPV"] as const;
 

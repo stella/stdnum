@@ -14,16 +14,16 @@
  * @see https://en.wikipedia.org/wiki/CURP
  */
 
-import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
-import { randomInt } from "#util/generate";
-import { err } from "#util/result";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 /** Valid Mexican state codes (2-letter). */
 const STATE_CODES = new Set([

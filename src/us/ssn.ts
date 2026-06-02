@@ -27,12 +27,12 @@ const generate = (): string => {
  * @see https://www.ssa.gov/employer/verifySSN.htm
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /** Known-invalid SSNs used in advertisements. */
 const BLACKLIST = new Set([

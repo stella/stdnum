@@ -9,11 +9,11 @@
  * @see https://www.idno.md
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [
   7, 3, 1, 7, 3, 1, 7, 3, 1, 7, 3, 1,

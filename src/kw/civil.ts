@@ -12,17 +12,17 @@
  * @see https://kuwaitsexpat.com/kuwait-civil-id-format/
  */
 
-import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
-import { randomDigits, randomInt } from "#util/generate";
-import { err } from "#util/result";
-import { isdigits } from "#util/strings";
-
 import type {
   ParsedBirthDate,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
 
 const WEIGHTS = [2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2] as const;
 

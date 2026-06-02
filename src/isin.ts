@@ -10,13 +10,13 @@
  * @see https://www.isin.org/
  */
 
+import type { ValidateResult, Validator } from "./types";
+
 import { luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { randomInt, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { charValue, isalnum } from "#util/strings";
-
-import type { ValidateResult, Validator } from "./types";
 
 const ISIN_RE = /^[A-Z]{2}[0-9A-Z]{9}[0-9]$/;
 

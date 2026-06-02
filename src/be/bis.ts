@@ -10,13 +10,13 @@
  * @see https://nl.wikipedia.org/wiki/Rijksregisternummer
  */
 
+import type { ValidateResult, Validator } from "../types";
+import { checksum, format as nnFormat } from "./nn";
+
 import { clean } from "#util/clean";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
-import { checksum, format as nnFormat } from "./nn";
 
 const compact = (value: string): string =>
   clean(value, " .-");

@@ -10,6 +10,8 @@
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Indonesia-TIN.pdf
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import {
   luhnValidate,
   luhnChecksum,
@@ -19,8 +21,6 @@ import { isValidDate } from "#util/date";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   clean(value, " .-");

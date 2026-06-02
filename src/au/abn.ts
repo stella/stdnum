@@ -9,12 +9,12 @@
  * @see https://abr.business.gov.au/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [
   10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19,

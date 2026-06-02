@@ -15,16 +15,16 @@
  * @see https://www.ecured.cu/Carnet_de_Identidad
  */
 
-import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
-import { randomDigits, randomInt } from "#util/generate";
-import { err } from "#util/result";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
 
 const compact = (value: string): string =>
   clean(value, " -").trim();

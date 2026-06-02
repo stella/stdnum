@@ -16,12 +16,12 @@
  * @see https://en.wikipedia.org/wiki/Tax_Identification_Number_(Mexico)
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 /** Alphabet for RFC check digit computation. */
 const ALPHABET = "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ Ñ";

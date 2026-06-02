@@ -16,12 +16,12 @@ const generate = (): string => randomDigits(8);
  * @see https://www.src.am/en/taxpayerSearchSystemPage/112
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string =>
   clean(value, " -").trim();

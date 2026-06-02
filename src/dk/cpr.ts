@@ -8,17 +8,17 @@
  * @see https://cpr.dk/
  */
 
-import { clean } from "#util/clean";
-import { isValidDate } from "#util/date";
-import { randomDigits, randomInt } from "#util/generate";
-import { err } from "#util/result";
-import { isdigits } from "#util/strings";
-
 import type {
   ParsedPersonId,
   ValidateResult,
   Validator,
 } from "../types";
+
+import { clean } from "#util/clean";
+import { isValidDate } from "#util/date";
+import { randomDigits, randomInt } from "#util/generate";
+import { err } from "#util/result";
+import { isdigits } from "#util/strings";
 
 const compact = (value: string): string =>
   clean(value, " -");

@@ -11,12 +11,12 @@ const generate = (): string => randomDigits(9);
  * @see https://www.eta.gov.eg/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /**
  * Arabic-Indic and Extended Arabic-Indic digit map.

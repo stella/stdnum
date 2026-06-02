@@ -13,12 +13,12 @@
  * @see https://en.wikipedia.org/wiki/CLABE
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [3, 7, 1] as const;
 

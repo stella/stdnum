@@ -13,11 +13,11 @@
  * @see https://en.wikipedia.org/wiki/Rol_%C3%9Anico_Tributario
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const RUT_RE = /^\d{7,8}[\dK]$/;
 

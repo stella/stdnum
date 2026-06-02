@@ -31,11 +31,11 @@ const generate = (): string => {
  * @see https://de.wikipedia.org/wiki/Handelsregister_(Deutschland)
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const REGISTER_TYPES = new Set([
   "HRA",

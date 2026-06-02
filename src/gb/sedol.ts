@@ -10,12 +10,12 @@
  * @see https://en.wikipedia.org/wiki/SEDOL
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomChar } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /**
  * Allowed characters in a SEDOL: digits and

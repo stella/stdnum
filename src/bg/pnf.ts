@@ -7,12 +7,12 @@
  * @see https://en.wikipedia.org/wiki/Unique_citizenship_number
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [21, 19, 17, 13, 11, 9, 7, 3, 1] as const;
 

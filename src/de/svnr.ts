@@ -9,6 +9,8 @@
  * @see https://de.wikipedia.org/wiki/Sozialversicherungsnummer
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import {
   isValidDate,
@@ -16,8 +18,6 @@ import {
 } from "#util/date";
 import { randomInt } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 const letterValue = (ch: string): number => {
   const code = ch.charCodeAt(0);

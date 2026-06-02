@@ -36,6 +36,8 @@ const generate = (): string => {
  * @see https://www.swift.com/
  */
 
+import type { ValidateResult, Validator } from "./types";
+
 import { clean } from "#util/clean";
 import {
   randomChar,
@@ -43,8 +45,6 @@ import {
   randomPick,
 } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "./types";
 
 const BIC_RE =
   /^[A-Z]{4}[A-Z]{2}[0-9A-Z]{2}([0-9A-Z]{3})?$/;

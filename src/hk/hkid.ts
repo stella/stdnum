@@ -9,11 +9,11 @@
  * @see https://en.wikipedia.org/wiki/Hong_Kong_identity_card
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
-
-import type { ValidateResult, Validator } from "../types";
 
 /** Strip spaces, parentheses, and dashes. */
 const compact = (value: string): string =>

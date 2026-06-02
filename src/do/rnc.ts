@@ -14,13 +14,13 @@
  * @see https://dgii.gov.do/
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { luhnValidate } from "#checksums/luhn";
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 /**
  * Weights for the 9-digit RNC check digit.

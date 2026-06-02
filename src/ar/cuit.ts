@@ -16,12 +16,12 @@
  * @see https://en.wikipedia.org/wiki/CUIT_(Argentina)
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const VALID_TYPES = new Set([
   "20",
