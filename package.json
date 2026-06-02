@@ -913,8 +913,8 @@
     "oracle:gate": "bun scripts/oracle.ts --mode=gate",
     "oracle:survey": "bun scripts/oracle.ts --mode=survey",
     "lint": "bun --bun oxlint -c oxlint.config.ts --report-unused-disable-directives-severity=error --deny-warnings --type-aware .",
-    "format": "oxfmt . '!.ai/**' '!.agents/**' '!.claude/**' '!AGENTS.md' '!CLAUDE.md' '!GEMINI.md'",
-    "format:check": "oxfmt --check . '!.ai/**' '!.agents/**' '!.claude/**' '!AGENTS.md' '!CLAUDE.md' '!GEMINI.md'",
+    "format": "oxfmt . \"!.ai/**\" \"!.agents/**\" \"!.claude/**\" \"!AGENTS.md\" \"!CLAUDE.md\" \"!GEMINI.md\"",
+    "format:check": "oxfmt --check . \"!.ai/**\" \"!.agents/**\" \"!.claude/**\" \"!AGENTS.md\" \"!CLAUDE.md\" \"!GEMINI.md\"",
     "typecheck": "tsc -p tsconfig.json",
     "sync-ai:check": "bash scripts/sync-ai-skills.sh --check",
     "lint:fix": "bun --bun oxlint -c oxlint.config.ts --type-aware --fix ."
