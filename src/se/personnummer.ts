@@ -32,8 +32,8 @@ const compact = (value: string): string => {
   let v = clean(value, " :");
   if (
     (v.length === 10 || v.length === 12) &&
-    v[v.length - 5] !== "-" &&
-    v[v.length - 5] !== "+"
+    v.at(-5) !== "-" &&
+    v.at(-5) !== "+"
   ) {
     v = `${v.slice(0, -4)}-${v.slice(-4)}`;
   }
@@ -64,7 +64,7 @@ const getBirthDate = (
     let century = Math.floor(currentYear / 100);
     const yy = Number(v.slice(0, 2));
     if (yy > currentYear % 100) century -= 1;
-    if (v[v.length - 5] === "+") century -= 1;
+    if (v.at(-5) === "+") century -= 1;
     year = century * 100 + yy;
     month = Number(v.slice(2, 4));
     day = Number(v.slice(4, 6));
@@ -84,7 +84,7 @@ const validate = (value: string): ValidateResult => {
   }
 
   const digits = v.slice(0, -5) + v.slice(-4);
-  const sep = v[v.length - 5];
+  const sep = v.at(-5);
   if ((sep !== "-" && sep !== "+") || !isdigits(digits)) {
     return err(
       "INVALID_FORMAT",
@@ -123,7 +123,7 @@ const parse = (value: string): ParsedPersonId | null => {
   const birthDate = getBirthDate(v);
   if (birthDate === null) return null;
 
-  const genderDigit = Number(v[v.length - 2]);
+  const genderDigit = Number(v.at(-2));
 
   return {
     birthDate: new Date(

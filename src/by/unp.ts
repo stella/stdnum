@@ -44,7 +44,8 @@ const compact = (value: string): string => {
   } else if (v.startsWith("UNP")) {
     v = v.slice(3);
   }
-  return [...v]
+  return v
+    .split("")
     .map((ch) => CYRILLIC_TO_LATIN[ch] ?? ch)
     .join("");
 };
@@ -88,7 +89,7 @@ const validate = (value: string): ValidateResult => {
   const first2 = v.slice(0, 2);
   if (
     !isdigits(first2) &&
-    ![...first2].every((ch) => ALPHA_SET.includes(ch))
+    !first2.split("").every((ch) => ALPHA_SET.includes(ch))
   ) {
     return err(
       "INVALID_FORMAT",

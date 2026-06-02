@@ -144,7 +144,6 @@ const generate = (): string => {
     const serial = randomDigits(4);
     const payload = yy + mm + dd + gender + serial;
     const check = calcCheckDigit(payload);
-    if (check === null) continue;
     const c = payload + String(check);
     if (validate(c).valid) return c;
   }

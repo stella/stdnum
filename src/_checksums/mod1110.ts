@@ -19,6 +19,6 @@ export const mod1110checkDigit = (
 /** Validate a string with a Mod 11,10 check digit. */
 export const mod1110validate = (value: string): boolean => {
   const payload = value.slice(0, -1);
-  const check = Number(value[value.length - 1]);
+  const check = Number(value.at(-1));
   return mod1110checkDigit(payload) === check;
 };

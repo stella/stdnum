@@ -16,43 +16,49 @@ import type { Validator } from "../src/types";
 
 // ─── Auto-discover validators with generate ────
 
+type GeneratorValidator = Validator & {
+  generate: () => string;
+};
+
 type GeneratorEntry = {
   name: string;
-  validator: Validator;
+  validator: GeneratorValidator;
 };
+
+const isRecord = (
+  value: unknown,
+): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const isGeneratorValidator = (
+  value: unknown,
+): value is GeneratorValidator =>
+  isRecord(value) &&
+  "validate" in value &&
+  "generate" in value &&
+  typeof value.generate === "function";
 
 const generators: GeneratorEntry[] = [];
 
 for (const [ns, mod] of Object.entries(all)) {
-  if (
-    mod &&
-    typeof mod === "object" &&
-    "validate" in mod &&
-    "generate" in mod &&
-    typeof (mod as Validator).generate === "function"
-  ) {
+  const moduleValue: unknown = mod;
+  if (isGeneratorValidator(moduleValue)) {
     // Top-level validator (iban, luhn, creditcard, etc.)
     generators.push({
       name: ns,
-      validator: mod as Validator,
+      validator: moduleValue,
     });
-  } else if (mod && typeof mod === "object") {
-    // Namespace (cz, de, etc.)
-    for (const [key, v] of Object.entries(
-      mod as Record<string, unknown>,
-    )) {
-      if (
-        v &&
-        typeof v === "object" &&
-        "validate" in v &&
-        "generate" in v &&
-        typeof (v as Validator).generate === "function"
-      ) {
-        generators.push({
-          name: `${ns}.${key}`,
-          validator: v as Validator,
-        });
-      }
+    continue;
+  }
+  if (!isRecord(moduleValue)) continue;
+
+  // Namespace (cz, de, etc.)
+  for (const [key, value] of Object.entries(moduleValue)) {
+    if (isGeneratorValidator(value)) {
+      generators.push({
+        name: `${ns}.${key}`,
+        validator: value,
+      });
     }
   }
 }
@@ -67,7 +73,7 @@ for (const { name, validator } of generators) {
   describe(`${name}.generate()`, () => {
     test(`produces valid values (${String(ITERATIONS)}x)`, () => {
       for (let i = 0; i < ITERATIONS; i++) {
-        const value = validator.generate!();
+        const value = validator.generate();
         const result = validator.validate(value);
         if (!result.valid) {
           expect(

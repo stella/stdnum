@@ -2,18 +2,37 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import { defineConfig } from "tsdown";
 
+type DirectoryEntry = {
+  isDirectory: () => boolean;
+  isFile: () => boolean;
+  name: string;
+};
+
 const collectEntries = (dir: string): string[] => {
   const results: string[] = [];
-  for (const entry of readdirSync(dir, {
-    withFileTypes: true,
-    recursive: true,
-  })) {
-    if (!entry.isFile()) continue;
-    if (!entry.name.endsWith(".ts")) continue;
-    if (entry.name.includes(".test.")) continue;
-    const full = join(entry.parentPath, entry.name);
-    results.push(full);
-  }
+
+  const visit = (currentDir: string): void => {
+    const entries: DirectoryEntry[] = readdirSync(
+      currentDir,
+      {
+        withFileTypes: true,
+      },
+    );
+
+    for (const entry of entries) {
+      const full = join(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        visit(full);
+        continue;
+      }
+      if (!entry.isFile()) continue;
+      if (!entry.name.endsWith(".ts")) continue;
+      if (entry.name.includes(".test.")) continue;
+      results.push(full);
+    }
+  };
+
+  visit(dir);
   return results;
 };
 

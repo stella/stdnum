@@ -27,7 +27,7 @@ import type { ValidateResult, Validator } from "../types";
 const ALPHABET = "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ Ñ";
 
 const CHAR_MAP = new Map<string, number>();
-for (const [i, ch] of [...ALPHABET].entries()) {
+for (const [i, ch] of ALPHABET.split("").entries()) {
   CHAR_MAP.set(ch, i);
 }
 

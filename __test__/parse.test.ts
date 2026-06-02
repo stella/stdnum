@@ -28,14 +28,16 @@ type Discovered = {
   validator: ParseValidator;
 };
 
+const isRecord = (
+  value: unknown,
+): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
 const isValidator = (value: unknown): value is Validator =>
-  Boolean(
-    value &&
-    typeof value === "object" &&
-    "validate" in value &&
-    "compact" in value &&
-    "format" in value,
-  );
+  isRecord(value) &&
+  "validate" in value &&
+  "compact" in value &&
+  "format" in value;
 
 const hasParse = (
   value: unknown,
@@ -45,19 +47,18 @@ const hasParse = (
 const discovered: Discovered[] = [];
 
 for (const [ns, mod] of Object.entries(all)) {
-  if (hasParse(mod)) {
+  const moduleValue: unknown = mod;
+  if (hasParse(moduleValue)) {
     discovered.push({
       name: ns,
-      validator: mod,
+      validator: moduleValue,
     });
     continue;
   }
 
-  if (!mod || typeof mod !== "object") continue;
+  if (!isRecord(moduleValue)) continue;
 
-  for (const [key, value] of Object.entries(
-    mod as Record<string, unknown>,
-  )) {
+  for (const [key, value] of Object.entries(moduleValue)) {
     if (!hasParse(value)) continue;
     discovered.push({
       name: `${ns}.${key}`,
@@ -82,10 +83,9 @@ for (const { name, validator } of discovered) {
           expect(result).not.toBeNull();
           expect(result?.birthDate).toBeInstanceOf(Date);
           if (result && "gender" in result) {
-            expect(
-              result.gender === "male" ||
-                result.gender === "female",
-            ).toBe(true);
+            expect(["male", "female"]).toContain(
+              result.gender,
+            );
           }
         }
       });
@@ -102,9 +102,7 @@ describe("cz.rc parse", () => {
   test("extracts male born 1971-03-19", () => {
     const result = validator.parse("7103192745");
     expect(result).not.toBeNull();
-    expect(
-      result && "gender" in result && result.gender,
-    ).toBe("male");
+    expect(result?.gender).toBe("male");
     expect(result?.birthDate.getFullYear()).toBe(1971);
     expect(result?.birthDate.getMonth()).toBe(2);
     expect(result?.birthDate.getDate()).toBe(19);

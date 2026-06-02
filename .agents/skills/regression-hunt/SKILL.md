@@ -1,3 +1,8 @@
+---
+name: regression-hunt
+description: 'Track down a behavior that used to work and now fails, changed, or regressed. Use this when a bug report points to a recent breakage, especially when the cause is not obvious yet.'
+---
+
 # Regression Hunt
 
 Track down a behavior that used to work and now fails, changed, or
@@ -9,7 +14,6 @@ especially when the cause is not obvious yet.
 $ARGUMENTS — A short description of what regressed.
 
 Helpful extras when available:
-
 - failing test name or file
 - error message or log line
 - expected behavior

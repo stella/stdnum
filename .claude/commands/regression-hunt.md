@@ -9,7 +9,6 @@ especially when the cause is not obvious yet.
 $ARGUMENTS — A short description of what regressed.
 
 Helpful extras when available:
-
 - failing test name or file
 - error message or log line
 - expected behavior

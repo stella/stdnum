@@ -19,30 +19,30 @@ import type { Validator } from "../src/types";
 
 // ─── Auto-discover every Validator ──────────
 
+const isRecord = (
+  value: unknown,
+): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const isValidator = (value: unknown): value is Validator =>
+  isRecord(value) &&
+  "validate" in value &&
+  "compact" in value &&
+  "format" in value;
+
 const validators: Array<[string, Validator]> = [];
 
 for (const [ns, mod] of Object.entries(all)) {
-  if (
-    mod &&
-    typeof mod === "object" &&
-    "validate" in mod &&
-    "compact" in mod &&
-    "format" in mod
-  ) {
-    validators.push([ns, mod as Validator]);
-  } else if (mod && typeof mod === "object") {
-    for (const [key, v] of Object.entries(
-      mod as Record<string, unknown>,
-    )) {
-      if (
-        v &&
-        typeof v === "object" &&
-        "validate" in v &&
-        "compact" in v &&
-        "format" in v
-      ) {
-        validators.push([`${ns}.${key}`, v as Validator]);
-      }
+  const moduleValue: unknown = mod;
+  if (isValidator(moduleValue)) {
+    validators.push([ns, moduleValue]);
+    continue;
+  }
+  if (!isRecord(moduleValue)) continue;
+
+  for (const [key, value] of Object.entries(moduleValue)) {
+    if (isValidator(value)) {
+      validators.push([`${ns}.${key}`, value]);
     }
   }
 }

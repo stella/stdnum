@@ -110,9 +110,7 @@ const GENERATE_TYPES = ["V", "E", "J", "P", "G"] as const;
 const generate = (): string => {
   const prefix = randomPick(GENERATE_TYPES);
   const body = randomDigits(8);
-  return (
-    prefix + body + String(calcCheckDigit(prefix, body))
-  );
+  return prefix + body + calcCheckDigit(prefix, body);
 };
 
 /**
