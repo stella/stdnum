@@ -17,6 +17,10 @@
  *   bun run oracle:survey
  */
 
+import {
+  isValidCnpj,
+  isValidCpf,
+} from "@brazilian-utils/brazilian-utils";
 import fc from "fast-check";
 import IBAN from "iban";
 import { isValidIBAN } from "ibantools";
@@ -45,7 +49,10 @@ import {
   norway,
 } from "jsvat";
 import { execSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { unlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { validate as validateRut } from "rut.js";
 import {
   validateEntity as stdnumEntity,
   validatePerson as stdnumPerson,
@@ -506,6 +513,89 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
       ),
     )
     .map(([p, d, c]) => `${p}00${d}${c}`),
+  // Indian PAN: 5 letters + 4 digits + 1 letter.
+  // Without a custom arb, the default digit-only
+  // generator never produces a format-valid PAN, so
+  // the oracle would compare 0/N valid samples.
+  "in_.pan": fc
+    .tuple(
+      fc
+        .array(letters(L), { minLength: 5, maxLength: 5 })
+        .map((c) => c.join("")),
+      digs(4),
+      letters(L),
+    )
+    .map(([p, d, s]) => `${p}${d}${s}`),
+  // Mexican CURP: 4 letters + DDMMYY + H|M + 2 state
+  // letters + 3 consonants + 1 alphanumeric + 1 digit.
+  // The 2nd letter must be a vowel (or X) per the
+  // canonical regex; chars 14-16 must be consonants.
+  "mx.curp": validDateParts(1900, 2099).chain(
+    ({ year, month, day }) =>
+      fc
+        .tuple(
+          letters(L),
+          letters("AEIOUX"),
+          letters(L),
+          letters(L),
+          fc.constantFrom("H", "M"),
+          fc
+            .array(letters(L), {
+              minLength: 2,
+              maxLength: 2,
+            })
+            .map((c) => c.join("")),
+          fc
+            .array(letters("BCDFGHJKLMNPQRSTVWXYZ"), {
+              minLength: 3,
+              maxLength: 3,
+            })
+            .map((c) => c.join("")),
+          alnumStr(1, 1),
+          digs(1),
+        )
+        .map(([a, b, c, d2, g, st, cs, alpha, dg]) => {
+          const yy = p2(year % 100);
+          const mm = p2(month);
+          const dd = p2(day);
+          return `${a}${b}${c}${d2}${yy}${mm}${dd}${g}${st}${cs}${alpha}${dg}`;
+        }),
+  ),
+  // Mexican RFC: persona física = 4 letters + YYMMDD
+  // + 3 alphanumeric (13 chars); persona moral = 3
+  // letters + YYMMDD + 3 alphanumeric (12 chars).
+  "mx.rfc": validDateParts(1900, 2099).chain(
+    ({ year, month, day }) => {
+      const yy = p2(year % 100);
+      const mm = p2(month);
+      const dd = p2(day);
+      const date = `${yy}${mm}${dd}`;
+      return fc.oneof(
+        fc
+          .tuple(
+            fc
+              .array(letters(L), {
+                minLength: 4,
+                maxLength: 4,
+              })
+              .map((c) => c.join("")),
+            alnumStr(3, 3),
+          )
+          .map(([n, c]) => `${n}${date}${c}`),
+        fc
+          .tuple(
+            fc
+              .array(letters(L), {
+                minLength: 3,
+                maxLength: 3,
+              })
+              .map((c) => c.join("")),
+            alnumStr(3, 3),
+          )
+          .map(([n, c]) => `${n}${date}${c}`),
+      );
+    },
+  ),
   "za.idnr": dateDigs(13, "ymd"),
   "mu.brn": fc.oneof(
     fc
@@ -634,6 +724,13 @@ const hasPython = () =>
   probe(`${PYTHON} -c "import stdnum"`);
 const hasIdnumbers = () =>
   probe(`${PYTHON} -c "import idnumbers"`);
+const hasLocalflavor = () =>
+  probe(
+    `${PYTHON} -c ` +
+      `"from django.conf import settings;` +
+      ` settings.configure(USE_I18N=False);` +
+      ` import localflavor"`,
+  );
 const hasRust = () => probe(`test -f ${RUST_BIN}`);
 const hasRubyValvat = () =>
   probe(`GEM_HOME=${RUBY_GEM} ruby -e "require 'valvat'"`);
@@ -677,6 +774,51 @@ const pyIdnBatch: SubBatch = (cls, vals) => {
     .trim()
     .split("\n")
     .map((l) => l === "1");
+};
+
+// django-localflavor (Python): "{mod}.forms.{Field}"
+// The module path may contain dots (e.g. "in_.forms"),
+// so we split on the last dot to separate the class.
+const localflavorBatch: SubBatch = (path, vals) => {
+  const lastDot = path.lastIndexOf(".");
+  const mod = path.slice(0, lastDot);
+  const name = path.slice(lastDot + 1);
+  const json = JSON.stringify(vals);
+  const s = `import json, sys
+from django.conf import settings
+if not settings.configured:
+    settings.configure(USE_I18N=False)
+from django.core.exceptions import ValidationError
+from localflavor.${mod} import ${name}
+field = ${name}()
+vals = json.loads(sys.stdin.read())
+for v in vals:
+    try:
+        field.clean(v)
+        print("1")
+    except (ValidationError, Exception):
+        print("0")`;
+  const tmp = join(
+    tmpdir(),
+    `_stdnum_localflavor_${String(process.pid)}.py`,
+  );
+  writeFileSync(tmp, s);
+  try {
+    return execSync(`${PYTHON} ${tmp}`, {
+      input: json,
+      encoding: "utf-8",
+      timeout: 60_000,
+    })
+      .trim()
+      .split("\n")
+      .map((l) => l === "1");
+  } finally {
+    try {
+      unlinkSync(tmp);
+    } catch {
+      // Best-effort cleanup; ignore if already gone.
+    }
+  }
 };
 
 const rustBatch: SubBatch = (fmt, vals) => {
@@ -887,6 +1029,43 @@ const IDNUMBERS: Record<string, string> = {
   "tr.tckimlik": "TUR.PersonalID",
 };
 
+// django-localflavor: key → "{module}.forms.{Field}".
+// localflavor ships Django form fields whose .clean()
+// performs format + checksum validation; we drive the
+// field's clean() directly via a configured-but-empty
+// Django settings setup so no full project is needed.
+const LOCALFLAVOR: Record<string, string> = {
+  "ar.cuit": "ar.forms.ARCUITField",
+  "ar.dni": "ar.forms.ARDNIField",
+  "au.abn": "au.forms.AUBusinessNumberField",
+  "au.acn": "au.forms.AUCompanyNumberField",
+  "au.tfn": "au.forms.AUTaxFileNumberField",
+  "br.cpf": "br.forms.BRCPFField",
+  "br.cnpj": "br.forms.BRCNPJField",
+  "ca.sin": "ca.forms.CASocialInsuranceNumberField",
+  "cl.rut": "cl.forms.CLRutField",
+  "es.dni": "es.forms.ESIdentityCardNumberField",
+  "in_.aadhaar": "in_.forms.INAadhaarNumberField",
+  "in_.pan": "in_.forms.INPANCardNumberFormField",
+  "mx.clabe": "mx.forms.MXCLABEField",
+  "mx.curp": "mx.forms.MXCURPField",
+  "mx.rfc": "mx.forms.MXRFCField",
+  "us.ssn": "us.forms.USSocialSecurityNumberField",
+};
+
+// Some localflavor fields require punctuated input
+// (e.g., CASocialInsuranceNumberField rejects bare
+// digits). Apply a per-key shape before sending.
+const LOCALFLAVOR_FORMAT: Record<
+  string,
+  (v: string) => string
+> = {
+  "ca.sin": (v) =>
+    v.length === 9
+      ? `${v.slice(0, 3)}-${v.slice(3, 6)}-${v.slice(6)}`
+      : v,
+};
+
 // valvat (Ruby): key → VAT prefix
 const VALVAT: Record<string, string> = {
   "at.uid": "AT",
@@ -1013,6 +1192,49 @@ const SURVEY_ONLY_ENTRIES = new Set([
   "stdnum-js:lt.asmens",
   "stdnum-js:ro.cnp",
   "validate-polish:pl.pesel",
+  // rut.js rejects any RUT body that starts with 0
+  // as a stylistic policy. Our validator follows the
+  // checksum math only, so leading-zero bodies are
+  // valid for us. Useful as a probe, not a gate.
+  "rut.js:cl.rut",
+  // localflavor's BRCNPJField does not yet support
+  // the alphanumeric (v2) CNPJ format that Receita
+  // Federal began issuing in July 2026. Our
+  // validator does. Probe-only until upstream catches up.
+  "localflavor:br.cnpj",
+  // localflavor's INAadhaarNumberField checks only
+  // format ("XXXX XXXX XXXX" / no all-zero group),
+  // not the Verhoeff checksum required by UIDAI.
+  // Our validator is stricter; expect ~85% false
+  // positives from the oracle.
+  "localflavor:in_.aadhaar",
+  // Same leading-zero policy disagreement as rut.js.
+  "localflavor:cl.rut",
+  // ARCUITField only allows the individual/company
+  // prefix set {20,23,24,27,30,33,34}. AFIP also
+  // issues CUITs with the international prefixes
+  // {50,51,55}, which both our validator and
+  // python-stdnum accept. localflavor is the outlier
+  // here, so the pairing stays a probe, not a gate.
+  "localflavor:ar.cuit",
+  // python-stdnum's mx.rfc is_valid() defaults to
+  // validate_check_digits=False, so it accepts any
+  // format-valid RFC. Our validator always checks
+  // the SAT mod-11 check digit, producing systematic
+  // drift.
+  "python-stdnum:mx.rfc",
+  // localflavor's MXRFCField requires the 2nd
+  // character of a persona física RFC to be a vowel.
+  // We accept any letter, matching the SAT regex on
+  // python-stdnum.
+  "localflavor:mx.rfc",
+  // python-stdnum accepts holder-type 'K' (deprecated
+  // but listed in their _pan_holder_types) and rejects
+  // PANs whose 4-digit serial is "0000" (per the
+  // Income Tax Dept tutorial). Our validator excludes
+  // 'K' and does not reject "0000"; both differences
+  // are defensible per source.
+  "python-stdnum:in_.pan",
 ]);
 
 const tierFor = (source: string, key: string): OracleMode =>
@@ -1066,6 +1288,39 @@ const buildOracles = (): OracleEntry[] => {
         pyIdnBatch(cls, v),
       );
   }
+
+  // django-localflavor
+  if (hasLocalflavor()) {
+    for (const [key, path] of Object.entries(LOCALFLAVOR)) {
+      const shape = LOCALFLAVOR_FORMAT[key];
+      safe(
+        `${key} (vs localflavor)`,
+        "localflavor",
+        key,
+        (v) =>
+          localflavorBatch(path, shape ? v.map(shape) : v),
+      );
+    }
+  }
+
+  // brazilian-utils (always available)
+  safe(
+    "br.cpf (vs brazilian-utils)",
+    "brazilian-utils",
+    "br.cpf",
+    (v) => v.map(isValidCpf),
+  );
+  safe(
+    "br.cnpj (vs brazilian-utils)",
+    "brazilian-utils",
+    "br.cnpj",
+    (v) => v.map((x) => isValidCnpj(x, { version: 2 })),
+  );
+
+  // rut.js (always available)
+  safe("cl.rut (vs rut.js)", "rut.js", "cl.rut", (v) =>
+    v.map(validateRut),
+  );
 
   // jsvat (always available)
   for (const [key, [cfg, pfx]] of Object.entries(JSVAT))
