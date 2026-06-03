@@ -1217,11 +1217,8 @@ const buildOracles = (): OracleEntry[] => {
   );
 
   // rut.js (always available)
-  safe(
-    "cl.rut (vs rut.js)",
-    "rut.js",
-    "cl.rut",
-    (v) => v.map(validateRut),
+  safe("cl.rut (vs rut.js)", "rut.js", "cl.rut", (v) =>
+    v.map(validateRut),
   );
 
   // jsvat (always available)
