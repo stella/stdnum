@@ -6,6 +6,7 @@
       "name": "@stll/stdnum",
       "devDependencies": {
         "@stll/oxlint-config": "^0.2.0",
+        "@stll/typescript-config": "^0.2.0",
         "@types/node": "^25.9.1",
         "bun-types": "^1.3.14",
         "fast-check": "^4.8.0",
@@ -176,6 +177,8 @@
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.1", "", {}, "sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw=="],
 
     "@stll/oxlint-config": ["@stll/oxlint-config@0.2.0", "", { "peerDependencies": { "oxlint": ">=1.66.0", "oxlint-tsgolint": ">=0.23.0" } }, "sha512-QsxuGX4vpfiwOJgwShpkaXxc35aL/JZECNy8lF+GH6BrDV6wN/K2l76uyPQ3+VEAteAZD1so+17yeE+7oJ64lQ=="],
+
+    "@stll/typescript-config": ["@stll/typescript-config@0.2.0", "", {}, "sha512-GDG/CT5ZXoyIa936NtDeUm77dSAgJfdoqRCra8dgyyHv2MuT0bDpEdJDceOXySRHIVb9qQzpIg/D71Fd92ZQ0Q=="],
 
     "@tybys/wasm-util": ["@tybys/wasm-util@0.10.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg=="],
 
