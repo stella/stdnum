@@ -49,7 +49,9 @@ import {
   norway,
 } from "jsvat";
 import { execSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { unlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { validate as validateRut } from "rut.js";
 import {
   validateEntity as stdnumEntity,
@@ -713,15 +715,27 @@ for v in vals:
         print("1")
     except (ValidationError, Exception):
         print("0")`;
-  writeFileSync("/tmp/_stdnum_localflavor.py", s);
-  return execSync(`${PYTHON} /tmp/_stdnum_localflavor.py`, {
-    input: json,
-    encoding: "utf-8",
-    timeout: 60_000,
-  })
-    .trim()
-    .split("\n")
-    .map((l) => l === "1");
+  const tmp = join(
+    tmpdir(),
+    `_stdnum_localflavor_${String(process.pid)}.py`,
+  );
+  writeFileSync(tmp, s);
+  try {
+    return execSync(`${PYTHON} ${tmp}`, {
+      input: json,
+      encoding: "utf-8",
+      timeout: 60_000,
+    })
+      .trim()
+      .split("\n")
+      .map((l) => l === "1");
+  } finally {
+    try {
+      unlinkSync(tmp);
+    } catch {
+      // Best-effort cleanup; ignore if already gone.
+    }
+  }
 };
 
 const rustBatch: SubBatch = (fmt, vals) => {
@@ -1189,30 +1203,26 @@ const buildOracles = (): OracleEntry[] => {
   }
 
   // brazilian-utils (always available)
-  e.push({
-    name: "br.cpf (vs brazilian-utils)",
-    source: "brazilian-utils",
-    key: "br.cpf",
-    tier: tierFor("brazilian-utils", "br.cpf"),
-    validate: (v) => v.map(isValidCpf),
-  });
-  e.push({
-    name: "br.cnpj (vs brazilian-utils)",
-    source: "brazilian-utils",
-    key: "br.cnpj",
-    tier: tierFor("brazilian-utils", "br.cnpj"),
-    validate: (v) =>
-      v.map((x) => isValidCnpj(x, { version: 2 })),
-  });
+  safe(
+    "br.cpf (vs brazilian-utils)",
+    "brazilian-utils",
+    "br.cpf",
+    (v) => v.map(isValidCpf),
+  );
+  safe(
+    "br.cnpj (vs brazilian-utils)",
+    "brazilian-utils",
+    "br.cnpj",
+    (v) => v.map((x) => isValidCnpj(x, { version: 2 })),
+  );
 
   // rut.js (always available)
-  e.push({
-    name: "cl.rut (vs rut.js)",
-    source: "rut.js",
-    key: "cl.rut",
-    tier: tierFor("rut.js", "cl.rut"),
-    validate: (v) => v.map(validateRut),
-  });
+  safe(
+    "cl.rut (vs rut.js)",
+    "rut.js",
+    "cl.rut",
+    (v) => v.map(validateRut),
+  );
 
   // jsvat (always available)
   for (const [key, [cfg, pfx]] of Object.entries(JSVAT))
