@@ -71,6 +71,7 @@ const vat: Validator = {
   country: "HU",
   entityType: "company",
   sourceUrl: "https://nav.gov.hu/",
+  lengths: [8] as const,
   examples: ["12892312"] as const,
   compact,
   format,

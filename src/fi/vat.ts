@@ -71,6 +71,7 @@ const vat: Validator = {
   country: "FI",
   entityType: "company",
   sourceUrl: "https://www.ytj.fi/en/index/businessid.html",
+  lengths: [8] as const,
   examples: ["20774740"] as const,
   compact,
   format,

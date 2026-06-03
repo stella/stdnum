@@ -69,6 +69,7 @@ const vat: Validator = {
   country: "LU",
   entityType: "company",
   sourceUrl: "https://pfi.public.lu/",
+  lengths: [8] as const,
   examples: ["15027442"] as const,
   compact,
   format,

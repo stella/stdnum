@@ -77,6 +77,7 @@ const vat: Validator = {
   country: "MT",
   entityType: "company",
   sourceUrl: "https://cfr.gov.mt/",
+  lengths: [8] as const,
   examples: ["11679112"] as const,
   compact,
   format,

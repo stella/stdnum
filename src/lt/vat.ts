@@ -98,6 +98,7 @@ const vat: Validator = {
   country: "LT",
   entityType: "any",
   sourceUrl: "https://www.vmi.lt/",
+  lengths: [9, 12] as const,
   examples: ["119511515", "100001919017"] as const,
   compact,
   format,

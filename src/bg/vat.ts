@@ -144,6 +144,7 @@ const vat: Validator = {
   country: "BG",
   entityType: "any",
   sourceUrl: "https://www.nra.bg/",
+  lengths: [9, 10] as const,
   examples: ["175074752"] as const,
   compact,
   format,

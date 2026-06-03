@@ -82,6 +82,7 @@ const vat: Validator = {
   country: "PT",
   entityType: "any",
   sourceUrl: "https://www.portaldasfinancas.gov.pt/",
+  lengths: [9] as const,
   examples: ["501964843"] as const,
   compact,
   format,

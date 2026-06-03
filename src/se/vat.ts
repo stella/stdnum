@@ -81,6 +81,7 @@ const vat: Validator = {
   country: "SE",
   entityType: "company",
   sourceUrl: "https://www.skatteverket.se/",
+  lengths: [12] as const,
   examples: ["556188840401"] as const,
   compact,
   format,
