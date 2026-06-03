@@ -179,19 +179,25 @@ describe("at.vnr", () => {
     }
   });
 
-  test("invalid birth date (month > 12)", () => {
+  // VNRs may legitimately encode "month > 12" when the
+  // daily-serial pool for a substitute date is exhausted
+  // (per sozialversicherung.at). We do not enforce
+  // calendar validity on the embedded date; only the
+  // checksum is gating. A month-13 value with a non-
+  // matching check digit therefore fails on checksum.
+  test("non-matching month-13 fails on checksum", () => {
     const r = at.vnr.validate("1237011380");
     expect(r.valid).toBe(false);
     if (!r.valid) {
-      expect(r.error.code).toBe("INVALID_COMPONENT");
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
     }
   });
 
-  test("invalid birth date (day 0)", () => {
+  test("non-matching day-0 fails on checksum", () => {
     const r = at.vnr.validate("1237000180");
     expect(r.valid).toBe(false);
     if (!r.valid) {
-      expect(r.error.code).toBe("INVALID_COMPONENT");
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
     }
   });
 

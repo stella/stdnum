@@ -265,12 +265,13 @@ describe("us.rtn", () => {
     }
   });
 
-  test("invalid prefix (00)", () => {
-    const r = us.rtn.validate("001000021");
-    expect(r.valid).toBe(false);
-    if (!r.valid) {
-      expect(r.error.code).toBe("INVALID_COMPONENT");
-    }
+  // Prefix 00 is reserved for U.S. Government and
+  // federal agencies per the ABA Routing Number Policy
+  // (https://en.wikipedia.org/wiki/ABA_routing_transit_number).
+  test("valid prefix (00, U.S. Government)", () => {
+    const r = us.rtn.validate("000000026");
+    expect(r.valid).toBe(true);
+    if (r.valid) expect(r.compact).toBe("000000026");
   });
 
   test("invalid prefix (13)", () => {

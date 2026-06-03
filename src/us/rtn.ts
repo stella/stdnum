@@ -7,9 +7,9 @@
  * [3, 7, 1] repeated three times.
  *
  * The first two digits identify the Federal Reserve
- * district (01-12) or special ranges (21-32 for
- * thrifts, 61-72 for electronic, 80 for traveler's
- * cheques).
+ * district (01-12) or special ranges (00 for U.S.
+ * Government, 21-32 for thrifts, 61-72 for electronic,
+ * 80 for traveler's cheques).
  *
  * @see https://en.wikipedia.org/wiki/ABA_routing_transit_number
  * @see https://www.frbservices.org/
@@ -48,7 +48,11 @@ const validate = (value: string): ValidateResult => {
   // Validate Federal Reserve prefix (first 2 digits)
   const prefix = Number(v.slice(0, 2));
   const validPrefixRanges =
-    (prefix >= 1 && prefix <= 12) ||
+    // 00 is reserved for U.S. Government and federal
+    // agencies per the ABA Routing Number Policy;
+    // 01-12 are the 12 Federal Reserve districts.
+    // @see https://en.wikipedia.org/wiki/ABA_routing_transit_number
+    (prefix >= 0 && prefix <= 12) ||
     (prefix >= 21 && prefix <= 32) ||
     (prefix >= 61 && prefix <= 72) ||
     prefix === 80;
@@ -78,7 +82,7 @@ const format = (value: string): string => compact(value);
 
 /** All valid Federal Reserve prefix ranges. */
 const PREFIX_RANGES: readonly [number, number][] = [
-  [1, 12],
+  [0, 12],
   [21, 32],
   [61, 72],
   [80, 80],

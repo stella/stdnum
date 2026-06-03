@@ -6,8 +6,17 @@
  * The check digit is computed using a weighted sum
  * mod 11 over the 9 non-check digits.
  *
+ * The 6-digit "birth date" field is not always a real
+ * calendar date. Sozialversicherung.at documents that
+ * persons with unknown date of birth are issued
+ * substitute values (01.01. or 01.07.), and that
+ * months 13, 14, etc. are issued when the daily serial
+ * pool for a given substitute date is exhausted. We
+ * therefore do not enforce calendar validity on this
+ * field — only the checksum is gating.
+ *
  * @see https://de.wikipedia.org/wiki/Sozialversicherungsnummer#%C3%96sterreich
- * @see https://www.sozialversicherung.at/
+ * @see https://www.sozialversicherung.at/cdscontent/?contentid=10007.820902&viewmode=content
  */
 
 import type { ValidateResult, Validator } from "../types";
@@ -44,13 +53,12 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  // Validate birth date (DDMMYY in positions 4-9)
-  const day = Number(v.slice(4, 6));
-  const month = Number(v.slice(6, 8));
-  if (day < 1 || day > 31 || month < 1 || month > 12) {
+  // Per sozialversicherung.at, the 3-digit serial
+  // (positions 0-2) never starts with zero.
+  if (v[0] === "0") {
     return err(
       "INVALID_COMPONENT",
-      "Austrian VNR contains an invalid birth date",
+      "Austrian VNR serial must not start with zero",
     );
   }
 
