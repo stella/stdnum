@@ -370,6 +370,11 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
       fc.constantFrom("A", "B", "C", "D"),
     )
     .map(([a, b, d, s]) => `${a}${b}${d}${s}`),
+  // gb.vat's `validate` also accepts letter-prefixed
+  // GD/HA government and health-authority variants, but
+  // those aren't pure digits — gate against the
+  // mod-97 digit path explicitly.
+  "gb.vat": fc.oneof(digs(9), digs(12)),
   "cz.dic": digsRange(8, 10),
   "cz.rc": fc.oneof(rcShape(9), rcShape(10)),
   "sk.rc": fc.oneof(rcShape(9), rcShape(10)),
