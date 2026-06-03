@@ -2,4 +2,7 @@
 # 5-day quarantine: reject package versions published
 # less than 5 days ago to mitigate supply chain attacks.
 minimumReleaseAge = 432_000
-minimumReleaseAgeExcludes = ["@stll/typescript-config"]
+minimumReleaseAgeExcludes = [
+  "@stll/oxlint-config",
+  "@stll/typescript-config",
+]
