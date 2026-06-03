@@ -83,6 +83,7 @@ const vat: Validator = {
   country: "RO",
   entityType: "any",
   sourceUrl: "https://www.anaf.ro/",
+  lengths: [2, 3, 4, 5, 6, 7, 8, 9, 10] as const,
   examples: ["18547290"] as const,
   compact,
   format,

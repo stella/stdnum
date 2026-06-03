@@ -563,6 +563,12 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
     .map(([i, l, b]) => `${i}${l}${b}`),
 };
 
+// Stopgap when a validator omits `lengths`: derive
+// likely compact lengths from its examples. Reliable
+// for fixed-length validators; variable-length ones
+// (e.g. ro.vat at 2-10 digits) should declare
+// `lengths` explicitly so this fallback does not
+// silently under-probe the range.
 const lengthsFromExamples = (
   v: Validator,
 ): number[] | null => {

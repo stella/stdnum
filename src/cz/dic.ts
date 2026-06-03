@@ -124,6 +124,7 @@ const dic: Validator = {
   country: "CZ",
   entityType: "any",
   sourceUrl: "https://adisspr.mfcr.cz/dpr/DphReg",
+  lengths: [8, 9, 10] as const,
   examples: ["25123891", "7103192745"] as const,
   compact,
   format,

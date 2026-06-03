@@ -147,6 +147,9 @@ const vat: Validator = {
   country: "GB",
   entityType: "company",
   sourceUrl: "https://www.gov.uk/vat-registration",
+  // Standard digit lengths. GD/HA + 3-digit variants are
+  // letter-prefixed and handled by `validate` directly.
+  lengths: [9, 12] as const,
   examples: ["980780684"] as const,
   compact,
   format,
