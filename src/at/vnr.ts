@@ -12,8 +12,10 @@
  * substitute values (01.01. or 01.07.), and that
  * months 13, 14, etc. are issued when the daily serial
  * pool for a given substitute date is exhausted. We
- * therefore do not enforce calendar validity on this
- * field — only the checksum is gating.
+ * therefore do not enforce a calendar-valid month here.
+ * The day field, however, is always within 01-31 — even
+ * in the documented overflow cases the day stays "01"
+ * — so we keep the day-bounds check.
  *
  * @see https://de.wikipedia.org/wiki/Sozialversicherungsnummer#%C3%96sterreich
  * @see https://www.sozialversicherung.at/cdscontent/?contentid=10007.820902&viewmode=content
@@ -62,6 +64,18 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
+  // Day (positions 4-5) is always within 01-31, even
+  // in the documented substitute and overflow cases
+  // where the month is shifted. The month is left
+  // unchecked per the source.
+  const day = Number(v.slice(4, 6));
+  if (day < 1 || day > 31) {
+    return err(
+      "INVALID_COMPONENT",
+      "Austrian VNR day field must be within 01-31",
+    );
+  }
+
   // Check digit at position 3: weighted sum of the
   // other 9 digits mod 11. If remainder is 10 the
   // number is invalid.
@@ -96,7 +110,9 @@ const format = (value: string): string => {
 /** Generate a random valid Austrian VNR. */
 const generate = (): string => {
   for (;;) {
-    const serial = randomDigits(3);
+    // Serial must not start with zero (see validate).
+    const serial =
+      String(randomInt(1, 9)) + randomDigits(2);
     const day = String(randomInt(1, 28)).padStart(2, "0");
     const month = String(randomInt(1, 12)).padStart(2, "0");
     const year = String(randomInt(0, 99)).padStart(2, "0");

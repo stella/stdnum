@@ -181,11 +181,15 @@ describe("at.vnr", () => {
 
   // VNRs may legitimately encode "month > 12" when the
   // daily-serial pool for a substitute date is exhausted
-  // (per sozialversicherung.at). We do not enforce
-  // calendar validity on the embedded date; only the
-  // checksum is gating. A month-13 value with a non-
-  // matching check digit therefore fails on checksum.
-  test("non-matching month-13 fails on checksum", () => {
+  // (per sozialversicherung.at). Month is therefore not
+  // calendar-checked; only the checksum is gating.
+  test("month-13 with matching checksum is valid", () => {
+    const r = at.vnr.validate("1234011380");
+    expect(r.valid).toBe(true);
+    if (r.valid) expect(r.compact).toBe("1234011380");
+  });
+
+  test("month-13 with non-matching checksum fails on checksum", () => {
     const r = at.vnr.validate("1237011380");
     expect(r.valid).toBe(false);
     if (!r.valid) {
@@ -193,11 +197,22 @@ describe("at.vnr", () => {
     }
   });
 
-  test("non-matching day-0 fails on checksum", () => {
+  // Day, by contrast, is always 01-31 per the source —
+  // even substitute and overflow VNRs use day "01" —
+  // so day "00" is rejected as a component error.
+  test("day-0 is invalid", () => {
     const r = at.vnr.validate("1237000180");
     expect(r.valid).toBe(false);
     if (!r.valid) {
-      expect(r.error.code).toBe("INVALID_CHECKSUM");
+      expect(r.error.code).toBe("INVALID_COMPONENT");
+    }
+  });
+
+  test("leading-zero serial is invalid", () => {
+    const r = at.vnr.validate("0000000000");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_COMPONENT");
     }
   });
 
