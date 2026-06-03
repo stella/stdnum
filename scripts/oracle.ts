@@ -513,6 +513,89 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
       ),
     )
     .map(([p, d, c]) => `${p}00${d}${c}`),
+  // Indian PAN: 5 letters + 4 digits + 1 letter.
+  // Without a custom arb, the default digit-only
+  // generator never produces a format-valid PAN, so
+  // the oracle would compare 0/N valid samples.
+  "in_.pan": fc
+    .tuple(
+      fc
+        .array(letters(L), { minLength: 5, maxLength: 5 })
+        .map((c) => c.join("")),
+      digs(4),
+      letters(L),
+    )
+    .map(([p, d, s]) => `${p}${d}${s}`),
+  // Mexican CURP: 4 letters + DDMMYY + H|M + 2 state
+  // letters + 3 consonants + 1 alphanumeric + 1 digit.
+  // The 2nd letter must be a vowel (or X) per the
+  // canonical regex; chars 14-16 must be consonants.
+  "mx.curp": validDateParts(1900, 2099).chain(
+    ({ year, month, day }) =>
+      fc
+        .tuple(
+          letters(L),
+          letters("AEIOUX"),
+          letters(L),
+          letters(L),
+          fc.constantFrom("H", "M"),
+          fc
+            .array(letters(L), {
+              minLength: 2,
+              maxLength: 2,
+            })
+            .map((c) => c.join("")),
+          fc
+            .array(letters("BCDFGHJKLMNPQRSTVWXYZ"), {
+              minLength: 3,
+              maxLength: 3,
+            })
+            .map((c) => c.join("")),
+          alnumStr(1, 1),
+          digs(1),
+        )
+        .map(([a, b, c, d2, g, st, cs, alpha, dg]) => {
+          const yy = p2(year % 100);
+          const mm = p2(month);
+          const dd = p2(day);
+          return `${a}${b}${c}${d2}${yy}${mm}${dd}${g}${st}${cs}${alpha}${dg}`;
+        }),
+  ),
+  // Mexican RFC: persona física = 4 letters + YYMMDD
+  // + 3 alphanumeric (13 chars); persona moral = 3
+  // letters + YYMMDD + 3 alphanumeric (12 chars).
+  "mx.rfc": validDateParts(1900, 2099).chain(
+    ({ year, month, day }) => {
+      const yy = p2(year % 100);
+      const mm = p2(month);
+      const dd = p2(day);
+      const date = `${yy}${mm}${dd}`;
+      return fc.oneof(
+        fc
+          .tuple(
+            fc
+              .array(letters(L), {
+                minLength: 4,
+                maxLength: 4,
+              })
+              .map((c) => c.join("")),
+            alnumStr(3, 3),
+          )
+          .map(([n, c]) => `${n}${date}${c}`),
+        fc
+          .tuple(
+            fc
+              .array(letters(L), {
+                minLength: 3,
+                maxLength: 3,
+              })
+              .map((c) => c.join("")),
+            alnumStr(3, 3),
+          )
+          .map(([n, c]) => `${n}${date}${c}`),
+      );
+    },
+  ),
   "za.idnr": dateDigs(13, "ymd"),
   "mu.brn": fc.oneof(
     fc
@@ -1134,6 +1217,24 @@ const SURVEY_ONLY_ENTRIES = new Set([
   // python-stdnum accept. localflavor is the outlier
   // here, so the pairing stays a probe, not a gate.
   "localflavor:ar.cuit",
+  // python-stdnum's mx.rfc is_valid() defaults to
+  // validate_check_digits=False, so it accepts any
+  // format-valid RFC. Our validator always checks
+  // the SAT mod-11 check digit, producing systematic
+  // drift.
+  "python-stdnum:mx.rfc",
+  // localflavor's MXRFCField requires the 2nd
+  // character of a persona física RFC to be a vowel.
+  // We accept any letter, matching the SAT regex on
+  // python-stdnum.
+  "localflavor:mx.rfc",
+  // python-stdnum accepts holder-type 'K' (deprecated
+  // but listed in their _pan_holder_types) and rejects
+  // PANs whose 4-digit serial is "0000" (per the
+  // Income Tax Dept tutorial). Our validator excludes
+  // 'K' and does not reject "0000"; both differences
+  // are defensible per source.
+  "python-stdnum:in_.pan",
 ]);
 
 const tierFor = (source: string, key: string): OracleMode =>
