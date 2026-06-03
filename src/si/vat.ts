@@ -10,13 +10,13 @@
  * @see https://spot.gov.si/en/info/taxes/value-added-tax-vat
  */
 
-import type { ValidateResult, Validator } from "../types";
-
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [8, 7, 6, 5, 4, 3, 2];
 
@@ -97,6 +97,7 @@ const vat: Validator = {
   country: "SI",
   entityType: "company",
   sourceUrl: "https://www.fu.gov.si/",
+  lengths: [8] as const,
   examples: ["15012557"] as const,
   compact,
   format,

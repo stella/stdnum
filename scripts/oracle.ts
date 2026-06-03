@@ -563,8 +563,25 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
     .map(([i, l, b]) => `${i}${l}${b}`),
 };
 
+const lengthsFromExamples = (
+  v: Validator,
+): number[] | null => {
+  const examples = v.examples ?? [];
+  if (examples.length === 0) return null;
+  const seen = new Set<number>();
+  for (const e of examples) {
+    const n = v.compact(e).length;
+    if (n > 0) seen.add(n);
+  }
+  return seen.size > 0 ? Array.from(seen) : null;
+};
+
 const inferArb = (v: Validator): fc.Arbitrary<string> => {
-  const lens = v.lengths;
+  const declared = v.lengths;
+  const lens =
+    declared && declared.length > 0
+      ? Array.from(declared)
+      : lengthsFromExamples(v);
   if (lens && lens.length > 0) {
     const first = lens[0];
     if (lens.length === 1 && first !== undefined) {
@@ -959,11 +976,31 @@ const SURVEY_ONLY_ENTRIES = new Set([
   "jsvat:bg.vat",
   "jsvat:ee.vat",
   "jsvat:pl.nip",
+  // jsvat skips checksum or component checks that the
+  // official country sources require. Confirmed
+  // against python-stdnum, which agrees with us on
+  // these samples (DK/PT no-leading-zero, FI/MT
+  // checksum, IT province code, GR 8-vs-9 padding).
+  "jsvat:dk.vat",
+  "jsvat:fi.vat",
+  "jsvat:gr.vat",
+  "jsvat:it.iva",
+  "jsvat:mt.vat",
+  "jsvat:pt.vat",
   "stdnum-js:be.nn",
   "stdnum-js:fi.hetu",
   "stdnum-js:is_.kennitala",
   "stdnum-js:ie.pps",
   "stdnum-js:se.personnummer",
+  // stdnum-js validatePerson("NL", ...) also runs the
+  // Onderwijsnummer validator, so it accepts values
+  // that are not valid BSNs.
+  "stdnum-js:nl.bsn",
+  // stdnum-js does not model the 21st/22nd century
+  // gender digits (5-8) the same way the official
+  // Lithuanian and Romanian specs do.
+  "stdnum-js:lt.asmens",
+  "stdnum-js:ro.cnp",
   "validate-polish:pl.pesel",
 ]);
 

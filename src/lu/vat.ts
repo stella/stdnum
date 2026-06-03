@@ -7,12 +7,12 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/luxembourg-tin.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
-
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+
+import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -69,6 +69,7 @@ const vat: Validator = {
   country: "LU",
   entityType: "company",
   sourceUrl: "https://pfi.public.lu/",
+  lengths: [8] as const,
   examples: ["15027442"] as const,
   compact,
   format,

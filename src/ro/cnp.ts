@@ -9,12 +9,6 @@
  * @see https://www.cnp.ro/
  */
 
-import type {
-  ParsedPersonId,
-  ValidateResult,
-  Validator,
-} from "../types";
-
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
@@ -22,15 +16,26 @@ import { randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
 
+import type {
+  ParsedPersonId,
+  ValidateResult,
+  Validator,
+} from "../types";
+
 const WEIGHTS = [
   2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9,
 ] as const;
 
+// Counties 01-39 are the 39 modern judete; 40-46 are
+// Bucuresti sectors 1-6; 47-48 are the abolished
+// sectors 7-8; 51-52 are Calarasi/Giurgiu; 70 is "Any";
+// 80-83 are reserved. 49 and 50 are not allocated.
+// See https://github.com/vimishor/cnp-spec.
 const VALID_COUNTIES = new Set([
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
   18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
   32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
-  46, 47, 48, 49, 50, 51, 52, 70, 80, 81, 82, 83,
+  46, 47, 48, 51, 52, 70, 80, 81, 82, 83,
 ]);
 
 const centuryMap: Record<number, number> = {
@@ -160,6 +165,7 @@ const cnp: Validator<ParsedPersonId> = {
   country: "RO",
   entityType: "person",
   sourceUrl: "https://www.cnp.ro/",
+  lengths: [13] as const,
   examples: ["1630615123457"] as const,
   compact,
   format,

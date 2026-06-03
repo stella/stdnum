@@ -9,12 +9,12 @@
  * @see https://www.vmi.lt/
  */
 
-import type { ValidateResult, Validator } from "../types";
-
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+
+import type { ValidateResult, Validator } from "../types";
 
 const compact = (value: string): string => {
   let v = clean(value, " -/.");
@@ -98,6 +98,7 @@ const vat: Validator = {
   country: "LT",
   entityType: "any",
   sourceUrl: "https://www.vmi.lt/",
+  lengths: [9, 12] as const,
   examples: ["119511515", "100001919017"] as const,
   compact,
   format,

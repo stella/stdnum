@@ -11,13 +11,13 @@
  * for CVR.
  */
 
-import type { ValidateResult, Validator } from "../types";
-
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
+
+import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [2, 7, 6, 5, 4, 3, 2, 1];
 
@@ -80,6 +80,7 @@ const vat: Validator = {
   country: "DK",
   entityType: "company",
   sourceUrl: "https://erhvervsstyrelsen.dk/",
+  lengths: [8] as const,
   examples: ["13585628"] as const,
   compact,
   format,
