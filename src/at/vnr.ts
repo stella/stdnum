@@ -6,8 +6,19 @@
  * The check digit is computed using a weighted sum
  * mod 11 over the 9 non-check digits.
  *
+ * The 6-digit "birth date" field is not always a real
+ * calendar date. Sozialversicherung.at documents that
+ * persons with unknown date of birth are issued
+ * substitute values (01.01. or 01.07.), and that
+ * months 13, 14, etc. are issued when the daily serial
+ * pool for a given substitute date is exhausted. We
+ * therefore do not enforce a calendar-valid month here.
+ * The day field, however, is always within 01-31 — even
+ * in the documented overflow cases the day stays "01"
+ * — so we keep the day-bounds check.
+ *
  * @see https://de.wikipedia.org/wiki/Sozialversicherungsnummer#%C3%96sterreich
- * @see https://www.sozialversicherung.at/
+ * @see https://www.sozialversicherung.at/cdscontent/?contentid=10007.820902&viewmode=content
  */
 
 import type { ValidateResult, Validator } from "../types";
@@ -44,13 +55,24 @@ const validate = (value: string): ValidateResult => {
     );
   }
 
-  // Validate birth date (DDMMYY in positions 4-9)
-  const day = Number(v.slice(4, 6));
-  const month = Number(v.slice(6, 8));
-  if (day < 1 || day > 31 || month < 1 || month > 12) {
+  // Per sozialversicherung.at, the 3-digit serial
+  // (positions 0-2) never starts with zero.
+  if (v[0] === "0") {
     return err(
       "INVALID_COMPONENT",
-      "Austrian VNR contains an invalid birth date",
+      "Austrian VNR serial must not start with zero",
+    );
+  }
+
+  // Day (positions 4-5) is always within 01-31, even
+  // in the documented substitute and overflow cases
+  // where the month is shifted. The month is left
+  // unchecked per the source.
+  const day = Number(v.slice(4, 6));
+  if (day < 1 || day > 31) {
+    return err(
+      "INVALID_COMPONENT",
+      "Austrian VNR day field must be within 01-31",
     );
   }
 
@@ -88,7 +110,9 @@ const format = (value: string): string => {
 /** Generate a random valid Austrian VNR. */
 const generate = (): string => {
   for (;;) {
-    const serial = randomDigits(3);
+    // Serial must not start with zero (see validate).
+    const serial =
+      String(randomInt(1, 9)) + randomDigits(2);
     const day = String(randomInt(1, 28)).padStart(2, "0");
     const month = String(randomInt(1, 12)).padStart(2, "0");
     const year = String(randomInt(0, 99)).padStart(2, "0");
