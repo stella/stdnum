@@ -8,13 +8,13 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/hungary-tin.pdf
  */
 
+import type { ValidateResult, Validator } from "../types";
+
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
 import { isdigits } from "#util/strings";
-
-import type { ValidateResult, Validator } from "../types";
 
 const WEIGHTS = [9, 7, 3, 1, 9, 7, 3, 1];
 
