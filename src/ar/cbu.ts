@@ -8,7 +8,10 @@
  * @see https://es.wikipedia.org/wiki/Clave_bancaria_uniforme
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -84,12 +87,13 @@ const generate = (): string => {
 };
 
 /** Argentine Uniform Bank Key. */
-const cbu: Validator = {
+const cbu: CountryValidator<"AR"> = {
   name: "Argentine Bank Account Number",
   localName: "Clave Bancaria Uniforme",
   abbreviation: "CBU",
   aliases: ["CBU", "Clave Bancaria Uniforme"] as const,
   candidatePattern: "\\d{22}",
+  scope: "country",
   country: "AR",
   entityType: "any",
   sourceUrl:

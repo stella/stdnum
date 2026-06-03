@@ -23,7 +23,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 import { validate as validateIva } from "./iva";
 
@@ -297,7 +297,10 @@ const generate = (): string => {
 };
 
 /** Italian Tax Code. */
-const codiceFiscale: Validator<ParsedPersonId> = {
+const codiceFiscale: CountryValidator<
+  "IT",
+  ParsedPersonId
+> = {
   name: "Italian Tax Code",
   localName: "Codice Fiscale",
   abbreviation: "CF",
@@ -310,6 +313,7 @@ const codiceFiscale: Validator<ParsedPersonId> = {
   ] as const,
   candidatePattern:
     "[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]",
+  scope: "country",
   country: "IT",
   entityType: "person",
   description:

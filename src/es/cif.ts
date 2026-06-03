@@ -9,7 +9,10 @@
  * @see https://www.agenciatributaria.es/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 import { cifChecksum } from "./vat";
 
 import { clean } from "#util/clean";
@@ -81,7 +84,7 @@ const generate = (): string => {
 };
 
 /** Spanish Company Tax ID (CIF). */
-const cif: Validator = {
+const cif: CountryValidator<"ES"> = {
   name: "Spanish Company Tax ID",
   localName: "Código de Identificación Fiscal",
   abbreviation: "CIF",
@@ -90,6 +93,7 @@ const cif: Validator = {
     "código de identificación fiscal",
   ] as const,
   candidatePattern: "[A-HJNP-SUVW]\\d{7}[\\dA-J]",
+  scope: "country",
   country: "ES",
   entityType: "company",
   sourceUrl: "https://www.agenciatributaria.es/",

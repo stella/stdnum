@@ -21,7 +21,10 @@
  * @see https://www.sozialversicherung.at/cdscontent/?contentid=10007.820902&viewmode=content
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -130,7 +133,7 @@ const generate = (): string => {
 };
 
 /** Austrian Social Insurance Number. */
-const vnr: Validator = {
+const vnr: CountryValidator<"AT"> = {
   name: "Austrian Social Insurance Number",
   localName: "Versicherungsnummer",
   abbreviation: "VNR",
@@ -141,6 +144,7 @@ const vnr: Validator = {
     "Sozialversicherungsnummer",
   ] as const,
   candidatePattern: "\\d{4}\\s?\\d{6}",
+  scope: "country",
   country: "AT",
   entityType: "person",
   sourceUrl:

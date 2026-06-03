@@ -23,7 +23,10 @@ const generate = (): string => {
  * @see https://www.irs.gov/individuals/individual-taxpayer-identification-number
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
@@ -99,7 +102,7 @@ const format = (value: string): string => {
 /**
  * U.S. Individual Taxpayer Identification Number.
  */
-const itin: Validator = {
+const itin: CountryValidator<"US"> = {
   name: "Individual Taxpayer Identification Number",
   localName: "Individual Taxpayer Identification Number",
   abbreviation: "ITIN",
@@ -108,6 +111,7 @@ const itin: Validator = {
     "Individual Taxpayer Identification Number",
   ] as const,
   candidatePattern: "9\\d{2}[\\s-]?\\d{2}[\\s-]?\\d{4}",
+  scope: "country",
   country: "US",
   entityType: "person",
   sourceUrl:

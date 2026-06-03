@@ -8,7 +8,10 @@
  * @see https://www.agenciatributaria.es/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -158,7 +161,7 @@ const generate = (): string => {
 };
 
 /** Spanish VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"ES"> = {
   name: "Spanish VAT Number",
   localName: "Número de Identificación Fiscal",
   abbreviation: "NIF",
@@ -168,6 +171,7 @@ const vat: Validator = {
     "número de identificación fiscal",
   ] as const,
   candidatePattern: "ES[A-Z]\\d{7}[A-Z\\d]",
+  scope: "country",
   country: "ES",
   entityType: "any",
   sourceUrl: "https://www.agenciatributaria.es/",

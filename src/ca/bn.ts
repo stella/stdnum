@@ -8,7 +8,10 @@
  * @see https://www.canada.ca/en/services/taxes/business-number.html
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -82,7 +85,7 @@ const generate = (): string => {
 };
 
 /** Canadian Business Number. */
-const bn: Validator = {
+const bn: CountryValidator<"CA"> = {
   name: "Business Number",
   localName: "Business Number",
   abbreviation: "BN",
@@ -92,6 +95,7 @@ const bn: Validator = {
     "numéro d'entreprise",
   ] as const,
   candidatePattern: "\\d{9}\\s?[A-Z]{2}\\s?\\d{4}",
+  scope: "country",
   country: "CA",
   entityType: "company",
   sourceUrl:

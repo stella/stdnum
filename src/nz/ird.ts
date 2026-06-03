@@ -9,7 +9,10 @@
  * @see https://www.ird.govt.nz/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -105,12 +108,13 @@ const generate = (): string => {
 };
 
 /** New Zealand IRD Number. */
-const ird: Validator = {
+const ird: CountryValidator<"NZ"> = {
   name: "IRD Number",
   localName: "IRD Number",
   abbreviation: "IRD",
   aliases: ["IRD number", "tax number NZ"] as const,
   candidatePattern: "\\d{8,9}",
+  scope: "country",
   country: "NZ",
   entityType: "any",
   compact,

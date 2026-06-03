@@ -7,7 +7,10 @@
  * @see https://www.skatteverket.se/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -57,7 +60,7 @@ const generate = (): string => {
 };
 
 /** Swedish Organization Number. */
-const orgnr: Validator = {
+const orgnr: CountryValidator<"SE"> = {
   name: "Swedish Organization Number",
   localName: "Organisationsnummer",
   abbreviation: "Orgnr",
@@ -67,6 +70,7 @@ const orgnr: Validator = {
     "org nr",
   ] as const,
   candidatePattern: "\\d{6}-\\d{4}",
+  scope: "country",
   country: "SE",
   entityType: "company",
   sourceUrl: "https://www.skatteverket.se/",

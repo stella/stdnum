@@ -22,7 +22,10 @@
  * @see https://persian-tools.js.org/functions/verifyIranianNationalId.html
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { normalizeArabicDigits } from "#util/arabic";
 import { clean } from "#util/clean";
@@ -97,12 +100,13 @@ const generate = (): string => {
 };
 
 /** Iranian National Identification Number. */
-const nid: Validator = {
+const nid: CountryValidator<"IR"> = {
   name: "Iranian National ID",
   localName: "کد ملی",
   abbreviation: "NID",
   aliases: ["NID", "کد ملی", "national code"] as const,
   candidatePattern: "\\d{10}",
+  scope: "country",
   country: "IR",
   entityType: "person",
   sourceUrl: "https://www.sabteahval.ir/",

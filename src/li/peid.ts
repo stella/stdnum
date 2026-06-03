@@ -15,7 +15,10 @@ const generate = (): string => {
  * @see https://www.oera.li/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -45,12 +48,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Liechtenstein Person Identification Number. */
-const peid: Validator = {
+const peid: CountryValidator<"LI"> = {
   name: "Liechtenstein Person Identification Number",
   localName: "Personenidentifikationsnummer",
   abbreviation: "PEID",
   aliases: ["PEID", "Personenidentifikation"] as const,
   candidatePattern: "\\d{6}",
+  scope: "country",
   country: "LI",
   entityType: "any",
   lengths: [4, 5, 6, 7, 8, 9, 10, 11, 12] as const,

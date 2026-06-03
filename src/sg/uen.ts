@@ -14,7 +14,10 @@
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Singapore-TIN.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -257,12 +260,13 @@ const generate = (): string => {
 };
 
 /** Singapore Unique Entity Number. */
-const uen: Validator = {
+const uen: CountryValidator<"SG"> = {
   name: "Singapore Unique Entity Number",
   localName: "Unique Entity Number",
   abbreviation: "UEN",
   aliases: ["UEN", "Unique Entity Number"] as const,
   candidatePattern: "[\\dSTR]\\d{7}[A-Z]",
+  scope: "country",
   country: "SG",
   entityType: "company",
   description:

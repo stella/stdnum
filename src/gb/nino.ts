@@ -28,7 +28,10 @@ const generate = (): string => {
  * @see https://www.gov.uk/hmrc-internal-manuals/national-insurance-manual/nim39110
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomChar, randomDigits } from "#util/generate";
@@ -124,7 +127,7 @@ const format = (value: string): string => {
 };
 
 /** UK National Insurance Number. */
-const nino: Validator = {
+const nino: CountryValidator<"GB"> = {
   name: "UK National Insurance Number",
   localName: "National Insurance Number",
   abbreviation: "NINO",
@@ -134,6 +137,7 @@ const nino: Validator = {
     "NI number",
   ] as const,
   candidatePattern: "[A-Z]{2}\\d{6}[A-Z]",
+  scope: "country",
   country: "GB",
   entityType: "person",
   description:

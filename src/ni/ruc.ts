@@ -22,7 +22,10 @@
  * @see https://www.dgi.gob.ni/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -154,12 +157,13 @@ const format = (value: string): string => {
 const generate = (): string => "J" + randomDigits(13);
 
 /** Nicaragua tax identification number. */
-const ruc: Validator = {
+const ruc: CountryValidator<"NI"> = {
   name: "Tax Identification Number",
   localName: "Registro Único de Contribuyente",
   abbreviation: "RUC",
   aliases: ["RUC"] as const,
   candidatePattern: "[JKME]\\d{13}",
+  scope: "country",
   country: "NI",
   entityType: "any",
   description: "Tax identifier issued by Nicaragua's DGI",

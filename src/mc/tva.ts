@@ -14,7 +14,10 @@ import {
   compact as frCompact,
   validate as frValidate,
 } from "../fr/tva";
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { randomDigits } from "#util/generate";
 import { err } from "#util/result";
@@ -54,12 +57,13 @@ const generate = (): string => {
 };
 
 /** Monacan VAT Number. */
-const tva: Validator = {
+const tva: CountryValidator<"MC"> = {
   name: "Monacan VAT Number",
   localName: "Numéro de TVA",
   abbreviation: "TVA",
   aliases: ["numéro de TVA", "TVA"] as const,
   candidatePattern: "FR\\d{11}",
+  scope: "country",
   country: "MC",
   entityType: "company",
   sourceUrl: "https://www.economie.gouv.fr/",

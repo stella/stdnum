@@ -6,7 +6,10 @@
  * characters. Validated using ISO 7064 Mod 97-10.
  */
 
-import type { ValidateResult, Validator } from "./types";
+import type {
+  ValidateResult,
+  GlobalValidator,
+} from "./types";
 
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
@@ -314,7 +317,8 @@ const generate = (): string => {
 };
 
 /** International Bank Account Number. */
-const iban: Validator = {
+const iban: GlobalValidator = {
+  scope: "global",
   name: "IBAN",
   localName: "IBAN",
   abbreviation: "IBAN",

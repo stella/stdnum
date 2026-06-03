@@ -9,7 +9,10 @@
  * @see https://www.idno.md
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { err } from "#util/result";
@@ -65,12 +68,13 @@ const generate = (): string => {
 };
 
 /** Moldavian Company Identification Number. */
-const idno: Validator = {
+const idno: CountryValidator<"MD"> = {
   name: "Moldavian Company Identification Number",
   localName: "IDNO",
   abbreviation: "IDNO",
   aliases: ["IDNO", "cod de identificare"] as const,
   candidatePattern: "\\d{13}",
+  scope: "country",
   country: "MD",
   entityType: "company",
   lengths: [13] as const,

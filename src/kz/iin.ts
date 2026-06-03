@@ -17,7 +17,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -154,7 +154,7 @@ const generate = (): string => {
  *
  * Examples sourced from identique/idnumbers test suite.
  */
-const iin: Validator<ParsedPersonId> = {
+const iin: CountryValidator<"KZ", ParsedPersonId> = {
   name: "Kazakhstan Individual ID",
   localName: "Жеке сәйкестендіру нөмірі",
   abbreviation: "IIN",
@@ -164,6 +164,7 @@ const iin: Validator<ParsedPersonId> = {
     "индивидуальный идентификационный номер",
   ] as const,
   candidatePattern: "\\d{12}",
+  scope: "country",
   country: "KZ",
   entityType: "person",
   lengths: [12] as const,

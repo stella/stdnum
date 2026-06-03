@@ -7,7 +7,10 @@
  * @see https://www.rik.ee/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 import { twoPassCheck } from "./ik";
 
 import { clean } from "#util/clean";
@@ -62,12 +65,13 @@ const generate = (): string => {
 };
 
 /** Estonian Company Registration Code. */
-const registrikood: Validator = {
+const registrikood: CountryValidator<"EE"> = {
   name: "Estonian Company Registration Code",
   localName: "Registrikood",
   abbreviation: "Registrikood",
   aliases: ["registrikood"] as const,
   candidatePattern: "\\d{8}",
+  scope: "country",
   country: "EE",
   entityType: "company",
   sourceUrl: "https://www.rik.ee/",

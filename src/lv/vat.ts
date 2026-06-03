@@ -26,7 +26,10 @@
  * @see https://www.pmlp.gov.lv/en/change-personal-identity-number
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -144,12 +147,13 @@ const generate = (): string => {
 };
 
 /** Latvian VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"LV"> = {
   name: "Latvian VAT Number",
   localName: "PVN reģistrācijas numurs",
   abbreviation: "PVN",
   aliases: ["PVN reģistrācijas numurs", "PVN"] as const,
   candidatePattern: "LV\\d{11}",
+  scope: "country",
   country: "LV",
   entityType: "any",
   sourceUrl:

@@ -8,7 +8,10 @@
  * @see https://www.estv.admin.ch/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 import {
   validate as validateUid,
   generate as generateUid,
@@ -64,13 +67,14 @@ const format = (value: string): string => {
 const generate = (): string => generateUid() + "MWST";
 
 /** Swiss VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"CH"> = {
   name: "Swiss VAT Number",
   localName: "Mehrwertsteuernummer",
   abbreviation: "MWST",
   aliases: ["MWST", "TVA", "IVA"] as const,
   candidatePattern:
     "CHE-?\\d{3}\\.?\\d{3}\\.?\\d{3}\\s?(?:MWST|TVA|IVA)",
+  scope: "country",
   country: "CH",
   entityType: "company",
   sourceUrl: "https://www.estv.admin.ch/",

@@ -9,7 +9,10 @@
  * @see https://en.wikipedia.org/wiki/Goods_and_Services_Tax_Identification_Number
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -146,13 +149,14 @@ const generate = (): string => {
 };
 
 /** Indian Goods and Services Tax ID. */
-const gstin: Validator = {
+const gstin: CountryValidator<"IN"> = {
   name: "Indian Goods and Services Tax ID",
   localName: "Goods and Services Tax Identification Number",
   abbreviation: "GSTIN",
   aliases: ["GSTIN", "GST number"] as const,
   candidatePattern:
     "\\d{2}[A-Z]{5}\\d{4}[A-Z][A-Z\\d][Z][A-Z\\d]",
+  scope: "country",
   country: "IN",
   entityType: "company",
   lengths: [15],

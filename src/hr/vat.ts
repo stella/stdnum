@@ -7,7 +7,10 @@
  * @see https://www.porezna-uprava.hr/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   mod1110validate,
@@ -59,12 +62,13 @@ const generate = (): string => {
 };
 
 /** Croatian VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"HR"> = {
   name: "Croatian VAT Number",
   localName: "Osobni identifikacijski broj",
   abbreviation: "OIB",
   aliases: ["OIB", "osobni identifikacijski broj"] as const,
   candidatePattern: "HR\\d{11}",
+  scope: "country",
   country: "HR",
   entityType: "any",
   sourceUrl: "https://www.porezna-uprava.hr/",

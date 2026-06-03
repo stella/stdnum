@@ -11,7 +11,10 @@ const generate = (): string => randomDigits(9);
  * @see https://www.eta.gov.eg/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -81,12 +84,13 @@ const format = (value: string): string => {
 };
 
 /** Egyptian Tax Registration Number. */
-const tn: Validator = {
+const tn: CountryValidator<"EG"> = {
   name: "Egyptian Tax Registration Number",
   localName: "الرقم الضريبي",
   abbreviation: "TN",
   aliases: ["الرقم الضريبي", "tax number"] as const,
   candidatePattern: "\\d{9}",
+  scope: "country",
   country: "EG",
   entityType: "any",
   compact,

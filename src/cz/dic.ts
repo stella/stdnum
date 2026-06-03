@@ -11,7 +11,10 @@
  * @see https://adisspr.mfcr.cz/dpr/DphReg
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 import { validate as validateRc } from "./rc";
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -115,12 +118,13 @@ const generate = (): string => {
 };
 
 /** Czech VAT Number. */
-const dic: Validator = {
+const dic: CountryValidator<"CZ"> = {
   name: "Czech VAT Number",
   localName: "Daňové identifikační číslo",
   abbreviation: "DIČ",
   aliases: ["DIČ", "daňové identifikační číslo"] as const,
   candidatePattern: "CZ\\d{8,10}",
+  scope: "country",
   country: "CZ",
   entityType: "any",
   sourceUrl: "https://adisspr.mfcr.cz/dpr/DphReg",

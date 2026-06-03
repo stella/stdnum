@@ -20,7 +20,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -144,12 +144,13 @@ const generate = (): string => {
 };
 
 /** Estonian Personal Identification Code. */
-const ik: Validator<ParsedPersonId> = {
+const ik: CountryValidator<"EE", ParsedPersonId> = {
   name: "Estonian Personal ID",
   localName: "Isikukood",
   abbreviation: "IK",
   aliases: ["isikukood", "IK"] as const,
   candidatePattern: "[1-6]\\d{10}",
+  scope: "country",
   country: "EE",
   entityType: "person",
   sourceUrl:

@@ -10,7 +10,10 @@
  * @see https://zh.wikipedia.org/wiki/統一編號
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -84,12 +87,13 @@ const generate = (): string => {
 };
 
 /** Taiwanese Unified Business Number. */
-const ubn: Validator = {
+const ubn: CountryValidator<"TW"> = {
   name: "Unified Business Number",
   localName: "統一編號",
   abbreviation: "UBN",
   aliases: ["統一編號", "UBN"] as const,
   candidatePattern: "\\d{8}",
+  scope: "country",
   country: "TW",
   entityType: "company",
   description:

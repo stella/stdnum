@@ -9,7 +9,10 @@
  * @see https://www.gleif.org/
  */
 
-import type { ValidateResult, Validator } from "./types";
+import type {
+  ValidateResult,
+  GlobalValidator,
+} from "./types";
 
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
@@ -79,7 +82,8 @@ const generate = (): string => {
 };
 
 /** Legal Entity Identifier. */
-const lei: Validator = {
+const lei: GlobalValidator = {
+  scope: "global",
   name: "Legal Entity Identifier",
   localName: "Legal Entity Identifier",
   abbreviation: "LEI",

@@ -8,7 +8,10 @@
  * @see https://www.revenue.ie/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -118,12 +121,13 @@ const generate = (): string => {
 };
 
 /** Irish VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"IE"> = {
   name: "Irish VAT Number",
   localName: "Value Added Tax Number",
   abbreviation: "VAT",
   aliases: ["VAT number IE"] as const,
   candidatePattern: "IE\\d[A-Z+*]\\d{5}[A-Z]",
+  scope: "country",
   country: "IE",
   entityType: "any",
   sourceUrl: "https://www.revenue.ie/",

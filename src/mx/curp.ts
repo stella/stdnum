@@ -17,7 +17,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -221,7 +221,7 @@ const generate = (): string => {
  *
  * Example sourced from python-stdnum test suite.
  */
-const curp: Validator<ParsedPersonId> = {
+const curp: CountryValidator<"MX", ParsedPersonId> = {
   name: "Mexican Personal ID",
   localName: "Clave Única de Registro de Población",
   abbreviation: "CURP",
@@ -230,6 +230,7 @@ const curp: Validator<ParsedPersonId> = {
     "Clave Única de Registro de Población",
   ] as const,
   candidatePattern: "[A-Z]{4}\\d{6}[HM][A-Z]{5}[A-Z\\d]\\d",
+  scope: "country",
   country: "MX",
   entityType: "person",
   lengths: [18] as const,

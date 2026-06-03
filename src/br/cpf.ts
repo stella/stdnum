@@ -13,7 +13,10 @@
  * @see https://en.wikipedia.org/wiki/CPF_number
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -94,12 +97,13 @@ const generate = (): string => {
 };
 
 /** Brazilian CPF (personal tax ID). */
-const cpf: Validator = {
+const cpf: CountryValidator<"BR"> = {
   name: "Brazilian CPF",
   localName: "Cadastro de Pessoas Físicas",
   abbreviation: "CPF",
   aliases: ["CPF", "Cadastro de Pessoas Físicas"] as const,
   candidatePattern: "\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}",
+  scope: "country",
   country: "BR",
   entityType: "person",
   sourceUrl: "https://www.gov.br/receitafederal/",

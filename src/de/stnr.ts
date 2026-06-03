@@ -26,7 +26,10 @@ const generate = (): string => {
  * @see https://de.wikipedia.org/wiki/Steuernummer
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -194,12 +197,13 @@ const charCat = (ch: string): string => {
 };
 
 /** German Tax Number (Steuernummer). */
-const stnr: Validator = {
+const stnr: CountryValidator<"DE"> = {
   name: "German Tax Number",
   localName: "Steuernummer",
   abbreviation: "StNr",
   aliases: ["Steuernummer", "St.Nr."] as const,
   candidatePattern: "\\d{2,4}/\\d{3,4}/\\d{4,5}",
+  scope: "country",
   country: "DE",
   entityType: "any",
   description:

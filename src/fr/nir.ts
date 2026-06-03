@@ -15,7 +15,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -165,7 +165,7 @@ const generate = (): string => {
 };
 
 /** French Social Security Number. */
-const nir: Validator<ParsedPersonId> = {
+const nir: CountryValidator<"FR", ParsedPersonId> = {
   name: "French Social Security Number",
   localName: "Numero d'Inscription au Repertoire",
   abbreviation: "NIR",
@@ -177,6 +177,7 @@ const nir: Validator<ParsedPersonId> = {
   ] as const,
   candidatePattern:
     "[12]\\s?\\d{2}\\s?\\d{2}\\s?\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{2}",
+  scope: "country",
   country: "FR",
   entityType: "person",
   description:

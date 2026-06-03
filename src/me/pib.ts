@@ -8,7 +8,10 @@
  * @see https://www.tax.gov.me/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -58,12 +61,13 @@ const generate = (): string => {
 };
 
 /** Montenegrin Tax Identification Number. */
-const pib: Validator = {
+const pib: CountryValidator<"ME"> = {
   name: "Montenegrin Tax ID",
   localName: "Poreski identifikacioni broj",
   abbreviation: "PIB",
   aliases: ["PIB"] as const,
   candidatePattern: "\\d{8}",
+  scope: "country",
   country: "ME",
   entityType: "any",
   lengths: [8] as const,

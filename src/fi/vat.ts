@@ -8,7 +8,10 @@
  * @see https://www.ytj.fi/en/index/businessid.html
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -62,12 +65,13 @@ const generate = (): string => {
 };
 
 /** Finnish VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"FI"> = {
   name: "Finnish VAT Number",
   localName: "Arvonlisäveronumero",
   abbreviation: "ALV nro",
   aliases: ["ALV-numero", "Y-tunnus"] as const,
   candidatePattern: "FI\\d{8}",
+  scope: "country",
   country: "FI",
   entityType: "company",
   sourceUrl: "https://www.ytj.fi/en/index/businessid.html",

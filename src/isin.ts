@@ -10,7 +10,10 @@
  * @see https://www.isin.org/
  */
 
-import type { ValidateResult, Validator } from "./types";
+import type {
+  ValidateResult,
+  GlobalValidator,
+} from "./types";
 
 import { luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
@@ -97,7 +100,8 @@ const generate = (): string => {
 };
 
 /** International Securities Identification Number. */
-const isin: Validator = {
+const isin: GlobalValidator = {
+  scope: "global",
   name: "International Securities Identification Number",
   localName:
     "International Securities Identification Number",

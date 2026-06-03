@@ -11,7 +11,10 @@
  * @see https://www.nalog.gov.by/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -139,12 +142,13 @@ const generate = (): string => {
 };
 
 /** Belarus UNP (Учётный номер плательщика). */
-const unp: Validator = {
+const unp: CountryValidator<"BY"> = {
   name: "Belarus Tax Number",
   localName: "Учётный номер плательщика",
   abbreviation: "УНП",
   aliases: ["УНП", "UNP"] as const,
   candidatePattern: "\\d{9}",
+  scope: "country",
   country: "BY",
   entityType: "any",
   sourceUrl: "https://www.nalog.gov.by/",

@@ -9,7 +9,10 @@
  * @see https://bip.stat.gov.pl/en/regon/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -78,12 +81,13 @@ const generate = (): string => {
 };
 
 /** Polish Statistical Identification Number. */
-const regon: Validator = {
+const regon: CountryValidator<"PL"> = {
   name: "Polish Business Register Number",
   localName: "Rejestr Gospodarki Narodowej",
   abbreviation: "REGON",
   aliases: ["REGON", "numer statystyczny"] as const,
   candidatePattern: "\\d{9,14}",
+  scope: "country",
   country: "PL",
   entityType: "company",
   sourceUrl: "https://bip.stat.gov.pl/en/regon/",

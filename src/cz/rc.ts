@@ -27,7 +27,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -196,12 +196,13 @@ const generate = (): string => {
 };
 
 /** Czech/Slovak Birth Number. */
-const rc: Validator<ParsedPersonId> = {
+const rc: CountryValidator<"CZ", ParsedPersonId> = {
   name: "Czech Birth Number",
   localName: "Rodné číslo",
   abbreviation: "RČ",
   aliases: ["rodné číslo", "RČ", "birth number"] as const,
   candidatePattern: "\\d{6}/\\d{3,4}",
+  scope: "country",
   country: "CZ",
   entityType: "person",
   description:

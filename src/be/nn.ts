@@ -10,7 +10,10 @@
  * @see https://www.ibz.rrn.fgov.be/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomInt } from "#util/generate";
@@ -100,7 +103,7 @@ const generate = (): string => {
 };
 
 /** Belgian National Number. */
-const nn: Validator = {
+const nn: CountryValidator<"BE"> = {
   name: "Belgian National Number",
   localName: "Numéro national",
   abbreviation: "NN",
@@ -111,6 +114,7 @@ const nn: Validator = {
   ] as const,
   candidatePattern:
     "\\d{2}\\.?\\d{2}\\.?\\d{2}-?\\d{3}\\.?\\d{2}",
+  scope: "country",
   country: "BE",
   entityType: "person",
   sourceUrl: "https://www.ibz.rrn.fgov.be/",

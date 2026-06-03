@@ -13,7 +13,10 @@ const generate = (): string => randomDigits(11);
  * @see https://nimc.gov.ng/about-nin/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -46,7 +49,7 @@ const format = (value: string): string => {
 };
 
 /** Nigerian National Identification Number. */
-const nin: Validator = {
+const nin: CountryValidator<"NG"> = {
   name: "National Identification Number",
   localName: "National Identification Number",
   abbreviation: "NIN",
@@ -55,6 +58,7 @@ const nin: Validator = {
     "National Identification Number",
   ] as const,
   candidatePattern: "\\d{11}",
+  scope: "country",
   country: "NG",
   entityType: "person",
   lengths: [11] as const,

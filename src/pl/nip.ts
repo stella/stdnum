@@ -8,7 +8,10 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/poland-tin.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -73,7 +76,7 @@ const generate = (): string => {
 };
 
 /** Polish VAT Number. */
-const nip: Validator = {
+const nip: CountryValidator<"PL"> = {
   name: "Polish VAT Number",
   localName: "Numer Identyfikacji Podatkowej",
   abbreviation: "NIP",
@@ -82,6 +85,7 @@ const nip: Validator = {
     "numer identyfikacji podatkowej",
   ] as const,
   candidatePattern: "\\d{3}-?\\d{3}-?\\d{2}-?\\d{2}",
+  scope: "country",
   country: "PL",
   entityType: "company",
   sourceUrl: "https://www.biznes.gov.pl/en/portal/004124",

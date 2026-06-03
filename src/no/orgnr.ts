@@ -6,7 +6,10 @@
  * @see https://www.brreg.no/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -59,12 +62,13 @@ const generate = (): string => {
 };
 
 /** Norwegian Organization Number. */
-const orgnr: Validator = {
+const orgnr: CountryValidator<"NO"> = {
   name: "Norwegian Organization Number",
   localName: "Organisasjonsnummer",
   abbreviation: "Orgnr",
   aliases: ["organisasjonsnummer", "org.nr"] as const,
   candidatePattern: "\\d{9}",
+  scope: "country",
   country: "NO",
   entityType: "company",
   sourceUrl: "https://www.brreg.no/",

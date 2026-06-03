@@ -25,7 +25,10 @@
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Belize-TIN.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -94,12 +97,13 @@ const generate = (): string => {
  *
  * Examples derived from stdnum-js test suite.
  */
-const tin: Validator = {
+const tin: CountryValidator<"BZ"> = {
   name: "Belize Tax Identification Number",
   localName: "Tax Identification Number",
   abbreviation: "TIN",
   aliases: ["TIN"] as const,
   candidatePattern: "\\d{6}",
+  scope: "country",
   country: "BZ",
   entityType: "any",
   lengths: [6, 8] as const,

@@ -1,6 +1,8 @@
 export type {
+  CountryValidator,
   CountryCode,
   ErrorCode,
+  GlobalValidator,
   ParsedBirthDate,
   ParsedIdentifier,
   ParsedPersonId,
@@ -8,6 +10,7 @@ export type {
   StdnumError,
   ValidateResult,
   Validator,
+  ValidatorScope,
 } from "./types";
 export { default as bic } from "./bic";
 export {

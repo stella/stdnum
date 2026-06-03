@@ -13,7 +13,10 @@
  * @see https://en.wikipedia.org/wiki/Tax_Identification_Number#Venezuela
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
@@ -118,7 +121,7 @@ const generate = (): string => {
  *
  * Examples sourced from python-stdnum test suite.
  */
-const rif: Validator = {
+const rif: CountryValidator<"VE"> = {
   name: "Venezuelan Tax ID",
   localName: "Registro de Información Fiscal",
   abbreviation: "RIF",
@@ -127,6 +130,7 @@ const rif: Validator = {
     "Registro de Información Fiscal",
   ] as const,
   candidatePattern: "[VEJPG]-?\\d{8}-?\\d",
+  scope: "country",
   country: "VE",
   entityType: "any",
   lengths: [10] as const,

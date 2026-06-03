@@ -11,7 +11,10 @@
  * @see https://portal.sat.gob.gt/portal/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -97,12 +100,13 @@ const generate = (): string => {
 };
 
 /** Guatemala tax identification number. */
-const nit: Validator = {
+const nit: CountryValidator<"GT"> = {
   name: "Tax Identification Number",
   localName: "Número de Identificación Tributaria",
   abbreviation: "NIT",
   aliases: ["NIT"] as const,
   candidatePattern: "\\d{7,8}-?\\d",
+  scope: "country",
   country: "GT",
   entityType: "any",
   description: "Tax identifier issued by Guatemala's SAT",

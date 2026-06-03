@@ -9,7 +9,10 @@
  * @see https://zh.wikipedia.org/wiki/统一社会信用代码
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import {
@@ -98,13 +101,14 @@ const generate = (): string => {
 };
 
 /** Chinese Unified Social Credit Code. */
-const uscc: Validator = {
+const uscc: CountryValidator<"CN"> = {
   name: "Unified Social Credit Code",
   localName: "统一社会信用代码",
   abbreviation: "USCC",
   aliases: ["统一社会信用代码", "USCC"] as const,
   candidatePattern:
     "[0-9A-HJ-NP-RTUW-Y]{2}\\d{6}[0-9A-HJ-NP-RTUW-Y]{10}",
+  scope: "country",
   country: "CN",
   entityType: "company",
   description:

@@ -30,7 +30,10 @@ const generate = (): string => {
  * @see https://www.nidw.gov.bd/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
@@ -106,7 +109,7 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Bangladesh National Identity Number. */
-const nid: Validator = {
+const nid: CountryValidator<"BD"> = {
   name: "National Identity Number",
   localName: "জাতীয় পরিচয়পত্র",
   abbreviation: "NID",
@@ -116,6 +119,7 @@ const nid: Validator = {
     "National ID Card",
   ] as const,
   candidatePattern: "\\d{10,17}",
+  scope: "country",
   country: "BD",
   entityType: "person",
   lengths: [10, 13, 17],

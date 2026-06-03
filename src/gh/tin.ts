@@ -14,7 +14,10 @@
  * @see https://gra.gov.gh/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
@@ -79,12 +82,13 @@ const generate = (): string => {
 };
 
 /** Ghanaian Tax Identification Number. */
-const tin: Validator = {
+const tin: CountryValidator<"GH"> = {
   name: "Ghanaian Tax Identification Number",
   localName: "Tax Identification Number",
   abbreviation: "TIN",
   aliases: ["TIN", "Tax Identification Number"] as const,
   candidatePattern: "[A-Z]\\d{9,10}",
+  scope: "country",
   country: "GH",
   entityType: "any",
   compact,

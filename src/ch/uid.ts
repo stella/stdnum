@@ -8,7 +8,10 @@
  * @see https://www.uid.admin.ch/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -84,7 +87,7 @@ const generate = (): string => {
 };
 
 /** Swiss Business Identification Number. */
-const uid: Validator = {
+const uid: CountryValidator<"CH"> = {
   name: "Swiss Business ID",
   localName: "Unternehmens-Identifikationsnummer",
   abbreviation: "UID",
@@ -94,6 +97,7 @@ const uid: Validator = {
     "IDE",
   ] as const,
   candidatePattern: "CHE-?\\d{3}\\.?\\d{3}\\.?\\d{3}",
+  scope: "country",
   country: "CH",
   entityType: "company",
   sourceUrl: "https://www.uid.admin.ch/",

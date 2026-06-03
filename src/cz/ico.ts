@@ -8,7 +8,10 @@
  * @see https://www.czso.cz/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -59,12 +62,13 @@ const generate = (): string => {
 };
 
 /** Czech Company Identification Number. */
-const ico: Validator = {
+const ico: CountryValidator<"CZ"> = {
   name: "Czech Company ID",
   localName: "Identifikační číslo osoby",
   abbreviation: "IČO",
   aliases: ["IČO", "IČ", "identifikační číslo"] as const,
   candidatePattern: "\\d{8}",
+  scope: "country",
   country: "CZ",
   entityType: "company",
   description:

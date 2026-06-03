@@ -13,7 +13,10 @@
  * @see https://en.wikipedia.org/wiki/Rol_%C3%9Anico_Tributario
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -99,12 +102,13 @@ const generate = (): string => {
  * Examples sourced from python-stdnum test suite
  * (cl.rut module).
  */
-const rut: Validator = {
+const rut: CountryValidator<"CL"> = {
   name: "Chilean Tax ID",
   localName: "Rol Único Tributario",
   abbreviation: "RUT",
   aliases: ["RUT", "Rol Único Tributario"] as const,
   candidatePattern: "\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[\\dkK]",
+  scope: "country",
   country: "CL",
   entityType: "any",
   compact,

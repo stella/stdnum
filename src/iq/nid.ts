@@ -16,7 +16,10 @@ const generate = (): string => randomDigits(12);
  * @see https://mofa.gov.iq/the-civil-status-id/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { normalizeArabicDigits } from "#util/arabic";
 import { clean } from "#util/clean";
@@ -48,12 +51,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Iraqi National Identification Number. */
-const nid: Validator = {
+const nid: CountryValidator<"IQ"> = {
   name: "Iraqi National ID",
   localName: "البطاقة الوطنية الموحدة",
   abbreviation: "NID",
   aliases: ["NID", "البطاقة الوطنية الموحدة"] as const,
   candidatePattern: "\\d{12}",
+  scope: "country",
   country: "IQ",
   entityType: "person",
   sourceUrl: "https://mofa.gov.iq/the-civil-status-id/",

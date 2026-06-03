@@ -15,7 +15,10 @@
  * @see https://www.frbservices.org/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import {
@@ -107,7 +110,7 @@ const generate = (): string => {
 };
 
 /** U.S. Routing Transit Number. */
-const rtn: Validator = {
+const rtn: CountryValidator<"US"> = {
   name: "Routing Transit Number",
   localName: "Routing Transit Number",
   abbreviation: "RTN",
@@ -119,6 +122,7 @@ const rtn: Validator = {
     "Routing Transit Number",
   ] as const,
   candidatePattern: "\\d{9}",
+  scope: "country",
   country: "US",
   entityType: "company",
   sourceUrl:

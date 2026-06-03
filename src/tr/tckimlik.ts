@@ -19,7 +19,10 @@
  * @see https://www.turkiye.gov.tr/nvi-tckn-dogrulama
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -88,7 +91,7 @@ const generate = (): string => {
 };
 
 /** Turkish Personal Identification Number. */
-const tckimlik: Validator = {
+const tckimlik: CountryValidator<"TR"> = {
   name: "Turkish Personal ID",
   localName: "T.C. Kimlik Numarası",
   abbreviation: "T.C. Kimlik",
@@ -97,6 +100,7 @@ const tckimlik: Validator = {
     "T.C. Kimlik Numarası",
   ] as const,
   candidatePattern: "[1-9]\\d{10}",
+  scope: "country",
   country: "TR",
   entityType: "person",
   sourceUrl: "https://www.nvi.gov.tr/",

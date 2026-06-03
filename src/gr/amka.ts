@@ -8,7 +8,10 @@
  * @see https://www.amka.gr/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -80,7 +83,7 @@ const generate = (): string => {
 };
 
 /** Greek Social Security Number. */
-const amka: Validator = {
+const amka: CountryValidator<"GR"> = {
   name: "Greek Social Security Number",
   localName: "Αριθμός Μητρώου Κοινωνικής Ασφάλισης",
   abbreviation: "ΑΜΚΑ",
@@ -90,6 +93,7 @@ const amka: Validator = {
     "AMKA",
   ] as const,
   candidatePattern: "\\d{11}",
+  scope: "country",
   country: "GR",
   entityType: "person",
   sourceUrl: "https://www.amka.gr/",

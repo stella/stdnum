@@ -9,7 +9,10 @@
  * @see https://www.gov.uk/vat-registration
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -135,7 +138,7 @@ const generate = (): string => {
 };
 
 /** UK VAT Registration Number. */
-const vat: Validator = {
+const vat: CountryValidator<"GB"> = {
   name: "UK VAT Number",
   localName: "VAT Registration Number",
   abbreviation: "VAT",
@@ -144,6 +147,7 @@ const vat: Validator = {
     "VAT number",
   ] as const,
   candidatePattern: "GB\\d{9,12}",
+  scope: "country",
   country: "GB",
   entityType: "company",
   sourceUrl: "https://www.gov.uk/vat-registration",

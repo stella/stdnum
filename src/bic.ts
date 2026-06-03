@@ -36,7 +36,10 @@ const generate = (): string => {
  * @see https://www.swift.com/
  */
 
-import type { ValidateResult, Validator } from "./types";
+import type {
+  ValidateResult,
+  GlobalValidator,
+} from "./types";
 
 import { clean } from "#util/clean";
 import {
@@ -82,7 +85,8 @@ const format = (value: string): string => {
 };
 
 /** Business Identifier Code (SWIFT/BIC). */
-const bic: Validator = {
+const bic: GlobalValidator = {
+  scope: "global",
   name: "Business Identifier Code",
   localName: "Business Identifier Code",
   abbreviation: "BIC",

@@ -15,7 +15,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -205,12 +205,13 @@ const generate = (): string => {
 };
 
 /** Sri Lankan National Identity Card. */
-const nic: Validator<ParsedPersonId> = {
+const nic: CountryValidator<"LK", ParsedPersonId> = {
   name: "National Identity Card",
   localName: "ජාතික හැඳුනුම්පත",
   abbreviation: "NIC",
   aliases: ["NIC", "ජාතික හැඳුනුම්පත"] as const,
   candidatePattern: "\\d{9}[VXvx]|\\d{12}",
+  scope: "country",
   country: "LK",
   entityType: "person",
   description:

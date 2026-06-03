@@ -12,7 +12,10 @@ const generate = (): string => {
  * @see https://www.rsk.is/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -43,12 +46,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Icelandic VAT Number. */
-const vsk: Validator = {
+const vsk: CountryValidator<"IS"> = {
   name: "Icelandic VAT Number",
   localName: "Virðisaukaskattur",
   abbreviation: "VSK",
   aliases: ["VSK-númer", "virðisaukaskattur"] as const,
   candidatePattern: "IS\\d{5,6}",
+  scope: "country",
   country: "IS",
   entityType: "company",
   sourceUrl: "https://www.rsk.is/",

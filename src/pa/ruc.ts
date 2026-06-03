@@ -17,7 +17,10 @@
  * @see https://dgi.mef.gob.pa/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomInt } from "#util/generate";
@@ -359,12 +362,13 @@ const generate = (): string => {
 };
 
 /** Panama tax identification number. */
-const ruc: Validator = {
+const ruc: CountryValidator<"PA"> = {
   name: "Tax Identification Number",
   localName: "Registro Único de Contribuyente",
   abbreviation: "RUC",
   aliases: ["RUC"] as const,
   candidatePattern: "\\d{1,2}-?\\d{1,4}-?\\d{1,6}",
+  scope: "country",
   country: "PA",
   entityType: "any",
   description: "Tax identifier issued by Panama's DGI",

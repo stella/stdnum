@@ -13,7 +13,10 @@
  * for CVR.
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -67,12 +70,13 @@ const generate = (): string => {
 };
 
 /** Danish Central Business Register Number. */
-const cvr: Validator = {
+const cvr: CountryValidator<"DK"> = {
   name: "Danish Business Register Number",
   localName: "CVR-nummer",
   abbreviation: "CVR",
   aliases: ["CVR-nummer", "CVR"] as const,
   candidatePattern: "\\d{8}",
+  scope: "country",
   country: "DK",
   entityType: "company",
   sourceUrl: "https://erhvervsstyrelsen.dk/",

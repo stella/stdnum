@@ -9,7 +9,10 @@
  * @see https://www.vmi.lt/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -89,12 +92,13 @@ const generate = (): string => {
 };
 
 /** Lithuanian VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"LT"> = {
   name: "Lithuanian VAT Number",
   localName: "PVM mokėtojo kodas",
   abbreviation: "PVM kodas",
   aliases: ["PVM mokėtojo kodas", "PVM"] as const,
   candidatePattern: "LT\\d{9,12}",
+  scope: "country",
   country: "LT",
   entityType: "any",
   sourceUrl: "https://www.vmi.lt/",

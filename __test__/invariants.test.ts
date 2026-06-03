@@ -4,9 +4,9 @@
  * Auto-discovers all validators and checks metadata
  * consistency: examples exist, examples validate,
  * compact is idempotent, entityType is valid,
- * required fields are non-empty, directory name
- * matches country field, and example lengths match
- * the declared `lengths` array.
+ * required fields are non-empty, scope matches the
+ * export namespace, and example lengths match the
+ * declared `lengths` array.
  *
  * New validators get all checks automatically when
  * added to the index.
@@ -93,22 +93,33 @@ for (const [name, v] of validators) {
       });
     }
 
-    // (c) Directory name matches country field
-    test("directory name matches country field", () => {
+    // (c) Scope matches export namespace
+    test("scope matches export namespace", () => {
       const ns = name.split(".")[0]!;
       if (INTERNATIONAL_NAMESPACES.has(ns)) {
         expect(
-          v.country,
-          `${name} is international but has country "${v.country}"`,
-        ).toBeUndefined();
-      } else {
-        // Namespace `is_` maps to country "IS"
-        const expected = ns.replace(/_$/, "").toUpperCase();
+          v.scope,
+          `${name}: expected global scope but got "${v.scope}"`,
+        ).toBe("global");
         expect(
-          v.country,
-          `${name}: expected country "${expected}" but got "${v.country}"`,
-        ).toBe(expected);
+          "country" in v,
+          `${name} is global but has a country field`,
+        ).toBe(false);
+        return;
       }
+
+      if (v.scope !== "country") {
+        throw new Error(
+          `${name}: expected country scope but got "${v.scope}"`,
+        );
+      }
+
+      // Namespace `is_` maps to country "IS"
+      const expected = ns.replace(/_$/, "").toUpperCase();
+      expect(
+        v.country,
+        `${name}: expected country "${expected}" but got "${v.country}"`,
+      ).toBe(expected);
     });
 
     // (d) Examples validate successfully

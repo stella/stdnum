@@ -8,7 +8,10 @@
  * @see https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/nie/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 import { CHECK_LETTERS } from "./dni";
 
 import { clean } from "#util/clean";
@@ -82,7 +85,7 @@ const generate = (): string => {
 };
 
 /** Spanish Foreigner Identification Number. */
-const nie: Validator = {
+const nie: CountryValidator<"ES"> = {
   name: "Spanish Foreigner ID",
   localName: "Número de Identidad de Extranjero",
   abbreviation: "NIE",
@@ -92,6 +95,7 @@ const nie: Validator = {
     "número de identidad de extranjero",
   ] as const,
   candidatePattern: "[XYZ]-?\\d{7}-?[A-Z]",
+  scope: "country",
   country: "ES",
   entityType: "person",
   sourceUrl:

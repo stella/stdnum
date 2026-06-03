@@ -9,7 +9,10 @@
  * @see https://www.portaldasfinancas.gov.pt/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -69,7 +72,7 @@ const generate = (): string => {
 };
 
 /** Portuguese VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"PT"> = {
   name: "Portuguese VAT Number",
   localName: "Número de Identificação Fiscal",
   abbreviation: "NIF",
@@ -79,6 +82,7 @@ const vat: Validator = {
     "contribuinte",
   ] as const,
   candidatePattern: "PT\\d{9}",
+  scope: "country",
   country: "PT",
   entityType: "any",
   sourceUrl: "https://www.portaldasfinancas.gov.pt/",

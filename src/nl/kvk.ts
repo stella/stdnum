@@ -9,7 +9,10 @@ const generate = (): string => randomDigits(8);
  * @see https://www.kvk.nl/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -39,12 +42,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Dutch Chamber of Commerce Number. */
-const kvk: Validator = {
+const kvk: CountryValidator<"NL"> = {
   name: "Dutch Chamber of Commerce Number",
   localName: "KvK-nummer",
   abbreviation: "KvK",
   aliases: ["KVK-nummer", "Kamer van Koophandel"] as const,
   candidatePattern: "\\d{8}",
+  scope: "country",
   country: "NL",
   entityType: "company",
   sourceUrl: "https://www.kvk.nl/",

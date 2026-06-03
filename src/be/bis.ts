@@ -10,7 +10,10 @@
  * @see https://nl.wikipedia.org/wiki/Rijksregisternummer
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 import { checksum, format as nnFormat } from "./nn";
 
 import { clean } from "#util/clean";
@@ -83,13 +86,14 @@ const generate = (): string => {
 };
 
 /** Belgian BIS Number. */
-const bis: Validator = {
+const bis: CountryValidator<"BE"> = {
   name: "Belgian BIS Number",
   localName: "BIS-nummer",
   abbreviation: "BIS",
   aliases: ["BIS-nummer", "numéro BIS"] as const,
   candidatePattern:
     "\\d{2}\\.?\\d{2}\\.?\\d{2}-?\\d{3}\\.?\\d{2}",
+  scope: "country",
   country: "BE",
   entityType: "person",
   sourceUrl:

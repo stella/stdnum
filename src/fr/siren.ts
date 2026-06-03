@@ -8,7 +8,10 @@
  * @see https://www.insee.fr/fr/information/2549588
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -58,13 +61,14 @@ const generate = (): string => {
 };
 
 /** French Company Identification Number. */
-const siren: Validator = {
+const siren: CountryValidator<"FR"> = {
   name: "French Company ID",
   localName:
     "Système d'Identification du Répertoire des Entreprises",
   abbreviation: "SIREN",
   aliases: ["SIREN", "numéro SIREN"] as const,
   candidatePattern: "\\d{3}\\s?\\d{3}\\s?\\d{3}",
+  scope: "country",
   country: "FR",
   entityType: "company",
   sourceUrl: "https://www.insee.fr/fr/information/2549588",

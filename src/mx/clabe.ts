@@ -13,7 +13,10 @@
  * @see https://en.wikipedia.org/wiki/CLABE
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -87,7 +90,7 @@ const generate = (): string => {
  *
  * Example sourced from Wikipedia CLABE article.
  */
-const clabe: Validator = {
+const clabe: CountryValidator<"MX"> = {
   name: "Mexican Bank Account",
   localName: "Clave Bancaria Estandarizada",
   abbreviation: "CLABE",
@@ -96,6 +99,7 @@ const clabe: Validator = {
     "Clave Bancaria Estandarizada",
   ] as const,
   candidatePattern: "\\d{18}",
+  scope: "country",
   country: "MX",
   entityType: "any",
   lengths: [18] as const,

@@ -8,7 +8,10 @@
  * @see https://www.bmf.gv.at/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { luhnChecksum } from "#checksums/luhn";
 import { clean } from "#util/clean";
@@ -68,7 +71,7 @@ const generate = (): string => {
 };
 
 /** Austrian VAT Identification Number. */
-const uid: Validator = {
+const uid: CountryValidator<"AT"> = {
   name: "Austrian VAT Number",
   localName: "Umsatzsteuer-Identifikationsnummer",
   abbreviation: "UID",
@@ -78,6 +81,7 @@ const uid: Validator = {
     "ATU",
   ] as const,
   candidatePattern: "ATU\\d{8}",
+  scope: "country",
   country: "AT",
   entityType: "company",
   sourceUrl: "https://www.bmf.gv.at/",

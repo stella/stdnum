@@ -8,7 +8,10 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/malta-tin.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -68,12 +71,13 @@ const generate = (): string => {
 };
 
 /** Maltese VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"MT"> = {
   name: "Maltese VAT Number",
   localName: "VAT Registration Number",
   abbreviation: "VAT",
   aliases: ["VAT number MT"] as const,
   candidatePattern: "MT\\d{8}",
+  scope: "country",
   country: "MT",
   entityType: "company",
   sourceUrl: "https://cfr.gov.mt/",

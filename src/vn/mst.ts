@@ -11,7 +11,10 @@
  * @see https://easyinvoice.vn/ma-so-thue/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -104,12 +107,13 @@ const generate = (): string => {
 };
 
 /** Vietnamese Tax Number. */
-const mst: Validator = {
+const mst: CountryValidator<"VN"> = {
   name: "Vietnamese Tax Number",
   localName: "Mã số thuế",
   abbreviation: "MST",
   aliases: ["MST", "mã số thuế"] as const,
   candidatePattern: "\\d{10}(-\\d{3})?",
+  scope: "country",
   country: "VN",
   entityType: "company",
   description:

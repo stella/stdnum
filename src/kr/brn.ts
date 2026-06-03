@@ -23,7 +23,10 @@ const generate = (): string => {
  * @see https://en.wikipedia.org/wiki/Business_registration_number_(South_Korea)
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -77,12 +80,13 @@ const format = (value: string): string => {
 };
 
 /** Korean Business Registration Number. */
-const brn: Validator = {
+const brn: CountryValidator<"KR"> = {
   name: "Korean Business Registration Number",
   localName: "사업자등록번호",
   abbreviation: "BRN",
   aliases: ["사업자등록번호", "BRN"] as const,
   candidatePattern: "\\d{3}-?\\d{2}-?\\d{5}",
+  scope: "country",
   country: "KR",
   entityType: "company",
   description:

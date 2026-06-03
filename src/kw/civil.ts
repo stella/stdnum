@@ -15,7 +15,7 @@
 import type {
   ParsedBirthDate,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -135,12 +135,13 @@ const generate = (): string => {
 };
 
 /** Kuwait Civil Number (الرقم المدني). */
-const civil: Validator<ParsedBirthDate> = {
+const civil: CountryValidator<"KW", ParsedBirthDate> = {
   name: "Civil Number",
   localName: "الرقم المدني",
   abbreviation: "Civil ID",
   aliases: ["Civil ID", "الرقم المدني"] as const,
   candidatePattern: "\\d{12}",
+  scope: "country",
   country: "KW",
   entityType: "person",
   lengths: [12] as const,

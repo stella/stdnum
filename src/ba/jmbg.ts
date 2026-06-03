@@ -11,7 +11,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -106,12 +106,13 @@ const generate = (): string => {
 };
 
 /** Bosnian Unique Master Citizen Number. */
-const jmbg: Validator<ParsedPersonId> = {
+const jmbg: CountryValidator<"BA", ParsedPersonId> = {
   name: "Bosnian Personal ID",
   localName: "Jedinstveni matični broj građana",
   abbreviation: "JMBG",
   aliases: ["JMBG", "matični broj"] as const,
   candidatePattern: "\\d{13}",
+  scope: "country",
   country: "BA",
   entityType: "person",
   lengths: [13] as const,

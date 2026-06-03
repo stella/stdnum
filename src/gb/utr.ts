@@ -8,7 +8,10 @@
  * @see https://www.gov.uk/find-utr-number
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -61,12 +64,13 @@ const generate = (): string => {
 };
 
 /** UK Unique Taxpayer Reference. */
-const utr: Validator = {
+const utr: CountryValidator<"GB"> = {
   name: "UK Unique Taxpayer Reference",
   localName: "Unique Taxpayer Reference",
   abbreviation: "UTR",
   aliases: ["Unique Taxpayer Reference", "UTR"] as const,
   candidatePattern: "\\d{10}",
+  scope: "country",
   country: "GB",
   entityType: "any",
   sourceUrl: "https://www.gov.uk/find-utr-number",

@@ -8,7 +8,10 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/hungary-tin.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -62,12 +65,13 @@ const generate = (): string => {
 };
 
 /** Hungarian VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"HU"> = {
   name: "Hungarian VAT Number",
   localName: "Adószám",
   abbreviation: "ANUM",
   aliases: ["adószám", "adóazonosító jel"] as const,
   candidatePattern: "\\d{8}-\\d-\\d{2}",
+  scope: "country",
   country: "HU",
   entityType: "company",
   sourceUrl: "https://nav.gov.hu/",

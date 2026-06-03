@@ -14,7 +14,10 @@
  * @see https://en.wikipedia.org/wiki/Tax_identification_number#Peru
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
@@ -99,12 +102,13 @@ const generate = (): string => {
  * Examples sourced from python-stdnum test suite
  * (pe.ruc module).
  */
-const ruc: Validator = {
+const ruc: CountryValidator<"PE"> = {
   name: "Peruvian Tax ID",
   localName: "Registro Único de Contribuyentes",
   abbreviation: "RUC",
   aliases: ["RUC"] as const,
   candidatePattern: "\\d{11}",
+  scope: "country",
   country: "PE",
   entityType: "any",
   compact,

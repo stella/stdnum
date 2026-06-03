@@ -9,7 +9,10 @@
  * @see https://en.wikipedia.org/wiki/Hong_Kong_identity_card
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -106,12 +109,13 @@ const generate = (): string => {
 };
 
 /** Hong Kong Identity Card number. */
-const hkid: Validator = {
+const hkid: CountryValidator<"HK"> = {
   name: "Hong Kong Identity Card Number",
   localName: "Hong Kong Identity Card Number",
   abbreviation: "HKID",
   aliases: ["HKID", "香港身份證"] as const,
   candidatePattern: "[A-Z]{1,2}\\d{6}[\\dA]",
+  scope: "country",
   country: "HK",
   entityType: "person",
   lengths: [8, 9],

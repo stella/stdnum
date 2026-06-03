@@ -15,7 +15,10 @@
  * @see https://intervia.com/doc/validar-numeros-de-la-seguridad-social/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -85,12 +88,13 @@ const generate = (): string => {
 };
 
 /** Spanish Social Security Number. */
-const nss: Validator = {
+const nss: CountryValidator<"ES"> = {
   name: "Spanish Social Security Number",
   localName: "Número de la Seguridad Social",
   abbreviation: "NSS",
   aliases: ["NSS", "número de seguridad social"] as const,
   candidatePattern: "\\d{12}",
+  scope: "country",
   country: "ES",
   entityType: "person",
   description:

@@ -9,7 +9,10 @@
  * @see https://www.ujp.gov.mk/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -66,7 +69,7 @@ const generate = (): string => {
 };
 
 /** North Macedonian Tax Identification Number. */
-const edb: Validator = {
+const edb: CountryValidator<"MK"> = {
   name: "North Macedonian Tax ID",
   localName: "Edinstven danocen broj",
   abbreviation: "EDB",
@@ -76,6 +79,7 @@ const edb: Validator = {
     "EDB",
   ] as const,
   candidatePattern: "MK\\d{13}",
+  scope: "country",
   country: "MK",
   entityType: "any",
   lengths: [13] as const,

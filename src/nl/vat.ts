@@ -12,7 +12,10 @@
  * @see https://business.gov.nl/regulations/using-checking-vat-numbers/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -70,12 +73,13 @@ const generate = (): string =>
   `${randomDigits(9)}B${randomDigits(2)}`;
 
 /** Dutch VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"NL"> = {
   name: "Dutch VAT Number",
   localName: "BTW-identificatienummer",
   abbreviation: "BTW",
   aliases: ["BTW-nummer", "BTW-id"] as const,
   candidatePattern: "NL\\d{9}B\\d{2}",
+  scope: "country",
   country: "NL",
   entityType: "company",
   sourceUrl:

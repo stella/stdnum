@@ -16,7 +16,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import {
@@ -132,12 +132,13 @@ const generate = (): string => {
 };
 
 /** South African Identity Number. */
-const idnr: Validator<ParsedPersonId> = {
+const idnr: CountryValidator<"ZA", ParsedPersonId> = {
   name: "South African Identity Number",
   localName: "South African Identity Number",
   abbreviation: "SA ID",
   aliases: ["ID number", "RSA ID"] as const,
   candidatePattern: "\\d{13}",
+  scope: "country",
   country: "ZA",
   entityType: "person",
   compact,

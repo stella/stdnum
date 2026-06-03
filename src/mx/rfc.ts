@@ -16,7 +16,10 @@
  * @see https://en.wikipedia.org/wiki/Tax_Identification_Number_(Mexico)
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
@@ -150,7 +153,7 @@ const generate = (): string => {
  *
  * Examples sourced from python-stdnum test suite.
  */
-const rfc: Validator = {
+const rfc: CountryValidator<"MX"> = {
   name: "Mexican Tax ID",
   localName: "Registro Federal de Contribuyentes",
   abbreviation: "RFC",
@@ -159,6 +162,7 @@ const rfc: Validator = {
     "Registro Federal de Contribuyentes",
   ] as const,
   candidatePattern: "[A-ZÑ&]{3,4}\\d{6}[A-Z\\d]{3}",
+  scope: "country",
   country: "MX",
   entityType: "any",
   lengths: [12, 13] as const,

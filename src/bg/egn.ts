@@ -18,7 +18,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -137,7 +137,7 @@ const generate = (): string => {
 };
 
 /** Bulgarian Personal Identification Number. */
-const egn: Validator<ParsedPersonId> = {
+const egn: CountryValidator<"BG", ParsedPersonId> = {
   name: "Bulgarian Personal ID",
   localName: "Единен граждански номер",
   abbreviation: "ЕГН",
@@ -147,6 +147,7 @@ const egn: Validator<ParsedPersonId> = {
     "EGN",
   ] as const,
   candidatePattern: "\\d{10}",
+  scope: "country",
   country: "BG",
   entityType: "person",
   sourceUrl:

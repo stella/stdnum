@@ -19,7 +19,10 @@
  * @see https://www.gib.gov.tr/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -77,12 +80,13 @@ const generate = (): string => {
 };
 
 /** Turkish Tax Identification Number. */
-const vkn: Validator = {
+const vkn: CountryValidator<"TR"> = {
   name: "Turkish Tax ID",
   localName: "Vergi Kimlik Numarası",
   abbreviation: "VKN",
   aliases: ["VKN", "Vergi Kimlik Numarası"] as const,
   candidatePattern: "\\d{10}",
+  scope: "country",
   country: "TR",
   entityType: "company",
   sourceUrl: "https://www.gib.gov.tr/",

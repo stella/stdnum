@@ -11,7 +11,10 @@
  * @see https://www.skra.is/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
@@ -105,12 +108,13 @@ const generate = (): string => {
 };
 
 /** Icelandic Identification Number. */
-const kennitala: Validator = {
+const kennitala: CountryValidator<"IS"> = {
   name: "Icelandic ID Number",
   localName: "Kennitala",
   abbreviation: "kt.",
   aliases: ["kennitala", "kt."] as const,
   candidatePattern: "\\d{6}-?\\d{4}",
+  scope: "country",
   country: "IS",
   entityType: "any",
   sourceUrl: "https://www.skra.is/",
