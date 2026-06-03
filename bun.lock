@@ -5,6 +5,7 @@
     "": {
       "name": "@stll/stdnum",
       "devDependencies": {
+        "@brazilian-utils/brazilian-utils": "^2.3.0",
         "@stll/oxlint-config": "^0.3.0",
         "@stll/typescript-config": "^0.3.0",
         "@types/node": "^25.9.1",
@@ -18,6 +19,7 @@
         "oxfmt": "^0.52.0",
         "oxlint": "^1.67.0",
         "oxlint-tsgolint": "^0.23.0",
+        "rut.js": "^2.1.0",
         "stdnum": "^1.11.14",
         "tsdown": "0.22.1",
         "typescript": "^5.9.3",
@@ -35,6 +37,8 @@
     "@babel/parser": ["@babel/parser@8.0.0-rc.4", "", { "dependencies": { "@babel/types": "^8.0.0-rc.4" }, "bin": "./bin/babel-parser.js" }, "sha512-0S/1yefMa15N4i2v3t8Fw9pgMHhf2gF6Lc1UEXI96Ls6FNAjqvHHZouZ2ZS/deqLhbMFtmfVeFac6iTsvFbLwA=="],
 
     "@babel/types": ["@babel/types@8.0.0-rc.6", "", { "dependencies": { "@babel/helper-string-parser": "^8.0.0-rc.6", "@babel/helper-validator-identifier": "^8.0.0-rc.6" } }, "sha512-p7/ABylAYlexb31wtRdIfH9L9A0Z2T/9H6zAqzqndkY2PLkvNNc580wGhp/gGKN4Sp9sQvSkhc6Oga8/O+wTyw=="],
+
+    "@brazilian-utils/brazilian-utils": ["@brazilian-utils/brazilian-utils@2.3.0", "", {}, "sha512-gycd2tRqkWcS5bhSjFDgnvxIXjQuxr32xw5BAkflNpEp12r+FkuK60CDb48U7xJAszNt3sPW6u9hxEcea+CZPQ=="],
 
     "@emnapi/core": ["@emnapi/core@1.10.0", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.1", "tslib": "^2.4.0" } }, "sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw=="],
 
@@ -249,6 +253,8 @@
     "rolldown": ["rolldown@1.0.3", "", { "dependencies": { "@oxc-project/types": "=0.133.0", "@rolldown/pluginutils": "^1.0.0" }, "optionalDependencies": { "@rolldown/binding-android-arm64": "1.0.3", "@rolldown/binding-darwin-arm64": "1.0.3", "@rolldown/binding-darwin-x64": "1.0.3", "@rolldown/binding-freebsd-x64": "1.0.3", "@rolldown/binding-linux-arm-gnueabihf": "1.0.3", "@rolldown/binding-linux-arm64-gnu": "1.0.3", "@rolldown/binding-linux-arm64-musl": "1.0.3", "@rolldown/binding-linux-ppc64-gnu": "1.0.3", "@rolldown/binding-linux-s390x-gnu": "1.0.3", "@rolldown/binding-linux-x64-gnu": "1.0.3", "@rolldown/binding-linux-x64-musl": "1.0.3", "@rolldown/binding-openharmony-arm64": "1.0.3", "@rolldown/binding-wasm32-wasi": "1.0.3", "@rolldown/binding-win32-arm64-msvc": "1.0.3", "@rolldown/binding-win32-x64-msvc": "1.0.3" }, "bin": { "rolldown": "./bin/cli.mjs" } }, "sha512-i00lAJ2ks1BYr7rjNjKC7BcqAS7nVfiT3QX1SI5aY+AFHblCmaUf9OE9dbdzDvW6dJxbi2ZCZiy9v3CcwOiX3g=="],
 
     "rolldown-plugin-dts": ["rolldown-plugin-dts@0.25.1", "", { "dependencies": { "@babel/generator": "8.0.0-rc.5", "@babel/helper-validator-identifier": "8.0.0-rc.5", "@babel/parser": "8.0.0-rc.4", "ast-kit": "^3.0.0-beta.1", "birpc": "^4.0.0", "dts-resolver": "^3.0.0", "get-tsconfig": "5.0.0-beta.5", "obug": "^2.1.1" }, "peerDependencies": { "@ts-macro/tsc": "^0.3.6", "@typescript/native-preview": ">=7.0.0-dev.20260325.1", "rolldown": "^1.0.0", "typescript": "^5.0.0 || ^6.0.0", "vue-tsc": "~3.2.0" }, "optionalPeers": ["@ts-macro/tsc", "@typescript/native-preview", "typescript", "vue-tsc"] }, "sha512-zK82aC/8z1iVW+g0bCnlQZq04Y5bNeL/RcRwTYBwsnU6wH0N+6vpIFkN7JC0kYRS5qKA+pxQyfIPvXJ6Q5xSpQ=="],
+
+    "rut.js": ["rut.js@2.1.0", "", {}, "sha512-v8tXUbqycX2frkeZBcCJgn2dbZE29S21bOF+tRmow58m2qEVz5lGLmNaJ9ahTRfj3WEfwl55mTZi8qqE91w81g=="],
 
     "semver": ["semver@7.8.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-rkVq3IXh+4FDGch+KwzX3aV9W3kO54GyEgpvBzSyctDA6Xtd7RJQV1xmXbeQp5v7+VzLOfVqiutSE6GICgPFvg=="],
 
