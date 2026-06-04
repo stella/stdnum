@@ -917,7 +917,9 @@
     "format:check": "oxfmt --check . \"!.ai/**\" \"!.agents/**\" \"!.claude/**\" \"!AGENTS.md\" \"!CLAUDE.md\" \"!GEMINI.md\"",
     "typecheck": "tsc -p tsconfig.json",
     "sync-ai:check": "bash scripts/sync-ai-skills.sh --check",
-    "lint:fix": "bun --bun oxlint -c oxlint.config.ts --type-aware --fix ."
+    "lint:fix": "bun --bun oxlint -c oxlint.config.ts --type-aware --fix .",
+    "version:check": "node scripts/version-sync.mjs check",
+    "version:sync": "node scripts/version-sync.mjs sync"
   },
   "devDependencies": {
     "@brazilian-utils/brazilian-utils": "^2.3.0",
