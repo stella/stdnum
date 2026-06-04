@@ -20,7 +20,10 @@ const generate = (): string => {
  * @see https://en.wikipedia.org/wiki/CNIC_(Pakistan)
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -81,12 +84,13 @@ const format = (value: string): string => {
 };
 
 /** Pakistan Computerized National Identity Card. */
-const cnic: Validator = {
+const cnic: CountryValidator<"PK"> = {
   name: "Computerized National Identity Card",
   localName: "Computerized National Identity Card",
   abbreviation: "CNIC",
   aliases: ["CNIC", "شناختی کارڈ"] as const,
   candidatePattern: "\\d{5}-?\\d{7}-?\\d",
+  scope: "country",
   country: "PK",
   entityType: "person",
   lengths: [13],

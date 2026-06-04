@@ -7,7 +7,10 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/bulgaria-tin.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -132,7 +135,7 @@ const generate = (): string => {
 };
 
 /** Bulgarian VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"BG"> = {
   name: "Bulgarian VAT Number",
   localName: "ИН по ДДС",
   abbreviation: "ИН по ДДС",
@@ -141,6 +144,7 @@ const vat: Validator = {
     "идентификационен номер по ДДС",
   ] as const,
   candidatePattern: "BG\\d{9,10}",
+  scope: "country",
   country: "BG",
   entityType: "any",
   sourceUrl: "https://www.nra.bg/",

@@ -10,7 +10,10 @@
  * @see https://service.bmf.gv.at/Service/Anwend/Behoerden/show_mast.asp
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -69,12 +72,13 @@ const generate = (): string => {
 };
 
 /** Austrian Tax Identification Number. */
-const tin: Validator = {
+const tin: CountryValidator<"AT"> = {
   name: "Austrian Tax Identification Number",
   localName: "Abgabenkontonummer",
   abbreviation: "TIN",
   aliases: ["Steuernummer", "St.Nr.", "TIN"] as const,
   candidatePattern: "\\d{2}-?\\d{3}/\\d{4}",
+  scope: "country",
   country: "AT",
   entityType: "any",
   sourceUrl:

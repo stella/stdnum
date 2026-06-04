@@ -9,7 +9,10 @@
  * @see https://asic.gov.au/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -66,12 +69,13 @@ const generate = (): string => {
 };
 
 /** Australian Company Number. */
-const acn: Validator = {
+const acn: CountryValidator<"AU"> = {
   name: "Australian Company Number",
   localName: "Australian Company Number",
   abbreviation: "ACN",
   aliases: ["ACN", "Australian Company Number"] as const,
   candidatePattern: "\\d{3}\\s?\\d{3}\\s?\\d{3}",
+  scope: "country",
   country: "AU",
   entityType: "company",
   sourceUrl: "https://asic.gov.au/",

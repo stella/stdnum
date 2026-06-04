@@ -9,7 +9,10 @@
  * @see https://www.iso.org/standard/70484.html
  */
 
-import type { ValidateResult, Validator } from "./types";
+import type {
+  ValidateResult,
+  GlobalValidator,
+} from "./types";
 
 import {
   luhnChecksum,
@@ -162,7 +165,8 @@ const generate = (): string => {
 };
 
 /** Credit Card Number (Luhn). */
-const creditCard: Validator = {
+const creditCard: GlobalValidator = {
+  scope: "global",
   name: "Credit Card Number",
   localName: "Credit Card Number",
   abbreviation: "CC",

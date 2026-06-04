@@ -27,7 +27,10 @@ const generate = (): string => {
  * @see https://www.ssa.gov/employer/verifySSN.htm
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomInt } from "#util/generate";
@@ -97,12 +100,13 @@ const format = (value: string): string => {
 };
 
 /** U.S. Social Security Number. */
-const ssn: Validator = {
+const ssn: CountryValidator<"US"> = {
   name: "Social Security Number",
   localName: "Social Security Number",
   abbreviation: "SSN",
   aliases: ["SSN", "Social Security Number"] as const,
   candidatePattern: "\\d{3}-?\\d{2}-?\\d{4}",
+  scope: "country",
   country: "US",
   entityType: "person",
   sourceUrl: "https://www.ssa.gov/employer/verifySSN.htm",

@@ -7,7 +7,10 @@
  * @see https://www.agenziaentrate.gov.it/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -90,7 +93,7 @@ const generate = (): string => {
 };
 
 /** Italian VAT Number. */
-const iva: Validator = {
+const iva: CountryValidator<"IT"> = {
   name: "Italian VAT Number",
   localName: "Partita IVA",
   abbreviation: "P.IVA",
@@ -101,6 +104,7 @@ const iva: Validator = {
     "VAT IT",
   ] as const,
   candidatePattern: "IT\\d{11}",
+  scope: "country",
   country: "IT",
   entityType: "company",
   sourceUrl: "https://www.agenziaentrate.gov.it/",

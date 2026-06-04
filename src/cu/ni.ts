@@ -18,7 +18,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -119,7 +119,7 @@ const generate = (): string => {
  *
  * Examples sourced from python-stdnum test suite.
  */
-const ni: Validator<ParsedPersonId> = {
+const ni: CountryValidator<"CU", ParsedPersonId> = {
   name: "Cuban Identity Card Number",
   localName: "Número de Identidad",
   abbreviation: "NI",
@@ -129,6 +129,7 @@ const ni: Validator<ParsedPersonId> = {
     "carnet de identidad",
   ] as const,
   candidatePattern: "\\d{11}",
+  scope: "country",
   country: "CU",
   entityType: "person",
   lengths: [11] as const,

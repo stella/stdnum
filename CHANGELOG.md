@@ -8,6 +8,18 @@ The format is based on
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-06-03
+
+### Changed
+
+- `Validator` now carries a `scope` discriminator:
+  `{ scope: "country"; country: CountryCode }` or
+  `{ scope: "global" }`. The optional `country?` field
+  is removed in favor of this discriminated union.
+  Consumers that read `validator.country` must first
+  narrow on `validator.scope === "country"`.
+  `ValidatorScope` is exported from the package root.
+
 ## [1.0.0] - 2026-05-17
 
 ### Changed
@@ -57,5 +69,6 @@ and this project adheres to
   artifacts.
 - Per-identifier entry points for tree-shaking.
 
+[2.0.0]: https://github.com/stella/stdnum/releases/tag/v2.0.0
 [1.0.0]: https://github.com/stella/stdnum/releases/tag/v1.0.0
 [0.1.0]: https://github.com/stella/stdnum/releases/tag/v0.1.0

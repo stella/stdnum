@@ -7,7 +7,10 @@
  * (13-19 digits), use `creditcard` instead.
  */
 
-import type { ValidateResult, Validator } from "./types";
+import type {
+  ValidateResult,
+  GlobalValidator,
+} from "./types";
 
 import {
   luhnChecksum,
@@ -56,7 +59,8 @@ const generate = (length = 16): string => {
 };
 
 /** Generic Luhn Validator. */
-const luhn: Validator = {
+const luhn: GlobalValidator = {
+  scope: "global",
   name: "Luhn",
   localName: "Luhn",
   abbreviation: "Luhn",

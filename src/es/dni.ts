@@ -8,7 +8,10 @@
  * @see https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/dni/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -59,7 +62,7 @@ const generate = (): string => {
 };
 
 /** Spanish National Identity Document. */
-const dni: Validator = {
+const dni: CountryValidator<"ES"> = {
   name: "Spanish National ID",
   localName: "Documento Nacional de Identidad",
   abbreviation: "DNI",
@@ -69,6 +72,7 @@ const dni: Validator = {
     "documento nacional de identidad",
   ] as const,
   candidatePattern: "\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[A-Z]",
+  scope: "country",
   country: "ES",
   entityType: "person",
   sourceUrl:

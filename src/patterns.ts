@@ -27,13 +27,19 @@
  * ```
  */
 
-import type { CountryCode, Validator } from "./types";
+import type {
+  CountryCode,
+  CountryValidator,
+  Validator,
+} from "./types";
 
 // ─── Pattern type ─────────────────────────────
 
-export type ValidatorPattern = {
+export type ValidatorPattern<
+  TValidator extends Validator = Validator,
+> = {
   /** The validator this pattern was derived from. */
-  validator: Validator;
+  validator: TValidator;
   /** Loose regex matching candidates in text. */
   regex: RegExp;
 };
@@ -314,9 +320,9 @@ export const toRegex = (v: Validator): RegExp => {
 /**
  * Build patterns for a list of validators.
  */
-export const toPatterns = (
-  validators: readonly Validator[],
-): ValidatorPattern[] =>
+export const toPatterns = <TValidator extends Validator>(
+  validators: readonly TValidator[],
+): ValidatorPattern<TValidator>[] =>
   validators.map((v) => ({
     validator: v,
     regex: toRegex(v),
@@ -326,22 +332,47 @@ export const toPatterns = (
  * Filter validators by country code and build
  * patterns.
  */
-export const byCountry = (
-  country: CountryCode,
-  validators: readonly Validator[],
-): ValidatorPattern[] =>
-  toPatterns(
-    validators.filter((v) => v.country === country),
+type CountryScopedValidator<
+  TValidator extends Validator,
+  TCountry extends CountryCode,
+> =
+  TValidator extends CountryValidator<
+    infer TValidatorCountry,
+    infer TParsed
+  >
+    ? TCountry extends TValidatorCountry
+      ? TValidator & CountryValidator<TCountry, TParsed>
+      : TValidatorCountry extends TCountry
+        ? TValidator
+        : never
+    : never;
+
+export const byCountry = <
+  TCountry extends CountryCode,
+  TValidator extends Validator,
+>(
+  country: TCountry,
+  validators: readonly TValidator[],
+): ValidatorPattern<
+  CountryScopedValidator<TValidator, TCountry>
+>[] => {
+  const countryValidators = validators.filter(
+    (
+      v,
+    ): v is CountryScopedValidator<TValidator, TCountry> =>
+      v.scope === "country" && v.country === country,
   );
+  return toPatterns(countryValidators);
+};
 
 /**
  * Filter validators by entity type and build
  * patterns.
  */
-export const byEntityType = (
+export const byEntityType = <TValidator extends Validator>(
   entityType: "person" | "company" | "any",
-  validators: readonly Validator[],
-): ValidatorPattern[] =>
+  validators: readonly TValidator[],
+): ValidatorPattern<TValidator>[] =>
   toPatterns(
     validators.filter(
       (v) =>
@@ -354,6 +385,6 @@ export const byEntityType = (
 /**
  * Build patterns for ALL provided validators.
  */
-export const allPatterns = (
-  validators: readonly Validator[],
-): ValidatorPattern[] => toPatterns(validators);
+export const allPatterns = <TValidator extends Validator>(
+  validators: readonly TValidator[],
+): ValidatorPattern<TValidator>[] => toPatterns(validators);

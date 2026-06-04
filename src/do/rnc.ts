@@ -14,7 +14,10 @@
  * @see https://dgii.gov.do/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { luhnValidate } from "#checksums/luhn";
 import { clean } from "#util/clean";
@@ -102,7 +105,7 @@ const generate = (): string => {
  *
  * Examples sourced from python-stdnum test suite.
  */
-const rnc: Validator = {
+const rnc: CountryValidator<"DO"> = {
   name: "Dominican Republic Tax ID",
   localName: "Registro Nacional del Contribuyente",
   abbreviation: "RNC",
@@ -111,6 +114,7 @@ const rnc: Validator = {
     "Registro Nacional del Contribuyente",
   ] as const,
   candidatePattern: "\\d{9}",
+  scope: "country",
   country: "DO",
   entityType: "any",
   lengths: [9, 11] as const,

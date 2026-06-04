@@ -11,7 +11,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -173,7 +173,7 @@ const generate = (): string => {
 };
 
 /** Finnish Personal Identity Code. */
-const hetu: Validator<ParsedPersonId> = {
+const hetu: CountryValidator<"FI", ParsedPersonId> = {
   name: "Finnish Personal ID",
   localName: "Henkilötunnus",
   abbreviation: "HETU",
@@ -183,6 +183,7 @@ const hetu: Validator<ParsedPersonId> = {
     "sosiaaliturvatunnus",
   ] as const,
   candidatePattern: "\\d{6}[-+A]\\d{3}[\\dA-Z]",
+  scope: "country",
   country: "FI",
   entityType: "person",
   sourceUrl: "https://dvv.fi/en/personal-identity-code",

@@ -9,7 +9,10 @@
  * @see https://www.insee.fr/fr/information/2549588
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -101,13 +104,14 @@ const generate = (): string => {
 };
 
 /** French Establishment Identification Number. */
-const siret: Validator = {
+const siret: CountryValidator<"FR"> = {
   name: "French Establishment ID",
   localName:
     "Système d'Identification du Répertoire des Établissements",
   abbreviation: "SIRET",
   aliases: ["SIRET", "numéro SIRET"] as const,
   candidatePattern: "\\d{3}\\s?\\d{3}\\s?\\d{3}\\s?\\d{5}",
+  scope: "country",
   country: "FR",
   entityType: "company",
   sourceUrl: "https://www.insee.fr/fr/information/2549588",

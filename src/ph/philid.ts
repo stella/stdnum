@@ -14,7 +14,10 @@ const generate = (): string => randomDigits(12);
  * @see https://philsys.gov.ph/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -50,12 +53,13 @@ const format = (value: string): string => {
 };
 
 /** Philippine Identification System Number. */
-const philid: Validator = {
+const philid: CountryValidator<"PH"> = {
   name: "Philippine Identification System Number",
   localName: "PhilSys Card Number",
   abbreviation: "PhilID",
   aliases: ["PhilID", "PhilSys", "Philippine ID"] as const,
   candidatePattern: "\\d{4}-\\d{4}-\\d{4}-\\d{4}",
+  scope: "country",
   country: "PH",
   entityType: "person",
   description:

@@ -10,7 +10,10 @@
  * @see https://www.bzst.de/DE/Privatpersonen/SteuerlicheIdentifikationsnummer/steuerlicheidentifikationsnummer_node.html
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   mod1110validate,
@@ -118,7 +121,7 @@ const generate = (): string => {
 };
 
 /** German Personal Tax ID. */
-const idnr: Validator = {
+const idnr: CountryValidator<"DE"> = {
   name: "German Tax ID",
   localName: "Steuerliche Identifikationsnummer",
   abbreviation: "IdNr",
@@ -128,6 +131,7 @@ const idnr: Validator = {
     "Steuer-ID",
   ] as const,
   candidatePattern: "\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}",
+  scope: "country",
   country: "DE",
   entityType: "person",
   sourceUrl:

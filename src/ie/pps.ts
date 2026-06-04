@@ -9,7 +9,10 @@
  * @see https://www.gov.ie/en/service/12e6de-get-a-personal-public-service-pps-number/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -84,12 +87,13 @@ const generate = (): string => {
 };
 
 /** Irish Personal Public Service Number. */
-const pps: Validator = {
+const pps: CountryValidator<"IE"> = {
   name: "Irish Personal ID",
   localName: "Personal Public Service Number",
   abbreviation: "PPS",
   aliases: ["PPS number", "PPSN", "RSI number"] as const,
   candidatePattern: "\\d{7}[A-Z]{1,2}",
+  scope: "country",
   country: "IE",
   entityType: "person",
   sourceUrl:

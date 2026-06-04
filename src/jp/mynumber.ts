@@ -9,7 +9,10 @@
  * @see https://en.wikipedia.org/wiki/Individual_Number
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -74,7 +77,7 @@ const generate = (): string => {
 };
 
 /** Japanese Individual Number (My Number). */
-const mynumber: Validator = {
+const mynumber: CountryValidator<"JP"> = {
   name: "Japanese Individual Number",
   localName: "マイナンバー",
   abbreviation: "My Number",
@@ -84,6 +87,7 @@ const mynumber: Validator = {
     "個人番号",
   ] as const,
   candidatePattern: "\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}",
+  scope: "country",
   country: "JP",
   entityType: "person",
   description:

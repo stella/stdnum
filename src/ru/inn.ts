@@ -10,7 +10,10 @@
  * @see https://www.nalog.gov.ru/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -88,12 +91,13 @@ const generate = (): string => {
 };
 
 /** Russian Taxpayer Identification Number. */
-const inn: Validator = {
+const inn: CountryValidator<"RU"> = {
   name: "Russian Tax ID",
   localName: "Идентификационный номер налогоплательщика",
   abbreviation: "ИНН",
   aliases: ["ИНН", "INN"] as const,
   candidatePattern: "\\d{10,12}",
+  scope: "country",
   country: "RU",
   entityType: "any",
   lengths: [10, 12] as const,

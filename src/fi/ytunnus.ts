@@ -8,7 +8,10 @@
  * @see https://www.ytj.fi/en/index/businessid.html
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -59,7 +62,7 @@ const generate = (): string => {
 };
 
 /** Finnish Business ID. */
-const ytunnus: Validator = {
+const ytunnus: CountryValidator<"FI"> = {
   name: "Finnish Business ID",
   localName: "Y-tunnus",
   abbreviation: "Y-tunnus",
@@ -69,6 +72,7 @@ const ytunnus: Validator = {
     "FO-nummer",
   ] as const,
   candidatePattern: "\\d{7}-\\d",
+  scope: "country",
   country: "FI",
   entityType: "company",
   sourceUrl: "https://www.ytj.fi/en/index/businessid.html",

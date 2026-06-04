@@ -14,7 +14,10 @@ const generate = (): string => randomDigits(11);
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Georgia-TIN.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -47,12 +50,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Georgian Personal Identification Number. */
-const pin: Validator = {
+const pin: CountryValidator<"GE"> = {
   name: "Georgian Personal ID",
   localName: "პირადი ნომერი",
   abbreviation: "PIN",
   aliases: ["პირადი ნომერი", "PIN"] as const,
   candidatePattern: "\\d{11}",
+  scope: "country",
   country: "GE",
   entityType: "any",
   lengths: [9, 11] as const,

@@ -9,7 +9,10 @@
  * @see https://abr.business.gov.au/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -65,12 +68,13 @@ const generate = (): string => {
 };
 
 /** Australian Business Number. */
-const abn: Validator = {
+const abn: CountryValidator<"AU"> = {
   name: "Australian Business Number",
   localName: "Australian Business Number",
   abbreviation: "ABN",
   aliases: ["ABN", "Australian Business Number"] as const,
   candidatePattern: "\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}",
+  scope: "country",
   country: "AU",
   entityType: "company",
   sourceUrl: "https://abr.business.gov.au/",

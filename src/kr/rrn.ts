@@ -12,7 +12,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -157,7 +157,7 @@ const generate = (): string => {
 };
 
 /** Korean Resident Registration Number. */
-const rrn: Validator<ParsedPersonId> = {
+const rrn: CountryValidator<"KR", ParsedPersonId> = {
   name: "Korean Resident Registration Number",
   localName: "주민등록번호",
   abbreviation: "RRN",
@@ -167,6 +167,7 @@ const rrn: Validator<ParsedPersonId> = {
     "Resident Registration Number",
   ] as const,
   candidatePattern: "\\d{6}[\\s-]?\\d{7}",
+  scope: "country",
   country: "KR",
   entityType: "person",
   description:

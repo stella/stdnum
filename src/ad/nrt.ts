@@ -25,7 +25,10 @@ const generate = (): string => {
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Andorra-TIN.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import {
@@ -98,12 +101,13 @@ const format = (value: string): string => {
 };
 
 /** Andorra NRT (Número de Registre Tributari). */
-const nrt: Validator = {
+const nrt: CountryValidator<"AD"> = {
   name: "Andorra Tax Number",
   localName: "Número de Registre Tributari",
   abbreviation: "NRT",
   aliases: ["NRT", "Número de Registre Tributari"] as const,
   candidatePattern: "[A-Z]-?\\d{6}-?[A-Z]",
+  scope: "country",
   country: "AD",
   entityType: "any",
   sourceUrl:

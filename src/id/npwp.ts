@@ -10,7 +10,10 @@
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Indonesia-TIN.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -160,13 +163,14 @@ const generate = (): string => {
 };
 
 /** Indonesian Taxpayer Identification Number. */
-const npwp: Validator = {
+const npwp: CountryValidator<"ID"> = {
   name: "Indonesian Taxpayer Identification Number",
   localName: "Nomor Pokok Wajib Pajak",
   abbreviation: "NPWP",
   aliases: ["NPWP", "Nomor Pokok Wajib Pajak"] as const,
   candidatePattern:
     "\\d{2}\\.?\\d{3}\\.?\\d{3}\\.?\\d-?\\d{3}\\.?\\d{3}",
+  scope: "country",
   country: "ID",
   entityType: "any",
   lengths: [15, 16],

@@ -13,7 +13,10 @@
  * @see https://www.taxes.gov.az/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -106,12 +109,13 @@ const generate = (): string => {
  *
  * Examples sourced from python-stdnum test suite.
  */
-const voen: Validator = {
+const voen: CountryValidator<"AZ"> = {
   name: "Azerbaijani Tax ID",
   localName: "Vergi Ödəyicisinin Eyniləşdirmə Nömrəsi",
   abbreviation: "VÖEN",
   aliases: ["VÖEN"] as const,
   candidatePattern: "\\d{10}",
+  scope: "country",
   country: "AZ",
   entityType: "any",
   lengths: [10] as const,

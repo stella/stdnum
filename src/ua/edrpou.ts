@@ -10,7 +10,10 @@
  * @see https://usr.minjust.gov.ua/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -83,12 +86,13 @@ const generate = (): string => {
 };
 
 /** Ukrainian Company Register Number. */
-const edrpou: Validator = {
+const edrpou: CountryValidator<"UA"> = {
   name: "Ukrainian Company Register Number",
   localName: "ЄДРПОУ",
   abbreviation: "ЄДРПОУ",
   aliases: ["ЄДРПОУ", "EDRPOU"] as const,
   candidatePattern: "\\d{8}",
+  scope: "country",
   country: "UA",
   entityType: "company",
   lengths: [8] as const,

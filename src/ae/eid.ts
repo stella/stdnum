@@ -10,7 +10,10 @@
  * @see https://u.ae/en/information-and-services/visa-and-emirates-id/emirates-id
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnChecksum,
@@ -77,12 +80,13 @@ const generate = (): string => {
 };
 
 /** UAE Emirates ID. */
-const eid: Validator = {
+const eid: CountryValidator<"AE"> = {
   name: "Emirates ID",
   localName: "رقم الهوية",
   abbreviation: "EID",
   aliases: ["EID", "Emirates ID", "رقم الهوية"] as const,
   candidatePattern: "784-\\d{4}-\\d{7}-\\d",
+  scope: "country",
   country: "AE",
   entityType: "person",
   lengths: [15],

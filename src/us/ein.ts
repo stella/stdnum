@@ -101,7 +101,10 @@ const generate = (): string => {
  * @see https://www.irs.gov/businesses/small-businesses-self-employed/how-eins-are-assigned-and-valid-ein-prefixes
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
@@ -232,7 +235,7 @@ const format = (value: string): string => {
 };
 
 /** U.S. Employer Identification Number. */
-const ein: Validator = {
+const ein: CountryValidator<"US"> = {
   name: "Employer Identification Number",
   localName: "Employer Identification Number",
   abbreviation: "EIN",
@@ -242,6 +245,7 @@ const ein: Validator = {
     "Federal Tax ID",
   ] as const,
   candidatePattern: "\\d{2}-?\\d{7}",
+  scope: "country",
   country: "US",
   entityType: "company",
   sourceUrl:

@@ -7,7 +7,10 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/luxembourg-tin.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -60,12 +63,13 @@ const generate = (): string => {
 };
 
 /** Luxembourg VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"LU"> = {
   name: "Luxembourg VAT Number",
   localName: "Numéro de TVA",
   abbreviation: "TVA",
   aliases: ["TVA", "numéro d'identification TVA"] as const,
   candidatePattern: "LU\\d{8}",
+  scope: "country",
   country: "LU",
   entityType: "company",
   sourceUrl: "https://pfi.public.lu/",

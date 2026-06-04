@@ -11,7 +11,10 @@ const generate = (): string => randomDigits(8);
  * @see https://en.wikipedia.org/wiki/Documento_Nacional_de_Identidad_(Argentina)
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -53,7 +56,7 @@ const format = (value: string): string => {
 };
 
 /** Argentine National Identity Document. */
-const dni: Validator = {
+const dni: CountryValidator<"AR"> = {
   name: "Argentine Identity Card",
   localName: "Documento Nacional de Identidad",
   abbreviation: "DNI",
@@ -63,6 +66,7 @@ const dni: Validator = {
     "Documento de Identidad",
   ] as const,
   candidatePattern: "\\d{1,2}\\.?\\d{3}\\.?\\d{3}",
+  scope: "country",
   country: "AR",
   entityType: "person",
   sourceUrl:

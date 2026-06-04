@@ -9,7 +9,10 @@
  * @see https://www.anaf.ro/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -69,7 +72,7 @@ const generate = (): string => {
 };
 
 /** Romanian VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"RO"> = {
   name: "Romanian VAT Number",
   localName: "Cod de Identificare Fiscală",
   abbreviation: "CIF",
@@ -80,6 +83,7 @@ const vat: Validator = {
     "cod fiscal",
   ] as const,
   candidatePattern: "RO\\d{2,10}",
+  scope: "country",
   country: "RO",
   entityType: "any",
   sourceUrl: "https://www.anaf.ro/",

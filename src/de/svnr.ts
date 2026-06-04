@@ -9,7 +9,10 @@
  * @see https://de.wikipedia.org/wiki/Sozialversicherungsnummer
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import {
@@ -137,7 +140,7 @@ const generate = (): string => {
 };
 
 /** German Social Insurance Number. */
-const svnr: Validator = {
+const svnr: CountryValidator<"DE"> = {
   name: "German Social Insurance Number",
   localName: "Sozialversicherungsnummer",
   abbreviation: "SVNR",
@@ -147,6 +150,7 @@ const svnr: Validator = {
     "Versicherungsnummer",
   ] as const,
   candidatePattern: "\\d{2}\\s?\\d{6}\\s?[A-Z]\\s?\\d{3}",
+  scope: "country",
   country: "DE",
   entityType: "person",
   description:

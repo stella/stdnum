@@ -13,7 +13,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -131,13 +131,14 @@ const generate = (): string => {
 };
 
 /** Polish National Identification Number. */
-const pesel: Validator<ParsedPersonId> = {
+const pesel: CountryValidator<"PL", ParsedPersonId> = {
   name: "Polish National ID",
   localName:
     "Powszechny Elektroniczny System Ewidencji Ludności",
   abbreviation: "PESEL",
   aliases: ["PESEL"] as const,
   candidatePattern: "\\d{11}",
+  scope: "country",
   country: "PL",
   entityType: "person",
   sourceUrl:

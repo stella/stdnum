@@ -8,7 +8,10 @@
  * @see https://pt.wikipedia.org/wiki/Cartão_de_cidadão
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomChar, randomDigits } from "#util/generate";
@@ -80,7 +83,7 @@ const generate = (): string => {
 };
 
 /** Portuguese Identity Card number. */
-const cc: Validator = {
+const cc: CountryValidator<"PT"> = {
   name: "Portuguese Identity Card",
   localName: "Cartão de Cidadão",
   abbreviation: "CC",
@@ -90,6 +93,7 @@ const cc: Validator = {
     "número de identificação civil",
   ] as const,
   candidatePattern: "\\d{8}\\s?\\d\\s?[A-Z]{2}\\d",
+  scope: "country",
   country: "PT",
   entityType: "person",
   description:

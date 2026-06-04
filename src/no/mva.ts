@@ -7,7 +7,10 @@
  * @see https://www.skatteetaten.no/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 import {
   validate as validateOrgnr,
   generate as generateOrgnr,
@@ -53,12 +56,13 @@ const format = (value: string): string => {
 const generate = (): string => generateOrgnr() + "MVA";
 
 /** Norwegian VAT Number. */
-const mva: Validator = {
+const mva: CountryValidator<"NO"> = {
   name: "Norwegian VAT Number",
   localName: "Merverdiavgift",
   abbreviation: "MVA",
   aliases: ["MVA-nummer", "organisasjonsnummer"] as const,
   candidatePattern: "NO\\d{9}MVA",
+  scope: "country",
   country: "NO",
   entityType: "company",
   sourceUrl: "https://www.skatteetaten.no/",

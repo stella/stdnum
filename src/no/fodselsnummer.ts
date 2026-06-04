@@ -11,7 +11,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -172,12 +172,16 @@ const generate = (): string => {
 };
 
 /** Norwegian Birth Number. */
-const fodselsnummer: Validator<ParsedPersonId> = {
+const fodselsnummer: CountryValidator<
+  "NO",
+  ParsedPersonId
+> = {
   name: "Norwegian Birth Number",
   localName: "Fødselsnummer",
   abbreviation: "Fødselsnr",
   aliases: ["fødselsnummer", "personnummer"] as const,
   candidatePattern: "\\d{11}",
+  scope: "country",
   country: "NO",
   entityType: "person",
   sourceUrl: "https://www.skatteetaten.no/",

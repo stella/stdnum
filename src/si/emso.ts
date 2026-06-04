@@ -18,7 +18,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
@@ -152,7 +152,7 @@ const generate = (): string => {
 };
 
 /** Slovenian Unique Master Citizen Number. */
-const emso: Validator<ParsedPersonId> = {
+const emso: CountryValidator<"SI", ParsedPersonId> = {
   name: "Slovenian Personal ID",
   localName: "Enotna matična številka občana",
   abbreviation: "EMŠO",
@@ -161,6 +161,7 @@ const emso: Validator<ParsedPersonId> = {
     "enotna matična številka občana",
   ] as const,
   candidatePattern: "\\d{13}",
+  scope: "country",
   country: "SI",
   entityType: "person",
   sourceUrl:

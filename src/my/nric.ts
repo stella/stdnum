@@ -15,7 +15,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -234,12 +234,13 @@ const generate = (): string => {
 };
 
 /** Malaysian National Registration Identity Card. */
-const nric: Validator<ParsedPersonId> = {
+const nric: CountryValidator<"MY", ParsedPersonId> = {
   name: "Malaysian National Registration Identity Card Number",
   localName: "Nombor Kad Pengenalan",
   abbreviation: "NRIC",
   aliases: ["NRIC", "MyKad", "kad pengenalan"] as const,
   candidatePattern: "\\d{6}-?\\d{2}-?\\d{4}",
+  scope: "country",
   country: "MY",
   entityType: "person",
   description:

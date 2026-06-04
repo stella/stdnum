@@ -23,7 +23,10 @@ const generate = (): string => {
  * @see https://www.tse.go.cr/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -91,12 +94,13 @@ const format = (value: string): string => {
  *
  * Examples sourced from python-stdnum test suite.
  */
-const cpf: Validator = {
+const cpf: CountryValidator<"CR"> = {
   name: "Costa Rican Physical Person ID",
   localName: "Cédula de Persona Física",
   abbreviation: "CPF",
   aliases: ["CPF", "cédula de persona física"] as const,
   candidatePattern: "\\d{9,12}",
+  scope: "country",
   country: "CR",
   entityType: "person",
   lengths: [10] as const,

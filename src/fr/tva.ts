@@ -10,7 +10,10 @@
  * @see https://www.economie.gouv.fr/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -122,7 +125,7 @@ const generate = (): string => {
 };
 
 /** French VAT Number. */
-const tva: Validator = {
+const tva: CountryValidator<"FR"> = {
   name: "French VAT Number",
   localName: "Numéro de TVA intracommunautaire",
   abbreviation: "TVA",
@@ -132,6 +135,7 @@ const tva: Validator = {
     "FR VAT",
   ] as const,
   candidatePattern: "FR[A-Z0-9]{2}\\d{9}",
+  scope: "country",
   country: "FR",
   entityType: "company",
   sourceUrl: "https://www.economie.gouv.fr/",

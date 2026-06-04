@@ -31,7 +31,10 @@ const generate = (): string => {
  * @see https://de.wikipedia.org/wiki/Handelsregister_(Deutschland)
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
@@ -92,7 +95,7 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** German Company Register Number. */
-const handelsreg: Validator = {
+const handelsreg: CountryValidator<"DE"> = {
   name: "German Company Register Number",
   localName: "Handelsregisternummer",
   abbreviation: "HReg",
@@ -103,6 +106,7 @@ const handelsreg: Validator = {
     "HRA",
   ] as const,
   candidatePattern: "(?:HRA|HRB|GnR|PR|VR)\\s*\\d{1,7}",
+  scope: "country",
   country: "DE",
   entityType: "company",
   sourceUrl:

@@ -29,7 +29,10 @@ const generate = (): string => {
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/mauritius-tin.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -78,12 +81,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Mauritius Business Registration Number. */
-const brn: Validator = {
+const brn: CountryValidator<"MU"> = {
   name: "Mauritius Business Registration Number",
   localName: "Business Registration Number",
   abbreviation: "BRN",
   aliases: ["BRN", "Business Registration Number"] as const,
   candidatePattern: "[A-Z]\\d{8}",
+  scope: "country",
   country: "MU",
   entityType: "any",
   compact,

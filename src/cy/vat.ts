@@ -7,7 +7,10 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/cyprus-tin.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -110,12 +113,13 @@ const generate = (): string => {
 };
 
 /** Cypriot VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"CY"> = {
   name: "Cypriot VAT Number",
   localName: "Αριθμός Εγγραφής Φ.Π.Α.",
   abbreviation: "ΦΠΑ",
   aliases: ["ΦΠΑ", "VAT CY"] as const,
   candidatePattern: "CY\\d{8}[A-Z]",
+  scope: "country",
   country: "CY",
   entityType: "company",
   sourceUrl: "https://www.mof.gov.cy/",

@@ -18,7 +18,10 @@ const generate = (): string => {
  * @see https://www.tatime.gov.al/eng/c/4/103/business-lifecycle
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -57,13 +60,14 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Albanian NIPT (tax identification number). */
-const nipt: Validator = {
+const nipt: CountryValidator<"AL"> = {
   name: "Albanian Tax Number",
   localName:
     "Numri i Identifikimit për Personin e Tatueshëm",
   abbreviation: "NIPT",
   aliases: ["NIPT", "NUIS"] as const,
   candidatePattern: "[A-Z]\\d{8}[A-Z]",
+  scope: "country",
   country: "AL",
   entityType: "any",
   sourceUrl: "https://www.tatime.gov.al/",

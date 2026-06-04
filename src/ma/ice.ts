@@ -9,7 +9,10 @@
  * @see https://www.ice.gov.ma/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { mod97 } from "#checksums/mod97";
 import { clean } from "#util/clean";
@@ -54,7 +57,7 @@ const generate = (): string => {
 };
 
 /** Moroccan Company Identification Number. */
-const ice: Validator = {
+const ice: CountryValidator<"MA"> = {
   name: "Moroccan Company Identification Number",
   localName: "Identifiant Commun de l'Entreprise",
   abbreviation: "ICE",
@@ -63,6 +66,7 @@ const ice: Validator = {
     "Identifiant Commun de l'Entreprise",
   ] as const,
   candidatePattern: "\\d{15}",
+  scope: "country",
   country: "MA",
   entityType: "company",
   compact,

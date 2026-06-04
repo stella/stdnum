@@ -25,7 +25,10 @@ const generate = (): string => {
  * @see https://en.wikipedia.org/wiki/Permanent_account_number
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import {
@@ -70,12 +73,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Indian Permanent Account Number. */
-const pan: Validator = {
+const pan: CountryValidator<"IN"> = {
   name: "Indian Permanent Account Number",
   localName: "Permanent Account Number",
   abbreviation: "PAN",
   aliases: ["PAN", "Permanent Account Number"] as const,
   candidatePattern: "[A-Z]{5}\\d{4}[A-Z]",
+  scope: "country",
   country: "IN",
   entityType: "any",
   lengths: [10],

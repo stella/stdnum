@@ -9,7 +9,10 @@
  * @see https://www.aade.gr/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -72,7 +75,7 @@ const generate = (): string => {
 };
 
 /** Greek VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"GR"> = {
   name: "Greek VAT Number",
   localName: "Αριθμός Φορολογικού Μητρώου",
   abbreviation: "ΑΦΜ",
@@ -82,6 +85,7 @@ const vat: Validator = {
     "AFM",
   ] as const,
   candidatePattern: "EL\\d{9}",
+  scope: "country",
   country: "GR",
   entityType: "any",
   sourceUrl: "https://www.aade.gr/",

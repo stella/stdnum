@@ -16,7 +16,10 @@ const generate = (): string => {
  * @see https://www.justiz.gv.at/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -54,12 +57,13 @@ const format = (value: string): string =>
   `FN ${compact(value)}`;
 
 /** Austrian Company Register Number. */
-const businessid: Validator = {
+const businessid: CountryValidator<"AT"> = {
   name: "Austrian Company Register Number",
   localName: "Firmenbuchnummer",
   abbreviation: "FN",
   aliases: ["Firmenbuchnummer", "FN", "FBN"] as const,
   candidatePattern: "FN\\s?\\d{5,6}[a-z]?",
+  scope: "country",
   country: "AT",
   entityType: "company",
   sourceUrl: "https://www.justiz.gv.at/",

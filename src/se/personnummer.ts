@@ -11,7 +11,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import {
@@ -154,28 +154,30 @@ const generate = (): string => {
 };
 
 /** Swedish Personal Identity Number. */
-const personnummer: Validator<ParsedPersonId> = {
-  name: "Swedish Personal ID",
-  localName: "Personnummer",
-  abbreviation: "PN",
-  aliases: [
-    "personnummer",
-    "personnr",
-    "pers.nr",
-    "personal identity number",
-  ] as const,
-  candidatePattern: "\\d{6,8}-\\d{4}",
-  country: "SE",
-  entityType: "person",
-  sourceUrl:
-    "https://www.skatteverket.se/privat/folkbokforing/personnummer.4.3810a01c150939e893f18c29.html",
-  examples: ["880320-0016"] as const,
-  compact,
-  format,
-  parse,
-  validate,
-  generate,
-};
+const personnummer: CountryValidator<"SE", ParsedPersonId> =
+  {
+    name: "Swedish Personal ID",
+    localName: "Personnummer",
+    abbreviation: "PN",
+    aliases: [
+      "personnummer",
+      "personnr",
+      "pers.nr",
+      "personal identity number",
+    ] as const,
+    candidatePattern: "\\d{6,8}-\\d{4}",
+    scope: "country",
+    country: "SE",
+    entityType: "person",
+    sourceUrl:
+      "https://www.skatteverket.se/privat/folkbokforing/personnummer.4.3810a01c150939e893f18c29.html",
+    examples: ["880320-0016"] as const,
+    compact,
+    format,
+    parse,
+    validate,
+    generate,
+  };
 
 export default personnummer;
 export { compact, format, parse, validate, generate };

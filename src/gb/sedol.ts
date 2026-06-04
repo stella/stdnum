@@ -10,7 +10,10 @@
  * @see https://en.wikipedia.org/wiki/SEDOL
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomChar } from "#util/generate";
@@ -109,7 +112,7 @@ const generate = (): string => {
 };
 
 /** Stock Exchange Daily Official List number. */
-const sedol: Validator = {
+const sedol: CountryValidator<"GB"> = {
   name: "Stock Exchange Daily Official List number",
   localName: "Stock Exchange Daily Official List number",
   abbreviation: "SEDOL",
@@ -118,6 +121,7 @@ const sedol: Validator = {
     "Stock Exchange Daily Official List",
   ] as const,
   candidatePattern: "[B-DF-HJ-NP-TV-Z0-9]{6}\\d",
+  scope: "country",
   country: "GB",
   entityType: "any",
   sourceUrl: "https://en.wikipedia.org/wiki/SEDOL",

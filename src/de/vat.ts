@@ -9,7 +9,10 @@
  * @see https://www.bzst.de/SharedDocs/Downloads/DE/Merkblaetter/ust_idnr_aufbau.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   mod1110checkDigit,
@@ -70,7 +73,7 @@ const generate = (): string => {
 };
 
 /** German VAT Identification Number. */
-const vat: Validator = {
+const vat: CountryValidator<"DE"> = {
   name: "German VAT Number",
   localName: "Umsatzsteuer-Identifikationsnummer",
   abbreviation: "USt-IdNr.",
@@ -80,6 +83,7 @@ const vat: Validator = {
     "VAT DE",
   ] as const,
   candidatePattern: "DE\\d{9}",
+  scope: "country",
   country: "DE",
   entityType: "company",
   description:

@@ -8,7 +8,10 @@
  * @see https://en.wikipedia.org/wiki/Social_Insurance_Number
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -66,7 +69,7 @@ const generate = (): string => {
 };
 
 /** Canadian Social Insurance Number. */
-const sin: Validator = {
+const sin: CountryValidator<"CA"> = {
   name: "Social Insurance Number",
   localName: "Social Insurance Number",
   abbreviation: "SIN",
@@ -76,6 +79,7 @@ const sin: Validator = {
     "NAS",
   ] as const,
   candidatePattern: "\\d{3}-?\\d{3}-?\\d{3}",
+  scope: "country",
   country: "CA",
   entityType: "person",
   sourceUrl:

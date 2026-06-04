@@ -15,15 +15,19 @@ import {
   parse,
   validate,
 } from "../cz/rc";
-import type { ParsedPersonId, Validator } from "../types";
+import type {
+  ParsedPersonId,
+  CountryValidator,
+} from "../types";
 
 /** Slovak Birth Number. */
-const rc: Validator<ParsedPersonId> = {
+const rc: CountryValidator<"SK", ParsedPersonId> = {
   name: "Slovak Birth Number",
   localName: "Rodné číslo",
   abbreviation: "RČ",
   aliases: ["rodné číslo", "RČ"] as const,
   candidatePattern: "\\d{6}/\\d{3,4}",
+  scope: "country",
   country: "SK",
   entityType: "person",
   sourceUrl: "https://www.minv.sk/",

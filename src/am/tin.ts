@@ -16,7 +16,10 @@ const generate = (): string => randomDigits(8);
  * @see https://www.src.am/en/taxpayerSearchSystemPage/112
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -49,12 +52,13 @@ const validate = (value: string): ValidateResult => {
 const format = (value: string): string => compact(value);
 
 /** Armenian Tax Identification Number. */
-const tin: Validator = {
+const tin: CountryValidator<"AM"> = {
   name: "Armenian Tax ID",
   localName: "Հարկ վճարողի հաշվառման համար",
   abbreviation: "TIN",
   aliases: ["ՀՎՀՀ", "TIN"] as const,
   candidatePattern: "\\d{8}",
+  scope: "country",
   country: "AM",
   entityType: "any",
   lengths: [8] as const,

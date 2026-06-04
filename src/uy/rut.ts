@@ -13,7 +13,10 @@
  * @see https://www.agesic.gub.uy/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -125,12 +128,13 @@ const generate = (): string => {
  *
  * Examples sourced from python-stdnum test suite.
  */
-const rut: Validator = {
+const rut: CountryValidator<"UY"> = {
   name: "Uruguayan Tax ID",
   localName: "Registro Único Tributario",
   abbreviation: "RUT",
   aliases: ["RUT", "Registro Único Tributario"] as const,
   candidatePattern: "\\d{12}",
+  scope: "country",
   country: "UY",
   entityType: "any",
   lengths: [12] as const,

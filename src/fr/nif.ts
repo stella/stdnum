@@ -8,7 +8,10 @@
  * @see https://www.impots.gouv.fr/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -69,7 +72,7 @@ const generate = (): string => {
 };
 
 /** French Tax Identification Number. */
-const nif: Validator = {
+const nif: CountryValidator<"FR"> = {
   name: "French Tax ID",
   localName: "Numéro d'Identification Fiscale",
   abbreviation: "NIF",
@@ -79,6 +82,7 @@ const nif: Validator = {
     "numéro d'identification fiscale",
   ] as const,
   candidatePattern: "\\d{13}",
+  scope: "country",
   country: "FR",
   entityType: "person",
   sourceUrl: "https://www.impots.gouv.fr/",

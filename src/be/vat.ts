@@ -8,7 +8,10 @@
  * @see https://www.oecd.org/content/dam/oecd/en/topics/policy-issue-focus/aeoi/belgium-tin.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -82,7 +85,7 @@ const generate = (): string => {
 };
 
 /** Belgian VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"BE"> = {
   name: "Belgian VAT Number",
   localName: "BTW-identificatienummer",
   abbreviation: "BTW",
@@ -93,6 +96,7 @@ const vat: Validator = {
     "ondernemingsnummer",
   ] as const,
   candidatePattern: "BE0?\\d{9,10}",
+  scope: "country",
   country: "BE",
   entityType: "company",
   sourceUrl: "https://finances.belgium.be/",

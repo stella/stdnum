@@ -11,7 +11,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import { clean } from "#util/clean";
@@ -114,12 +114,13 @@ const generate = (): string => {
 };
 
 /** Danish Personal Identification Number. */
-const cpr: Validator<ParsedPersonId> = {
+const cpr: CountryValidator<"DK", ParsedPersonId> = {
   name: "Danish Personal ID",
   localName: "Det Centrale Personregister",
   abbreviation: "CPR",
   aliases: ["CPR-nummer", "personnummer", "CPR"] as const,
   candidatePattern: "\\d{6}-?\\d{4}",
+  scope: "country",
   country: "DK",
   entityType: "person",
   sourceUrl: "https://cpr.dk/",

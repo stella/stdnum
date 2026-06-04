@@ -13,10 +13,10 @@ import {
   generate,
   validate,
 } from "../cz/ico";
-import type { Validator } from "../types";
+import type { CountryValidator } from "../types";
 
 /** Slovak Company Identification Number. */
-const ico: Validator = {
+const ico: CountryValidator<"SK"> = {
   name: "Slovak Company ID",
   localName: "Identifikačné číslo organizácie",
   abbreviation: "IČO",
@@ -25,6 +25,7 @@ const ico: Validator = {
     "identifikačné číslo organizácie",
   ] as const,
   candidatePattern: "\\d{8}",
+  scope: "country",
   country: "SK",
   entityType: "company",
   sourceUrl: "https://www.statistics.sk/",

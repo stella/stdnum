@@ -10,7 +10,10 @@
  * @see https://es.wikipedia.org/wiki/Número_de_identificación_tributaria
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -86,7 +89,7 @@ const generate = (): string => {
 };
 
 /** Colombian tax identification number. */
-const nit: Validator = {
+const nit: CountryValidator<"CO"> = {
   name: "Número de Identificación Tributaria",
   localName: "Número de Identificación Tributaria",
   abbreviation: "NIT",
@@ -95,6 +98,7 @@ const nit: Validator = {
     "Número de Identificación Tributaria",
   ] as const,
   candidatePattern: "\\d{9,10}-?\\d",
+  scope: "country",
   country: "CO",
   entityType: "any",
   description: "Tax identifier issued by the DIAN",

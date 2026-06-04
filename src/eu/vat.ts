@@ -40,7 +40,10 @@ import roVat from "../ro/vat";
 import seVat from "../se/vat";
 import siVat from "../si/vat";
 import skDic from "../sk/dic";
-import type { Validator, ValidateResult } from "../types";
+import type {
+  GlobalValidator,
+  ValidateResult,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomInt } from "#util/generate";
@@ -197,7 +200,8 @@ const generate = (): string => {
 };
 
 /** European Union VAT Number. */
-const euVat: Validator = {
+const euVat: GlobalValidator = {
+  scope: "global",
   name: "EU VAT Number",
   localName: "EU VAT Number",
   abbreviation: "EU VAT",

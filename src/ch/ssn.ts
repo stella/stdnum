@@ -8,7 +8,10 @@
  * @see https://www.bsv.admin.ch/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -70,7 +73,7 @@ const generate = (): string => {
 };
 
 /** Swiss Social Security Number. */
-const ssn: Validator = {
+const ssn: CountryValidator<"CH"> = {
   name: "Swiss Social Security Number",
   localName: "AHV-Versichertennummer",
   abbreviation: "AHV",
@@ -81,6 +84,7 @@ const ssn: Validator = {
     "AHV",
   ] as const,
   candidatePattern: "756\\.?\\d{4}\\.?\\d{4}\\.?\\d{2}",
+  scope: "country",
   country: "CH",
   entityType: "person",
   sourceUrl: "https://www.bsv.admin.ch/",

@@ -10,7 +10,10 @@
  */
 
 import { validate as validateRc } from "../cz/rc";
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -85,13 +88,14 @@ const generate = (): string => {
 };
 
 /** Slovak VAT Number. */
-const dic: Validator = {
+const dic: CountryValidator<"SK"> = {
   name: "Slovak VAT Number",
   localName:
     "Identifikačné číslo pre daň z pridanej hodnoty",
   abbreviation: "IČ DPH",
   aliases: ["DIČ", "daňové identifikačné číslo"] as const,
   candidatePattern: "SK\\d{10}",
+  scope: "country",
   country: "SK",
   entityType: "company",
   sourceUrl: "https://www.financnasprava.sk/",

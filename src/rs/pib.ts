@@ -8,7 +8,10 @@
  * @see https://www.purs.gov.rs/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -62,12 +65,13 @@ const generate = (): string => {
 };
 
 /** Serbian Tax Identification Number. */
-const pib: Validator = {
+const pib: CountryValidator<"RS"> = {
   name: "Serbian Tax ID",
   localName: "Poreski identifikacioni broj",
   abbreviation: "PIB",
   aliases: ["PIB", "poreski identifikacioni broj"] as const,
   candidatePattern: "\\d{9}",
+  scope: "country",
   country: "RS",
   entityType: "any",
   lengths: [9] as const,

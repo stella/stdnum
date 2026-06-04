@@ -11,7 +11,10 @@
  */
 
 import { twoPassCheck } from "../ee/ik";
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { isValidDate } from "#util/date";
@@ -100,12 +103,13 @@ const generate = (): string => {
 };
 
 /** Lithuanian Personal Code. */
-const asmens: Validator = {
+const asmens: CountryValidator<"LT"> = {
   name: "Lithuanian Personal ID",
   localName: "Asmens kodas",
   abbreviation: "AK",
   aliases: ["asmens kodas", "AK"] as const,
   candidatePattern: "[3-6]\\d{10}",
+  scope: "country",
   country: "LT",
   entityType: "person",
   sourceUrl: "https://www.registrucentras.lt/",

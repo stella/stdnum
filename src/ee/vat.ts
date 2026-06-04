@@ -8,7 +8,10 @@
  * @see https://www.emta.ee/en
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -62,7 +65,7 @@ const generate = (): string => {
 };
 
 /** Estonian VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"EE"> = {
   name: "Estonian VAT Number",
   localName: "Käibemaksukohustuslase number",
   abbreviation: "KMKR",
@@ -71,6 +74,7 @@ const vat: Validator = {
     "KMKR",
   ] as const,
   candidatePattern: "EE\\d{9}",
+  scope: "country",
   country: "EE",
   entityType: "company",
   sourceUrl: "https://www.emta.ee/en",

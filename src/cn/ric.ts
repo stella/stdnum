@@ -14,7 +14,7 @@
 import type {
   ParsedPersonId,
   ValidateResult,
-  Validator,
+  CountryValidator,
 } from "../types";
 
 import {
@@ -155,12 +155,13 @@ const generate = (): string => {
 };
 
 /** Chinese Resident Identity Card number. */
-const ric: Validator<ParsedPersonId> = {
+const ric: CountryValidator<"CN", ParsedPersonId> = {
   name: "Chinese Resident Identity Card",
   localName: "居民身份证号码",
   abbreviation: "RIC",
   aliases: ["身份证", "居民身份证号码", "RIC"] as const,
   candidatePattern: "\\d{17}[\\dX]",
+  scope: "country",
   country: "CN",
   entityType: "person",
   description:

@@ -23,7 +23,10 @@ const generate = (): string => {
  * @see https://www.oecd.org/tax/automatic-exchange/crs-implementation-and-assistance/tax-identification-numbers/Anguilla-TIN.pdf
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -74,12 +77,13 @@ const format = (value: string): string => {
  * (format-only validation, no published check
  * digit algorithm).
  */
-const tin: Validator = {
+const tin: CountryValidator<"AI"> = {
   name: "Anguilla Tax Identification Number",
   localName: "Tax Identification Number",
   abbreviation: "TIN",
   aliases: ["TIN"] as const,
   candidatePattern: "\\d{11}",
+  scope: "country",
   country: "AI",
   entityType: "any",
   lengths: [10] as const,

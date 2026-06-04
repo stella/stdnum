@@ -19,7 +19,10 @@
  * @see https://en.wikipedia.org/wiki/CNPJ
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -128,7 +131,7 @@ const generate = (): string => {
  * - Petrobras: 33.000.167/0001-01
  * - Banco do Brasil: 00.000.000/0001-91
  */
-const cnpj: Validator = {
+const cnpj: CountryValidator<"BR"> = {
   name: "Brazilian CNPJ",
   localName: "Cadastro Nacional da Pessoa Jurídica",
   abbreviation: "CNPJ",
@@ -138,6 +141,7 @@ const cnpj: Validator = {
   ] as const,
   candidatePattern:
     "\\d{2}\\.?\\d{3}\\.?\\d{3}/?\\d{4}-?\\d{2}",
+  scope: "country",
   country: "BR",
   entityType: "company",
   sourceUrl: "https://www.gov.br/receitafederal/",

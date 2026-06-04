@@ -16,7 +16,10 @@
  * @see https://www.bahrain.bh/wps/portal/IDInfo_en
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -68,12 +71,13 @@ const generate = (): string => {
 };
 
 /** Bahrain Central Population Registration number. */
-const cpr: Validator = {
+const cpr: CountryValidator<"BH"> = {
   name: "Central Population Registration Number",
   localName: "الرقم السكاني",
   abbreviation: "CPR",
   aliases: ["CPR", "الرقم السكاني"] as const,
   candidatePattern: "\\d{9}",
+  scope: "country",
   country: "BH",
   entityType: "person",
   lengths: [9] as const,

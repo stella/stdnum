@@ -8,7 +8,10 @@
  * @see https://en.wikipedia.org/wiki/Corporate_Number_(Japan)
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -67,12 +70,13 @@ const generate = (): string => {
 };
 
 /** Japanese Corporate Number. */
-const cn: Validator = {
+const cn: CountryValidator<"JP"> = {
   name: "Japanese Corporate Number",
   localName: "法人番号",
   abbreviation: "CN",
   aliases: ["法人番号", "Corporate Number"] as const,
   candidatePattern: "\\d{13}",
+  scope: "country",
   country: "JP",
   entityType: "company",
   description:

@@ -8,7 +8,10 @@
  * @see https://www.government.nl/topics/personal-data/citizen-service-number-bsn
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -62,7 +65,7 @@ const generate = (): string => {
 };
 
 /** Dutch Citizen Service Number. */
-const bsn: Validator = {
+const bsn: CountryValidator<"NL"> = {
   name: "Dutch Citizen Service Number",
   localName: "Burgerservicenummer",
   abbreviation: "BSN",
@@ -72,6 +75,7 @@ const bsn: Validator = {
     "sofinummer",
   ] as const,
   candidatePattern: "\\d{9}",
+  scope: "country",
   country: "NL",
   entityType: "person",
   sourceUrl:

@@ -9,7 +9,10 @@
  * @see https://www.ato.gov.au/Individuals/Tax-file-number/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -64,12 +67,13 @@ const generate = (): string => {
 };
 
 /** Australian Tax File Number. */
-const tfn: Validator = {
+const tfn: CountryValidator<"AU"> = {
   name: "Tax File Number",
   localName: "Tax File Number",
   abbreviation: "TFN",
   aliases: ["TFN", "Tax File Number"] as const,
   candidatePattern: "\\d{8,9}",
+  scope: "country",
   country: "AU",
   entityType: "person",
   sourceUrl:

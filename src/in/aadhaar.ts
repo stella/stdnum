@@ -10,7 +10,10 @@
  * @see https://uidai.gov.in/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   verhoeffValidate,
@@ -73,12 +76,13 @@ const generate = (): string => {
 };
 
 /** Indian Unique Identity Number. */
-const aadhaar: Validator = {
+const aadhaar: CountryValidator<"IN"> = {
   name: "Indian Unique Identity Number",
   localName: "Aadhaar",
   abbreviation: "Aadhaar",
   aliases: ["Aadhaar", "आधार"] as const,
   candidatePattern: "\\d{4}\\s?\\d{4}\\s?\\d{4}",
+  scope: "country",
   country: "IN",
   entityType: "person",
   lengths: [12],

@@ -7,7 +7,10 @@
  * @see https://en.wikipedia.org/wiki/Unique_citizenship_number
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits } from "#util/generate";
@@ -61,7 +64,7 @@ const generate = (): string => {
 };
 
 /** Bulgarian Personal Number of a Foreigner. */
-const pnf: Validator = {
+const pnf: CountryValidator<"BG"> = {
   name: "Bulgarian Foreigner Number",
   localName: "Личен номер на чужденец",
   abbreviation: "ЛНЧ",
@@ -71,6 +74,7 @@ const pnf: Validator = {
     "PNF",
   ] as const,
   candidatePattern: "\\d{10}",
+  scope: "country",
   country: "BG",
   entityType: "person",
   sourceUrl:

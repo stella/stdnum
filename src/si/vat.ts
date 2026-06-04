@@ -10,7 +10,10 @@
  * @see https://spot.gov.si/en/info/taxes/value-added-tax-vat
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { weightedSum } from "#checksums/weighted-sum";
 import { clean } from "#util/clean";
@@ -85,7 +88,7 @@ const generate = (): string => {
 };
 
 /** Slovenian VAT Number. */
-const vat: Validator = {
+const vat: CountryValidator<"SI"> = {
   name: "Slovenian VAT Number",
   localName: "Davčna številka",
   abbreviation: "DDV",
@@ -94,6 +97,7 @@ const vat: Validator = {
     "identifikacijska številka za DDV",
   ] as const,
   candidatePattern: "SI\\d{8}",
+  scope: "country",
   country: "SI",
   entityType: "company",
   sourceUrl: "https://www.fu.gov.si/",

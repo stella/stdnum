@@ -17,7 +17,10 @@
  * @see https://www.sri.gob.ec/
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -169,7 +172,7 @@ const generate = (): string => {
 };
 
 /** Ecuadorian tax identification number. */
-const ruc: Validator = {
+const ruc: CountryValidator<"EC"> = {
   name: "Registro Único de Contribuyentes",
   localName: "Registro Único de Contribuyentes",
   abbreviation: "RUC",
@@ -178,6 +181,7 @@ const ruc: Validator = {
     "Registro Único de Contribuyentes",
   ] as const,
   candidatePattern: "\\d{13}",
+  scope: "country",
   country: "EC",
   entityType: "any",
   description:

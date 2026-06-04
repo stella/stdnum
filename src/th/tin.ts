@@ -10,7 +10,10 @@
  * @see https://en.wikipedia.org/wiki/Thai_identity_card
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomInt } from "#util/generate";
@@ -79,12 +82,13 @@ const generate = (): string => {
 };
 
 /** Thai Tax Identification Number. */
-const tin: Validator = {
+const tin: CountryValidator<"TH"> = {
   name: "Thai Tax Identification Number",
   localName: "เลขประจำตัวผู้เสียภาษี",
   abbreviation: "TIN",
   aliases: ["เลขประจำตัวผู้เสียภาษี", "TIN"] as const,
   candidatePattern: "\\d{13}",
+  scope: "country",
   country: "TH",
   entityType: "any",
   description:

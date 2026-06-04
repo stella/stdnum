@@ -135,7 +135,20 @@ export type ParsedIdentifier =
   | ParsedBirthDate
   | ParsedPersonId;
 
-export type Validator<
+/**
+ * Whether an identifier is scoped to a single
+ * country (e.g. Czech IČO) or is cross-border by
+ * design (e.g. IBAN, ISIN, BIC, LEI, EU VAT).
+ *
+ * Modeled as a discriminated union so consumers
+ * can group, filter, and exhaustively switch
+ * without null-checking `country`.
+ */
+export type ValidatorScope =
+  | { scope: "country"; country: CountryCode }
+  | { scope: "global" };
+
+type ValidatorBase<
   TParsed extends ParsedIdentifier | undefined = undefined,
 > = {
   /** English name. */
@@ -144,8 +157,6 @@ export type Validator<
   localName: string;
   /** Common abbreviation (e.g. "IČO"). */
   abbreviation: string;
-  /** Country this identifier belongs to. */
-  country?: CountryCode;
   /** What kind of entity this identifies. */
   entityType: "person" | "company" | "any";
 
@@ -225,6 +236,26 @@ export type Validator<
 } & ([TParsed] extends [undefined]
   ? unknown
   : { parse: (value: string) => TParsed | null });
+
+export type CountryValidator<
+  TCountry extends CountryCode = CountryCode,
+  TParsed extends ParsedIdentifier | undefined = undefined,
+> = ValidatorBase<TParsed> & {
+  scope: "country";
+  country: TCountry;
+};
+
+export type GlobalValidator<
+  TParsed extends ParsedIdentifier | undefined = undefined,
+> = ValidatorBase<TParsed> & {
+  scope: "global";
+};
+
+export type Validator<
+  TParsed extends ParsedIdentifier | undefined = undefined,
+> =
+  | CountryValidator<CountryCode, TParsed>
+  | GlobalValidator<TParsed>;
 
 export type ParsableValidator<
   TParsed extends ParsedIdentifier = ParsedIdentifier,

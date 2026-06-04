@@ -16,7 +16,10 @@
  * @see https://en.wikipedia.org/wiki/CUIT_(Argentina)
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import { clean } from "#util/clean";
 import { randomDigits, randomPick } from "#util/generate";
@@ -120,7 +123,7 @@ const generate = (): string => {
  * Examples sourced from python-stdnum test suite
  * (ar.cuit module).
  */
-const cuit: Validator = {
+const cuit: CountryValidator<"AR"> = {
   name: "Argentine Tax ID",
   localName: "Clave Única de Identificación Tributaria",
   abbreviation: "CUIT",
@@ -130,6 +133,7 @@ const cuit: Validator = {
     "Clave Única de Identificación Tributaria",
   ] as const,
   candidatePattern: "\\d{2}-?\\d{8}-?\\d",
+  scope: "country",
   country: "AR",
   entityType: "any",
   compact,

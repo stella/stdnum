@@ -7,7 +7,10 @@
  * @see https://en.wikipedia.org/wiki/Israeli_identity_card
  */
 
-import type { ValidateResult, Validator } from "../types";
+import type {
+  ValidateResult,
+  CountryValidator,
+} from "../types";
 
 import {
   luhnValidate,
@@ -58,7 +61,7 @@ const generate = (): string => {
 };
 
 /** Israeli Identity Number (Mispar Zehut). */
-const idnr: Validator = {
+const idnr: CountryValidator<"IL"> = {
   name: "Israeli Identity Number",
   localName: "מספר זהות",
   abbreviation: "ת.ז.",
@@ -68,6 +71,7 @@ const idnr: Validator = {
     "ID number",
   ] as const,
   candidatePattern: "\\d{9}",
+  scope: "country",
   country: "IL",
   entityType: "person",
   compact,
