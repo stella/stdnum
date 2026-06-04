@@ -40,7 +40,7 @@ jobs:
       github.event_name != 'workflow_dispatch'
       || inputs.publish_to_npm != true
       || github.ref == 'refs/heads/main'
-    uses: stella/.github/.github/workflows/npm-version-preflight.yml@a34fb098e5a47e63362a2da0c3fcaccf8eae1c35
+    uses: stella/.github/.github/workflows/npm-version-preflight.yml@1cf2d8c99d478e37c653dbe25816bfe5b26157ce
     with:
       package-files: package.json
       publish-to-npm: >-
@@ -110,7 +110,7 @@ jobs:
       needs.preflight.outputs.already-released != 'true'
       && (github.event_name == 'push'
           || (inputs.publish_to_npm && github.ref == 'refs/heads/main'))
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@a34fb098e5a47e63362a2da0c3fcaccf8eae1c35
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@1cf2d8c99d478e37c653dbe25816bfe5b26157ce
     with:
       package-files: package.json
       publish-to-npm: >-
