@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/assets/banner.png" alt="Stella" width="100%" />
+  <img src=".github/assets/banner.png" alt="stella" width="100%" />
 </p>
 
 # @stll/stdnum
@@ -18,9 +18,6 @@ npm install @stll/stdnum
 # or
 bun add @stll/stdnum
 ```
-
-Tagged releases are published from GitHub Actions
-with npm provenance enabled.
 
 ## Usage
 
