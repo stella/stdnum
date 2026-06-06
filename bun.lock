@@ -22,7 +22,7 @@
         "rut.js": "^2.1.0",
         "stdnum": "^1.11.14",
         "tsdown": "0.22.1",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
         "validate-polish": "^2.1.40",
       },
     },
@@ -258,7 +258,7 @@
 
     "semver": ["semver@7.8.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-rkVq3IXh+4FDGch+KwzX3aV9W3kO54GyEgpvBzSyctDA6Xtd7RJQV1xmXbeQp5v7+VzLOfVqiutSE6GICgPFvg=="],
 
-    "stdnum": ["stdnum@1.11.14", "", {}, "sha512-Z6QOLdM5+d0lo0UJrByze6y+RciCfdGrUgTjFh3W0bDHMZk+SvGdGP57wq5UHV1RK9A+lE2Ni6TOuylawUv07Q=="],
+    "stdnum": ["stdnum@1.12.0", "", {}, "sha512-WbhfzvVREMZyJqXEGV4+Nx0ZitHInbgtyy2/7LXypS72ZE+pkpHNu66RWEK9SHmv2irvFXbFlWmCKqmE9Z9q6g=="],
 
     "tinyexec": ["tinyexec@1.2.2", "", {}, "sha512-M/Q0B2cp4K7kynaT/vnED1j8TlLY+Pp7C6Wl2bl/7u/F0mUVwdyOpwomQb8JpYLitHUssAJRmLZdMCGsrx7i+g=="],
 
@@ -272,7 +272,7 @@
 
     "tslib": ["tslib@2.4.1", "", {}, "sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA=="],
 
-    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
+    "typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
 
     "unconfig-core": ["unconfig-core@7.5.0", "", { "dependencies": { "@quansync/fs": "^1.0.0", "quansync": "^1.0.0" } }, "sha512-Su3FauozOGP44ZmKdHy2oE6LPjk51M/TRRjHv2HNCWiDvfvCoxC2lno6jevMA91MYAdCdwP05QnWdWpSbncX/w=="],
 

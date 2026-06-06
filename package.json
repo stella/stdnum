@@ -939,7 +939,7 @@
     "rut.js": "^2.1.0",
     "stdnum": "^1.11.14",
     "tsdown": "0.22.1",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "validate-polish": "^2.1.40"
   },
   "engines": {
