@@ -35,15 +35,11 @@ const decodeBase58 = (value: string): Uint8Array | null => {
   }
 
   const bytes: number[] = [];
-  if (decoded > 0n) {
-    let hex = decoded.toString(16);
-    if (hex.length % 2 === 1) {
-      hex = `0${hex}`;
-    }
-    for (let i = 0; i < hex.length; i += 2) {
-      bytes.push(Number.parseInt(hex.slice(i, i + 2), 16));
-    }
+  while (decoded > 0n) {
+    bytes.push(Number(decoded & 0xffn));
+    decoded >>= 8n;
   }
+  bytes.reverse();
 
   let leadingZeros = 0;
   while (value.charAt(leadingZeros) === "1") {

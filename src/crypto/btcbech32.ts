@@ -23,6 +23,7 @@ const BECH32M_CONST = 0x2bc830a3;
 const CHECKSUM_LENGTH = 6;
 const MIN_DATA_LENGTH = 11;
 const MAX_DATA_LENGTH = 71;
+const BC_HRP_EXPANSION = [3, 3, 0, 2, 3] as const;
 
 const compact = (value: string): string =>
   clean(value, " ").toLowerCase();
@@ -40,18 +41,6 @@ const polymod = (values: readonly number[]): number => {
     }
   }
   return chk >>> 0;
-};
-
-const hrpExpand = (hrp: string): number[] => {
-  const expanded: number[] = [];
-  for (const ch of hrp) {
-    expanded.push(ch.charCodeAt(0) >>> 5);
-  }
-  expanded.push(0);
-  for (const ch of hrp) {
-    expanded.push(ch.charCodeAt(0) & 31);
-  }
-  return expanded;
 };
 
 const dataValues = (data: string): number[] | null => {
@@ -123,13 +112,13 @@ const validateBech32 = (
   if (values === null)
     return { valid: false, code: "format" };
 
-  const expanded = hrpExpand("bc");
+  const expanded: number[] = Array.from(BC_HRP_EXPANSION);
   for (const value of values) {
     expanded.push(value);
   }
   const check = polymod(expanded);
 
-  const version = values.at(0);
+  const version = values[0];
   if (version === undefined || version > 16) {
     return { valid: false, code: "component" };
   }
