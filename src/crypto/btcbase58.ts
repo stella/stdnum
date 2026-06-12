@@ -19,6 +19,7 @@ const BASE58_ALPHABET =
 
 const MIN_LENGTH = 26;
 const MAX_LENGTH = 35;
+const DECODED_ADDRESS_LENGTH = 25;
 const CHECKSUM_LENGTH = 4;
 const MAINNET_P2PKH_VERSION = 0x00;
 const MAINNET_P2SH_VERSION = 0x05;
@@ -86,6 +87,12 @@ const validate = (value: string): ValidateResult => {
     return err(
       "INVALID_FORMAT",
       "Bitcoin Base58Check address contains invalid characters",
+    );
+  }
+  if (decoded.length !== DECODED_ADDRESS_LENGTH) {
+    return err(
+      "INVALID_LENGTH",
+      "Bitcoin Base58Check address decoded payload must be 25 bytes",
     );
   }
 

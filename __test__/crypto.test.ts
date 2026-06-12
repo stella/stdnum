@@ -1,6 +1,23 @@
 import { describe, expect, test } from "bun:test";
 
 import { crypto } from "../src";
+import { keccak256 } from "../src/_checksums/keccak";
+
+const hex = (bytes: Uint8Array): string => {
+  let result = "";
+  for (const byte of bytes) {
+    result += byte.toString(16).padStart(2, "0");
+  }
+  return result;
+};
+
+describe("keccak256", () => {
+  test("matches canonical empty digest", () => {
+    expect(hex(keccak256(new Uint8Array()))).toBe(
+      "c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+    );
+  });
+});
 
 describe("crypto.eth", () => {
   test("valid Ethereum address", () => {
@@ -27,6 +44,23 @@ describe("crypto.eth", () => {
       expect(r.error.code).toBe("INVALID_FORMAT");
     }
   });
+
+  test("valid EIP-55 mixed-case checksum", () => {
+    const r = crypto.eth.validate(
+      "0x52908400098527886E0F7030069857D2E4169EE7",
+    );
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid EIP-55 mixed-case checksum", () => {
+    const r = crypto.eth.validate(
+      "0x52908400098527886e0F7030069857D2E4169EE7",
+    );
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
 });
 
 describe("crypto.btcbase58", () => {
@@ -51,6 +85,16 @@ describe("crypto.btcbase58", () => {
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("invalid decoded payload length", () => {
+    const r = crypto.btcbase58.validate(
+      "111111111111111111117K4nzc",
+    );
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
     }
   });
 });
