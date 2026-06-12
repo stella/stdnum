@@ -1,6 +1,7 @@
 {
   "extends": "@stll/typescript-config/library.json",
   "compilerOptions": {
+    "types": ["node"],
     "paths": {
       "#checksums/*": ["./src/_checksums/*"],
       "#util/*": ["./src/_util/*"]
