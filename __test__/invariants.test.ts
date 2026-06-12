@@ -60,6 +60,7 @@ const INTERNATIONAL_NAMESPACES = new Set([
   "lei",
   "luhn",
   "eu",
+  "crypto",
 ]);
 
 const VALID_ENTITY_TYPES = new Set([

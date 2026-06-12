@@ -67,15 +67,16 @@ runtime against coverage.
 
 ### International
 
-| Identifier         | Module       | Type    |
-| ------------------ | ------------ | ------- |
-| BIC (ISO 9362)     | `bic`        | company |
-| Credit Card (Luhn) | `creditcard` | any     |
-| IBAN               | `iban`       | any     |
-| ISIN (ISO 6166)    | `isin`       | any     |
-| LEI                | `lei`        | company |
-| Luhn               | `luhn`       | any     |
-| EU VAT             | `eu/vat`     | company |
+| Identifier         | Module          | Type    |
+| ------------------ | --------------- | ------- |
+| BIC (ISO 9362)     | `bic`           | company |
+| Credit Card (Luhn) | `creditcard`    | any     |
+| Crypto Wallet      | `crypto/wallet` | any     |
+| IBAN               | `iban`          | any     |
+| ISIN (ISO 6166)    | `isin`          | any     |
+| LEI                | `lei`           | company |
+| Luhn               | `luhn`          | any     |
+| EU VAT             | `eu/vat`        | company |
 
 ### Countries
 
@@ -156,6 +157,7 @@ runtime against coverage.
 |                           | `fr/siret`         | SIRET        |
 |                           | `fr/tva`           | TVA          |
 | GB United Kingdom         | `gb/nino`          | NINO         |
+|                           | `gb/nhs`           | NHS          |
 |                           | `gb/sedol`         | SEDOL        |
 |                           | `gb/utr`           | UTR          |
 |                           | `gb/vat`           | VAT          |
