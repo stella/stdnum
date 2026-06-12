@@ -2,6 +2,47 @@ import { describe, expect, test } from "bun:test";
 
 import { gb } from "../src";
 
+describe("gb.nhs", () => {
+  test("valid NHS number", () => {
+    const r = gb.nhs.validate("4010232137");
+    expect(r.valid).toBe(true);
+    if (r.valid) expect(r.compact).toBe("4010232137");
+  });
+
+  test("valid with spaces", () => {
+    const r = gb.nhs.validate("401 023 2137");
+    expect(r.valid).toBe(true);
+  });
+
+  test("invalid checksum", () => {
+    const r = gb.nhs.validate("4010232138");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("wrong length", () => {
+    const r = gb.nhs.validate("401023213");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_LENGTH");
+    }
+  });
+
+  test("format", () => {
+    expect(gb.nhs.format("4010232137")).toBe(
+      "401 023 2137",
+    );
+  });
+
+  test("metadata", () => {
+    expect(gb.nhs.abbreviation).toBe("NHS");
+    expect(gb.nhs.country).toBe("GB");
+    expect(gb.nhs.entityType).toBe("person");
+  });
+});
+
 describe("gb.vat", () => {
   const valid = ["980780684", "340804329", "346270013"];
 

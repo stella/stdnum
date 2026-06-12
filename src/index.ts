@@ -23,6 +23,7 @@ export { default as isin } from "./isin";
 export { default as lei } from "./lei";
 export { default as luhn } from "./luhn";
 
+export * as crypto from "./crypto/mod";
 export * as ad from "./ad/mod";
 export * as ae from "./ae/mod";
 export * as ai from "./ai/mod";

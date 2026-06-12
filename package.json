@@ -247,6 +247,26 @@
       "import": "./dist/creditcard.js",
       "default": "./dist/creditcard.js"
     },
+    "./crypto/btcbase58": {
+      "types": "./dist/crypto/btcbase58.d.ts",
+      "import": "./dist/crypto/btcbase58.js",
+      "default": "./dist/crypto/btcbase58.js"
+    },
+    "./crypto/btcbech32": {
+      "types": "./dist/crypto/btcbech32.d.ts",
+      "import": "./dist/crypto/btcbech32.js",
+      "default": "./dist/crypto/btcbech32.js"
+    },
+    "./crypto/eth": {
+      "types": "./dist/crypto/eth.d.ts",
+      "import": "./dist/crypto/eth.js",
+      "default": "./dist/crypto/eth.js"
+    },
+    "./crypto/wallet": {
+      "types": "./dist/crypto/wallet.d.ts",
+      "import": "./dist/crypto/wallet.js",
+      "default": "./dist/crypto/wallet.js"
+    },
     "./cu/ni": {
       "types": "./dist/cu/ni.d.ts",
       "import": "./dist/cu/ni.js",
@@ -411,6 +431,11 @@
       "types": "./dist/fr/tva.d.ts",
       "import": "./dist/fr/tva.js",
       "default": "./dist/fr/tva.js"
+    },
+    "./gb/nhs": {
+      "types": "./dist/gb/nhs.d.ts",
+      "import": "./dist/gb/nhs.js",
+      "default": "./dist/gb/nhs.js"
     },
     "./gb/nino": {
       "types": "./dist/gb/nino.d.ts",
