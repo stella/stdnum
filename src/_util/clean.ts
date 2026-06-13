@@ -63,7 +63,12 @@ const CHAR_REGEX = new RegExp(
 
 /**
  * Normalize Unicode artifacts to ASCII
- * equivalents and strip the given characters.
+ * equivalents, strip the given characters, and
+ * remove surrounding whitespace.
+ *
+ * The trailing trim removes whitespace outside the
+ * separator set (newlines, tabs) so validators
+ * accept copy-pasted input.
  *
  * @param value - The input string
  * @param strip - Characters to remove
@@ -82,5 +87,5 @@ export const clean = (
       result = result.replaceAll(ch, "");
     }
   }
-  return result;
+  return result.trim();
 };

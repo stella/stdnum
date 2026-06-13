@@ -15,6 +15,16 @@ describe("no.orgnr", () => {
     expect(r.valid).toBe(true);
   });
 
+  test("valid with surrounding whitespace", () => {
+    // compact() trims newlines/tabs that the separator set misses.
+    expect(no.orgnr.validate("988077917\n").valid).toBe(
+      true,
+    );
+    expect(no.orgnr.validate("\t 988077917 ").valid).toBe(
+      true,
+    );
+  });
+
   test("invalid checksum", () => {
     const r = no.orgnr.validate("988077918");
     expect(r.valid).toBe(false);
