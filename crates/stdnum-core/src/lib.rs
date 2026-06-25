@@ -2,6 +2,15 @@
 
 const SPANISH_CHECK_LETTERS: &str = "TRWAGMYFPDXBNJZSQVHLCKE";
 const SPANISH_CIF_LETTERS: &str = "JABCDEFGHI";
+const INVALID_NINO_PREFIXES: &[(char, char)] = &[
+  ('B', 'G'),
+  ('G', 'B'),
+  ('N', 'K'),
+  ('K', 'N'),
+  ('T', 'N'),
+  ('N', 'T'),
+  ('Z', 'Z'),
+];
 
 const SUPPORTED_VALIDATOR_IDS: &[&str] = &[
   "au.abn", "br.cnpj", "br.cpf", "cz.dic", "cz.rc", "es.cif", "es.dni",
@@ -215,6 +224,7 @@ fn cnpj_digit(chars: &[char], weights: &[u32]) -> u32 {
 }
 
 fn cnpj_char_value(ch: char) -> Option<u32> {
+  // Alphanumeric CNPJ uses ord(ch) - ord('0'), so A maps to 17.
   (ch.is_ascii_digit() || ch.is_ascii_uppercase())
     .then(|| u32::from(ch).saturating_sub(u32::from('0')))
 }
@@ -409,22 +419,20 @@ fn validate_gb_nino(value: &str) -> bool {
   if !matches!(suffix, 'A' | 'B' | 'C' | 'D') {
     return false;
   }
-  let prefix = [first, second].iter().collect::<String>();
-  !matches!(
-    prefix.as_str(),
-    "BG" | "GB" | "NK" | "KN" | "TN" | "NT" | "ZZ"
-  )
+  !INVALID_NINO_PREFIXES.contains(&(first, second))
 }
 
 fn validate_es_dni(value: &str) -> bool {
   let compact = compact_without(value, &[' ', '-']).to_uppercase();
-  let chars = compact.chars().collect::<Vec<_>>();
-  let Ok(chars) = <[char; 9]>::try_from(chars) else {
+  let mut chars = compact.chars();
+  let Some(letter) = chars.next_back() else {
     return false;
   };
-  let [d0, d1, d2, d3, d4, d5, d6, d7, letter] = chars;
-  let digits = [d0, d1, d2, d3, d4, d5, d6, d7];
-  let Some(number) = number_from_ascii_digits(&digits) else {
+  let digits = chars.as_str();
+  if digits.is_empty() || digits.len() > 8 {
+    return false;
+  }
+  let Ok(number) = digits.parse::<u32>() else {
     return false;
   };
   spanish_check_letter(number) == Some(letter)
@@ -553,12 +561,9 @@ fn validate_no_mva(value: &str) -> bool {
   if compact.starts_with("NO") {
     compact = compact.chars().skip(2).collect();
   }
-  if !compact.ends_with("MVA") {
+  let Some(digits) = compact.strip_suffix("MVA") else {
     return false;
-  }
-  let digits = compact
-    .get(..compact.len().saturating_sub(3))
-    .unwrap_or_default();
+  };
   validate_no_orgnr(digits)
 }
 
@@ -587,6 +592,7 @@ fn validate_us_routing(value: &str) -> bool {
 }
 
 fn compact_without(value: &str, skipped: &[char]) -> String {
+  let value = value.trim();
   let mut compact = String::with_capacity(value.len());
   for ch in value.chars() {
     let Some(normalized) = normalized_char(ch) else {
@@ -596,7 +602,7 @@ fn compact_without(value: &str, skipped: &[char]) -> String {
       compact.push(normalized);
     }
   }
-  compact.trim().to_owned()
+  compact
 }
 
 const fn normalized_char(ch: char) -> Option<char> {
@@ -627,17 +633,20 @@ const fn normalized_char(ch: char) -> Option<char> {
   }
 }
 
-fn decimal_digits(value: &str) -> Vec<u32> {
-  decimal_digit_chars(value)
-    .filter_map(|ch| ch.to_digit(10))
-    .collect()
-}
-
 fn decimal_digits_strict(value: &str) -> Vec<u32> {
-  if !is_ascii_digits(value) {
+  if value.is_empty() {
     return Vec::new();
   }
-  decimal_digits(value)
+  let mut digits = Vec::with_capacity(value.len());
+  for ch in value.chars() {
+    if !ch.is_ascii_digit() {
+      return Vec::new();
+    }
+    if let Some(digit) = ch.to_digit(10) {
+      digits.push(digit);
+    }
+  }
+  digits
 }
 
 fn decimal_digit_chars(value: &str) -> impl Iterator<Item = char> + '_ {
@@ -715,11 +724,14 @@ mod tests {
     let cases = [
       ("au.abn", "51 824 753 556"),
       ("br.cnpj", "33.000.167/0001-01"),
+      ("br.cnpj", "12ABC34501DE35"),
       ("br.cpf", "390.533.447-05"),
       ("cz.dic", "CZ25123891"),
+      ("cz.dic", "CZ600000008"),
       ("cz.rc", "710319/2745"),
       ("es.cif", "A13585625"),
       ("es.dni", "54362315K"),
+      ("es.dni", "1234567L"),
       ("es.nie", "X5253868R"),
       ("gb.nhs", "401 023 2137"),
       ("gb.nino", "AB 12 34 56 C"),

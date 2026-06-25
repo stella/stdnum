@@ -2,7 +2,7 @@
  * DNI (Documento Nacional de Identidad).
  *
  * Spanish national identity document number.
- * 8 digits followed by a check letter determined
+ * 1-8 digits followed by a check letter determined
  * by the remainder of dividing the number by 23.
  *
  * @see https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/dni/
@@ -25,24 +25,26 @@ const compact = (value: string): string =>
 
 const validate = (value: string): ValidateResult => {
   const v = compact(value);
-  if (v.length !== 9) {
+  if (v.length < 2 || v.length > 9) {
     return err(
       "INVALID_LENGTH",
-      "DNI must be 8 digits and 1 letter",
+      "DNI must be 1-8 digits and 1 letter",
     );
   }
 
-  const digits = v.slice(0, 8);
-  const letter = v[8];
+  const digits = v.slice(0, -1);
+  const letter = v.slice(-1);
 
   if (!isdigits(digits)) {
     return err(
       "INVALID_FORMAT",
-      "DNI must start with 8 digits",
+      "DNI must start with 1-8 digits",
     );
   }
 
-  const expected = CHECK_LETTERS[Number(digits) % 23];
+  const expected = CHECK_LETTERS.charAt(
+    Number(digits) % 23,
+  );
   if (letter !== expected) {
     return err(
       "INVALID_CHECKSUM",
