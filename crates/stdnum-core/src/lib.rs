@@ -534,17 +534,24 @@ fn spanish_cif_checksum(digits: &[char; 7]) -> Option<u32> {
 }
 
 fn validate_au_abn(value: &str) -> bool {
+  const WEIGHTS: [i32; 11] = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+
   let compact = compact_without(value, &[' ', '-']);
-  let Ok(mut digits) = <[u32; 11]>::try_from(decimal_digits_strict(&compact))
+  let Ok(digits) = <[u32; 11]>::try_from(decimal_digits_strict(&compact))
   else {
     return false;
   };
-  let Some(first) = digits.first_mut() else {
-    return false;
-  };
-  *first = (*first).saturating_sub(1);
-  weighted_sum(&digits, &[10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19])
-    .is_multiple_of(89)
+  let mut sum = 0_i32;
+  for (index, (digit, weight)) in digits.iter().zip(WEIGHTS).enumerate() {
+    let digit = i32::try_from(*digit).unwrap_or(i32::MAX);
+    let adjusted = if index == 0 {
+      digit.saturating_sub(1)
+    } else {
+      digit
+    };
+    sum = sum.saturating_add(adjusted.saturating_mul(weight));
+  }
+  sum.rem_euclid(89) == 0
 }
 
 fn validate_no_orgnr(value: &str) -> bool {
@@ -723,6 +730,7 @@ mod tests {
   fn validates_known_good_values() {
     let cases = [
       ("au.abn", "51 824 753 556"),
+      ("au.abn", "00000000019"),
       ("br.cnpj", "33.000.167/0001-01"),
       ("br.cnpj", "12ABC34501DE35"),
       ("br.cpf", "390.533.447-05"),
@@ -750,6 +758,7 @@ mod tests {
   fn rejects_known_bad_values() {
     let cases = [
       ("au.abn", "51 824 753 557"),
+      ("au.abn", "00000000000"),
       ("br.cnpj", "33.000.167/0001-02"),
       ("br.cpf", "111.111.111-11"),
       ("cz.dic", "CZ25123890"),
