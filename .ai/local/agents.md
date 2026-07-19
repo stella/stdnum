@@ -28,16 +28,9 @@ or running a CLI script (`bun run oracle`, `bun scripts/catalog.ts`,
 `bun run sync-exports`). Bun is the toolchain; standard commands are listed above and
 in `CONTRIBUTING.md`.
 
-- Build caveat: run the build as `bun --bun run build`, not `bun run build`. Plain
-  `bun run build` executes the `tsdown` bin under Node (via its `#!/usr/bin/env node`
-  shebang), so tsdown's `auto` config loader cannot import `tsdown.config.ts` and
-  fails with `Failed to import module "unrun"` (an uninstalled optional peer). The
-  `--bun` flag forces the Bun runtime, letting tsdown load the TS config natively.
-  CI passes with plain `bun run build` only because `oven-sh/setup-bun` runs it under
-  Bun.
 - `.ai/shared` is a git submodule needed only for `bun run sync-ai` /
   `bun run sync-ai:check`. Core work (`bun test`, `bun run lint`, `bun run typecheck`,
-  `bun --bun run build`, `bun run oracle`) does not require it. If it is missing, run
+  `bun run build`, `bun run oracle`) does not require it. If it is missing, run
   `git submodule update --init`.
 - `bunfig.toml` sets a 5-day install quarantine (`minimumReleaseAge`); installs use the
   committed `bun.lock`, so this does not block `bun install`.

@@ -927,7 +927,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "bun --bun tsdown",
     "prepublishOnly": "bun run typecheck && bun run build && bun run sync-exports:check",
     "catalog": "bun scripts/catalog.ts",
     "sync-ai": "bash scripts/sync-ai-skills.sh",
