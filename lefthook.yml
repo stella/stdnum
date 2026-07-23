@@ -1,0 +1,36 @@
+# Opt-in git hooks.
+# To activate: bun run hooks:install
+# To deactivate: bun run hooks:uninstall
+#
+# These hooks are NOT auto-installed. Each developer
+# chooses whether to use them.
+
+no_auto_install: true
+
+pre-commit:
+  parallel: false
+  commands:
+    lint:
+      glob: "**/*.{ts,tsx,js,jsx,mjs}"
+      run: bun --bun oxlint -c oxlint.config.ts --deny-warnings --no-error-on-unmatched-pattern --fix {staged_files}
+      stage_fixed: true
+    format:
+      run: bun --bun oxfmt --no-error-on-unmatched-pattern {staged_files} "!.ai/**" "!.agents/**" "!.claude/**" "!AGENTS.md" "!CLAUDE.md" "!GEMINI.md"
+      stage_fixed: true
+    # Runs last (parallel: false, so ordering is honored) so it scans
+    # everything staged by lint/format's `stage_fixed`, not just what was
+    # staged before this hook ran.
+    secrets:
+      run: bun run secrets:check:staged
+
+pre-push:
+  parallel: true
+  commands:
+    typecheck:
+      run: bun run typecheck
+    format:
+      run: bun run format:check
+    ai-skills:
+      run: bun run sync-ai:check
+    test:
+      run: bun test

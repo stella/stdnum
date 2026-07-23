@@ -1,0 +1,75 @@
+name: Mutants
+
+# Mutation testing measures whether the test suite actually kills injected bugs
+# in the validation core, rather than just executing the code. It is slow (each
+# surviving mutant re-runs the tests), so it runs weekly and on demand.
+# Exploratory: surviving mutants are reported as an artifact, never a merge
+# gate. Tune the scope/timeout after observing the first runs.
+
+on:
+  schedule:
+    - cron: "0 4 * * 1" # Mondays 04:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mutants-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mutants:
+    name: cargo-mutants (validation core)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup Rust
+        run: |
+          rustup toolchain install 1.96.0 --profile minimal
+          rustup default 1.96.0
+
+      - name: Install pinned Rust tools (checksum-verified)
+        # nextest is the test runner used by cargo-mutants. taiki-e/install-action
+        # verifies release checksums, unlike a raw `curl | tar`.
+        uses: taiki-e/install-action@ed67fa35ac944f3a9b33f12c4dd43b6f31a47e20 # v2.83.3
+        with:
+          tool: nextest@0.9.140,cargo-mutants@27.1.0
+
+      - name: Cache Rust build
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-mutants-1.96.0-${{ hashFiles('Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mutants-1.96.0-
+
+      - name: Run cargo-mutants
+        # Scoped to the validation core (lib.rs). The fast unit cases
+        # (validates_known_good_values / rejects_known_bad_values) are the real
+        # mutant killers; the nextest filter drops the slow property tests so a
+        # weekly run stays within budget. Widen scope via sharding once real
+        # timings are known.
+        continue-on-error: true
+        run: |
+          cargo mutants \
+            --package stella-stdnum-core \
+            --test-tool nextest \
+            --file '**/lib.rs' \
+            --timeout-multiplier 5 \
+            --output mutants-out \
+            -- -E 'not test(/never_panics/)'
+
+      - name: Upload mutants report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
+        with:
+          name: mutants-report
+          path: mutants-out/
+          if-no-files-found: warn

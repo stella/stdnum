@@ -57,7 +57,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --frozen-lockfile
       - run: bun run lint
@@ -74,7 +74,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: "22.21.1"
@@ -91,7 +91,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --frozen-lockfile
       - run: bun test
@@ -107,7 +107,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --frozen-lockfile
       - run: ORACLE_SAMPLES=500 bun run oracle
@@ -123,12 +123,66 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - run: rustup toolchain install stable --profile minimal
-      - run: rustup default stable
-      - run: cargo fmt --all --check
-      - run: cargo clippy --workspace --all-targets --all-features -- -D warnings
-      - run: cargo test --workspace --all-targets --all-features
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+
+      - name: Setup Rust
+        # 1.96.0 is the pinned toolchain (rust-toolchain.toml); the nightly with
+        # rustc-dev is only needed to build the shared Dylint lint libraries.
+        run: |
+          rustup toolchain install 1.96.0 --profile minimal \
+            --component rustfmt,clippy
+          rustup toolchain install nightly-2026-04-16 --profile minimal \
+            --component rustc-dev \
+            --component llvm-tools-preview
+          rustup default 1.96.0
+          cargo install cargo-dylint --version 6.0.1 --locked
+          cargo install dylint-link --version 6.0.1 --locked
+
+      - name: Install pinned Rust CI tools (checksum-verified)
+        # Prebuilt nextest (the `cargo ci-test` runner), cargo-deny (the
+        # supply-chain gate, `cargo ci-deny`), and cargo-insta (the
+        # snapshot-hygiene gate, `cargo ci-snapshot`); avoids a from-source
+        # compile on every CI run. taiki-e/install-action verifies release
+        # checksums, unlike a raw `curl | tar`.
+        uses: taiki-e/install-action@ed67fa35ac944f3a9b33f12c4dd43b6f31a47e20 # v2.83.3
+        with:
+          tool: nextest@0.9.140,cargo-deny@0.20.2,cargo-insta@1.48.0
+
+      - name: Cache Rust build
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-1.96.0-${{ hashFiles('Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-1.96.0-
+
+      - name: Rust checks (fmt, clippy, dylint, test)
+        run: bun run rust:check
+
+      - name: Cargo deny (supply chain)
+        # Full-tree license/advisory/source/duplicate checks; complements the
+        # PR-scoped dependency-review action. See deny.toml.
+        run: bun run rust:deny
+
+      - name: Snapshot hygiene (insta)
+        # Rejects snapshot mismatches and orphaned .snap files no test
+        # references anymore.
+        run: bun run rust:snapshot-check
+
+      - name: Fuzz targets compile (anti-bitrot)
+        # The fuzz crate is its own workspace, so it is not covered by the
+        # `--workspace` build above and can silently stop compiling when the
+        # core public API changes. A compile-check (no nightly / cargo-fuzz /
+        # sanitizer needed) keeps the targets honest; actual fuzzing runs
+        # locally or on demand (see fuzz/README.md).
+        run: cargo check --manifest-path fuzz/Cargo.toml --bins
 
   build:
     name: Build
@@ -141,7 +195,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --frozen-lockfile
       - run: bun run typecheck
@@ -159,7 +213,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: "22.21.1"

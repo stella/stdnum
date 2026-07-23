@@ -6,9 +6,11 @@
       "stella-public-repo",
       "engineering",
       "typescript",
+      "rust",
       "testing",
       "linting"
     ],
     "local": ".ai/local/agents.md"
-  }
+  },
+  "sharedRootFiles": ["rustfmt.toml", "clippy.toml", "deny.toml"]
 }
