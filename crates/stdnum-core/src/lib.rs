@@ -2282,21 +2282,29 @@ fn validate_se_personnummer(value: &str) -> bool {
 }
 
 fn compact_se_personnummer(value: &str) -> String {
-  let mut compact = compact_without(value, &[' ', ':']);
-  if matches!(compact.len(), 10 | 12) {
-    let insertion = compact.len().saturating_sub(4);
-    compact.insert(insertion, '-');
+  let compact = compact_without(value, &[' ', ':']);
+  // Work on characters, not bytes: multibyte input would otherwise make the
+  // byte-offset insert/slice land mid-codepoint and panic. Non-ASCII input is
+  // rejected downstream by `is_ascii_digits`, so preserving it verbatim here is
+  // fine as long as we never break a codepoint.
+  let mut chars: Vec<char> = compact.chars().collect();
+  // A bare 10- or 12-character number gets the '-' century/serial separator
+  // inserted before the last four characters (matching src/se/personnummer.ts).
+  if matches!(chars.len(), 10 | 12) {
+    let insertion = chars.len().saturating_sub(4);
+    chars.insert(insertion, '-');
   }
-  if compact.len() < 5 {
-    return compact;
+  if chars.len() < 5 {
+    return chars.into_iter().collect();
   }
-  let split = compact.len().saturating_sub(5);
-  let prefix = compact
-    .get(..split)
-    .unwrap_or_default()
-    .replace(['-', '+'], "");
-  let suffix = compact.get(split..).unwrap_or_default();
-  format!("{prefix}{suffix}")
+  let split = chars.len().saturating_sub(5);
+  // Drop separators from the head; keep the trailing five characters intact.
+  chars
+    .iter()
+    .take(split)
+    .filter(|ch| !matches!(ch, '-' | '+'))
+    .chain(chars.iter().skip(split))
+    .collect()
 }
 
 fn valid_se_birth_date(value: &str) -> bool {
