@@ -1187,7 +1187,12 @@ fn validate_dk_cpr(value: &str) -> bool {
   let month = d2.saturating_mul(10).saturating_add(d3);
   let yy = d4.saturating_mul(10).saturating_add(d5);
   let year = dk_cpr_century(yy, d6).saturating_add(yy);
-  valid_date(year, month, day)
+  if !valid_date(year, month, day) {
+    return false;
+  }
+  // Reject future birth dates, matching src/dk/cpr.ts. Serial heads that map
+  // yy into the 2000s can otherwise resolve to a not-yet-assignable date.
+  (year, month, day) <= current_date()
 }
 
 const fn dk_cpr_century(yy: u32, serial_head: u32) -> u32 {
@@ -1338,14 +1343,19 @@ fn validate_es_nss(value: &str) -> bool {
     return false;
   };
   let check = c0.saturating_mul(10).saturating_add(c1);
+  // Widen to u64 before combining: for provinces 43-52 with an 8-digit
+  // affiliate the concatenated base exceeds u32::MAX (e.g. 493961665403 →
+  // 4_939_616_654), which would otherwise saturate and disagree with the TS
+  // validator.
   let base = if affiliate < 10_000_000 {
-    affiliate.saturating_add(province.saturating_mul(10_000_000))
+    u64::from(affiliate)
+      .saturating_add(u64::from(province).saturating_mul(10_000_000))
   } else {
-    province
+    u64::from(province)
       .saturating_mul(100_000_000)
-      .saturating_add(affiliate)
+      .saturating_add(u64::from(affiliate))
   };
-  base.rem_euclid(97) == check
+  base.rem_euclid(97) == u64::from(check)
 }
 
 fn validate_fr_siren(value: &str) -> bool {
@@ -2362,7 +2372,14 @@ fn validate_sk_dic(value: &str) -> bool {
   if !matches!(digits.get(2), Some(2 | 3 | 4 | 7 | 8 | 9)) {
     return false;
   }
-  number_from_digits(Some(&digits))
+  // A 10-digit value can reach 9_999_999_999, which overflows u32; fold into a
+  // u64 so numbers above u32::MAX (e.g. 4320000003) reach the modulo check and
+  // stay in parity with the TS validator.
+  digits
+    .iter()
+    .try_fold(0_u64, |total, &digit| {
+      total.checked_mul(10)?.checked_add(u64::from(digit))
+    })
     .is_some_and(|number| number.is_multiple_of(11))
 }
 
@@ -2810,12 +2827,16 @@ fn resolve_two_digit_year(year: u32) -> u32 {
 }
 
 fn current_year() -> u32 {
+  current_date().0
+}
+
+fn current_date() -> (u32, u32, u32) {
   let Ok(duration) = SystemTime::now().duration_since(UNIX_EPOCH) else {
-    return 1970;
+    return (1970, 1, 1);
   };
   let days = i64::try_from(duration.as_secs().div_euclid(86_400)).unwrap_or(0);
-  let (year, _, _) = civil_from_days(days);
-  u32::try_from(year).unwrap_or(1970)
+  let (year, month, day) = civil_from_days(days);
+  (u32::try_from(year).unwrap_or(1970), month, day)
 }
 
 fn civil_from_days(days_since_epoch: i64) -> (i32, u32, u32) {
@@ -2935,6 +2956,8 @@ mod tests {
       ("es.dni", "1234567L"),
       ("es.nie", "X5253868R"),
       ("es.nss", "28/12345678/40"),
+      // Province 43-52 with an 8-digit affiliate: base exceeds u32::MAX.
+      ("es.nss", "493961665403"),
       ("es.vat", "ES12345678Z"),
       ("es.vat", "ESA78304516"),
       ("fi.hetu", "131052-308T"),
@@ -2978,6 +3001,8 @@ mod tests {
       ("se.personnummer", "8803200016"),
       ("si.vat", "SI15012557"),
       ("sk.dic", "SK2021853504"),
+      // 10-digit value above u32::MAX that is still divisible by 11.
+      ("sk.dic", "4320000003"),
       ("us.ein", "04-2103594"),
       ("us.rtn", "111000025"),
     ];
@@ -3012,6 +3037,8 @@ mod tests {
       ("de.svnr", "12010188M012"),
       ("de.vat", "DE136695977"),
       ("dk.cpr", "321399-5629"),
+      // Serial head maps yy into the 2000s, resolving to 2057-12-31 (future).
+      ("dk.cpr", "3112575000"),
       ("dk.vat", "DK13585629"),
       ("ee.ik", "36805280108"),
       ("ee.vat", "EE100931559"),

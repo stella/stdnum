@@ -79,7 +79,10 @@ const dni: CountryValidator<"ES"> = {
   entityType: "person",
   sourceUrl:
     "https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/dni/",
-  examples: ["54362315K"] as const,
+  // 1-8 digits plus a check letter → compact length 2-9. Declared explicitly so
+  // pattern discovery (toRegex) covers short DNIs, not just the 9-char example.
+  lengths: [2, 3, 4, 5, 6, 7, 8, 9] as const,
+  examples: ["54362315K", "1234567L"] as const,
   compact,
   format,
   validate,
