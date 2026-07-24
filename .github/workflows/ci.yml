@@ -140,6 +140,8 @@ jobs:
         run: |
           python3 -m venv .venv
           .venv/bin/python3 -m pip install --requirement scripts/oracle/requirements.txt
+          export GEM_HOME="$RUNNER_TEMP/ruby-gems"
+          export PATH="$GEM_HOME/bin:$PATH"
           gem install bundler --version 2.4.22 --no-document
           BUNDLE_GEMFILE=scripts/oracle/Gemfile bundle install
           composer install --working-dir=scripts/oracle \
