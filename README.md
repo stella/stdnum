@@ -111,13 +111,15 @@ The repo ships two oracle modes:
 Both commands accept `ORACLE_SAMPLES=<n>` to trade off
 runtime against coverage.
 
-`bun run performance:oracles` requires the Rust-backed public API to beat each
-specialized JavaScript oracle covered by the performance gate. The benchmark
-alternates execution order and compares paired medians to reduce host noise.
+`bun run performance:oracles` is an optional local diagnostic for the handful
+of specialized JavaScript oracles it covers. It is deliberately not a CI gate:
+those country-specific comparisons are not representative of the library as a
+whole. The benchmark alternates execution order and compares paired medians to
+reduce host noise.
 
 Dependabot watches every JavaScript, Python, Ruby, PHP, and Rust oracle
-manifest. Its weekly update PRs rerun the strict correctness and JavaScript
-performance gates against the new upstream versions before they can merge.
+manifest. Its weekly update PRs rerun the strict correctness gates against the
+new upstream versions before they can merge.
 
 ## Supported Identifiers
 

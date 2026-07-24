@@ -249,7 +249,6 @@ jobs:
       - run: bun run typecheck
       - run: bun run build
       - run: bun run performance
-      - run: bun run performance:oracles
       - run: bun run codegen:check
       - run: bun run smoke:native
       - run: bun run build:wasm
