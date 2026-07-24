@@ -29,6 +29,14 @@ from ._native import (
     validator_metadata,
     validators,
 )
+from ._types import (
+    CardNetwork,
+    CountryCode,
+    EntityType,
+    ErrorCode,
+    ValidatorId,
+    ValidatorScope,
+)
 
 __all__ = [
     "ValidationError",
@@ -36,6 +44,12 @@ __all__ = [
     "ParsedIdentifier",
     "Bech32Validation",
     "ValidatorMetadata",
+    "CardNetwork",
+    "CountryCode",
+    "EntityType",
+    "ErrorCode",
+    "ValidatorId",
+    "ValidatorScope",
     "compact",
     "btc_base58_decode",
     "btc_bech32_convert_bits",

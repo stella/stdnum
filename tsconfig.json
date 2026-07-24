@@ -1,16 +1,9 @@
 {
   "extends": "@stll/typescript-config/library.json",
   "compilerOptions": {
-    "types": ["node"],
-    "paths": {
-      "#checksums/*": ["./src/_checksums/*"],
-      "#util/*": ["./src/_util/*"]
-    }
+    "types": ["node", "bun-types"],
+    "noEmit": true
   },
-  "include": [
-    "src",
-    "oxlint.config.ts",
-    "tsdown.config.ts"
-  ],
+  "include": ["oxlint.config.ts"],
   "exclude": ["node_modules"]
 }

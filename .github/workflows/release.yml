@@ -92,13 +92,11 @@ jobs:
           bun run format:check
           cargo test --workspace --locked
           bun test
-          bun run test:bindings
 
       - name: Build and smoke the host package
         run: |
           bun run build
           bun run smoke:native
-          bun run parity:migration
           bun run smoke:pack
 
   pack-native:

@@ -83,9 +83,10 @@ assert result.valid
 assert result.compact == "25596641"
 ```
 
-The Rust registry owns validator behavior and metadata. TypeScript subpaths and
-catalog files are generated from that registry, while one committed fixture set
-checks the Rust, Node.js, WASM, and Python surfaces.
+The Rust registry owns validator behavior and metadata. TypeScript subpaths,
+catalog files, and exact TypeScript/Python registry types are generated from
+that registry. One committed fixture set checks the Rust, Node.js, WASM, and
+Python surfaces, and `ty` checks the installed Python wheel as a real consumer.
 
 ## Oracle Validation
 
@@ -386,6 +387,8 @@ handled automatically.
 
 ```bash
 bun install
+bun run rust:check
+bun run codegen:check
 bun run typecheck
 bun test
 bun run lint     # oxlint

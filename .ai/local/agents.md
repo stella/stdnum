@@ -10,7 +10,7 @@
 - `bun run typecheck`
 - `bun test`
 - `bun run oracle`
-- `bun run sync-exports:check`
+- `bun run codegen:check`
 
 ### Working Rules
 

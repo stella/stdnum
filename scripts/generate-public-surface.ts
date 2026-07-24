@@ -4,10 +4,8 @@
  *
  * The normal path invokes the Rust registry exporter, making the core the
  * source of truth for runtime metadata and generated package entrypoints.
- * `--bootstrap-from-typescript` remains a one-time migration aid only.
  *
  * Usage:
- *   bun scripts/generate-public-surface.ts --bootstrap-from-typescript
  *   bun scripts/generate-public-surface.ts
  *   bun scripts/generate-public-surface.ts --check
  */
@@ -52,30 +50,27 @@ type Registry = {
   validators: RegistryValidator[];
 };
 
-type ValidatorLike = {
-  abbreviation: string;
-  aliases?: readonly string[];
-  candidatePattern?: string;
-  country?: string;
-  description?: string;
-  entityType: EntityType;
-  examples?: readonly string[];
-  generate?: () => string;
-  lengths?: readonly number[];
-  localName: string;
-  name: string;
-  parse?: (
-    value: string,
-  ) => { birthDate?: Date; gender?: string } | null;
-  scope: Scope;
-  sourceUrl?: string;
-  validate: (value: string) => unknown;
-};
-
 const ROOT = join(import.meta.dir, "..");
 const PACKAGE_ROOT = join(ROOT, "packages", "stdnum");
 const REGISTRY_PATH = join(PACKAGE_ROOT, "registry.json");
 const README_PATH = join(ROOT, "README.md");
+const TYPES_PATH = join(PACKAGE_ROOT, "src", "types.ts");
+const PYTHON_STUB_PATH = join(
+  ROOT,
+  "crates",
+  "stdnum-py",
+  "python",
+  "stella_stdnum",
+  "_native.pyi",
+);
+const PYTHON_TYPES_PATH = join(
+  ROOT,
+  "crates",
+  "stdnum-py",
+  "python",
+  "stella_stdnum",
+  "_types.py",
+);
 const GENERATED_ROOT = join(
   PACKAGE_ROOT,
   "src",
@@ -88,132 +83,6 @@ const STANDARD_EXPORTS = new Set([
   "parse",
   "validate",
 ]);
-
-const isValidator = (
-  value: unknown,
-): value is ValidatorLike =>
-  value !== null &&
-  typeof value === "object" &&
-  "validate" in value &&
-  "scope" in value &&
-  "name" in value;
-
-const bootstrapRegistry = async (): Promise<Registry> => {
-  const oldPackage = JSON.parse(
-    await readFile(join(ROOT, "package.json"), "utf8"),
-  ) as { exports: Record<string, unknown> };
-  const all = await import(join(ROOT, "src", "index.ts"));
-  const identities = new Map<
-    ValidatorLike,
-    {
-      exportName: string;
-      id: string;
-      namespaceExport: string | null;
-    }
-  >();
-
-  for (const [namespaceExport, value] of Object.entries(
-    all,
-  )) {
-    if (isValidator(value)) {
-      identities.set(value, {
-        exportName: namespaceExport,
-        id: namespaceExport,
-        namespaceExport: null,
-      });
-      continue;
-    }
-    if (value === null || typeof value !== "object")
-      continue;
-    const namespace = namespaceExport.endsWith("_")
-      ? namespaceExport.slice(0, -1)
-      : namespaceExport;
-    for (const [exportName, validator] of Object.entries(
-      value,
-    )) {
-      if (!isValidator(validator)) continue;
-      identities.set(validator, {
-        exportName,
-        id: `${namespace}.${exportName}`,
-        namespaceExport,
-      });
-    }
-  }
-
-  const validators: RegistryValidator[] = [];
-  for (const exportPath of Object.keys(
-    oldPackage.exports,
-  )) {
-    if (
-      exportPath === "." ||
-      exportPath === "./types" ||
-      exportPath === "./patterns"
-    ) {
-      continue;
-    }
-    const subpath = exportPath.slice(2);
-    const module = await import(
-      join(ROOT, "src", `${subpath}.ts`)
-    );
-    const validator: unknown = module.default;
-    if (!isValidator(validator)) {
-      throw new Error(
-        `${exportPath} does not default-export a validator`,
-      );
-    }
-    const identity = identities.get(validator);
-    if (identity === undefined) {
-      throw new Error(
-        `${exportPath} is absent from src/index.ts`,
-      );
-    }
-    const parsed = parseExample(validator);
-    validators.push({
-      abbreviation: validator.abbreviation,
-      aliases: [...(validator.aliases ?? [])],
-      canGenerate: typeof validator.generate === "function",
-      candidatePattern: validator.candidatePattern ?? null,
-      country: validator.country ?? null,
-      description: validator.description ?? null,
-      entityType: validator.entityType,
-      examples: [...(validator.examples ?? [])],
-      exportName: identity.exportName,
-      id: identity.id,
-      lengths: [...(validator.lengths ?? [])],
-      localName: validator.localName,
-      name: validator.name,
-      namedExports: Object.keys(module)
-        .filter((name) => name !== "default")
-        .sort(),
-      namespaceExport: identity.namespaceExport,
-      parseKind: parsed,
-      scope: validator.scope,
-      sourceUrl: validator.sourceUrl ?? null,
-      subpath,
-    });
-  }
-
-  validators.sort((left, right) =>
-    left.subpath.localeCompare(right.subpath),
-  );
-  return {
-    $schema: "./registry.schema.json",
-    schemaVersion: 1,
-    validators,
-  };
-};
-
-const parseExample = (
-  validator: ValidatorLike,
-): ParseKind => {
-  if (typeof validator.parse !== "function") return null;
-  const example = validator.examples?.[0];
-  if (example === undefined) return "birthDate";
-  const parsed = validator.parse(example);
-  return parsed !== null && "gender" in parsed
-    ? "person"
-    : "birthDate";
-};
 
 const validateRegistry = (value: unknown): Registry => {
   if (value === null || typeof value !== "object") {
@@ -280,22 +149,33 @@ const quote = (value: unknown): string =>
 const generatedHeader =
   "// Generated by scripts/generate-public-surface.ts. Do not edit.\n";
 
-const replaceGeneratedRegion = (
+const replaceDelimitedRegion = (
   document: string,
-  name: string,
+  begin: string,
+  end: string,
   contents: string,
 ): string => {
-  const begin = `<!-- BEGIN GENERATED: ${name} -->`;
-  const end = `<!-- END GENERATED: ${name} -->`;
   const start = document.indexOf(begin);
   const finish = document.indexOf(end);
   if (start < 0 || finish < start) {
     throw new Error(
-      `README generated region is missing: ${name}`,
+      `generated region is missing: ${begin}`,
     );
   }
   return `${document.slice(0, start + begin.length)}\n${contents.trim()}\n${document.slice(finish)}`;
 };
+
+const replaceGeneratedRegion = (
+  document: string,
+  name: string,
+  contents: string,
+): string =>
+  replaceDelimitedRegion(
+    document,
+    `<!-- BEGIN GENERATED: ${name} -->`,
+    `<!-- END GENERATED: ${name} -->`,
+    contents,
+  );
 
 const markdownTable = (
   headers: readonly string[],
@@ -600,6 +480,199 @@ const metadataModule = (registry: Registry): string =>
     2,
   )} as const;\n`;
 
+const typeScriptUnion = (
+  values: readonly string[],
+): string =>
+  values.map((value) => `  | ${quote(value)}`).join("\n");
+
+const writeTypeScriptTypes = async (
+  registry: Registry,
+): Promise<void> => {
+  const countries = [
+    ...new Set(
+      registry.validators
+        .map((validator) => validator.country)
+        .filter((value): value is string => value !== null),
+    ),
+  ].sort();
+  const ids = registry.validators
+    .map((validator) => validator.id)
+    .sort();
+  const generated = `export type CountryCode =\n${typeScriptUnion(countries)};\n\nexport type ValidatorId =\n${typeScriptUnion(ids)};`;
+  const source = await readFile(TYPES_PATH, "utf8");
+  await writeFile(
+    TYPES_PATH,
+    replaceDelimitedRegion(
+      source,
+      "// BEGIN GENERATED: registry-types",
+      "// END GENERATED: registry-types",
+      generated,
+    ),
+  );
+};
+
+const pythonLiteral = (values: readonly string[]): string =>
+  values.map((value) => `    ${quote(value)},`).join("\n");
+
+const pythonStub = (): string => {
+  return `# Generated by scripts/generate-public-surface.ts. Do not edit.
+from typing import Literal, final
+
+from ._types import (
+    CardNetwork as _CardNetwork,
+    CountryCode as _CountryCode,
+    EntityType as _EntityType,
+    ErrorCode as _ErrorCode,
+    ValidatorId as _ValidatorId,
+    ValidatorScope as _ValidatorScope,
+)
+
+__all__: list[str]
+
+@final
+class ValidationError:
+    @property
+    def code(self) -> _ErrorCode: ...
+    @property
+    def message(self) -> str: ...
+
+@final
+class ValidationResult:
+    @property
+    def valid(self) -> bool: ...
+    @property
+    def compact(self) -> str | None: ...
+    @property
+    def error(self) -> ValidationError | None: ...
+
+@final
+class ParsedIdentifier:
+    @property
+    def birth_year(self) -> int: ...
+    @property
+    def birth_month(self) -> int: ...
+    @property
+    def birth_day(self) -> int: ...
+    @property
+    def gender(self) -> Literal["male", "female"] | None: ...
+
+@final
+class Bech32Validation:
+    @property
+    def valid(self) -> bool: ...
+    @property
+    def code(self) -> Literal["format", "checksum", "component"] | None: ...
+
+@final
+class ValidatorMetadata:
+    @property
+    def id(self) -> _ValidatorId: ...
+    @property
+    def name(self) -> str: ...
+    @property
+    def local_name(self) -> str: ...
+    @property
+    def abbreviation(self) -> str: ...
+    @property
+    def description(self) -> str | None: ...
+    @property
+    def aliases(self) -> list[str]: ...
+    @property
+    def candidate_pattern(self) -> str: ...
+    @property
+    def scope(self) -> _ValidatorScope: ...
+    @property
+    def country(self) -> _CountryCode | None: ...
+    @property
+    def entity_type(self) -> _EntityType: ...
+    @property
+    def source_url(self) -> str | None: ...
+    @property
+    def lengths(self) -> list[int]: ...
+    @property
+    def examples(self) -> list[str]: ...
+    @property
+    def can_generate(self) -> bool: ...
+    @property
+    def can_parse(self) -> bool: ...
+
+def validator_ids() -> list[_ValidatorId]: ...
+def validators() -> list[ValidatorMetadata]: ...
+def validator_metadata(id: _ValidatorId) -> ValidatorMetadata: ...
+def validate(id: _ValidatorId, value: str) -> ValidationResult: ...
+def compact(id: _ValidatorId, value: str) -> str: ...
+def format(id: _ValidatorId, value: str) -> str: ...
+def generate(id: _ValidatorId) -> str | None: ...
+def parse(id: _ValidatorId, value: str) -> ParsedIdentifier | None: ...
+def credit_card_detect_network(value: str) -> _CardNetwork | None: ...
+def eth_has_valid_eip55_checksum(value: str) -> bool: ...
+def btc_base58_decode(value: str) -> bytes | None: ...
+def btc_bech32_polymod(values: list[int]) -> int: ...
+def btc_bech32_convert_bits(
+    values: list[int], from_bits: int, to_bits: int
+) -> list[int] | None: ...
+def btc_bech32_validate(value: str) -> Bech32Validation: ...
+def be_nn_checksum(value: str) -> int | None: ...
+def es_vat_cif_checksum(value: str) -> int | None: ...
+def ee_ik_two_pass_check(value: str) -> int | None: ...
+def gb_nhs_calc_check_digit(value: str) -> int | None: ...
+def gb_sedol_calc_check_digit(value: str) -> int | None: ...
+def luhn_generate(length: int = 16) -> str: ...
+def validate_id(validator: str, value: str, input: str | None = None) -> bool: ...
+def validate_named_id(validator: str, value: str) -> bool: ...
+`;
+};
+
+const pythonTypes = (registry: Registry): string => {
+  const countries = [
+    ...new Set(
+      registry.validators
+        .map((validator) => validator.country)
+        .filter((value): value is string => value !== null),
+    ),
+  ].sort();
+  const ids = registry.validators
+    .map((validator) => validator.id)
+    .sort();
+  return `# Generated by scripts/generate-public-surface.ts. Do not edit.
+from typing import Literal, TypeAlias
+
+ValidatorId: TypeAlias = Literal[
+${pythonLiteral(ids)}
+]
+CountryCode: TypeAlias = Literal[
+${pythonLiteral(countries)}
+]
+ErrorCode: TypeAlias = Literal[
+    "INVALID_FORMAT",
+    "INVALID_LENGTH",
+    "INVALID_CHECKSUM",
+    "INVALID_COMPONENT",
+]
+EntityType: TypeAlias = Literal["person", "company", "any"]
+ValidatorScope: TypeAlias = Literal["country", "global"]
+CardNetwork: TypeAlias = Literal[
+    "visa",
+    "mastercard",
+    "amex",
+    "discover",
+    "diners",
+    "jcb",
+    "unionpay",
+    "maestro",
+]
+
+__all__ = [
+    "CardNetwork",
+    "CountryCode",
+    "EntityType",
+    "ErrorCode",
+    "ValidatorId",
+    "ValidatorScope",
+]
+`;
+};
+
 const conditionalExport = (output: string) => ({
   types: `./dist/${output}.d.ts`,
   import: `./dist/${output}.js`,
@@ -683,6 +756,9 @@ const writeGenerated = async (
     metadataModule(registry),
   );
   await writePackageExports(registry);
+  await writeTypeScriptTypes(registry);
+  await writeFile(PYTHON_STUB_PATH, pythonStub());
+  await writeFile(PYTHON_TYPES_PATH, pythonTypes(registry));
   await writeReadme(registry);
   const formatter = Bun.spawn(
     [
@@ -690,6 +766,9 @@ const writeGenerated = async (
       "oxfmt",
       GENERATED_ROOT,
       join(PACKAGE_ROOT, "package.json"),
+      TYPES_PATH,
+      PYTHON_STUB_PATH,
+      PYTHON_TYPES_PATH,
       REGISTRY_PATH,
       README_PATH,
     ],
@@ -717,18 +796,8 @@ const snapshotGenerated = async (): Promise<
 };
 
 const main = async (): Promise<void> => {
-  const bootstrap = process.argv.includes(
-    "--bootstrap-from-typescript",
-  );
   const check = process.argv.includes("--check");
-  if (bootstrap && check)
-    throw new Error(
-      "bootstrap and check modes are mutually exclusive",
-    );
-
-  const registry = bootstrap
-    ? await bootstrapRegistry()
-    : await rustRegistry();
+  const registry = await rustRegistry();
   if (!check) {
     await mkdir(PACKAGE_ROOT, { recursive: true });
     await writeFile(
@@ -759,6 +828,15 @@ const main = async (): Promise<void> => {
     "utf8",
   );
   const readmeBefore = await readFile(README_PATH, "utf8");
+  const typesBefore = await readFile(TYPES_PATH, "utf8");
+  const pythonStubBefore = await readFile(
+    PYTHON_STUB_PATH,
+    "utf8",
+  );
+  const pythonTypesBefore = await readFile(
+    PYTHON_TYPES_PATH,
+    "utf8",
+  );
   await writeGenerated(registry);
   const after = await snapshotGenerated();
   const manifestAfter = await readFile(
@@ -766,10 +844,22 @@ const main = async (): Promise<void> => {
     "utf8",
   );
   const readmeAfter = await readFile(README_PATH, "utf8");
+  const typesAfter = await readFile(TYPES_PATH, "utf8");
+  const pythonStubAfter = await readFile(
+    PYTHON_STUB_PATH,
+    "utf8",
+  );
+  const pythonTypesAfter = await readFile(
+    PYTHON_TYPES_PATH,
+    "utf8",
+  );
   const unchanged =
     before.size === after.size &&
     manifestBefore === manifestAfter &&
     readmeBefore === readmeAfter &&
+    typesBefore === typesAfter &&
+    pythonStubBefore === pythonStubAfter &&
+    pythonTypesBefore === pythonTypesAfter &&
     [...before].every(
       ([path, contents]) => after.get(path) === contents,
     );
@@ -781,6 +871,19 @@ const main = async (): Promise<void> => {
       ...(readmeBefore === readmeAfter
         ? []
         : ["README.md"]),
+      ...(typesBefore === typesAfter
+        ? []
+        : ["packages/stdnum/src/types.ts"]),
+      ...(pythonStubBefore === pythonStubAfter
+        ? []
+        : [
+            "crates/stdnum-py/python/stella_stdnum/_native.pyi",
+          ]),
+      ...(pythonTypesBefore === pythonTypesAfter
+        ? []
+        : [
+            "crates/stdnum-py/python/stella_stdnum/_types.py",
+          ]),
       ...new Set([...before.keys(), ...after.keys()]),
     ]
       .filter(

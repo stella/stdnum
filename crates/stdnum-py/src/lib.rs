@@ -268,7 +268,7 @@ fn luhn_generate(length: usize) -> String {
 }
 
 /// Compatibility entry point for the pre-registry boolean API.
-#[pyfunction]
+#[pyfunction(signature = (validator, value, input=None))]
 fn validate_id(validator: &str, value: &str, input: Option<&str>) -> bool {
   stella_stdnum_core::validate_id(validator, value, input)
 }

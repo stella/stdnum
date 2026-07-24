@@ -45,7 +45,9 @@ updates:
       - "jan-kubica"
 
   - package-ecosystem: "pip"
-    directory: "/scripts/oracle"
+    directories:
+      - "/scripts/oracle"
+      - "/crates/stdnum-py/tests"
     schedule:
       interval: "weekly"
       day: "saturday"

@@ -120,7 +120,6 @@ jobs:
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --frozen-lockfile
       - run: bun test
-      - run: bun run test:bindings
 
   oracle:
     name: Oracle
@@ -248,10 +247,10 @@ jobs:
       - run: bun run performance
       - run: bun run codegen:check
       - run: bun run smoke:native
-      - run: bun run parity:migration
       - run: bun run build:wasm
       - run: bun run smoke:wasm
       - run: bun run readme:check
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
       - name: Build the Python abi3 wheel
         uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
@@ -263,9 +262,12 @@ jobs:
             --out dist-python
       - name: Install and test the Python wheel
         run: |
-          python3 -m venv .python-smoke
-          .python-smoke/bin/python -m pip install dist-python/*.whl
+          uv venv .python-smoke --python python3
+          uv pip install --python .python-smoke/bin/python \
+            --requirement crates/stdnum-py/tests/requirements.txt \
+            dist-python/*.whl
           .python-smoke/bin/python -m unittest discover -s crates/stdnum-py/tests -v
+          .python-smoke/bin/ty check crates/stdnum-py/tests/typing_contract.py
 
   pack:
     name: Pack

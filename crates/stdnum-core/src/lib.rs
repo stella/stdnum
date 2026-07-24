@@ -1034,7 +1034,7 @@ fn validate_dk_cpr(value: &str) -> bool {
   if !valid_date(year, month, day) {
     return false;
   }
-  // Reject future birth dates, matching src/dk/cpr.ts. Serial heads that map
+  // Reject future birth dates. Serial heads that map
   // yy into the 2000s can otherwise resolve to a not-yet-assignable date.
   (year, month, day) <= current_date()
 }
@@ -2133,7 +2133,7 @@ fn compact_se_personnummer(value: &str) -> String {
   // fine as long as we never break a codepoint.
   let mut chars: Vec<char> = compact.chars().collect();
   // A bare 10- or 12-character number gets the '-' century/serial separator
-  // inserted before the last four characters (matching src/se/personnummer.ts).
+  // inserted before the last four characters.
   if matches!(chars.len(), 10 | 12) {
     let insertion = chars.len().saturating_sub(4);
     chars.insert(insertion, '-');
