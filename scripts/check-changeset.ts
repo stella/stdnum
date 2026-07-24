@@ -1,17 +1,26 @@
 #!/usr/bin/env bun
 
 import { $ } from "bun";
+import { readFileSync } from "node:fs";
 
 const BASE_REF =
   process.env.CHANGESET_BASE_REF ?? "origin/main";
 const CHANGESET_RE =
   /^\.changeset\/(?!README\.md$)[^/]+\.md$/;
 const RUNTIME_SOURCE_RE =
-  /^(?:src\/|crates\/stdnum-(?:core|napi|py|wasm)\/)/;
+  /^(?:packages\/(?:stdnum|stdnum-wasm)\/(?:(?:src|scripts)\/|(?:index\.cjs|registry(?:\.schema)?\.json|tsconfig\.json|tsdown\.config\.ts)$)|crates\/stdnum-(?:core|napi|py|wasm)\/)/;
 const RUNTIME_MANIFESTS = new Set([
+  "packages/stdnum/package.json",
+  "packages/stdnum-wasm/package.json",
+  "packages/stdnum-darwin-arm64/package.json",
+  "packages/stdnum-darwin-x64/package.json",
+  "packages/stdnum-linux-arm64-gnu/package.json",
+  "packages/stdnum-linux-x64-gnu/package.json",
+  "packages/stdnum-win32-x64-msvc/package.json",
+]);
+const RUNTIME_CARGO_MANIFESTS = new Set([
   "Cargo.lock",
   "Cargo.toml",
-  "package.json",
   "crates/stdnum-core/Cargo.toml",
   "crates/stdnum-napi/Cargo.toml",
   "crates/stdnum-py/Cargo.toml",
@@ -19,6 +28,7 @@ const RUNTIME_MANIFESTS = new Set([
 ]);
 const GENERATED_VERSION_METADATA = new Set([
   ...RUNTIME_MANIFESTS,
+  ...RUNTIME_CARGO_MANIFESTS,
   "CHANGELOG.md",
   "VERSION",
   "bun.lock",
@@ -83,6 +93,30 @@ const pendingChangesets = (await diff("ACMR")).filter(
   (file) => CHANGESET_RE.test(file),
 );
 
+const manifestAffectsPublishedRuntime = async (
+  file: string,
+): Promise<boolean> => {
+  const previous = await $`git show ${BASE_REF}:${file}`
+    .nothrow()
+    .quiet();
+  if (previous.exitCode !== 0) return true;
+
+  let before: Record<string, unknown>;
+  let after: Record<string, unknown>;
+  try {
+    before = JSON.parse(previous.stdout.toString());
+    after = JSON.parse(readFileSync(file, "utf8"));
+  } catch {
+    return true;
+  }
+
+  // Development-only dependencies do not change the published package. All
+  // other manifest fields remain release-significant.
+  delete before.devDependencies;
+  delete after.devDependencies;
+  return JSON.stringify(before) !== JSON.stringify(after);
+};
+
 if (pendingChangesets.length > 0) {
   const status =
     await $`bun run changeset status --since ${BASE_REF}`
@@ -116,11 +150,23 @@ if (
   }
 }
 
-const runtimeChanged = changedFiles.some(
-  (file) =>
-    RUNTIME_SOURCE_RE.test(file) ||
-    RUNTIME_MANIFESTS.has(file),
+const changedRuntimeManifests = changedFiles.filter(
+  (file) => RUNTIME_MANIFESTS.has(file),
 );
+const runtimeManifestChanged = (
+  await Promise.all(
+    changedRuntimeManifests.map(
+      manifestAffectsPublishedRuntime,
+    ),
+  )
+).some(Boolean);
+const runtimeChanged =
+  runtimeManifestChanged ||
+  changedFiles.some(
+    (file) =>
+      RUNTIME_SOURCE_RE.test(file) ||
+      RUNTIME_CARGO_MANIFESTS.has(file),
+  );
 if (!runtimeChanged) {
   console.log(
     "changeset check: no published runtime source changes; skipping.",
