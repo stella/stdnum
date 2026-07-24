@@ -1,0 +1,5 @@
+{
+  "require": {
+    "loophp/tin": "1.1.1"
+  }
+}

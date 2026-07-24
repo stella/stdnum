@@ -8,14 +8,17 @@ publish.workspace = true
 repository.workspace = true
 
 [lib]
-name = "stella_stdnum_core_py"
+name = "_native"
 crate-type = ["cdylib"]
+test = false
+doctest = false
+
+[features]
+default = []
+extension-module = ["pyo3/extension-module"]
 
 [dependencies]
-pyo3 = { version = "0.29", features = [
-  "extension-module",
-  "abi3-py311",
-] }
+pyo3 = { version = "0.29", features = ["abi3-py311"] }
 stella-stdnum-core = { path = "../stdnum-core" }
 
 [build-dependencies]

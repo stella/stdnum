@@ -49,6 +49,14 @@ describe("vn.mst", () => {
     }
   });
 
+  test("invalid: checksum calculation yields 10", () => {
+    const r = vn.mst.validate("9765357360");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
   test("invalid: sequential part 0000000", () => {
     const r = vn.mst.validate("0100000003");
     expect(r.valid).toBe(false);

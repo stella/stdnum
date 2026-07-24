@@ -43,3 +43,67 @@ updates:
       prefix: "chore"
     reviewers:
       - "jan-kubica"
+
+  - package-ecosystem: "pip"
+    directory: "/scripts/oracle"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      time: "09:00"
+      timezone: "Europe/Prague"
+    cooldown:
+      default-days: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+    reviewers:
+      - "jan-kubica"
+
+  - package-ecosystem: "bundler"
+    directory: "/scripts/oracle"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      time: "09:00"
+      timezone: "Europe/Prague"
+    cooldown:
+      default-days: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+    reviewers:
+      - "jan-kubica"
+
+  - package-ecosystem: "composer"
+    directory: "/scripts/oracle"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      time: "09:00"
+      timezone: "Europe/Prague"
+    cooldown:
+      default-days: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+    reviewers:
+      - "jan-kubica"
+
+  - package-ecosystem: "cargo"
+    directory: "/scripts/rust-oracle"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      time: "09:00"
+      timezone: "Europe/Prague"
+    cooldown:
+      default-days: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+    reviewers:
+      - "jan-kubica"

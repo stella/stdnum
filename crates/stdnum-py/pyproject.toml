@@ -3,7 +3,7 @@ requires = ["maturin>=1.14,<2"]
 build-backend = "maturin"
 
 [project]
-name = "stella-stdnum-core"
+name = "stella-stdnum"
 dynamic = ["version"]
 description = "Python bindings for Stella standard identifier validation"
 readme = "../../README.md"
@@ -17,4 +17,6 @@ classifiers = [
 
 [tool.maturin]
 manifest-path = "Cargo.toml"
-module-name = "stella_stdnum_core_py"
+module-name = "stella_stdnum._native"
+python-source = "python"
+features = ["extension-module"]

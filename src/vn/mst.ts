@@ -23,20 +23,13 @@ import { isdigits } from "#util/strings";
 
 const WEIGHTS = [31, 29, 23, 19, 17, 13, 7, 5, 3] as const;
 
-const calcCheckDigit = (number: string): string => {
+const calcCheckDigit = (number: string): string | null => {
   let total = 0;
   for (let i = 0; i < 9; i++) {
     total += (WEIGHTS[i] ?? 0) * Number(number.charAt(i));
   }
   const remainder = 10 - (total % 11);
-  // When remainder is 10, the sequential part is
-  // never issued by GDT. Returning "0" keeps the
-  // function correct as a digit calculator (mod 10
-  // wrap) while still rejecting these numbers since
-  // no real MST will have this combination.
-  return String(
-    remainder >= 10 ? remainder - 10 : remainder,
-  );
+  return remainder > 9 ? null : String(remainder);
 };
 
 const compact = (value: string): string =>
@@ -101,7 +94,9 @@ const generate = (): string => {
       "0",
     );
     const payload = province + randomDigits(7);
-    const c = payload + calcCheckDigit(payload);
+    const check = calcCheckDigit(payload);
+    if (check === null) continue;
+    const c = payload + check;
     if (validate(c).valid) return c;
   }
 };

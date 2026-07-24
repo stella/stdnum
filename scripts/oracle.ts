@@ -8,7 +8,7 @@
  * for research, but known to drift from official sources
  * on some formats.
  *
- * Auto-discovers ALL validators from ../src.
+ * Auto-discovers every generated validator backed by the Rust registry.
  * Each oracle backend declares what it validates;
  * matching is automatic via validator key.
  *
@@ -59,8 +59,8 @@ import {
 } from "stdnum";
 import { validatePolish } from "validate-polish";
 
-import * as all from "../src";
-import type { Validator } from "../src/types";
+import * as all from "../packages/stdnum/src/generated";
+import type { Validator } from "../packages/stdnum/src/types";
 
 // ─── Auto-discover validators ───────────────
 
@@ -702,15 +702,8 @@ const arbFor = (key: string, v: Validator) =>
 const PYTHON = ".venv/bin/python3";
 const RUST_BIN =
   "scripts/rust-oracle/target/release/stdnum-oracle";
-const RUBY_GEM = (() => {
-  try {
-    return execSync("ruby -e 'puts Gem.user_dir'", {
-      encoding: "utf-8",
-    }).trim();
-  } catch {
-    return "";
-  }
-})();
+const BUNDLER =
+  "BUNDLE_GEMFILE=scripts/oracle/Gemfile bundle exec";
 
 const probe = (cmd: string): boolean => {
   try {
@@ -723,8 +716,20 @@ const probe = (cmd: string): boolean => {
 
 const hasPython = () =>
   probe(`${PYTHON} -c "import stdnum"`);
+const hasPythonModule = (module: string) =>
+  probe(
+    `${PYTHON} -c "from stdnum.${module} import is_valid"`,
+  );
 const hasIdnumbers = () =>
   probe(`${PYTHON} -c "import idnumbers"`);
+const hasIdnumbersClass = (path: string) => {
+  const separator = path.indexOf(".");
+  const module = path.slice(0, separator);
+  const name = path.slice(separator + 1);
+  return probe(
+    `${PYTHON} -c "from idnumbers.nationalid.${module} import ${name}"`,
+  );
+};
 const hasLocalflavor = () =>
   probe(
     `${PYTHON} -c ` +
@@ -734,14 +739,16 @@ const hasLocalflavor = () =>
   );
 const hasRust = () => probe(`test -f ${RUST_BIN}`);
 const hasRubyValvat = () =>
-  probe(`GEM_HOME=${RUBY_GEM} ruby -e "require 'valvat'"`);
+  probe(`${BUNDLER} ruby -e "require 'valvat'"`);
 const hasRubySsn = () =>
   probe(
-    `GEM_HOME=${RUBY_GEM} ruby -e ` +
+    `${BUNDLER} ruby -e ` +
       `"require 'social_security_number'"`,
   );
 const hasPhp = () =>
-  probe(`php -r "require 'scripts/vendor/autoload.php';"`);
+  probe(
+    `php -r "require 'scripts/oracle/vendor/autoload.php';"`,
+  );
 
 type SubBatch = (
   arg: string,
@@ -845,7 +852,7 @@ const rubyScript = (
     tmp,
     `require 'json'\nrequire '${gem}'\nvals = JSON.parse(STDIN.read)\n${body}`,
   );
-  return execSync(`GEM_HOME=${RUBY_GEM} ruby ${tmp}`, {
+  return execSync(`${BUNDLER} ruby ${tmp}`, {
     input: json,
     encoding: "utf-8",
     timeout: 60_000,
@@ -879,7 +886,7 @@ const phpBatch = (
   const json = JSON.stringify(vals);
   writeFileSync(
     "/tmp/_stdnum_oracle.php",
-    `<?php\nrequire 'scripts/vendor/autoload.php';\nuse loophp\\Tin\\TIN;\n$vals = json_decode(file_get_contents('php://stdin'), true);\nforeach ($vals as $v) {\n    try { $r = TIN::from($v, '${cc}')->isValid(); echo $r ? "1" : "0"; } catch (Exception $e) { echo "0"; }\n    echo "\\n";\n}`,
+    `<?php\nrequire 'scripts/oracle/vendor/autoload.php';\nuse loophp\\Tin\\TIN;\n$vals = json_decode(file_get_contents('php://stdin'), true);\nforeach ($vals as $v) {\n    try { $r = TIN::from($v, '${cc}')->isValid(); echo $r ? "1" : "0"; } catch (Exception $e) { echo "0"; }\n    echo "\\n";\n}`,
   );
   return execSync(`php /tmp/_stdnum_oracle.php`, {
     input: json,
@@ -1178,6 +1185,24 @@ const SURVEY_ONLY_ENTRIES = new Set([
   "jsvat:it.iva",
   "jsvat:mt.vat",
   "jsvat:pt.vat",
+  "python-stdnum:at.tin",
+  "python-stdnum:at.vnr",
+  "python-stdnum:br.cpf",
+  "python-stdnum:cn.ric",
+  "python-stdnum:cz.rc",
+  "python-stdnum:do_.rnc",
+  "python-stdnum:id.npwp",
+  "python-stdnum:lv.vat",
+  "python-stdnum:pt.cc",
+  "python-stdnum:sk.rc",
+  "python-stdnum:us.rtn",
+  "idnumbers:cz.rc",
+  "idnumbers:fi.hetu",
+  "idnumbers:lt.asmens",
+  "idnumbers:ro.cnp",
+  "idnumbers:sk.rc",
+  "localflavor:au.tfn",
+  "localflavor:ca.sin",
   "stdnum-js:be.nn",
   "stdnum-js:fi.hetu",
   "stdnum-js:is_.kennitala",
@@ -1192,6 +1217,7 @@ const SURVEY_ONLY_ENTRIES = new Set([
   // Lithuanian and Romanian specs do.
   "stdnum-js:lt.asmens",
   "stdnum-js:ro.cnp",
+  "stdnum-js:si.emso",
   "validate-polish:pl.pesel",
   // rut.js rejects any RUT body that starts with 0
   // as a stylistic policy. Our validator follows the
@@ -1273,6 +1299,7 @@ const buildOracles = (): OracleEntry[] => {
     for (const d of discover()) {
       if (PY_SKIP.has(d.key)) continue;
       const mod = PY_REMAP[d.key] ?? d.key;
+      if (!hasPythonModule(mod)) continue;
       safe(
         `${d.key} (vs python-stdnum)`,
         "python-stdnum",
@@ -1284,10 +1311,12 @@ const buildOracles = (): OracleEntry[] => {
 
   // idnumbers
   if (hasIdnumbers()) {
-    for (const [key, cls] of Object.entries(IDNUMBERS))
+    for (const [key, cls] of Object.entries(IDNUMBERS)) {
+      if (!hasIdnumbersClass(cls)) continue;
       safe(`${key} (vs idnumbers)`, "idnumbers", key, (v) =>
         pyIdnBatch(cls, v),
       );
+    }
   }
 
   // django-localflavor

@@ -9,7 +9,7 @@
 
 use proptest::prelude::*;
 use stella_stdnum_core::{
-  supported_validator_ids, validate_id, validate_named_id,
+  supported_validator_ids, validate_id, validate_named_id, validators,
 };
 
 proptest! {
@@ -38,6 +38,18 @@ proptest! {
   fn unknown_validator_is_rejected(id in "[a-z.]{0,12}", value in ".*") {
     if !supported_validator_ids().contains(&id.as_str()) {
       prop_assert!(!validate_named_id(&id, &value));
+    }
+  }
+
+  // Every operation exposed by a full-surface validator remains total for
+  // arbitrary UTF-8. Formatting invalid input is intentionally supported by
+  // the TypeScript API, so it must be as robust as validation.
+  #[test]
+  fn full_surface_operations_never_panic(value in ".*") {
+    for validator in validators() {
+      let _ = validator.compact(&value);
+      let _ = validator.format(&value);
+      let _ = validator.validate(&value);
     }
   }
 }

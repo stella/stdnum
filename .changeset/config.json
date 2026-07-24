@@ -1,0 +1,24 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.4/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "stella/stdnum" }
+  ],
+  "commit": false,
+  "fixed": [
+    [
+      "@stll/stdnum",
+      "@stll/stdnum-darwin-arm64",
+      "@stll/stdnum-darwin-x64",
+      "@stll/stdnum-linux-arm64-gnu",
+      "@stll/stdnum-linux-x64-gnu",
+      "@stll/stdnum-wasm",
+      "@stll/stdnum-win32-x64-msvc"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}

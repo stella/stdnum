@@ -17,6 +17,12 @@ napi = { version = "3", default-features = false, features = [
 napi-derive = "3"
 stella-stdnum-core = { path = "../stdnum-core" }
 
+[dev-dependencies]
+napi = { version = "3", default-features = false, features = [
+  "dyn-symbols",
+  "napi9",
+] }
+
 [build-dependencies]
 napi-build = "2"
 
