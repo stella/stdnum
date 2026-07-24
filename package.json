@@ -17,6 +17,7 @@
     "smoke:pack": "node scripts/pack-smoke.mjs",
     "readme:check": "node scripts/readme-smoke.mjs",
     "performance": "node scripts/performance-gate.mjs",
+    "performance:oracles": "node scripts/oracle-performance-gate.mjs",
     "codegen": "bun scripts/generate-public-surface.ts",
     "codegen:check": "bun scripts/generate-public-surface.ts --check",
     "oracle": "bun scripts/oracle.ts --mode=gate",

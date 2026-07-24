@@ -10,32 +10,45 @@
 )]
 
 use crate::types::{
-  CountryCode, EntityType, Gender, IsoDate, ParsedIdentifier, ValidationError,
-  ValidationResult, Validator, ValidatorScope, ValidatorSpec,
+  CanonicalValidation, CountryCode, EntityType, Gender, IsoDate,
+  ParsedIdentifier, ValidationError, ValidationResult, Validator,
+  ValidatorScope, ValidatorSpec,
 };
 
+macro_rules! canonical_validator {
+  ("pl.nip", $validator:expr) => {
+    $validator.with_canonical_validator(validate_pl_nip_canonical)
+  };
+  ($id:literal, $validator:expr) => {
+    $validator
+  };
+}
+
 macro_rules! legacy_validator {
-  ($module:ident, $id:literal, $name:literal, $local_name:literal, $abbreviation:literal, $aliases:expr, $pattern:literal, $scope:expr, $entity:expr, $source:expr, $lengths:expr, $examples:expr, $generate:expr, $parse:expr) => {
+  ($module:ident, $id:tt, $name:literal, $local_name:literal, $abbreviation:literal, $aliases:expr, $pattern:literal, $scope:expr, $entity:expr, $source:expr, $lengths:expr, $examples:expr, $generate:expr, $parse:expr) => {
     pub mod $module {
       use super::*;
-      pub static VALIDATOR: Validator = Validator::new(ValidatorSpec {
-        id: $id,
-        name: $name,
-        local_name: $local_name,
-        abbreviation: $abbreviation,
-        aliases: $aliases,
-        candidate_pattern: $pattern,
-        scope: $scope,
-        entity_type: $entity,
-        source_url: $source,
-        lengths: $lengths,
-        examples: $examples,
-        compact,
-        format,
-        validate,
-        generate: $generate,
-        parse: $parse,
-      });
+      pub static VALIDATOR: Validator = canonical_validator!(
+        $id,
+        Validator::new(ValidatorSpec {
+          id: $id,
+          name: $name,
+          local_name: $local_name,
+          abbreviation: $abbreviation,
+          aliases: $aliases,
+          candidate_pattern: $pattern,
+          scope: $scope,
+          entity_type: $entity,
+          source_url: $source,
+          lengths: $lengths,
+          examples: $examples,
+          compact,
+          format,
+          validate,
+          generate: $generate,
+          parse: $parse,
+        })
+      );
       #[must_use]
       pub fn compact(value: &str) -> String {
         compact_for($id, value)
@@ -1477,7 +1490,45 @@ fn raw_is_valid(id: &str, value: &str) -> bool {
   }
 }
 
+fn validate_pl_nip_canonical(value: &str) -> CanonicalValidation {
+  if !value.is_ascii()
+    || value.trim() != value
+    || value
+      .bytes()
+      .any(|byte| matches!(byte, b' ' | b'-' | b'/' | b'.' | b',' | b':'))
+    || value
+      .get(..2)
+      .is_some_and(|prefix| prefix.eq_ignore_ascii_case("PL"))
+  {
+    return CanonicalValidation::NotCanonical;
+  }
+  if value.len() != 10 {
+    return CanonicalValidation::Invalid(ValidationError::InvalidLength(
+      "identifier has an invalid length",
+    ));
+  }
+  if !value.bytes().all(|byte| byte.is_ascii_digit()) {
+    return CanonicalValidation::Invalid(ValidationError::InvalidFormat(
+      "identifier has an invalid format",
+    ));
+  }
+  if crate::validate_pl_nip_ascii(value.as_bytes()) {
+    CanonicalValidation::Valid
+  } else {
+    CanonicalValidation::Invalid(ValidationError::InvalidChecksum(
+      "identifier checksum or components are invalid",
+    ))
+  }
+}
+
 fn validate_for(id: &str, value: &str) -> ValidationResult {
+  if id == "pl.nip" {
+    match validate_pl_nip_canonical(value) {
+      CanonicalValidation::Valid => return Ok(value.to_owned()),
+      CanonicalValidation::Invalid(error) => return Err(error),
+      CanonicalValidation::NotCanonical => {}
+    }
+  }
   let compact = compact_for(id, value);
   if raw_is_valid(id, &compact) {
     return Ok(compact);

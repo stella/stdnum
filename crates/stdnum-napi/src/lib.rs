@@ -6,8 +6,8 @@ use napi::{
 };
 use napi_derive::napi;
 use stella_stdnum_core::{
-  EntityType, Gender, ParsedIdentifier, ValidationError, Validator,
-  ValidatorScope,
+  CanonicalValidation, EntityType, Gender, ParsedIdentifier, ValidationError,
+  Validator, ValidatorScope,
 };
 
 /// A validation error returned as data rather than thrown into JavaScript.
@@ -193,9 +193,51 @@ fn validate_with(validator: &Validator, value: &str) -> JsValidationResult {
   }
 }
 
+fn validate_owned(validator: &Validator, value: String) -> JsValidationResult {
+  match validator.validate_canonical(&value) {
+    CanonicalValidation::Valid => JsValidationResult {
+      valid: true,
+      compact: Some(value),
+      error: None,
+    },
+    CanonicalValidation::Invalid(error) => validation_error(error),
+    CanonicalValidation::NotCanonical => validate_with(validator, &value),
+  }
+}
+
 #[napi(js_name = "validateIndex")]
 pub fn validate_index(index: u32, value: String) -> Result<JsValidationResult> {
-  Ok(validate_with(find_validator_index(index)?, &value))
+  Ok(validate_owned(find_validator_index(index)?, value))
+}
+
+#[napi(js_name = "validateManyIndex")]
+pub fn validate_many_index(
+  index: u32,
+  values: Vec<String>,
+) -> Result<Vec<JsValidationResult>> {
+  let validator = find_validator_index(index)?;
+  Ok(
+    values
+      .into_iter()
+      .map(|value| validate_owned(validator, value))
+      .collect(),
+  )
+}
+
+#[napi(js_name = "areAllCanonicalValidIndex")]
+#[must_use]
+pub fn are_all_canonical_valid_index(index: u32, values: Vec<String>) -> bool {
+  usize::try_from(index)
+    .ok()
+    .and_then(|index| stella_stdnum_core::validators().get(index))
+    .is_some_and(|validator| {
+      values.iter().all(|value| {
+        matches!(
+          validator.validate_canonical(value),
+          CanonicalValidation::Valid
+        )
+      })
+    })
 }
 
 #[napi(js_name = "validateFastIndex")]
@@ -204,14 +246,45 @@ pub fn validate_fast_index(
   value: String,
 ) -> Result<Either<u32, JsValidationError>> {
   let input = value.as_str();
-  Ok(match find_validator_index(index)?.validate(input) {
-    Ok(compact) if compact == input => Either::A(1),
-    Ok(_) => Either::A(2),
-    Err(error) => Either::B(JsValidationError {
+  let validator = find_validator_index(index)?;
+  Ok(match validator.validate_canonical(input) {
+    CanonicalValidation::Valid => Either::A(1),
+    CanonicalValidation::Invalid(error) => Either::B(JsValidationError {
       code: error.code().as_str().to_owned(),
       message: error.message().to_owned(),
     }),
+    CanonicalValidation::NotCanonical => match validator.validate(input) {
+      Ok(compact) if compact == input => Either::A(1),
+      Ok(_) => Either::A(2),
+      Err(error) => Either::B(JsValidationError {
+        code: error.code().as_str().to_owned(),
+        message: error.message().to_owned(),
+      }),
+    },
   })
+}
+
+#[napi(js_name = "isValidCanonicalIndex")]
+#[must_use]
+pub fn is_valid_canonical_index(index: u32, value: String) -> bool {
+  usize::try_from(index)
+    .ok()
+    .and_then(|index| stella_stdnum_core::validators().get(index))
+    .is_some_and(|validator| {
+      matches!(
+        validator.validate_canonical(&value),
+        CanonicalValidation::Valid
+      )
+    })
+}
+
+#[napi(js_name = "supportsCanonicalValidationIndex")]
+#[must_use]
+pub fn supports_canonical_validation_index(index: u32) -> bool {
+  usize::try_from(index)
+    .ok()
+    .and_then(|index| stella_stdnum_core::validators().get(index))
+    .is_some_and(|validator| validator.supports_canonical_validation())
 }
 
 #[napi(js_name = "compact")]
@@ -436,6 +509,32 @@ mod tests {
       ));
     };
     assert_eq!(error.code, "INVALID_CHECKSUM");
+    assert!(is_valid_canonical_index(
+      index("br.cpf")?,
+      "39053344705".to_owned()
+    ));
+    assert!(!is_valid_canonical_index(
+      index("br.cpf")?,
+      "390.533.447-05".to_owned()
+    ));
+    assert!(supports_canonical_validation_index(index("br.cpf")?));
+    assert!(!supports_canonical_validation_index(index("cz.ico")?));
+    let batch = validate_many_index(
+      index("br.cpf")?,
+      vec![
+        "39053344705".to_owned(),
+        "390.533.447-05".to_owned(),
+        "11111111111".to_owned(),
+      ],
+    )?;
+    assert_eq!(batch.len(), 3);
+    assert!(batch.first().is_some_and(|result| result.valid));
+    assert!(batch.get(1).is_some_and(|result| result.valid));
+    assert!(batch.get(2).is_some_and(|result| !result.valid));
+    assert!(are_all_canonical_valid_index(
+      index("br.cpf")?,
+      vec!["39053344705".to_owned(), "52998224725".to_owned()]
+    ));
     Ok(())
   }
 

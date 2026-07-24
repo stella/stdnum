@@ -11,6 +11,10 @@ assert_type(stdnum.validator_ids(), list[stdnum.ValidatorId])
 assert_type(stdnum.validators(), list[stdnum.ValidatorMetadata])
 assert_type(stdnum.validator_metadata(validator_id), stdnum.ValidatorMetadata)
 assert_type(stdnum.validate(validator_id, "25596641"), stdnum.ValidationResult)
+assert_type(
+    stdnum.validate_many(validator_id, ["25596641"]),
+    list[stdnum.ValidationResult],
+)
 assert_type(stdnum.compact(validator_id, "25596641"), str)
 assert_type(stdnum.format(validator_id, "25596641"), str)
 assert_type(stdnum.generate(validator_id), str | None)

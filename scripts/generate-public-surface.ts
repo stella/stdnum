@@ -63,6 +63,15 @@ const PYTHON_STUB_PATH = join(
   "stella_stdnum",
   "_native.pyi",
 );
+const PYTHON_INIT_PATH = join(
+  ROOT,
+  "crates",
+  "stdnum-py",
+  "python",
+  "stella_stdnum",
+  "__init__.py",
+);
+const PYTHON_INIT_STUB_PATH = `${PYTHON_INIT_PATH}i`;
 const PYTHON_TYPES_PATH = join(
   ROOT,
   "crates",
@@ -71,6 +80,45 @@ const PYTHON_TYPES_PATH = join(
   "stella_stdnum",
   "_types.py",
 );
+
+const PYTHON_NATIVE_EXPORTS = [
+  "ValidationError",
+  "ValidationResult",
+  "ParsedIdentifier",
+  "Bech32Validation",
+  "ValidatorMetadata",
+  "validator_ids",
+  "validators",
+  "validator_metadata",
+  "validate",
+  "validate_many",
+  "compact",
+  "format",
+  "generate",
+  "parse",
+  "credit_card_detect_network",
+  "eth_has_valid_eip55_checksum",
+  "btc_base58_decode",
+  "btc_bech32_polymod",
+  "btc_bech32_convert_bits",
+  "btc_bech32_validate",
+  "be_nn_checksum",
+  "es_vat_cif_checksum",
+  "ee_ik_two_pass_check",
+  "gb_nhs_calc_check_digit",
+  "gb_sedol_calc_check_digit",
+  "luhn_generate",
+  "validate_id",
+  "validate_named_id",
+] as const;
+const PYTHON_TYPE_EXPORTS = [
+  "CardNetwork",
+  "CountryCode",
+  "EntityType",
+  "ErrorCode",
+  "ValidatorId",
+  "ValidatorScope",
+] as const;
 const GENERATED_ROOT = join(
   PACKAGE_ROOT,
   "src",
@@ -601,6 +649,7 @@ def validator_ids() -> list[_ValidatorId]: ...
 def validators() -> list[ValidatorMetadata]: ...
 def validator_metadata(id: _ValidatorId) -> ValidatorMetadata: ...
 def validate(id: _ValidatorId, value: str) -> ValidationResult: ...
+def validate_many(id: _ValidatorId, values: list[str]) -> list[ValidationResult]: ...
 def compact(id: _ValidatorId, value: str) -> str: ...
 def format(id: _ValidatorId, value: str) -> str: ...
 def generate(id: _ValidatorId) -> str | None: ...
@@ -623,6 +672,64 @@ def validate_id(validator: str, value: str, input: str | None = None) -> bool: .
 def validate_named_id(validator: str, value: str) -> bool: ...
 `;
 };
+
+const verifiedPythonStub = (): string => {
+  const stub = pythonStub();
+  const declarations = [
+    ...stub.matchAll(/^(?:class|def) ([A-Za-z_]\w*)/gmu),
+  ].map((match) => match[1]);
+  if (
+    JSON.stringify(declarations) !==
+    JSON.stringify(PYTHON_NATIVE_EXPORTS)
+  ) {
+    throw new Error(
+      "Python native stub declarations and package exports differ",
+    );
+  }
+  return stub;
+};
+
+const pythonImports = (
+  names: readonly string[],
+  aliases: boolean,
+): string =>
+  names
+    .map((name) =>
+      aliases ? `    ${name} as ${name},` : `    ${name},`,
+    )
+    .join("\n");
+
+const pythonInit = (): string => {
+  const exports = [
+    ...PYTHON_NATIVE_EXPORTS,
+    ...PYTHON_TYPE_EXPORTS,
+  ]
+    .map((name) => `    ${JSON.stringify(name)},`)
+    .join("\n");
+  return `"""Fast standard-identifier validation backed by stella's Rust core."""
+
+from ._native import (
+${pythonImports(PYTHON_NATIVE_EXPORTS, false)}
+)
+from ._types import (
+${pythonImports(PYTHON_TYPE_EXPORTS, false)}
+)
+
+__all__ = [
+${exports}
+]
+`;
+};
+
+const pythonInitStub = (): string => `from ._native import (
+${pythonImports(PYTHON_NATIVE_EXPORTS, true)}
+)
+from ._types import (
+${pythonImports(PYTHON_TYPE_EXPORTS, true)}
+)
+
+__all__: list[str]
+`;
 
 const pythonTypes = (registry: Registry): string => {
   const countries = [
@@ -764,7 +871,9 @@ const writeGenerated = async (
   );
   await writePackageExports(registry);
   await writeTypeScriptTypes(registry);
-  await writeFile(PYTHON_STUB_PATH, pythonStub());
+  await writeFile(PYTHON_STUB_PATH, verifiedPythonStub());
+  await writeFile(PYTHON_INIT_PATH, pythonInit());
+  await writeFile(PYTHON_INIT_STUB_PATH, pythonInitStub());
   await writeFile(PYTHON_TYPES_PATH, pythonTypes(registry));
   await writeReadme(registry);
   const formatter = Bun.spawn(
@@ -775,6 +884,8 @@ const writeGenerated = async (
       join(PACKAGE_ROOT, "package.json"),
       TYPES_PATH,
       PYTHON_STUB_PATH,
+      PYTHON_INIT_PATH,
+      PYTHON_INIT_STUB_PATH,
       PYTHON_TYPES_PATH,
       REGISTRY_PATH,
       README_PATH,
@@ -844,6 +955,14 @@ const main = async (): Promise<void> => {
     PYTHON_TYPES_PATH,
     "utf8",
   );
+  const pythonInitBefore = await readFile(
+    PYTHON_INIT_PATH,
+    "utf8",
+  );
+  const pythonInitStubBefore = await readFile(
+    PYTHON_INIT_STUB_PATH,
+    "utf8",
+  );
   await writeGenerated(registry);
   const after = await snapshotGenerated();
   const manifestAfter = await readFile(
@@ -860,12 +979,22 @@ const main = async (): Promise<void> => {
     PYTHON_TYPES_PATH,
     "utf8",
   );
+  const pythonInitAfter = await readFile(
+    PYTHON_INIT_PATH,
+    "utf8",
+  );
+  const pythonInitStubAfter = await readFile(
+    PYTHON_INIT_STUB_PATH,
+    "utf8",
+  );
   const unchanged =
     before.size === after.size &&
     manifestBefore === manifestAfter &&
     readmeBefore === readmeAfter &&
     typesBefore === typesAfter &&
     pythonStubBefore === pythonStubAfter &&
+    pythonInitBefore === pythonInitAfter &&
+    pythonInitStubBefore === pythonInitStubAfter &&
     pythonTypesBefore === pythonTypesAfter &&
     [...before].every(
       ([path, contents]) => after.get(path) === contents,
@@ -890,6 +1019,16 @@ const main = async (): Promise<void> => {
         ? []
         : [
             "crates/stdnum-py/python/stella_stdnum/_types.py",
+          ]),
+      ...(pythonInitBefore === pythonInitAfter
+        ? []
+        : [
+            "crates/stdnum-py/python/stella_stdnum/__init__.py",
+          ]),
+      ...(pythonInitStubBefore === pythonInitStubAfter
+        ? []
+        : [
+            "crates/stdnum-py/python/stella_stdnum/__init__.pyi",
           ]),
       ...new Set([...before.keys(), ...after.keys()]),
     ]
