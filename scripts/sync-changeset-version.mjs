@@ -30,8 +30,21 @@ execFileSync(
   { stdio: "inherit" },
 );
 execFileSync(
+  process.execPath,
+  ["scripts/sync-cargo-lock-workspace-versions.mjs"],
+  {
+    stdio: "inherit",
+  },
+);
+execFileSync(
   "cargo",
-  ["metadata", "--no-deps", "--format-version", "1"],
+  [
+    "metadata",
+    "--locked",
+    "--no-deps",
+    "--format-version",
+    "1",
+  ],
   {
     stdio: "ignore",
   },
