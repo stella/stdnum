@@ -64,7 +64,9 @@ jobs:
           bun-version-file: "package.json"
       - run: bun install --frozen-lockfile
       - name: Require a changeset for runtime source changes
-        run: bun run changeset:check
+        run: |
+          bun run changeset:check:test
+          bun run changeset:check
         env:
           CHANGESET_HEAD_REF: ${{ github.head_ref }}
           CHANGESET_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}

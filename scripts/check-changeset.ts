@@ -3,36 +3,17 @@
 import { $ } from "bun";
 import { readFileSync } from "node:fs";
 
+import {
+  CHANGESET_RE,
+  generatedVersionMetadataOnly,
+  RUNTIME_CARGO_MANIFESTS,
+  RUNTIME_MANIFESTS,
+} from "./changeset-policy";
+
 const BASE_REF =
   process.env.CHANGESET_BASE_REF ?? "origin/main";
-const CHANGESET_RE =
-  /^\.changeset\/(?!README\.md$)[^/]+\.md$/;
 const RUNTIME_SOURCE_RE =
   /^(?:packages\/(?:stdnum|stdnum-wasm)\/(?:(?:src|scripts)\/|(?:index\.cjs|registry(?:\.schema)?\.json|tsconfig\.json|tsdown\.config\.ts)$)|crates\/stdnum-(?:core|napi|py|wasm)\/)/;
-const RUNTIME_MANIFESTS = new Set([
-  "packages/stdnum/package.json",
-  "packages/stdnum-wasm/package.json",
-  "packages/stdnum-darwin-arm64/package.json",
-  "packages/stdnum-darwin-x64/package.json",
-  "packages/stdnum-linux-arm64-gnu/package.json",
-  "packages/stdnum-linux-x64-gnu/package.json",
-  "packages/stdnum-win32-x64-msvc/package.json",
-]);
-const RUNTIME_CARGO_MANIFESTS = new Set([
-  "Cargo.lock",
-  "Cargo.toml",
-  "crates/stdnum-core/Cargo.toml",
-  "crates/stdnum-napi/Cargo.toml",
-  "crates/stdnum-py/Cargo.toml",
-  "crates/stdnum-wasm/Cargo.toml",
-]);
-const GENERATED_VERSION_METADATA = new Set([
-  ...RUNTIME_MANIFESTS,
-  ...RUNTIME_CARGO_MANIFESTS,
-  "CHANGELOG.md",
-  "VERSION",
-  "bun.lock",
-]);
 
 const firstSlash = BASE_REF.indexOf("/");
 const baseRemote =
@@ -174,17 +155,12 @@ if (!runtimeChanged) {
   process.exit(0);
 }
 
-const generatedVersionMetadataOnly = changedFiles.every(
-  (file) =>
-    GENERATED_VERSION_METADATA.has(file) ||
-    CHANGESET_RE.test(file),
-);
 if (
   headRef === expectedVersionBranch &&
   headRepository === repository &&
   prAuthor === VERSION_PR_AUTHOR &&
   changedFiles.includes("VERSION") &&
-  generatedVersionMetadataOnly
+  generatedVersionMetadataOnly(changedFiles)
 ) {
   console.log(
     "changeset check: synchronized release metadata includes VERSION. OK.",
