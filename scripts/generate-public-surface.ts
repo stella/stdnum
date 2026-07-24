@@ -332,9 +332,6 @@ const readmeSupportedIdentifiers = (
   const countries = new Set(
     countryValidators.map((validator) => validator.country),
   );
-  const names = new Intl.DisplayNames(["en"], {
-    type: "region",
-  });
   const globalRows = globals.map((validator) => [
     validator.name,
     `\`${validator.subpath}\``,
@@ -345,9 +342,7 @@ const readmeSupportedIdentifiers = (
   for (const validator of countryValidators) {
     const country = validator.country ?? "";
     const label =
-      country === previousCountry
-        ? ""
-        : `${country} ${names.of(country) ?? country}`;
+      country === previousCountry ? "" : country;
     countryRows.push([
       label,
       `\`${validator.subpath}\``,
