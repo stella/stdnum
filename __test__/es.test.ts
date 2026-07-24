@@ -58,6 +58,11 @@ describe("es.dni", () => {
     expect(r.valid).toBe(true);
   });
 
+  test("valid shorter DNI", () => {
+    const r = es.dni.validate("1234567L");
+    expect(r.valid).toBe(true);
+  });
+
   test("invalid DNI check letter", () => {
     const r = es.dni.validate("54362315Z");
     expect(r.valid).toBe(false);
@@ -67,7 +72,7 @@ describe("es.dni", () => {
   });
 
   test("wrong length", () => {
-    const r = es.dni.validate("5436231K");
+    const r = es.dni.validate("123456789K");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_LENGTH");

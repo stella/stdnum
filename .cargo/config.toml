@@ -1,0 +1,18 @@
+# Use sparse index for faster resolution.
+[registries.crates-io]
+protocol = "sparse"
+
+[alias]
+ci-fmt = "fmt --all -- --check"
+ci-clippy = "clippy --workspace --all-targets --all-features --locked -- -D warnings"
+ci-dylint = "dylint --workspace --all"
+# nextest runs each test in its own process (a panic in one test cannot poison
+# the run) and is faster than the built-in harness. It does NOT run doctests,
+# so `ci-test-doc` covers those separately; keep both wired in `rust:test`.
+ci-test = "nextest run --workspace --all-features --locked --cargo-profile ci"
+ci-test-doc = "test --workspace --all-features --locked --doc --profile ci"
+# Supply-chain gate: license/advisory/source/duplicate checks (see deny.toml).
+ci-deny = "deny check"
+# Snapshot-hygiene gate: rejects snapshot mismatches and orphaned .snap files
+# (unreferenced by any test). `--check` never writes .snap.new.
+ci-snapshot = "insta test --workspace --all-features --test-runner nextest --profile ci --unreferenced=reject --check"

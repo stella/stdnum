@@ -1,0 +1,4 @@
+title = "stella Gitleaks Configuration"
+
+[extend]
+useDefault = true

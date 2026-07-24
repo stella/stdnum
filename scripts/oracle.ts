@@ -442,7 +442,8 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
       .map(([p, d, c]) => `${p}${d}${c}`),
   ),
   "es.dni": fc
-    .tuple(digs(8), letters(ES_LETTERS))
+    // stdnum-js compares only canonical 8-digit DNI bodies here.
+    .tuple(rawDigs(8), letters(ES_LETTERS))
     .map(([d, l]) => `${d}${l}`),
   "es.nie": fc
     .tuple(

@@ -1,0 +1,54 @@
+# Portable stella cargo-deny configuration, distributed via ai-shared and pulled
+# into consumer repos through `.ai/manifest.json` "sharedRootFiles".
+# Run `cargo deny check`.
+#
+# Complements the PR `dependency-review` action (which only sees dependencies
+# added in a PR) with continuous full-tree checks: RustSec advisories, license
+# policy, dependency sources, and duplicate versions. The license allow-list
+# mirrors the org's dependency-review allow-list; keep the two in sync.
+
+[advisories]
+version = 2
+# Fail on any crate the registry has yanked.
+yanked = "deny"
+ignore = []
+
+[licenses]
+version = 2
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "0BSD",
+  "BlueOak-1.0.0",
+  "Unlicense",
+  "CC0-1.0",
+  "CC-BY-4.0",
+  "MIT-0",
+  "MPL-2.0",
+  "Python-2.0",
+  "Zlib",
+  "Unicode-3.0",
+]
+confidence-threshold = 0.9
+# The allow-list mirrors dependency-review for parity; not every entry is
+# present in a given tree, so do not warn on the unused allowances.
+unused-allowed-license = "allow"
+
+[bans]
+# Duplicate versions are a warning, matching clippy `multiple_crate_versions`.
+multiple-versions = "warn"
+# A wildcard version requirement is almost always a mistake.
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+
+# Allow pinned git dependencies from the stella organization.
+[sources.allow-org]
+github = ["stella"]

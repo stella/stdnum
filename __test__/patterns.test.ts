@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { ch, cz, de, fr, pl } from "../src";
+import { ch, cz, de, es, fr, pl } from "../src";
 import {
   allPatterns,
   byCountry,
@@ -37,6 +37,13 @@ describe("toRegex", () => {
     // cz.rc accepts both 9 and 10 digit values
     expect(toRegex(cz.rc).test("7103192745")).toBe(true);
     expect(toRegex(cz.rc).test("710319274")).toBe(true);
+  });
+
+  test("short and full DNI (es.dni)", () => {
+    // 1-8 digits + a check letter: lengths metadata must cover short DNIs,
+    // not just the 9-char example.
+    expect(toRegex(es.dni).test("1234567L")).toBe(true);
+    expect(toRegex(es.dni).test("54362315K")).toBe(true);
   });
 
   test("grouped format (compact)", () => {

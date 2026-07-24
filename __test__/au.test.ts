@@ -16,8 +16,21 @@ describe("au.abn", () => {
     expect(r.valid).toBe(true);
   });
 
+  test("valid ABN with leading zero", () => {
+    const r = au.abn.validate("00000000019");
+    expect(r.valid).toBe(true);
+  });
+
   test("invalid checksum", () => {
     const r = au.abn.validate("99 999 999 999");
+    expect(r.valid).toBe(false);
+    if (!r.valid) {
+      expect(r.error.code).toBe("INVALID_CHECKSUM");
+    }
+  });
+
+  test("all-zero ABN is invalid", () => {
+    const r = au.abn.validate("00000000000");
     expect(r.valid).toBe(false);
     if (!r.valid) {
       expect(r.error.code).toBe("INVALID_CHECKSUM");

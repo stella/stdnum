@@ -1,0 +1,34 @@
+# cargo-fuzz targets for the stdnum core.
+#
+# This crate is intentionally its own workspace (empty `[workspace]` table
+# below) so it stays out of the main `--workspace` build and its strict lints.
+# It also keeps `libfuzzer-sys` and the nightly-only sanitizer instrumentation
+# off the default `cargo build`/`cargo test` path. Run it with a nightly
+# toolchain via `cargo +nightly fuzz run <target>` (see `fuzz/README.md`).
+
+[package]
+name = "stella-stdnum-fuzz"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+stella-stdnum-core = { path = "../crates/stdnum-core" }
+
+# Detach from the parent workspace so `cargo build --workspace` at the repo root
+# never pulls in the fuzz targets or their nightly-only dependencies.
+[workspace]
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "validate_id"
+path = "fuzz_targets/validate_id.rs"
+test = false
+doc = false
+bench = false
