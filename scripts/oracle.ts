@@ -1165,7 +1165,16 @@ const shouldFailOnDisagreements =
   MODE === "gate" ||
   process.env.ORACLE_FAIL_ON_DISAGREEMENTS === "1";
 
-const SURVEY_ONLY_SOURCES = new Set(["valvat", "ruby-ssn"]);
+const SURVEY_ONLY_SOURCES = new Set([
+  "valvat",
+  "ruby-ssn",
+  // loophp/tin layers country-specific issuance and
+  // policy constraints on top of checksum validation
+  // (for example repeated-digit exclusions). That is
+  // useful ecosystem evidence, but it is not an
+  // equivalent oracle for our public validators.
+  "loophp/tin",
+]);
 
 const SURVEY_ONLY_ENTRIES = new Set([
   // These pairings are useful as ecosystem probes,
