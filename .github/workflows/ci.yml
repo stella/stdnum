@@ -269,7 +269,9 @@ jobs:
             --requirement crates/stdnum-py/tests/requirements.txt \
             dist-python/*.whl
           .python-smoke/bin/python -m unittest discover -s crates/stdnum-py/tests -v
-          .python-smoke/bin/ty check crates/stdnum-py/tests/typing_contract.py
+          .python-smoke/bin/ty check \
+            --python .python-smoke/bin/python \
+            crates/stdnum-py/tests/typing_contract.py
 
   pack:
     name: Pack
