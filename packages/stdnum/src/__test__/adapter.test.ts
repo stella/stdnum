@@ -28,10 +28,56 @@ const fakeBinding = new Proxy(
         return (_id: string | number, value: string) =>
           `FN ${value}`;
       if (key === "validate" || key === "validateIndex")
-        return (_id: string | number, value: string) => ({
-          valid: true,
-          compact: value,
-        });
+        return (_id: string | number, value: string) =>
+          value === "invalid"
+            ? {
+                valid: false,
+                error: {
+                  code: "INVALID_FORMAT",
+                  message: "invalid fixture",
+                },
+              }
+            : {
+                valid: true,
+                compact: value
+                  .replaceAll(" ", "")
+                  .toLowerCase(),
+              };
+      if (key === "isValidCanonicalIndex")
+        return (_index: number, value: string) =>
+          value !== "invalid" && !value.includes(" ");
+      if (key === "supportsCanonicalValidationIndex")
+        return () => true;
+      if (key === "validateManyIndex")
+        return (
+          _index: number,
+          values: readonly string[],
+        ) =>
+          values.map((value) =>
+            value === "invalid"
+              ? {
+                  valid: false,
+                  error: {
+                    code: "INVALID_FORMAT",
+                    message: "invalid fixture",
+                  },
+                }
+              : {
+                  valid: true,
+                  compact: value
+                    .replaceAll(" ", "")
+                    .toLowerCase(),
+                },
+          );
+      if (key === "areAllCanonicalValidIndex")
+        return (
+          _index: number,
+          values: readonly string[],
+        ) =>
+          values.every(
+            (value) =>
+              value !== "invalid" && !value.includes(" "),
+          );
       if (key === "validateFastIndex")
         return (_index: number, value: string) => {
           if (value === "invalid")
@@ -73,6 +119,12 @@ describe("generated native adapter", () => {
         message: "invalid fixture",
       },
     });
+    expect(
+      businessid.validateMany(["122119m", "12 2119M"]),
+    ).toEqual([
+      { valid: true, compact: "122119m" },
+      { valid: true, compact: "122119m" },
+    ]);
     expect(generate()).toBe("122119m");
   });
 

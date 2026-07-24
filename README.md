@@ -49,6 +49,9 @@ cz.ico.validate("12345678");
 
 cz.rc.format("7103192745");
 // "710319/2745"
+
+cz.ico.validateMany(["25596641", "12345678"]);
+// [{ valid: true, compact: "25596641" }, { valid: false, error: ... }]
 ```
 
 ### Tree-shaking
@@ -81,6 +84,9 @@ import stella_stdnum
 result = stella_stdnum.validate("cz.ico", "25596641")
 assert result.valid
 assert result.compact == "25596641"
+
+results = stella_stdnum.validate_many("cz.ico", ["25596641", "12345678"])
+assert [result.valid for result in results] == [True, False]
 ```
 
 The Rust registry owns validator behavior and metadata. TypeScript subpaths,
@@ -105,9 +111,13 @@ The repo ships two oracle modes:
 Both commands accept `ORACLE_SAMPLES=<n>` to trade off
 runtime against coverage.
 
+`bun run performance:oracles` requires the Rust-backed public API to beat each
+specialized JavaScript oracle covered by the performance gate. The benchmark
+alternates execution order and compares paired medians to reduce host noise.
+
 Dependabot watches every JavaScript, Python, Ruby, PHP, and Rust oracle
-manifest. Its weekly update PRs rerun the strict oracle gate against the new
-upstream versions before they can merge.
+manifest. Its weekly update PRs rerun the strict correctness and JavaScript
+performance gates against the new upstream versions before they can merge.
 
 ## Supported Identifiers
 

@@ -1,8 +1,8 @@
 use crate::{
-  compact_without, decimal_digits_strict, is_ascii_digits, random_digits,
+  compact_without, decimal_digits_strict, random_digits,
   types::{
-    CountryCode, EntityType, ValidationError, ValidationResult, Validator,
-    ValidatorScope, ValidatorSpec,
+    CanonicalValidation, CountryCode, EntityType, ValidationError,
+    ValidationResult, Validator, ValidatorScope, ValidatorSpec,
   },
 };
 
@@ -23,7 +23,8 @@ pub static VALIDATOR: Validator = Validator::new(ValidatorSpec {
   validate,
   generate: Some(generate),
   parse: None,
-});
+})
+.with_canonical_validator(validate_canonical);
 
 #[must_use]
 pub fn compact(value: &str) -> String {
@@ -42,32 +43,85 @@ pub fn format(value: &str) -> String {
 }
 
 pub fn validate(value: &str) -> ValidationResult {
+  match validate_canonical(value) {
+    CanonicalValidation::Valid => return Ok(value.to_owned()),
+    CanonicalValidation::Invalid(error) => return Err(error),
+    CanonicalValidation::NotCanonical => {}
+  }
   let compact = compact(value);
-  if compact.chars().count() != 11 {
+  validate_ascii(compact.as_bytes())?;
+  Ok(compact)
+}
+
+fn validate_canonical(value: &str) -> CanonicalValidation {
+  if !value.is_ascii()
+    || value.trim() != value
+    || value.bytes().any(|byte| matches!(byte, b' ' | b'-' | b'.'))
+  {
+    return CanonicalValidation::NotCanonical;
+  }
+  match validate_ascii(value.as_bytes()) {
+    Ok(()) => CanonicalValidation::Valid,
+    Err(error) => CanonicalValidation::Invalid(error),
+  }
+}
+
+fn validate_ascii(bytes: &[u8]) -> Result<(), ValidationError> {
+  let Ok(bytes) = <&[u8; 11]>::try_from(bytes) else {
     return Err(ValidationError::InvalidLength("CPF must be 11 digits"));
-  }
-  if !is_ascii_digits(&compact) {
-    return Err(ValidationError::InvalidFormat(
-      "CPF must contain only digits",
-    ));
-  }
-  let Ok(digits) = <[u32; 11]>::try_from(decimal_digits_strict(&compact))
-  else {
-    return Err(ValidationError::InvalidFormat(
-      "CPF must contain only digits",
-    ));
   };
-  if digits.iter().all(|digit| *digit == digits[0]) {
+  if !bytes.iter().all(u8::is_ascii_digit) {
+    return Err(ValidationError::InvalidFormat(
+      "CPF must contain only digits",
+    ));
+  }
+  if bytes
+    .first()
+    .is_some_and(|first| bytes.iter().all(|byte| byte == first))
+  {
     return Err(ValidationError::InvalidFormat(
       "CPF must not be a repeated digit sequence",
     ));
   }
-  let first = check_digit(&digits[..9], 10);
-  let second = check_digit(&digits[..10], 11);
-  if digits[9] != first || digits[10] != second {
+  let mut first_sum = 0_u32;
+  let mut second_sum = 0_u32;
+  let weights = [
+    (10_u32, 11_u32),
+    (9, 10),
+    (8, 9),
+    (7, 8),
+    (6, 7),
+    (5, 6),
+    (4, 5),
+    (3, 4),
+    (2, 3),
+  ];
+  for (byte, (first_weight, second_weight)) in bytes.iter().take(9).zip(weights)
+  {
+    let digit = u32::from(byte.saturating_sub(b'0'));
+    first_sum = first_sum.saturating_add(digit.saturating_mul(first_weight));
+    second_sum = second_sum.saturating_add(digit.saturating_mul(second_weight));
+  }
+  let first = check_digit_from_sum(first_sum);
+  second_sum = second_sum.saturating_add(first.saturating_mul(2));
+  let second = check_digit_from_sum(second_sum);
+  if bytes
+    .get(9)
+    .is_none_or(|byte| u32::from(byte.saturating_sub(b'0')) != first)
+    || bytes
+      .get(10)
+      .is_none_or(|byte| u32::from(byte.saturating_sub(b'0')) != second)
+  {
     return Err(ValidationError::InvalidChecksum("CPF check digit mismatch"));
   }
-  Ok(compact)
+  Ok(())
+}
+
+const fn check_digit_from_sum(sum: u32) -> u32 {
+  11_u32
+    .saturating_sub(sum.rem_euclid(11))
+    .rem_euclid(11)
+    .rem_euclid(10)
 }
 
 fn check_digit(digits: &[u32], weight_start: u32) -> u32 {
@@ -79,10 +133,7 @@ fn check_digit(digits: &[u32], weight_start: u32) -> u32 {
       digit.saturating_mul(weight_start.saturating_sub(index))
     })
     .sum::<u32>();
-  11_u32
-    .saturating_sub(sum.rem_euclid(11))
-    .rem_euclid(11)
-    .rem_euclid(10)
+  check_digit_from_sum(sum)
 }
 
 #[must_use]

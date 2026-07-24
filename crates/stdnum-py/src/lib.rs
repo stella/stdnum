@@ -1,7 +1,7 @@
 use pyo3::{exceptions::PyKeyError, prelude::*};
 use stella_stdnum_core::{
-  EntityType, Gender, ParsedIdentifier, ValidationError, Validator,
-  ValidatorScope,
+  CanonicalValidation, EntityType, Gender, ParsedIdentifier, ValidationError,
+  Validator, ValidatorScope,
 };
 
 /// A validation error returned as structured Python data.
@@ -159,6 +159,36 @@ fn validate(id: &str, value: &str) -> PyResult<PyValidationResult> {
 }
 
 #[pyfunction]
+#[allow(clippy::needless_pass_by_value)] // PyO3 owns Python list arguments.
+fn validate_many(
+  id: &str,
+  values: Vec<String>,
+) -> PyResult<Vec<PyValidationResult>> {
+  let validator = find_validator(id)?;
+  Ok(
+    values
+      .into_iter()
+      .map(|value| match validator.validate_canonical(&value) {
+        CanonicalValidation::Valid => PyValidationResult {
+          valid: true,
+          compact: Some(value),
+          error: None,
+        },
+        CanonicalValidation::Invalid(error) => validation_error(&error),
+        CanonicalValidation::NotCanonical => match validator.validate(&value) {
+          Ok(compact) => PyValidationResult {
+            valid: true,
+            compact: Some(compact),
+            error: None,
+          },
+          Err(error) => validation_error(&error),
+        },
+      })
+      .collect(),
+  )
+}
+
+#[pyfunction]
 fn compact(id: &str, value: &str) -> PyResult<String> {
   Ok(find_validator(id)?.compact(value))
 }
@@ -290,6 +320,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
   module.add_function(wrap_pyfunction!(validators, module)?)?;
   module.add_function(wrap_pyfunction!(validator_metadata, module)?)?;
   module.add_function(wrap_pyfunction!(validate, module)?)?;
+  module.add_function(wrap_pyfunction!(validate_many, module)?)?;
   module.add_function(wrap_pyfunction!(compact, module)?)?;
   module.add_function(wrap_pyfunction!(format, module)?)?;
   module.add_function(wrap_pyfunction!(generate, module)?)?;

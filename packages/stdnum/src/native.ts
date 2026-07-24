@@ -49,11 +49,30 @@ export type NativeStdnumBinding = {
     index: number,
     value: string,
   ): NativeValidateResult;
+  validateManyIndex?(
+    this: void,
+    index: number,
+    values: readonly string[],
+  ): NativeValidateResult[];
+  areAllCanonicalValidIndex?(
+    this: void,
+    index: number,
+    values: readonly string[],
+  ): boolean;
   validateFastIndex?(
     this: void,
     index: number,
     value: string,
   ): number | NativeValidationError;
+  isValidCanonicalIndex?(
+    this: void,
+    index: number,
+    value: string,
+  ): boolean;
+  supportsCanonicalValidationIndex?(
+    this: void,
+    index: number,
+  ): boolean;
   compact(id: string, value: string): string;
   compactIndex?(
     this: void,

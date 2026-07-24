@@ -17,35 +17,47 @@
 use crate::{
   compact_without, random_below,
   types::{
-    CountryCode, EntityType, Gender, IsoDate, ParsedIdentifier,
-    ValidationError, ValidationResult, Validator, ValidatorScope,
-    ValidatorSpec,
+    CanonicalValidation, CountryCode, EntityType, Gender, IsoDate,
+    ParsedIdentifier, ValidationError, ValidationResult, Validator,
+    ValidatorScope, ValidatorSpec,
   },
 };
 
+macro_rules! canonical_validator {
+  ("cl.rut", $validator:expr) => {
+    $validator.with_canonical_validator(validate_cl_rut_canonical)
+  };
+  ($id:literal, $validator:expr) => {
+    $validator
+  };
+}
+
 macro_rules! validator {
-  ($module:ident, $id:literal, $country:expr, $entity:expr, $name:literal, $local:literal, $abbreviation:literal, $pattern:literal, $source:literal, $lengths:expr, $examples:expr, $aliases:expr) => {
+  ($module:ident, $id:tt, $country:expr, $entity:expr, $name:literal, $local:literal, $abbreviation:literal, $pattern:literal, $source:literal, $lengths:expr, $examples:expr, $aliases:expr) => {
     pub mod $module {
       use super::*;
 
-      pub static VALIDATOR: Validator = Validator::new(ValidatorSpec {
-        id: $id,
-        name: $name,
-        local_name: $local,
-        abbreviation: $abbreviation,
-        aliases: $aliases,
-        candidate_pattern: $pattern,
-        scope: ValidatorScope::Country($country),
-        entity_type: $entity,
-        source_url: Some($source),
-        lengths: $lengths,
-        examples: $examples,
-        compact,
-        format,
-        validate,
-        generate: Some(generate),
-        parse: parse_function($id),
-      });
+      pub static VALIDATOR: Validator = canonical_validator!(
+        $id,
+        Validator::new(ValidatorSpec {
+          id: $id,
+          name: $name,
+          local_name: $local,
+          abbreviation: $abbreviation,
+          aliases: $aliases,
+          candidate_pattern: $pattern,
+          scope: ValidatorScope::Country($country),
+          entity_type: $entity,
+          source_url: Some($source),
+          lengths: $lengths,
+          examples: $examples,
+          compact,
+          format,
+          validate,
+          generate: Some(generate),
+          parse: parse_function($id),
+        })
+      );
 
       #[must_use]
       pub fn compact(value: &str) -> String {
@@ -520,10 +532,10 @@ fn check_structure(
   Ok(())
 }
 
-fn rut_check(body: &str) -> char {
+fn rut_check_byte(body: &[u8]) -> u8 {
   let weights = [2_u32, 3, 4, 5, 6, 7];
   let sum = body
-    .bytes()
+    .iter()
     .rev()
     .enumerate()
     .fold(0_u32, |sum, (index, byte)| {
@@ -533,13 +545,55 @@ fn rut_check(body: &str) -> char {
       )
     });
   match 11_u32.saturating_sub(sum.rem_euclid(11)) {
-    11 => '0',
-    10 => 'K',
-    number => char::from_digit(number, 10).unwrap_or('0'),
+    11 => b'0',
+    10 => b'K',
+    number => u8::try_from(number).unwrap_or(0).saturating_add(b'0'),
   }
 }
 
+fn validate_cl_rut_canonical(value: &str) -> CanonicalValidation {
+  if !value.is_ascii()
+    || value.trim() != value
+    || value.bytes().any(|byte| {
+      byte.is_ascii_lowercase()
+        || matches!(byte, b' ' | b'-' | b'.' | b'/' | b'(' | b')')
+    })
+    || value.starts_with("CL")
+  {
+    return CanonicalValidation::NotCanonical;
+  }
+  match validate_cl_rut_ascii(value.as_bytes()) {
+    Ok(()) => CanonicalValidation::Valid,
+    Err(error) => CanonicalValidation::Invalid(error),
+  }
+}
+
+fn validate_cl_rut_ascii(bytes: &[u8]) -> Result<(), ValidationError> {
+  if ![8, 9].contains(&bytes.len()) {
+    return Err(invalid_length());
+  }
+  let Some((check, body)) = bytes.split_last() else {
+    return Err(invalid_length());
+  };
+  if !body.iter().all(u8::is_ascii_digit)
+    || !(check.is_ascii_digit() || *check == b'K')
+  {
+    return Err(invalid_format());
+  }
+  if *check != rut_check_byte(body) {
+    return Err(invalid_checksum());
+  }
+  Ok(())
+}
+
 fn validate_for(id: &str, input: &str) -> ValidationResult {
+  if id == "cl.rut" {
+    match validate_cl_rut_canonical(input) {
+      CanonicalValidation::Valid => return Ok(input.to_owned()),
+      CanonicalValidation::Invalid(error) => return Err(error),
+      CanonicalValidation::NotCanonical => {}
+    }
+  }
   let value = compact_for(id, input);
   if id == "ca.sin" && !is_digits(&value) {
     return Err(invalid_format());
@@ -834,21 +888,7 @@ fn validate_for(id: &str, input: &str) -> ValidationResult {
     }
     "ch.vat" => validate_ch_vat(&value)?,
     "cl.rut" => {
-      if ![8, 9].contains(&value.len()) {
-        return Err(invalid_length());
-      }
-      let body = value.get(..value.len().saturating_sub(1)).unwrap_or("");
-      if !is_digits(body)
-        || !value
-          .as_bytes()
-          .last()
-          .is_some_and(|byte| byte.is_ascii_digit() || *byte == b'K')
-      {
-        return Err(invalid_format());
-      }
-      if !value.ends_with(rut_check(body)) {
-        return Err(invalid_checksum());
-      }
+      validate_cl_rut_ascii(value.as_bytes())?;
     }
     "cn.uscc" => validate_uscc(&value)?,
     "co.nit" => validate_co_nit(&value)?,
