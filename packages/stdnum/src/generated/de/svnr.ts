@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const svnr: CountryValidator<"DE"> =
-  createValidator("de.svnr");
+const svnr: CountryValidator<"DE"> = createValidator(
+  "de.svnr",
+  53,
+);
 
 export default svnr;
 export const compact = svnr.compact;

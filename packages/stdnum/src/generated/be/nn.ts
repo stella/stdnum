@@ -2,7 +2,10 @@
 import { createValidator, getBinding } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const nn: CountryValidator<"BE"> = createValidator("be.nn");
+const nn: CountryValidator<"BE"> = createValidator(
+  "be.nn",
+  19,
+);
 
 export default nn;
 export const compact = nn.compact;

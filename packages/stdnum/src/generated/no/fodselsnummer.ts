@@ -8,7 +8,7 @@ import type {
 const fodselsnummer: CountryValidator<
   "NO",
   ParsedPersonId
-> = createValidator("no.fodselsnummer");
+> = createValidator("no.fodselsnummer", 136);
 
 export default fodselsnummer;
 export const compact = fodselsnummer.compact;

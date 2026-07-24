@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const jmbg: CountryValidator<"BA", ParsedPersonId> =
-  createValidator("ba.jmbg");
+  createValidator("ba.jmbg", 16);
 
 export default jmbg;
 export const compact = jmbg.compact;

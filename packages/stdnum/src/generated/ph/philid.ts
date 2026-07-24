@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const philid: CountryValidator<"PH"> =
-  createValidator("ph.philid");
+const philid: CountryValidator<"PH"> = createValidator(
+  "ph.philid",
+  142,
+);
 
 export default philid;
 export const compact = philid.compact;

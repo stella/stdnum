@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const aadhaar: CountryValidator<"IN"> =
-  createValidator("in.aadhaar");
+const aadhaar: CountryValidator<"IN"> = createValidator(
+  "in.aadhaar",
+  96,
+);
 
 export default aadhaar;
 export const compact = aadhaar.compact;

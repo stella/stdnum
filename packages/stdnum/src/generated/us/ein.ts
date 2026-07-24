@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const ein: CountryValidator<"US"> =
-  createValidator("us.ein");
+const ein: CountryValidator<"US"> = createValidator(
+  "us.ein",
+  167,
+);
 
 export default ein;
 export const compact = ein.compact;

@@ -2,7 +2,10 @@
 import { createValidator, getBinding } from "../../runtime";
 import type { GlobalValidator } from "../../types";
 
-const eth: GlobalValidator = createValidator("crypto.eth");
+const eth: GlobalValidator = createValidator(
+  "crypto.eth",
+  43,
+);
 
 export default eth;
 export const compact = eth.compact;

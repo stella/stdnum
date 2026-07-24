@@ -21,19 +21,30 @@ const fakeBinding = new Proxy(
   {},
   {
     get: (_target, key) => {
-      if (key === "compact")
-        return (_id: string, value: string) =>
+      if (key === "compact" || key === "compactIndex")
+        return (_id: string | number, value: string) =>
           value.replaceAll(" ", "").toLowerCase();
-      if (key === "format")
-        return (_id: string, value: string) =>
+      if (key === "format" || key === "formatIndex")
+        return (_id: string | number, value: string) =>
           `FN ${value}`;
-      if (key === "validate")
-        return (_id: string, value: string) => ({
+      if (key === "validate" || key === "validateIndex")
+        return (_id: string | number, value: string) => ({
           valid: true,
           compact: value,
         });
-      if (key === "generate") return () => "122119m";
-      if (key === "parse") return () => null;
+      if (key === "validateFastIndex")
+        return (_index: number, value: string) => {
+          if (value === "invalid")
+            return {
+              code: "INVALID_FORMAT",
+              message: "invalid fixture",
+            };
+          return value.includes(" ") ? 2 : 1;
+        };
+      if (key === "generate" || key === "generateIndex")
+        return () => "122119m";
+      if (key === "parse" || key === "parseIndex")
+        return () => null;
       return () => [];
     },
   },
@@ -50,6 +61,17 @@ describe("generated native adapter", () => {
     expect(validate("122119m")).toEqual({
       valid: true,
       compact: "122119m",
+    });
+    expect(validate("12 2119M")).toEqual({
+      valid: true,
+      compact: "122119m",
+    });
+    expect(validate("invalid")).toEqual({
+      valid: false,
+      error: {
+        code: "INVALID_FORMAT",
+        message: "invalid fixture",
+      },
     });
     expect(generate()).toBe("122119m");
   });

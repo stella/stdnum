@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const asmens: CountryValidator<"LT"> =
-  createValidator("lt.asmens");
+const asmens: CountryValidator<"LT"> = createValidator(
+  "lt.asmens",
+  115,
+);
 
 export default asmens;
 export const compact = asmens.compact;

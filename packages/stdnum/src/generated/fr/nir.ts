@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const nir: CountryValidator<"FR", ParsedPersonId> =
-  createValidator("fr.nir");
+  createValidator("fr.nir", 74);
 
 export default nir;
 export const compact = nir.compact;

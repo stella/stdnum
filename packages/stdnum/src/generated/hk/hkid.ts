@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const hkid: CountryValidator<"HK"> =
-  createValidator("hk.hkid");
+const hkid: CountryValidator<"HK"> = createValidator(
+  "hk.hkid",
+  88,
+);
 
 export default hkid;
 export const compact = hkid.compact;

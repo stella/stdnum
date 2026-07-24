@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const rif: CountryValidator<"VE"> =
-  createValidator("ve.rif");
+const rif: CountryValidator<"VE"> = createValidator(
+  "ve.rif",
+  172,
+);
 
 export default rif;
 export const compact = rif.compact;

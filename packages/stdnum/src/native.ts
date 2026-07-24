@@ -44,12 +44,38 @@ export type NativeStdnumBinding = {
   validators(): ValidatorMetadata[];
   validatorMetadata(id: string): ValidatorMetadata;
   validate(id: string, value: string): NativeValidateResult;
+  validateIndex?(
+    this: void,
+    index: number,
+    value: string,
+  ): NativeValidateResult;
+  validateFastIndex?(
+    this: void,
+    index: number,
+    value: string,
+  ): number | NativeValidationError;
   compact(id: string, value: string): string;
+  compactIndex?(
+    this: void,
+    index: number,
+    value: string,
+  ): string;
   format(id: string, value: string): string;
+  formatIndex?(
+    this: void,
+    index: number,
+    value: string,
+  ): string;
   generate(id: string): string | null;
+  generateIndex?(this: void, index: number): string | null;
   luhnGenerate(length?: number): string;
   parse(
     id: string,
+    value: string,
+  ): NativeParsedIdentifier | null;
+  parseIndex?(
+    this: void,
+    index: number,
     value: string,
   ): NativeParsedIdentifier | null;
   detectNetwork(value: string): CardNetwork | null;

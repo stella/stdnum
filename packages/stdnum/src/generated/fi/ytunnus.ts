@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const ytunnus: CountryValidator<"FI"> =
-  createValidator("fi.ytunnus");
+const ytunnus: CountryValidator<"FI"> = createValidator(
+  "fi.ytunnus",
+  72,
+);
 
 export default ytunnus;
 export const compact = ytunnus.compact;

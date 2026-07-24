@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const amka: CountryValidator<"GR"> =
-  createValidator("gr.amka");
+const amka: CountryValidator<"GR"> = createValidator(
+  "gr.amka",
+  85,
+);
 
 export default amka;
 export const compact = amka.compact;

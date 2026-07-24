@@ -2,7 +2,7 @@
 import { createValidator } from "../runtime";
 import type { GlobalValidator } from "../types";
 
-const iban: GlobalValidator = createValidator("iban");
+const iban: GlobalValidator = createValidator("iban", 91);
 
 export default iban;
 export const compact = iban.compact;

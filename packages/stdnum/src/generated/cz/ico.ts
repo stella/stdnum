@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const ico: CountryValidator<"CZ"> =
-  createValidator("cz.ico");
+const ico: CountryValidator<"CZ"> = createValidator(
+  "cz.ico",
+  48,
+);
 
 export default ico;
 export const compact = ico.compact;

@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const ssn: CountryValidator<"CH"> =
-  createValidator("ch.ssn");
+const ssn: CountryValidator<"CH"> = createValidator(
+  "ch.ssn",
+  32,
+);
 
 export default ssn;
 export const compact = ssn.compact;

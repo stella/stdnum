@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const pib: CountryValidator<"ME"> =
-  createValidator("me.pib");
+const pib: CountryValidator<"ME"> = createValidator(
+  "me.pib",
+  123,
+);
 
 export default pib;
 export const compact = pib.compact;

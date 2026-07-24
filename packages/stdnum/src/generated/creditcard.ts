@@ -2,8 +2,10 @@
 import { createValidator, getBinding } from "../runtime";
 import type { GlobalValidator } from "../types";
 
-const creditcard: GlobalValidator =
-  createValidator("creditcard");
+const creditcard: GlobalValidator = createValidator(
+  "creditcard",
+  40,
+);
 
 export default creditcard;
 export const compact = creditcard.compact;

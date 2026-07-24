@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const cuit: CountryValidator<"AR"> =
-  createValidator("ar.cuit");
+const cuit: CountryValidator<"AR"> = createValidator(
+  "ar.cuit",
+  6,
+);
 
 export default cuit;
 export const compact = cuit.compact;

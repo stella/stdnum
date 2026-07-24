@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const acn: CountryValidator<"AU"> =
-  createValidator("au.acn");
+const acn: CountryValidator<"AU"> = createValidator(
+  "au.acn",
+  13,
+);
 
 export default acn;
 export const compact = acn.compact;

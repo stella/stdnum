@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const nss: CountryValidator<"ES"> =
-  createValidator("es.nss");
+const nss: CountryValidator<"ES"> = createValidator(
+  "es.nss",
+  67,
+);
 
 export default nss;
 export const compact = nss.compact;

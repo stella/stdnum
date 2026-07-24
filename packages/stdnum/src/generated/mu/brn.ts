@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const brn: CountryValidator<"MU"> =
-  createValidator("mu.brn");
+const brn: CountryValidator<"MU"> = createValidator(
+  "mu.brn",
+  126,
+);
 
 export default brn;
 export const compact = brn.compact;

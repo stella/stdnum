@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const cif: CountryValidator<"ES"> =
-  createValidator("es.cif");
+const cif: CountryValidator<"ES"> = createValidator(
+  "es.cif",
+  64,
+);
 
 export default cif;
 export const compact = cif.compact;

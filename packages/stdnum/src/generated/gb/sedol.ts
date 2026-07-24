@@ -2,8 +2,10 @@
 import { createValidator, getBinding } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const sedol: CountryValidator<"GB"> =
-  createValidator("gb.sedol");
+const sedol: CountryValidator<"GB"> = createValidator(
+  "gb.sedol",
+  80,
+);
 
 export default sedol;
 export const compact = sedol.compact;

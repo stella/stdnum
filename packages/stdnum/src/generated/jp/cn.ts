@@ -2,7 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const cn: CountryValidator<"JP"> = createValidator("jp.cn");
+const cn: CountryValidator<"JP"> = createValidator(
+  "jp.cn",
+  106,
+);
 
 export default cn;
 export const compact = cn.compact;

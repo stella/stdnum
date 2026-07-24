@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const cpf: CountryValidator<"BR"> =
-  createValidator("br.cpf");
+const cpf: CountryValidator<"BR"> = createValidator(
+  "br.cpf",
+  27,
+);
 
 export default cpf;
 export const compact = cpf.compact;

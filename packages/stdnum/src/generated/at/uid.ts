@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const uid: CountryValidator<"AT"> =
-  createValidator("at.uid");
+const uid: CountryValidator<"AT"> = createValidator(
+  "at.uid",
+  10,
+);
 
 export default uid;
 export const compact = uid.compact;

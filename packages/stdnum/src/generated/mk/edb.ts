@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const edb: CountryValidator<"MK"> =
-  createValidator("mk.edb");
+const edb: CountryValidator<"MK"> = createValidator(
+  "mk.edb",
+  124,
+);
 
 export default edb;
 export const compact = edb.compact;

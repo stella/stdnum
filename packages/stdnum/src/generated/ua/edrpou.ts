@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const edrpou: CountryValidator<"UA"> =
-  createValidator("ua.edrpou");
+const edrpou: CountryValidator<"UA"> = createValidator(
+  "ua.edrpou",
+  166,
+);
 
 export default edrpou;
 export const compact = edrpou.compact;

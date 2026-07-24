@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const npwp: CountryValidator<"ID"> =
-  createValidator("id.npwp");
+const npwp: CountryValidator<"ID"> = createValidator(
+  "id.npwp",
+  92,
+);
 
 export default npwp;
 export const compact = npwp.compact;

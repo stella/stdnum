@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const egn: CountryValidator<"BG", ParsedPersonId> =
-  createValidator("bg.egn");
+  createValidator("bg.egn", 21);
 
 export default egn;
 export const compact = egn.compact;

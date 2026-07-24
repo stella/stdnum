@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const kennitala: CountryValidator<"IS"> =
-  createValidator("is.kennitala");
+const kennitala: CountryValidator<"IS"> = createValidator(
+  "is.kennitala",
+  101,
+);
 
 export default kennitala;
 export const compact = kennitala.compact;

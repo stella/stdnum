@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const sin: CountryValidator<"CA"> =
-  createValidator("ca.sin");
+const sin: CountryValidator<"CA"> = createValidator(
+  "ca.sin",
+  31,
+);
 
 export default sin;
 export const compact = sin.compact;

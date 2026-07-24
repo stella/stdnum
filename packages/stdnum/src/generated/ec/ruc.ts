@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const ruc: CountryValidator<"EC"> =
-  createValidator("ec.ruc");
+const ruc: CountryValidator<"EC"> = createValidator(
+  "ec.ruc",
+  59,
+);
 
 export default ruc;
 export const compact = ruc.compact;

@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const nit: CountryValidator<"CO"> =
-  createValidator("co.nit");
+const nit: CountryValidator<"CO"> = createValidator(
+  "co.nit",
+  38,
+);
 
 export default nit;
 export const compact = nit.compact;

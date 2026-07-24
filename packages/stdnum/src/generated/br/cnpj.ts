@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const cnpj: CountryValidator<"BR"> =
-  createValidator("br.cnpj");
+const cnpj: CountryValidator<"BR"> = createValidator(
+  "br.cnpj",
+  26,
+);
 
 export default cnpj;
 export const compact = cnpj.compact;

@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const cnic: CountryValidator<"PK"> =
-  createValidator("pk.cnic");
+const cnic: CountryValidator<"PK"> = createValidator(
+  "pk.cnic",
+  143,
+);
 
 export default cnic;
 export const compact = cnic.compact;

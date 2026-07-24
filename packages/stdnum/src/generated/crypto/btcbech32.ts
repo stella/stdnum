@@ -4,6 +4,7 @@ import type { GlobalValidator } from "../../types";
 
 const btcbech32: GlobalValidator = createValidator(
   "crypto.btcbech32",
+  42,
 );
 
 export default btcbech32;

@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const nino: CountryValidator<"GB"> =
-  createValidator("gb.nino");
+const nino: CountryValidator<"GB"> = createValidator(
+  "gb.nino",
+  79,
+);
 
 export default nino;
 export const compact = nino.compact;

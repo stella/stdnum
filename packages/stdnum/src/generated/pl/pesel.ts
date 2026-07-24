@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const pesel: CountryValidator<"PL", ParsedPersonId> =
-  createValidator("pl.pesel");
+  createValidator("pl.pesel", 145);
 
 export default pesel;
 export const compact = pesel.compact;

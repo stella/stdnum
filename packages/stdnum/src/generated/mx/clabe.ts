@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const clabe: CountryValidator<"MX"> =
-  createValidator("mx.clabe");
+const clabe: CountryValidator<"MX"> = createValidator(
+  "mx.clabe",
+  127,
+);
 
 export default clabe;
 export const compact = clabe.compact;

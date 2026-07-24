@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const vat: CountryValidator<"LV"> =
-  createValidator("lv.vat");
+const vat: CountryValidator<"LV"> = createValidator(
+  "lv.vat",
+  119,
+);
 
 export default vat;
 export const compact = vat.compact;

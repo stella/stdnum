@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const dni: CountryValidator<"AR"> =
-  createValidator("ar.dni");
+const dni: CountryValidator<"AR"> = createValidator(
+  "ar.dni",
+  7,
+);
 
 export default dni;
 export const compact = dni.compact;

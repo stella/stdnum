@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const tfn: CountryValidator<"AU"> =
-  createValidator("au.tfn");
+const tfn: CountryValidator<"AU"> = createValidator(
+  "au.tfn",
+  14,
+);
 
 export default tfn;
 export const compact = tfn.compact;

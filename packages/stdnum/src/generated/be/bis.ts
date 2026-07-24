@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const bis: CountryValidator<"BE"> =
-  createValidator("be.bis");
+const bis: CountryValidator<"BE"> = createValidator(
+  "be.bis",
+  18,
+);
 
 export default bis;
 export const compact = bis.compact;

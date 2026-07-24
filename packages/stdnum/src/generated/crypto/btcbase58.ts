@@ -4,6 +4,7 @@ import type { GlobalValidator } from "../../types";
 
 const btcbase58: GlobalValidator = createValidator(
   "crypto.btcbase58",
+  41,
 );
 
 export default btcbase58;

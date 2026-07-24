@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const tckimlik: CountryValidator<"TR"> =
-  createValidator("tr.tckimlik");
+const tckimlik: CountryValidator<"TR"> = createValidator(
+  "tr.tckimlik",
+  163,
+);
 
 export default tckimlik;
 export const compact = tckimlik.compact;

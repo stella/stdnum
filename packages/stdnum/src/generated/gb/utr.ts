@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const utr: CountryValidator<"GB"> =
-  createValidator("gb.utr");
+const utr: CountryValidator<"GB"> = createValidator(
+  "gb.utr",
+  81,
+);
 
 export default utr;
 export const compact = utr.compact;

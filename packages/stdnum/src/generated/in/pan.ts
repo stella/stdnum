@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const pan: CountryValidator<"IN"> =
-  createValidator("in.pan");
+const pan: CountryValidator<"IN"> = createValidator(
+  "in.pan",
+  98,
+);
 
 export default pan;
 export const compact = pan.compact;

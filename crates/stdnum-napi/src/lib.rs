@@ -1,6 +1,9 @@
 #![allow(clippy::needless_pass_by_value)]
 
-use napi::{Error, Result, Status, bindgen_prelude::Uint8Array};
+use napi::{
+  Error, Result, Status,
+  bindgen_prelude::{Either, Uint8Array},
+};
 use napi_derive::napi;
 use stella_stdnum_core::{
   EntityType, Gender, ParsedIdentifier, ValidationError, Validator,
@@ -64,6 +67,24 @@ fn unknown_validator(id: &str) -> Error {
 
 fn find_validator(id: &str) -> Result<&'static Validator> {
   stella_stdnum_core::validator(id).ok_or_else(|| unknown_validator(id))
+}
+
+fn find_validator_index(index: u32) -> Result<&'static Validator> {
+  let registry_index = usize::try_from(index).map_err(|_| {
+    Error::new(
+      Status::InvalidArg,
+      format!("unknown validator index: {index}"),
+    )
+  })?;
+  stella_stdnum_core::validators()
+    .get(registry_index)
+    .copied()
+    .ok_or_else(|| {
+      Error::new(
+        Status::InvalidArg,
+        format!("unknown validator index: {index}"),
+      )
+    })
 }
 
 fn validation_error(error: ValidationError) -> JsValidationResult {
@@ -158,14 +179,38 @@ pub fn validator_metadata(id: String) -> Result<JsValidatorMetadata> {
 
 #[napi(js_name = "validate")]
 pub fn validate(id: String, value: String) -> Result<JsValidationResult> {
-  let validator = find_validator(&id)?;
-  Ok(match validator.validate(&value) {
+  Ok(validate_with(find_validator(&id)?, &value))
+}
+
+fn validate_with(validator: &Validator, value: &str) -> JsValidationResult {
+  match validator.validate(value) {
     Ok(compact) => JsValidationResult {
       valid: true,
       compact: Some(compact),
       error: None,
     },
     Err(error) => validation_error(error),
+  }
+}
+
+#[napi(js_name = "validateIndex")]
+pub fn validate_index(index: u32, value: String) -> Result<JsValidationResult> {
+  Ok(validate_with(find_validator_index(index)?, &value))
+}
+
+#[napi(js_name = "validateFastIndex")]
+pub fn validate_fast_index(
+  index: u32,
+  value: String,
+) -> Result<Either<u32, JsValidationError>> {
+  let input = value.as_str();
+  Ok(match find_validator_index(index)?.validate(input) {
+    Ok(compact) if compact == input => Either::A(1),
+    Ok(_) => Either::A(2),
+    Err(error) => Either::B(JsValidationError {
+      code: error.code().as_str().to_owned(),
+      message: error.message().to_owned(),
+    }),
   })
 }
 
@@ -174,9 +219,19 @@ pub fn compact(id: String, value: String) -> Result<String> {
   find_validator(&id).map(|validator| validator.compact(&value))
 }
 
+#[napi(js_name = "compactIndex")]
+pub fn compact_index(index: u32, value: String) -> Result<String> {
+  find_validator_index(index).map(|validator| validator.compact(&value))
+}
+
 #[napi(js_name = "format")]
 pub fn format(id: String, value: String) -> Result<String> {
   find_validator(&id).map(|validator| validator.format(&value))
+}
+
+#[napi(js_name = "formatIndex")]
+pub fn format_index(index: u32, value: String) -> Result<String> {
+  find_validator_index(index).map(|validator| validator.format(&value))
 }
 
 #[napi(js_name = "generate")]
@@ -184,9 +239,23 @@ pub fn generate(id: String) -> Result<Option<String>> {
   find_validator(&id).map(Validator::generate)
 }
 
+#[napi(js_name = "generateIndex")]
+pub fn generate_index(index: u32) -> Result<Option<String>> {
+  find_validator_index(index).map(Validator::generate)
+}
+
 #[napi(js_name = "parse")]
 pub fn parse(id: String, value: String) -> Result<Option<JsParsedIdentifier>> {
   find_validator(&id)
+    .map(|validator| validator.parse(&value).map(parsed_identifier))
+}
+
+#[napi(js_name = "parseIndex")]
+pub fn parse_index(
+  index: u32,
+  value: String,
+) -> Result<Option<JsParsedIdentifier>> {
+  find_validator_index(index)
     .map(|validator| validator.parse(&value).map(parsed_identifier))
 }
 
@@ -334,6 +403,39 @@ mod tests {
     assert_eq!(result.scope, "country");
     assert!(result.can_generate);
     assert!(!result.can_parse);
+    Ok(())
+  }
+
+  #[test]
+  fn indexed_fast_path_distinguishes_canonical_changed_and_invalid_values()
+  -> Result<()> {
+    let index = |id: &str| {
+      stella_stdnum_core::validators()
+        .iter()
+        .position(|validator| validator.id() == id)
+        .and_then(|value| u32::try_from(value).ok())
+        .ok_or_else(|| Error::new(Status::GenericFailure, "missing fixture"))
+    };
+    assert!(matches!(
+      validate_fast_index(index("cz.ico")?, "25596641".to_owned())?,
+      Either::A(1)
+    ));
+    assert!(matches!(
+      validate_fast_index(
+        index("iban")?,
+        "CZ65 0800 0000 1920 0014 5399".to_owned()
+      )?,
+      Either::A(2)
+    ));
+    let Either::B(error) =
+      validate_fast_index(index("cz.ico")?, "12345678".to_owned())?
+    else {
+      return Err(Error::new(
+        Status::GenericFailure,
+        "invalid fixture unexpectedly validated",
+      ));
+    };
+    assert_eq!(error.code, "INVALID_CHECKSUM");
     Ok(())
   }
 

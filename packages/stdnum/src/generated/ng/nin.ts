@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const nin: CountryValidator<"NG"> =
-  createValidator("ng.nin");
+const nin: CountryValidator<"NG"> = createValidator(
+  "ng.nin",
+  131,
+);
 
 export default nin;
 export const compact = nin.compact;

@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const nif: CountryValidator<"FR"> =
-  createValidator("fr.nif");
+const nif: CountryValidator<"FR"> = createValidator(
+  "fr.nif",
+  73,
+);
 
 export default nif;
 export const compact = nif.compact;

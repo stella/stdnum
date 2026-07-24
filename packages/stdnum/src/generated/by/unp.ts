@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const unp: CountryValidator<"BY"> =
-  createValidator("by.unp");
+const unp: CountryValidator<"BY"> = createValidator(
+  "by.unp",
+  28,
+);
 
 export default unp;
 export const compact = unp.compact;

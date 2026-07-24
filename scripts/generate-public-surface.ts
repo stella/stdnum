@@ -271,6 +271,7 @@ const writeReadme = async (
 
 const validatorModule = (
   validator: RegistryValidator,
+  index: number,
 ): string => {
   const depth = validator.subpath.split("/").length;
   const relative = "../".repeat(depth);
@@ -306,7 +307,7 @@ const validatorModule = (
     `import { createValidator${hasSpecialExports ? ", getBinding" : ""} } from ${quote(`${relative}runtime`)};`,
     `import type { ${imports}${parsedImport} } from ${quote(`${relative}types`)};`,
     "",
-    `const ${validator.exportName}: ${typeName} = createValidator(${quote(validator.id)});`,
+    `const ${validator.exportName}: ${typeName} = createValidator(${quote(validator.id)}, ${String(index)});`,
     "",
     `export default ${validator.exportName};`,
   ];
@@ -723,13 +724,19 @@ const writeGenerated = async (
     recursive: true,
     force: true,
   });
-  for (const validator of registry.validators) {
+  for (const [
+    index,
+    validator,
+  ] of registry.validators.entries()) {
     const path = join(
       GENERATED_ROOT,
       `${validator.subpath}.ts`,
     );
     await mkdir(dirname(path), { recursive: true });
-    await writeFile(path, validatorModule(validator));
+    await writeFile(
+      path,
+      validatorModule(validator, index),
+    );
   }
   const grouped = Map.groupBy(
     registry.validators.filter(

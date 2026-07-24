@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const vkn: CountryValidator<"TR"> =
-  createValidator("tr.vkn");
+const vkn: CountryValidator<"TR"> = createValidator(
+  "tr.vkn",
+  164,
+);
 
 export default vkn;
 export const compact = vkn.compact;

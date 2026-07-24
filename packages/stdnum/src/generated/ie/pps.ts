@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const pps: CountryValidator<"IE"> =
-  createValidator("ie.pps");
+const pps: CountryValidator<"IE"> = createValidator(
+  "ie.pps",
+  93,
+);
 
 export default pps;
 export const compact = pps.compact;

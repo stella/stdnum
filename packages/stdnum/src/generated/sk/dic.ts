@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const dic: CountryValidator<"SK"> =
-  createValidator("sk.dic");
+const dic: CountryValidator<"SK"> = createValidator(
+  "sk.dic",
+  159,
+);
 
 export default dic;
 export const compact = dic.compact;

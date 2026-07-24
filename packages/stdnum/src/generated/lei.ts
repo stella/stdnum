@@ -2,7 +2,7 @@
 import { createValidator } from "../runtime";
 import type { GlobalValidator } from "../types";
 
-const lei: GlobalValidator = createValidator("lei");
+const lei: GlobalValidator = createValidator("lei", 112);
 
 export default lei;
 export const compact = lei.compact;

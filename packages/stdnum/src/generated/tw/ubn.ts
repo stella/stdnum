@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const ubn: CountryValidator<"TW"> =
-  createValidator("tw.ubn");
+const ubn: CountryValidator<"TW"> = createValidator(
+  "tw.ubn",
+  165,
+);
 
 export default ubn;
 export const compact = ubn.compact;

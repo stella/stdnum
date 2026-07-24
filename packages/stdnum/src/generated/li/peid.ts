@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const peid: CountryValidator<"LI"> =
-  createValidator("li.peid");
+const peid: CountryValidator<"LI"> = createValidator(
+  "li.peid",
+  113,
+);
 
 export default peid;
 export const compact = peid.compact;

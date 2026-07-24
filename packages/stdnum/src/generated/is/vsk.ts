@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const vsk: CountryValidator<"IS"> =
-  createValidator("is.vsk");
+const vsk: CountryValidator<"IS"> = createValidator(
+  "is.vsk",
+  102,
+);
 
 export default vsk;
 export const compact = vsk.compact;

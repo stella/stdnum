@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const pnf: CountryValidator<"BG"> =
-  createValidator("bg.pnf");
+const pnf: CountryValidator<"BG"> = createValidator(
+  "bg.pnf",
+  22,
+);
 
 export default pnf;
 export const compact = pnf.compact;

@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const nric: CountryValidator<"MY", ParsedPersonId> =
-  createValidator("my.nric");
+  createValidator("my.nric", 130);
 
 export default nric;
 export const compact = nric.compact;

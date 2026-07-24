@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const uscc: CountryValidator<"CN"> =
-  createValidator("cn.uscc");
+const uscc: CountryValidator<"CN"> = createValidator(
+  "cn.uscc",
+  37,
+);
 
 export default uscc;
 export const compact = uscc.compact;

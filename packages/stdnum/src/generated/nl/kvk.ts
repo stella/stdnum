@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const kvk: CountryValidator<"NL"> =
-  createValidator("nl.kvk");
+const kvk: CountryValidator<"NL"> = createValidator(
+  "nl.kvk",
+  134,
+);
 
 export default kvk;
 export const compact = kvk.compact;

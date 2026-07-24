@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const pin: CountryValidator<"GE"> =
-  createValidator("ge.pin");
+const pin: CountryValidator<"GE"> = createValidator(
+  "ge.pin",
+  83,
+);
 
 export default pin;
 export const compact = pin.compact;

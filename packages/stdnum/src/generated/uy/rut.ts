@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const rut: CountryValidator<"UY"> =
-  createValidator("uy.rut");
+const rut: CountryValidator<"UY"> = createValidator(
+  "uy.rut",
+  171,
+);
 
 export default rut;
 export const compact = rut.compact;

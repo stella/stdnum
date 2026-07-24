@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const regon: CountryValidator<"PL"> =
-  createValidator("pl.regon");
+const regon: CountryValidator<"PL"> = createValidator(
+  "pl.regon",
+  146,
+);
 
 export default regon;
 export const compact = regon.compact;

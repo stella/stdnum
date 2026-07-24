@@ -3,7 +3,7 @@ import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
 const registrikood: CountryValidator<"EE"> =
-  createValidator("ee.registrikood");
+  createValidator("ee.registrikood", 61);
 
 export default registrikood;
 export const compact = registrikood.compact;

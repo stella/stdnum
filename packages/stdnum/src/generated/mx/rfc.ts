@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const rfc: CountryValidator<"MX"> =
-  createValidator("mx.rfc");
+const rfc: CountryValidator<"MX"> = createValidator(
+  "mx.rfc",
+  129,
+);
 
 export default rfc;
 export const compact = rfc.compact;

@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const nipt: CountryValidator<"AL"> =
-  createValidator("al.nipt");
+const nipt: CountryValidator<"AL"> = createValidator(
+  "al.nipt",
+  3,
+);
 
 export default nipt;
 export const compact = nipt.compact;

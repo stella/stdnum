@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const ice: CountryValidator<"MA"> =
-  createValidator("ma.ice");
+const ice: CountryValidator<"MA"> = createValidator(
+  "ma.ice",
+  120,
+);
 
 export default ice;
 export const compact = ice.compact;

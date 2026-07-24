@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const cbu: CountryValidator<"AR"> =
-  createValidator("ar.cbu");
+const cbu: CountryValidator<"AR"> = createValidator(
+  "ar.cbu",
+  5,
+);
 
 export default cbu;
 export const compact = cbu.compact;

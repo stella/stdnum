@@ -2,8 +2,10 @@
 import { createValidator } from "../../runtime";
 import type { CountryValidator } from "../../types";
 
-const siret: CountryValidator<"FR"> =
-  createValidator("fr.siret");
+const siret: CountryValidator<"FR"> = createValidator(
+  "fr.siret",
+  76,
+);
 
 export default siret;
 export const compact = siret.compact;

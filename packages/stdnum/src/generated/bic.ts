@@ -2,7 +2,7 @@
 import { createValidator } from "../runtime";
 import type { GlobalValidator } from "../types";
 
-const bic: GlobalValidator = createValidator("bic");
+const bic: GlobalValidator = createValidator("bic", 25);
 
 export default bic;
 export const compact = bic.compact;
