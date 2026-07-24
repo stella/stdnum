@@ -7,8 +7,9 @@ pub mod validators;
 
 pub use registry::{validator, validators};
 pub use types::{
-  CountryCode, EntityType, Gender, IsoDate, ParsedIdentifier, ValidationError,
-  ValidationErrorCode, ValidationResult, Validator, ValidatorScope,
+  CanonicalValidation, CountryCode, EntityType, Gender, IsoDate,
+  ParsedIdentifier, ValidationError, ValidationErrorCode, ValidationResult,
+  Validator, ValidatorScope,
 };
 
 use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
@@ -1925,15 +1926,36 @@ fn validate_nl_vat(value: &str) -> bool {
 }
 
 fn validate_pl_nip(value: &str) -> bool {
+  if validate_pl_nip_ascii(value.as_bytes()) {
+    return true;
+  }
   let compact = strip_prefix_after_compact(value, &[' ', '-'], "PL");
-  let Ok(digits) = <[u32; 10]>::try_from(decimal_digits_strict(&compact))
-  else {
+  validate_pl_nip_ascii(compact.as_bytes())
+}
+
+pub(crate) fn validate_pl_nip_ascii(bytes: &[u8]) -> bool {
+  let Ok(digits) = <&[u8; 10]>::try_from(bytes) else {
     return false;
   };
-  let check =
-    weighted_sum(digits.get(..9).unwrap_or(&[]), &[6, 5, 7, 2, 3, 4, 5, 6, 7])
-      .rem_euclid(11);
-  check < 10 && digits.get(9).copied() == Some(check)
+  if !digits.iter().all(u8::is_ascii_digit) {
+    return false;
+  }
+  let weights = [6_u32, 5, 7, 2, 3, 4, 5, 6, 7];
+  let sum =
+    digits
+      .iter()
+      .take(9)
+      .zip(weights)
+      .fold(0_u32, |sum, (byte, weight)| {
+        sum.saturating_add(
+          u32::from(byte.saturating_sub(b'0')).saturating_mul(weight),
+        )
+      });
+  let check = sum.rem_euclid(11);
+  check < 10
+    && digits
+      .last()
+      .is_some_and(|byte| u32::from(byte.saturating_sub(b'0')) == check)
 }
 
 fn validate_pl_pesel(value: &str) -> bool {

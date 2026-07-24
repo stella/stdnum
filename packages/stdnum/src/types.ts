@@ -315,6 +315,9 @@ type ValidatorBase<
   compact: (value: string) => string;
   format: (value: string) => string;
   validate: (value: string) => ValidateResult;
+  validateMany: (
+    values: readonly string[],
+  ) => ValidateResult[];
   description?: string;
   sourceUrl?: string;
   lengths?: readonly number[];

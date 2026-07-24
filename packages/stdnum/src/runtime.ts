@@ -13,12 +13,14 @@ import type {
 let bindingOverride: NativeStdnumBinding | undefined;
 let nativeBinding: NativeStdnumBinding | undefined;
 let bindingGeneration = 0;
+const resetValidationBindings: (() => void)[] = [];
 
 export const setBinding = (
   binding: NativeStdnumBinding | undefined,
 ): void => {
   bindingOverride = binding;
   bindingGeneration += 1;
+  for (const reset of resetValidationBindings) reset();
 };
 
 export const getBinding = (): NativeStdnumBinding => {
@@ -52,6 +54,11 @@ export const createValidator = <
     }
     return cachedOperations;
   };
+  const lazyValidate = (value: string): ValidateResult => {
+    const validate = operations().validate;
+    validator["validate"] = validate;
+    return validate(value);
+  };
   const validator: Record<string, unknown> = {
     name: metadata.name,
     localName: metadata.localName,
@@ -71,9 +78,13 @@ export const createValidator = <
         : metadata.examples,
     compact: (value: string) => operations().compact(value),
     format: (value: string) => operations().format(value),
-    validate: (value: string) =>
-      operations().validate(value),
+    validate: lazyValidate,
+    validateMany: (values: readonly string[]) =>
+      operations().validateMany(values),
   };
+  resetValidationBindings.push(() => {
+    validator["validate"] = lazyValidate;
+  });
   if (metadata.country !== null)
     validator["country"] = metadata.country;
   if (metadata.description !== null)
@@ -98,11 +109,18 @@ export const createValidator = <
 };
 
 type ValidatorOperations = {
-  compact(value: string): string;
-  format(value: string): string;
-  generate(): string | null;
-  parse(value: string): NativeParsedIdentifier | null;
-  validate(value: string): ValidateResult;
+  compact(this: void, value: string): string;
+  format(this: void, value: string): string;
+  generate(this: void): string | null;
+  parse(
+    this: void,
+    value: string,
+  ): NativeParsedIdentifier | null;
+  validate(this: void, value: string): ValidateResult;
+  validateMany(
+    this: void,
+    values: readonly string[],
+  ): ValidateResult[];
 };
 
 const bindOperations = (
@@ -115,10 +133,69 @@ const bindOperations = (
   const generateIndex = binding.generateIndex;
   const parseIndex = binding.parseIndex;
   const validateFastIndex = binding.validateFastIndex;
+  const validateManyIndex = binding.validateManyIndex;
+  const areAllCanonicalValidIndex =
+    binding.areAllCanonicalValidIndex;
+  const isValidCanonicalIndex =
+    binding.isValidCanonicalIndex;
+  const supportsCanonicalValidation =
+    isValidCanonicalIndex !== undefined &&
+    binding.supportsCanonicalValidationIndex?.(index) ===
+      true;
   const compact =
     compactIndex === undefined
       ? (value: string) => binding.compact(id, value)
       : (value: string) => compactIndex(index, value);
+  const validate = (): ValidatorOperations["validate"] => {
+    if (supportsCanonicalValidation) {
+      return (value) =>
+        isValidCanonicalIndex(index, value)
+          ? { valid: true, compact: value }
+          : publicResult(
+              binding.validateIndex === undefined
+                ? binding.validate(id, value)
+                : binding.validateIndex(index, value),
+            );
+    }
+    if (validateFastIndex === undefined) {
+      return (value) =>
+        publicResult(binding.validate(id, value));
+    }
+    return (value) => {
+      const result = validateFastIndex(index, value);
+      if (typeof result !== "number")
+        return { valid: false, error: result };
+      return {
+        valid: true,
+        compact: result === 1 ? value : compact(value),
+      };
+    };
+  };
+  const validateMany =
+    (): ValidatorOperations["validateMany"] => {
+      if (validateManyIndex === undefined) {
+        return (values) =>
+          values.map((value) =>
+            publicResult(binding.validate(id, value)),
+          );
+      }
+      if (
+        supportsCanonicalValidation &&
+        areAllCanonicalValidIndex !== undefined
+      ) {
+        return (values) =>
+          areAllCanonicalValidIndex(index, values)
+            ? values.map((normalizedValue) => ({
+                valid: true,
+                compact: normalizedValue,
+              }))
+            : validateManyIndex(index, values).map(
+                publicResult,
+              );
+      }
+      return (values) =>
+        validateManyIndex(index, values).map(publicResult);
+    };
   return {
     compact,
     format:
@@ -133,20 +210,8 @@ const bindOperations = (
       parseIndex === undefined
         ? (value) => binding.parse(id, value)
         : (value) => parseIndex(index, value),
-    validate:
-      validateFastIndex === undefined
-        ? (value) =>
-            publicResult(binding.validate(id, value))
-        : (value) => {
-            const result = validateFastIndex(index, value);
-            if (typeof result !== "number")
-              return { valid: false, error: result };
-            return {
-              valid: true,
-              compact:
-                result === 1 ? value : compact(value),
-            };
-          },
+    validate: validate(),
+    validateMany: validateMany(),
   };
 };
 

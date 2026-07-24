@@ -64,6 +64,17 @@ impl ValidationError {
 /// The compact identifier on success, or a typed failure.
 pub type ValidationResult = Result<String, ValidationError>;
 
+/// Allocation-free validation result for an input that may already be compact.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CanonicalValidation {
+  /// Normalization would change the input, so the full validation path is needed.
+  NotCanonical,
+  /// The input is already compact and valid.
+  Valid,
+  /// The input is already compact but invalid.
+  Invalid(ValidationError),
+}
+
 /// ISO 3166-1 alpha-2 codes represented by the validator catalog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum CountryCode {
@@ -323,6 +334,7 @@ pub struct Validator {
   compact: fn(&str) -> String,
   format: fn(&str) -> String,
   validate: fn(&str) -> ValidationResult,
+  validate_canonical: Option<fn(&str) -> CanonicalValidation>,
   generate: Option<fn() -> String>,
   parse: Option<fn(&str) -> Option<ParsedIdentifier>>,
 }
@@ -366,9 +378,20 @@ impl Validator {
       compact: spec.compact,
       format: spec.format,
       validate: spec.validate,
+      validate_canonical: None,
       generate: spec.generate,
       parse: spec.parse,
     }
+  }
+
+  /// Attach an allocation-free kernel for inputs that are already compact.
+  #[must_use]
+  pub const fn with_canonical_validator(
+    mut self,
+    validate: fn(&str) -> CanonicalValidation,
+  ) -> Self {
+    self.validate_canonical = Some(validate);
+    self
   }
 
   #[must_use]
@@ -445,9 +468,29 @@ impl Validator {
     (self.validate)(value)
   }
 
+  /// Validate without allocating when a validator recognizes compact input.
+  #[must_use]
+  pub fn validate_canonical(&self, value: &str) -> CanonicalValidation {
+    self
+      .validate_canonical
+      .map_or(CanonicalValidation::NotCanonical, |validate| {
+        validate(value)
+      })
+  }
+
+  /// Report whether this validator has an allocation-free canonical kernel.
+  #[must_use]
+  pub const fn supports_canonical_validation(&self) -> bool {
+    self.validate_canonical.is_some()
+  }
+
   #[must_use]
   pub fn is_valid(&self, value: &str) -> bool {
-    self.validate(value).is_ok()
+    match self.validate_canonical(value) {
+      CanonicalValidation::Valid => true,
+      CanonicalValidation::Invalid(_) => false,
+      CanonicalValidation::NotCanonical => self.validate(value).is_ok(),
+    }
   }
 
   #[must_use]

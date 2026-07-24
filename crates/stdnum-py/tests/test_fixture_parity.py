@@ -73,6 +73,16 @@ class FixtureParityTest(unittest.TestCase):
                 if entry["parseKind"] is not None and example is not None:
                     self.assertIsNotNone(stella_stdnum.parse(entry["id"], example))
 
+    def test_batch_validation_preserves_order_and_results(self) -> None:
+        results = stella_stdnum.validate_many(
+            "br.cpf",
+            ["39053344705", "390.533.447-05", "11111111111"],
+        )
+        self.assertEqual([result.valid for result in results], [True, True, False])
+        self.assertEqual(results[0].compact, "39053344705")
+        self.assertEqual(results[1].compact, "39053344705")
+        self.assertIsNone(results[2].compact)
+
 
 if __name__ == "__main__":
     unittest.main()
