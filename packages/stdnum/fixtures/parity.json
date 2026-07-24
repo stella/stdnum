@@ -1409,6 +1409,13 @@
       "format": "MAB9307148T4"
     },
     {
+      "id": "mx.rfc",
+      "value": "ORJÑ610528G5A",
+      "expected": true,
+      "compact": "ORJÑ610528G5A",
+      "format": "ORJÑ610528G5A"
+    },
+    {
       "id": "my.nric",
       "value": "770305021234",
       "expected": true,

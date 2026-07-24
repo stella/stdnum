@@ -1958,6 +1958,16 @@ fn validate_curp(value: &str) -> Result<(), ValidationError> {
 }
 
 fn validate_rfc(value: &str) -> Result<(), ValidationError> {
+  // RFC permits Ñ in the name prefix. Normalize only
+  // that multi-byte character to an unused ASCII
+  // sentinel so the common ASCII path stays
+  // allocation-free and byte offsets remain safe.
+  let normalized = if value.is_ascii() {
+    std::borrow::Cow::Borrowed(value)
+  } else {
+    std::borrow::Cow::Owned(value.replace('Ñ', "^"))
+  };
+  let value = normalized.as_ref();
   if ![12, 13].contains(&value.len()) {
     return Err(invalid_length());
   }
@@ -1966,7 +1976,7 @@ fn validate_rfc(value: &str) -> Result<(), ValidationError> {
   let valid_prefix = bytes.get(..prefix_len).is_some_and(|part| {
     part
       .iter()
-      .all(|byte| byte.is_ascii_uppercase() || matches!(*byte, b'&'))
+      .all(|byte| byte.is_ascii_uppercase() || matches!(*byte, b'&' | b'^'))
   });
   if !valid_prefix
     || !bytes
@@ -1989,7 +1999,7 @@ fn validate_rfc(value: &str) -> Result<(), ValidationError> {
   ) {
     return Err(invalid_component());
   }
-  const ALPHABET: &str = "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ Ñ";
+  const ALPHABET: &str = "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ ^";
   let body = value.get(..value.len().saturating_sub(1)).unwrap_or("");
   let padded = if body.len() == 11 {
     format!(" {body}")
@@ -3564,6 +3574,18 @@ mod tests {
     assert!(
       checked > VALIDATORS.len(),
       "slice fixtures were not exercised"
+    );
+  }
+
+  #[test]
+  fn mexican_rfc_counts_unicode_prefixes_as_characters() {
+    let validator = VALIDATORS
+      .iter()
+      .find(|validator| validator.id() == "mx.rfc");
+    assert!(
+      validator
+        .is_some_and(|validator| validator.validate("ORJÑ610528G5A").is_ok()),
+      "RFC with Ñ prefix should retain TypeScript parity"
     );
   }
 }
