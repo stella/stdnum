@@ -447,6 +447,6 @@ jobs:
             echo "$TAG already exists"
             exit 0
           fi
-          git tag -a "$TAG" -m "$TAG"
-          git push origin "$TAG"
-          gh release create "$TAG" --generate-notes --verify-tag
+          gh release create "$TAG" \
+            --target "$GITHUB_SHA" \
+            --generate-notes
