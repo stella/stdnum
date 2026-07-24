@@ -936,8 +936,8 @@
     "codegen:check": "bun ../../scripts/generate-public-surface.ts --check"
   },
   "devDependencies": {
-    "tsdown": "0.22.2",
-    "typescript": "^6.0.3"
+    "tsdown": "0.22.9",
+    "typescript": "^7.0.2"
   },
   "optionalDependencies": {
     "@stll/stdnum-darwin-arm64": "2.1.1",
