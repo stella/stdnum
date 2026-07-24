@@ -779,8 +779,24 @@ const main = async (): Promise<void> => {
       ([path, contents]) => after.get(path) === contents,
     );
   if (!unchanged) {
+    const changedPaths = [
+      ...(manifestBefore === manifestAfter
+        ? []
+        : ["packages/stdnum/package.json"]),
+      ...(readmeBefore === readmeAfter
+        ? []
+        : ["README.md"]),
+      ...new Set([...before.keys(), ...after.keys()]),
+    ]
+      .filter(
+        (path) =>
+          !before.has(path) ||
+          !after.has(path) ||
+          before.get(path) !== after.get(path),
+      )
+      .sort();
     throw new Error(
-      "generated public surface is out of date",
+      `generated public surface is out of date:\n${changedPaths.join("\n")}`,
     );
   }
   console.log(
