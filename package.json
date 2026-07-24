@@ -38,6 +38,7 @@
     "version:sync": "node scripts/version-sync.mjs sync",
     "changeset": "changeset",
     "changeset:check": "bun scripts/check-changeset.ts",
+    "changeset:check:test": "bun test scripts/changeset-policy.test.ts",
     "changeset:version": "changeset version && node scripts/sync-changeset-version.mjs && bun install",
     "sync-ai": "bash scripts/sync-ai-skills.sh",
     "sync-ai:check": "bash scripts/sync-ai-skills.sh --check",
