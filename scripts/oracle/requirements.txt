@@ -1,0 +1,3 @@
+python-stdnum==2.2
+idnumbers==1.11.0
+django-localflavor==5.0

@@ -1,6 +1,23 @@
 //! Core validation for standard identifiers.
 
+mod catalog;
+pub mod registry;
+pub mod types;
+pub mod validators;
+
+pub use registry::{validator, validators};
+pub use types::{
+  CountryCode, EntityType, Gender, IsoDate, ParsedIdentifier, ValidationError,
+  ValidationErrorCode, ValidationResult, Validator, ValidatorScope,
+};
+
+use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
+#[cfg(not(target_arch = "wasm32"))]
 use std::time::{SystemTime, UNIX_EPOCH};
+
+const RANDOM_INITIAL_STATE: u64 = 0x9e37_79b9_7f4a_7c15;
+static RANDOM_STATE: AtomicU64 = AtomicU64::new(RANDOM_INITIAL_STATE);
+static RUNTIME_DATE: AtomicU32 = AtomicU32::new(0);
 
 const AUSTRIAN_UID_LUHN_OFFSET: u32 = 6;
 const BASE58_ALPHABET: &str =
@@ -38,7 +55,6 @@ const ROMANIAN_CNP_COUNTIES: &[u32] = &[
   22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
   41, 42, 43, 44, 45, 46, 47, 48, 51, 52, 70, 80, 81, 82, 83,
 ];
-const SPANISH_CHECK_LETTERS: &str = "TRWAGMYFPDXBNJZSQVHLCKE";
 const SPANISH_CIF_LETTERS: &str = "JABCDEFGHI";
 const FI_HETU_CHECK_CHARS: &str = "0123456789ABCDEFHJKLMNPRSTUVWXY";
 const IE_PPS_ALPHABET: &str = "WABCDEFGHIJKLMNOPQRSTUV";
@@ -76,77 +92,9 @@ const INVALID_NINO_PREFIXES: &[(char, char)] = &[
   ('Z', 'Z'),
 ];
 
-const SUPPORTED_VALIDATOR_IDS: &[&str] = &[
-  "au.abn",
-  "au.acn",
-  "at.businessid",
-  "at.tin",
-  "at.uid",
-  "be.nn",
-  "be.vat",
-  "bg.vat",
-  "br.cnpj",
-  "br.cpf",
-  "ch.uid",
-  "cn.ric",
-  "crypto.wallet",
-  "cy.vat",
-  "cz.dic",
-  "cz.rc",
-  "de.idnr",
-  "de.stnr",
-  "de.svnr",
-  "de.vat",
-  "es.cif",
-  "es.dni",
-  "es.nie",
-  "es.nss",
-  "es.vat",
-  "ee.ik",
-  "ee.vat",
-  "fi.hetu",
-  "fi.vat",
-  "fi.ytunnus",
-  "fr.nir",
-  "fr.siren",
-  "fr.siret",
-  "fr.tva",
-  "gb.nhs",
-  "gb.nino",
-  "gb.vat",
-  "gr.vat",
-  "hr.vat",
-  "hu.vat",
-  "dk.cpr",
-  "dk.vat",
-  "ie.pps",
-  "ie.vat",
-  "it.codiceFiscale",
-  "it.iva",
-  "lt.asmens",
-  "lt.vat",
-  "lu.vat",
-  "lv.vat",
-  "mt.vat",
-  "nl.vat",
-  "no.mva",
-  "no.orgnr",
-  "pl.nip",
-  "pl.pesel",
-  "pt.cc",
-  "pt.vat",
-  "ro.cnp",
-  "ro.vat",
-  "se.personnummer",
-  "si.vat",
-  "sk.dic",
-  "us.ein",
-  "us.rtn",
-];
-
 #[must_use]
-pub const fn supported_validator_ids() -> &'static [&'static str] {
-  SUPPORTED_VALIDATOR_IDS
+pub fn supported_validator_ids() -> &'static [&'static str] {
+  registry::supported_validator_ids()
 }
 
 #[must_use]
@@ -157,17 +105,17 @@ pub fn validate_named_id(validator: &str, value: &str) -> bool {
 #[must_use]
 pub fn validate_id(validator: &str, value: &str, input: Option<&str>) -> bool {
   let candidate = validator_candidate(value, input);
+  if let Some(validator) = registry::validator(validator) {
+    return validator.is_valid(&candidate);
+  }
   match validator {
-    "au.abn" => validate_au_abn(&candidate),
     "au.acn" => validate_au_acn(&candidate),
-    "at.businessid" => validate_at_business_id(&candidate),
     "at.tin" => validate_at_tin(&candidate),
     "at.uid" => validate_at_uid(&candidate),
     "be.nn" => validate_be_nn(&candidate),
     "be.vat" => validate_be_vat(&candidate),
     "bg.vat" => validate_bg_vat(&candidate),
     "br.cnpj" => validate_cnpj(&candidate),
-    "br.cpf" => validate_cpf(&candidate),
     "ch.uid" => validate_ch_uid(&candidate),
     "cn.ric" => validate_cn_ric(&candidate),
     "crypto.wallet" => validate_crypto_wallet(&candidate),
@@ -181,7 +129,6 @@ pub fn validate_id(validator: &str, value: &str, input: Option<&str>) -> bool {
     "ee.ik" => validate_ee_ik(&candidate),
     "ee.vat" => validate_ee_vat(&candidate),
     "es.cif" => validate_es_cif(&candidate),
-    "es.dni" => validate_es_dni(&candidate),
     "es.nie" => validate_es_nie(&candidate),
     "es.nss" => validate_es_nss(&candidate),
     "es.vat" => validate_es_vat(&candidate),
@@ -221,7 +168,6 @@ pub fn validate_id(validator: &str, value: &str, input: Option<&str>) -> bool {
     "se.personnummer" => validate_se_personnummer(&candidate),
     "si.vat" => validate_si_vat(&candidate),
     "sk.dic" => validate_sk_dic(&candidate),
-    "us.ein" => validate_us_ein(&candidate),
     "us.rtn" => validate_us_routing(&candidate),
     _ => false,
   }
@@ -235,18 +181,40 @@ fn validator_candidate(value: &str, input: Option<&str>) -> String {
   }
 }
 
-fn validate_at_business_id(value: &str) -> bool {
-  let mut compact = compact_without(value, &[' ', '-', '/', '.']);
-  if starts_with_ignore_ascii_case(&compact, "FN") {
-    compact = compact.chars().skip(2).collect();
-  }
-  let mut chars = compact.chars();
-  let Some(last) = chars.next_back() else {
-    return false;
+fn next_random_u64() -> u64 {
+  #[cfg(not(target_arch = "wasm32"))]
+  let timestamp = SystemTime::now()
+    .duration_since(UNIX_EPOCH)
+    .map_or(0, |duration| {
+      u64::try_from(duration.as_nanos()).unwrap_or(u64::MAX)
+    });
+  #[cfg(target_arch = "wasm32")]
+  let timestamp = u64::from(RUNTIME_DATE.load(Ordering::Relaxed));
+  let mut next =
+    RANDOM_STATE.fetch_add(RANDOM_INITIAL_STATE, Ordering::Relaxed) ^ timestamp;
+  next ^= next << 13;
+  next ^= next >> 7;
+  next ^= next << 17;
+  next
+}
+
+fn random_below(upper_exclusive: usize) -> usize {
+  let Ok(upper) = u64::try_from(upper_exclusive) else {
+    return 0;
   };
-  compact.len() >= 2
-    && last.is_ascii_alphabetic()
-    && chars.all(|ch| ch.is_ascii_digit())
+  if upper == 0 {
+    return 0;
+  }
+  usize::try_from(next_random_u64().rem_euclid(upper)).unwrap_or(0)
+}
+
+fn random_digits(length: usize) -> String {
+  let mut value = String::with_capacity(length);
+  for _ in 0..length {
+    let digit = u8::try_from(random_below(10)).unwrap_or(0);
+    value.push(char::from(b'0'.saturating_add(digit)));
+  }
+  value
 }
 
 fn validate_at_uid(value: &str) -> bool {
@@ -769,130 +737,6 @@ fn convert_bits(
   Some(result)
 }
 
-fn validate_us_ein(value: &str) -> bool {
-  let compact = compact_without(value, &[' ', '-']);
-  if compact.len() != 9 || !is_ascii_digits(&compact) {
-    return false;
-  }
-  let Some(prefix) = compact.get(0..2) else {
-    return false;
-  };
-  matches!(
-    prefix,
-    "01"
-      | "02"
-      | "03"
-      | "04"
-      | "05"
-      | "06"
-      | "10"
-      | "11"
-      | "12"
-      | "13"
-      | "14"
-      | "15"
-      | "16"
-      | "20"
-      | "21"
-      | "22"
-      | "23"
-      | "24"
-      | "25"
-      | "26"
-      | "27"
-      | "30"
-      | "31"
-      | "32"
-      | "33"
-      | "34"
-      | "35"
-      | "36"
-      | "37"
-      | "38"
-      | "39"
-      | "40"
-      | "41"
-      | "42"
-      | "43"
-      | "44"
-      | "45"
-      | "46"
-      | "47"
-      | "48"
-      | "50"
-      | "51"
-      | "52"
-      | "53"
-      | "54"
-      | "55"
-      | "56"
-      | "57"
-      | "58"
-      | "59"
-      | "60"
-      | "61"
-      | "62"
-      | "63"
-      | "64"
-      | "65"
-      | "66"
-      | "67"
-      | "68"
-      | "71"
-      | "72"
-      | "73"
-      | "74"
-      | "75"
-      | "76"
-      | "77"
-      | "80"
-      | "81"
-      | "82"
-      | "83"
-      | "84"
-      | "85"
-      | "86"
-      | "87"
-      | "88"
-      | "90"
-      | "91"
-      | "92"
-      | "93"
-      | "94"
-      | "95"
-      | "98"
-      | "99"
-  )
-}
-
-fn validate_cpf(value: &str) -> bool {
-  let compact = compact_without(value, &[' ', '-', '.']);
-  let Ok(digits) = <[u32; 11]>::try_from(decimal_digits_strict(&compact))
-  else {
-    return false;
-  };
-  let [d0, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10] = digits;
-  if digits.iter().all(|digit| *digit == d0) {
-    return false;
-  }
-  let first = cpf_digit(&[d0, d1, d2, d3, d4, d5, d6, d7, d8], 10);
-  let second = cpf_digit(&[d0, d1, d2, d3, d4, d5, d6, d7, d8, d9], 11);
-  d9 == first && d10 == second
-}
-
-fn cpf_digit(digits: &[u32], weight_start: u32) -> u32 {
-  let sum = digits
-    .iter()
-    .enumerate()
-    .map(|(index, digit)| {
-      let index = u32::try_from(index).unwrap_or(u32::MAX);
-      digit.saturating_mul(weight_start.saturating_sub(index))
-    })
-    .sum::<u32>();
-  let value = 11_u32.saturating_sub(sum.rem_euclid(11));
-  if value >= 10 { 0 } else { value }
-}
-
 fn validate_cnpj(value: &str) -> bool {
   let compact = compact_without(value, &[' ', '-', '.', '/']).to_uppercase();
   let chars = compact.chars().collect::<Vec<_>>();
@@ -1190,7 +1034,7 @@ fn validate_dk_cpr(value: &str) -> bool {
   if !valid_date(year, month, day) {
     return false;
   }
-  // Reject future birth dates, matching src/dk/cpr.ts. Serial heads that map
+  // Reject future birth dates. Serial heads that map
   // yy into the 2000s can otherwise resolve to a not-yet-assignable date.
   (year, month, day) <= current_date()
 }
@@ -2289,7 +2133,7 @@ fn compact_se_personnummer(value: &str) -> String {
   // fine as long as we never break a codepoint.
   let mut chars: Vec<char> = compact.chars().collect();
   // A bare 10- or 12-character number gets the '-' century/serial separator
-  // inserted before the last four characters (matching src/se/personnummer.ts).
+  // inserted before the last four characters.
   if matches!(chars.len(), 10 | 12) {
     let insertion = chars.len().saturating_sub(4);
     chars.insert(insertion, '-');
@@ -2392,19 +2236,7 @@ fn validate_sk_dic(value: &str) -> bool {
 }
 
 fn validate_es_dni(value: &str) -> bool {
-  let compact = compact_without(value, &[' ', '-']).to_uppercase();
-  let mut chars = compact.chars();
-  let Some(letter) = chars.next_back() else {
-    return false;
-  };
-  let digits = chars.as_str();
-  if digits.is_empty() || digits.len() > 8 {
-    return false;
-  }
-  let Ok(number) = digits.parse::<u32>() else {
-    return false;
-  };
-  spanish_check_letter(number) == Some(letter)
+  validators::es::dni::validate(value).is_ok()
 }
 
 fn validate_es_nie(value: &str) -> bool {
@@ -2509,7 +2341,7 @@ fn validate_es_vat(value: &str) -> bool {
 }
 
 fn spanish_check_letter(number: u32) -> Option<char> {
-  char_at(SPANISH_CHECK_LETTERS, number % 23)
+  char_at(validators::es::dni::CHECK_LETTERS, number % 23)
 }
 
 fn spanish_cif_checksum(digits: &[char; 7]) -> Option<u32> {
@@ -2533,27 +2365,6 @@ fn spanish_cif_checksum(digits: &[char; 7]) -> Option<u32> {
       .saturating_sub(even.saturating_add(odd).rem_euclid(10))
       .rem_euclid(10),
   )
-}
-
-fn validate_au_abn(value: &str) -> bool {
-  const WEIGHTS: [i32; 11] = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
-
-  let compact = compact_without(value, &[' ', '-']);
-  let Ok(digits) = <[u32; 11]>::try_from(decimal_digits_strict(&compact))
-  else {
-    return false;
-  };
-  let mut sum = 0_i32;
-  for (index, (digit, weight)) in digits.iter().zip(WEIGHTS).enumerate() {
-    let digit = i32::try_from(*digit).unwrap_or(i32::MAX);
-    let adjusted = if index == 0 {
-      digit.saturating_sub(1)
-    } else {
-      digit
-    };
-    sum = sum.saturating_add(adjusted.saturating_mul(weight));
-  }
-  sum.rem_euclid(89) == 0
 }
 
 fn validate_au_acn(value: &str) -> bool {
@@ -2834,19 +2645,46 @@ fn resolve_two_digit_year(year: u32) -> u32 {
   }
 }
 
-fn current_year() -> u32 {
+pub(crate) fn current_year() -> u32 {
   current_date().0
 }
 
+/// Supply the host date for runtimes without `std::time::SystemTime` support.
+#[doc(hidden)]
+pub fn set_runtime_date(year: u32, month: u32, day: u32) {
+  if (1..=12).contains(&month) && (1..=31).contains(&day) {
+    let encoded = year
+      .saturating_mul(10_000)
+      .saturating_add(month.saturating_mul(100))
+      .saturating_add(day);
+    RUNTIME_DATE.store(encoded, Ordering::Relaxed);
+  }
+}
+
 fn current_date() -> (u32, u32, u32) {
+  let configured = RUNTIME_DATE.load(Ordering::Relaxed);
+  if configured != 0 {
+    return (
+      configured.div_euclid(10_000),
+      configured.div_euclid(100) % 100,
+      configured % 100,
+    );
+  }
+  #[cfg(target_arch = "wasm32")]
+  return (1970, 1, 1);
+  #[cfg(not(target_arch = "wasm32"))]
   let Ok(duration) = SystemTime::now().duration_since(UNIX_EPOCH) else {
     return (1970, 1, 1);
   };
+  #[cfg(not(target_arch = "wasm32"))]
   let days = i64::try_from(duration.as_secs().div_euclid(86_400)).unwrap_or(0);
+  #[cfg(not(target_arch = "wasm32"))]
   let (year, month, day) = civil_from_days(days);
+  #[cfg(not(target_arch = "wasm32"))]
   (u32::try_from(year).unwrap_or(1970), month, day)
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn civil_from_days(days_since_epoch: i64) -> (i32, u32, u32) {
   let z = days_since_epoch.saturating_add(719_468);
   let era =

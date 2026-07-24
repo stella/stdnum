@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stella/stdnum/blob/main/packages/stdnum/registry.schema.json",
+  "title": "Stella stdnum registry snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "validators"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "validators": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/validator" }
+    }
+  },
+  "$defs": {
+    "nullableString": { "type": ["string", "null"] },
+    "validator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "abbreviation",
+        "aliases",
+        "canGenerate",
+        "candidatePattern",
+        "country",
+        "description",
+        "entityType",
+        "examples",
+        "exportName",
+        "id",
+        "lengths",
+        "localName",
+        "name",
+        "namedExports",
+        "namespaceExport",
+        "parseKind",
+        "scope",
+        "sourceUrl",
+        "subpath"
+      ],
+      "properties": {
+        "abbreviation": { "type": "string" },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "canGenerate": { "type": "boolean" },
+        "candidatePattern": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "country": { "$ref": "#/$defs/nullableString" },
+        "description": { "$ref": "#/$defs/nullableString" },
+        "entityType": {
+          "enum": ["person", "company", "any"]
+        },
+        "examples": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "exportName": {
+          "type": "string",
+          "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*$"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9]+(?:\\.[A-Za-z0-9]+)?$"
+        },
+        "lengths": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 }
+        },
+        "localName": { "type": "string" },
+        "name": { "type": "string" },
+        "namedExports": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "namespaceExport": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "parseKind": {
+          "enum": ["birthDate", "person", null]
+        },
+        "scope": { "enum": ["country", "global"] },
+        "sourceUrl": { "$ref": "#/$defs/nullableString" },
+        "subpath": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:/[a-z0-9]+)?$"
+        }
+      }
+    }
+  }
+}

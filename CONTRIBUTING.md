@@ -13,12 +13,14 @@ a pull request.
 ## Development setup
 
 ```bash
-# Prerequisites: Bun
+# Prerequisites: Bun and Rust 1.96
 bun install
-bun run typecheck   # type-check source
-bun test            # run tests
-bun run lint        # oxlint
-bun run format      # oxfmt
+bun run rust:check     # lint and test the Rust implementation
+bun run codegen:check  # verify generated bindings, types, and README
+bun run typecheck      # type-check binding code
+bun test               # test the TypeScript adapter
+bun run lint           # oxlint
+bun run format         # oxfmt
 ```
 
 The AI command layout is:
@@ -42,26 +44,22 @@ bun run sync-ai
 
 ## Adding a new identifier
 
-1. Create `src/{cc}/{id}.ts` implementing the
-   `Validator` type from `src/types.ts`.
-2. Export from `src/{cc}/mod.ts`.
-3. Run `bun run sync-exports`.
-4. Write tests in `__test__/{cc}.test.ts`.
-5. Update `src/types.ts` if the country is new
-   (add to `CountryCode` union).
+1. Implement the validator in `crates/stdnum-core/src/validators/` and register
+   it in the Rust catalog.
+2. Add Rust unit, property, and shared fixture coverage.
+3. Run `bun run codegen`; this generates npm entrypoints, TypeScript and Python
+   registry types, package exports, and the README tables from Rust.
+4. Add or update strict oracle coverage when an independent implementation is
+   available.
 
-Each validator must export:
-
-- `compact(value: string): string`
-- `format(value: string): string`
-- `validate(value: string): ValidateResult`
-- A default export of the `Validator` object
+Do not hand-write validator logic in a binding. Node.js, WASM, and Python are
+thin adapters over the one Rust implementation.
 
 ## Pull requests
 
 - One logical change per PR.
 - Include tests for all validators.
-- Run `bun run typecheck && bun test && bun run lint && bun run format`
+- Run `bun run rust:check && bun run codegen:check && bun run typecheck && bun test && bun run lint && bun run format`
   before submitting.
 - Use [Conventional Commits](https://www.conventionalcommits.org/):
   `feat:`, `fix:`, `chore:`, `docs:`.

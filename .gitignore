@@ -1,6 +1,13 @@
 node_modules/
+__pycache__/
+*.pyc
 dist/
 .venv/
+.python-smoke/
+dist-python/
+scripts/oracle/.bundle/
+scripts/oracle/vendor/
+scripts/.readme-smoke-*/
 scripts/rust-oracle/target/
 target/
 *.tgz

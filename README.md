@@ -4,12 +4,17 @@
 
 # @stll/stdnum
 
-Validate, compact, and format standard identifiers
-for Node.js and Bun. Pure TypeScript, zero
-dependencies, tree-shakeable per identifier.
+Validate, compact, format, generate, and parse standard identifiers through a
+single Rust implementation. The npm package uses a native N-API binding on
+Node.js and Bun; `@stll/stdnum-wasm` serves browsers and edge runtimes, and the
+same registry is available from Python as `stella-stdnum`.
 
-This package covers 7 international identifiers and
-96 countries through per-module entry points.
+<!-- BEGIN GENERATED: registry-summary -->
+
+This package covers 11 global identifiers and 96 countries through 175
+per-module entry points.
+
+<!-- END GENERATED: registry-summary -->
 
 ## Install
 
@@ -17,6 +22,18 @@ This package covers 7 international identifiers and
 npm install @stll/stdnum
 # or
 bun add @stll/stdnum
+```
+
+For browser or edge runtimes:
+
+```bash
+npm install @stll/stdnum-wasm
+```
+
+For Python 3.11 or newer:
+
+```bash
+pip install stella-stdnum
 ```
 
 ## Usage
@@ -46,6 +63,31 @@ ico.validate("25596641");
 iban.validate("CZ65 0800 0000 1920 0014 5399");
 ```
 
+### Browser and edge runtimes
+
+The WASM package exposes the registry API asynchronously:
+
+```typescript
+import { validate } from "@stll/stdnum-wasm";
+
+await validate("cz.ico", "25596641");
+```
+
+### Python
+
+```python
+import stella_stdnum
+
+result = stella_stdnum.validate("cz.ico", "25596641")
+assert result.valid
+assert result.compact == "25596641"
+```
+
+The Rust registry owns validator behavior and metadata. TypeScript subpaths,
+catalog files, and exact TypeScript/Python registry types are generated from
+that registry. One committed fixture set checks the Rust, Node.js, WASM, and
+Python surfaces, and `ty` checks the installed Python wheel as a real consumer.
+
 ## Oracle Validation
 
 The repo ships two oracle modes:
@@ -63,194 +105,204 @@ The repo ships two oracle modes:
 Both commands accept `ORACLE_SAMPLES=<n>` to trade off
 runtime against coverage.
 
+Dependabot watches every JavaScript, Python, Ruby, PHP, and Rust oracle
+manifest. Its weekly update PRs rerun the strict oracle gate against the new
+upstream versions before they can merge.
+
 ## Supported Identifiers
+
+<!-- BEGIN GENERATED: supported-identifiers -->
 
 ### International
 
-| Identifier         | Module          | Type    |
-| ------------------ | --------------- | ------- |
-| BIC (ISO 9362)     | `bic`           | company |
-| Credit Card (Luhn) | `creditcard`    | any     |
-| Crypto Wallet      | `crypto/wallet` | any     |
-| IBAN               | `iban`          | any     |
-| ISIN (ISO 6166)    | `isin`          | any     |
-| LEI                | `lei`           | company |
-| Luhn               | `luhn`          | any     |
-| EU VAT             | `eu/vat`        | company |
+| Identifier                                     | Module             | Type    |
+| ---------------------------------------------- | ------------------ | ------- |
+| Business Identifier Code                       | `bic`              | company |
+| Credit Card Number                             | `creditcard`       | any     |
+| Bitcoin Base58Check Address                    | `crypto/btcbase58` | any     |
+| Bitcoin Bech32 Address                         | `crypto/btcbech32` | any     |
+| Ethereum Address                               | `crypto/eth`       | any     |
+| Cryptocurrency Wallet Address                  | `crypto/wallet`    | any     |
+| EU VAT Number                                  | `eu/vat`           | company |
+| IBAN                                           | `iban`             | any     |
+| International Securities Identification Number | `isin`             | any     |
+| Legal Entity Identifier                        | `lei`              | company |
+| Luhn                                           | `luhn`             | any     |
 
 ### Countries
 
 <details>
 <summary>96 countries supported (click to expand)</summary>
 
-| Country                   | Module             | Identifier   |
-| ------------------------- | ------------------ | ------------ |
-| AD Andorra                | `ad/nrt`           | NRT          |
-| AE United Arab Emirates   | `ae/eid`           | EID          |
-| AI Anguilla               | `ai/tin`           | TIN          |
-| AL Albania                | `al/nipt`          | NIPT         |
-| AM Armenia                | `am/tin`           | TIN          |
-| AR Argentina              | `ar/cbu`           | CBU          |
-|                           | `ar/cuit`          | CUIT         |
-|                           | `ar/dni`           | DNI          |
-| AT Austria                | `at/businessid`    | FN           |
-|                           | `at/tin`           | TIN          |
-|                           | `at/uid`           | UID          |
-|                           | `at/vnr`           | VNR          |
-| AU Australia              | `au/abn`           | ABN          |
-|                           | `au/acn`           | ACN          |
-|                           | `au/tfn`           | TFN          |
-| AZ Azerbaijan             | `az/voen`          | VÖEN         |
-| BA Bosnia and Herzegovina | `ba/jmbg`          | JMBG         |
-| BD Bangladesh             | `bd/nid`           | NID          |
-| BE Belgium                | `be/bis`           | BIS          |
-|                           | `be/nn`            | NN           |
-|                           | `be/vat`           | BTW          |
-| BG Bulgaria               | `bg/egn`           | ЕГН          |
-|                           | `bg/pnf`           | ЛНЧ          |
-|                           | `bg/vat`           | ИН по ДДС    |
-| BH Bahrain                | `bh/cpr`           | CPR          |
-| BR Brazil                 | `br/cnpj`          | CNPJ         |
-|                           | `br/cpf`           | CPF          |
-| BY Belarus                | `by/unp`           | УНП          |
-| BZ Belize                 | `bz/tin`           | TIN          |
-| CA Canada                 | `ca/bn`            | BN           |
-|                           | `ca/sin`           | SIN          |
-| CH Switzerland            | `ch/ssn`           | AHV          |
-|                           | `ch/uid`           | UID          |
-|                           | `ch/vat`           | MWST         |
-| CL Chile                  | `cl/rut`           | RUT          |
-| CN China                  | `cn/ric`           | RIC          |
-|                           | `cn/uscc`          | USCC         |
-| CO Colombia               | `co/nit`           | NIT          |
-| CR Costa Rica             | `cr/cpf`           | CPF          |
-| CU Cuba                   | `cu/ni`            | NI           |
-| CY Cyprus                 | `cy/vat`           | ΦΠΑ          |
-| CZ Czech Republic         | `cz/dic`           | DIČ          |
-|                           | `cz/ico`           | IČO          |
-|                           | `cz/rc`            | RČ           |
-| DE Germany                | `de/handelsreg`    | HReg         |
-|                           | `de/idnr`          | IdNr         |
-|                           | `de/stnr`          | StNr         |
-|                           | `de/svnr`          | SVNR         |
-|                           | `de/vat`           | USt-IdNr.    |
-| DK Denmark                | `dk/cpr`           | CPR          |
-|                           | `dk/cvr`           | CVR          |
-|                           | `dk/vat`           | CVR          |
-| DO Dominican Republic     | `do/rnc`           | RNC          |
-| EC Ecuador                | `ec/ruc`           | RUC          |
-| EE Estonia                | `ee/ik`            | IK           |
-|                           | `ee/registrikood`  | Registrikood |
-|                           | `ee/vat`           | KMKR         |
-| EG Egypt                  | `eg/tn`            | TN           |
-| ES Spain                  | `es/cif`           | CIF          |
-|                           | `es/dni`           | DNI          |
-|                           | `es/nie`           | NIE          |
-|                           | `es/nss`           | NSS          |
-|                           | `es/vat`           | NIF          |
-| FI Finland                | `fi/hetu`          | HETU         |
-|                           | `fi/vat`           | ALV nro      |
-|                           | `fi/ytunnus`       | Y-tunnus     |
-| FR France                 | `fr/nif`           | NIF          |
-|                           | `fr/nir`           | NIR          |
-|                           | `fr/siren`         | SIREN        |
-|                           | `fr/siret`         | SIRET        |
-|                           | `fr/tva`           | TVA          |
-| GB United Kingdom         | `gb/nino`          | NINO         |
-|                           | `gb/nhs`           | NHS          |
-|                           | `gb/sedol`         | SEDOL        |
-|                           | `gb/utr`           | UTR          |
-|                           | `gb/vat`           | VAT          |
-| GE Georgia                | `ge/pin`           | PIN          |
-| GH Ghana                  | `gh/tin`           | TIN          |
-| GR Greece                 | `gr/amka`          | ΑΜΚΑ         |
-|                           | `gr/vat`           | ΑΦΜ          |
-| GT Guatemala              | `gt/nit`           | NIT          |
-| HK Hong Kong              | `hk/hkid`          | HKID         |
-| HR Croatia                | `hr/vat`           | OIB          |
-| HU Hungary                | `hu/vat`           | ANUM         |
-| ID Indonesia              | `id/npwp`          | NPWP         |
-| IE Ireland                | `ie/pps`           | PPS          |
-|                           | `ie/vat`           | VAT          |
-| IL Israel                 | `il/idnr`          | ת.ז.         |
-| IN India                  | `in/aadhaar`       | Aadhaar      |
-|                           | `in/gstin`         | GSTIN        |
-|                           | `in/pan`           | PAN          |
-| IQ Iraq                   | `iq/nid`           | NID          |
-| IR Iran                   | `ir/nid`           | NID          |
-| IS Iceland                | `is/kennitala`     | kt.          |
-|                           | `is/vsk`           | VSK          |
-| IT Italy                  | `it/codicefiscale` | CF           |
-|                           | `it/iva`           | P.IVA        |
-| JP Japan                  | `jp/cn`            | CN           |
-|                           | `jp/mynumber`      | My Number    |
-| KR South Korea            | `kr/brn`           | BRN          |
-|                           | `kr/rrn`           | RRN          |
-| KW Kuwait                 | `kw/civil`         | Civil ID     |
-| KZ Kazakhstan             | `kz/iin`           | IIN          |
-| LI Liechtenstein          | `li/peid`          | PEID         |
-| LK Sri Lanka              | `lk/nic`           | NIC          |
-| LT Lithuania              | `lt/asmens`        | AK           |
-|                           | `lt/vat`           | PVM kodas    |
-| LU Luxembourg             | `lu/vat`           | TVA          |
-| LV Latvia                 | `lv/vat`           | PVN          |
-| MA Morocco                | `ma/ice`           | ICE          |
-| MC Monaco                 | `mc/tva`           | TVA          |
-| MD Moldova                | `md/idno`          | IDNO         |
-| ME Montenegro             | `me/pib`           | PIB          |
-| MK North Macedonia        | `mk/edb`           | EDB          |
-| MT Malta                  | `mt/vat`           | VAT          |
-| MU Mauritius              | `mu/brn`           | BRN          |
-| MX Mexico                 | `mx/clabe`         | CLABE        |
-|                           | `mx/curp`          | CURP         |
-|                           | `mx/rfc`           | RFC          |
-| MY Malaysia               | `my/nric`          | NRIC         |
-| NG Nigeria                | `ng/nin`           | NIN          |
-| NI Nicaragua              | `ni/ruc`           | RUC          |
-| NL Netherlands            | `nl/bsn`           | BSN          |
-|                           | `nl/kvk`           | KvK          |
-|                           | `nl/vat`           | BTW          |
-| NO Norway                 | `no/fodselsnummer` | Fødselsnr    |
-|                           | `no/mva`           | MVA          |
-|                           | `no/orgnr`         | Orgnr        |
-| NZ New Zealand            | `nz/ird`           | IRD          |
-| PA Panama                 | `pa/ruc`           | RUC          |
-| PE Peru                   | `pe/ruc`           | RUC          |
-| PH Philippines            | `ph/philid`        | PhilID       |
-| PK Pakistan               | `pk/cnic`          | CNIC         |
-| PL Poland                 | `pl/nip`           | NIP          |
-|                           | `pl/pesel`         | PESEL        |
-|                           | `pl/regon`         | REGON        |
-| PT Portugal               | `pt/cc`            | CC           |
-|                           | `pt/vat`           | NIF          |
-| RO Romania                | `ro/cnp`           | CNP          |
-|                           | `ro/vat`           | CIF          |
-| RS Serbia                 | `rs/pib`           | PIB          |
-| RU Russia                 | `ru/inn`           | ИНН          |
-| SE Sweden                 | `se/orgnr`         | Orgnr        |
-|                           | `se/personnummer`  | PN           |
-|                           | `se/vat`           | Momsnr.      |
-| SG Singapore              | `sg/uen`           | UEN          |
-| SI Slovenia               | `si/emso`          | EMŠO         |
-|                           | `si/vat`           | DDV          |
-| SK Slovakia               | `sk/dic`           | IČ DPH       |
-|                           | `sk/ico`           | IČO          |
-|                           | `sk/rc`            | RČ           |
-| TH Thailand               | `th/tin`           | TIN          |
-| TR Turkey                 | `tr/tckimlik`      | T.C. Kimlik  |
-|                           | `tr/vkn`           | VKN          |
-| TW Taiwan                 | `tw/ubn`           | UBN          |
-| UA Ukraine                | `ua/edrpou`        | ЄДРПОУ       |
-| US United States          | `us/ein`           | EIN          |
-|                           | `us/itin`          | ITIN         |
-|                           | `us/rtn`           | RTN          |
-|                           | `us/ssn`           | SSN          |
-| UY Uruguay                | `uy/rut`           | RUT          |
-| VE Venezuela              | `ve/rif`           | RIF          |
-| VN Vietnam                | `vn/mst`           | MST          |
-| ZA South Africa           | `za/idnr`          | SA ID        |
+| Country | Module             | Identifier   |
+| ------- | ------------------ | ------------ |
+| AD      | `ad/nrt`           | NRT          |
+| AE      | `ae/eid`           | EID          |
+| AI      | `ai/tin`           | TIN          |
+| AL      | `al/nipt`          | NIPT         |
+| AM      | `am/tin`           | TIN          |
+| AR      | `ar/cbu`           | CBU          |
+|         | `ar/cuit`          | CUIT         |
+|         | `ar/dni`           | DNI          |
+| AT      | `at/businessid`    | FN           |
+|         | `at/tin`           | TIN          |
+|         | `at/uid`           | UID          |
+|         | `at/vnr`           | VNR          |
+| AU      | `au/abn`           | ABN          |
+|         | `au/acn`           | ACN          |
+|         | `au/tfn`           | TFN          |
+| AZ      | `az/voen`          | VÖEN         |
+| BA      | `ba/jmbg`          | JMBG         |
+| BD      | `bd/nid`           | NID          |
+| BE      | `be/bis`           | BIS          |
+|         | `be/nn`            | NN           |
+|         | `be/vat`           | BTW          |
+| BG      | `bg/egn`           | ЕГН          |
+|         | `bg/pnf`           | ЛНЧ          |
+|         | `bg/vat`           | ИН по ДДС    |
+| BH      | `bh/cpr`           | CPR          |
+| BR      | `br/cnpj`          | CNPJ         |
+|         | `br/cpf`           | CPF          |
+| BY      | `by/unp`           | УНП          |
+| BZ      | `bz/tin`           | TIN          |
+| CA      | `ca/bn`            | BN           |
+|         | `ca/sin`           | SIN          |
+| CH      | `ch/ssn`           | AHV          |
+|         | `ch/uid`           | UID          |
+|         | `ch/vat`           | MWST         |
+| CL      | `cl/rut`           | RUT          |
+| CN      | `cn/ric`           | RIC          |
+|         | `cn/uscc`          | USCC         |
+| CO      | `co/nit`           | NIT          |
+| CR      | `cr/cpf`           | CPF          |
+| CU      | `cu/ni`            | NI           |
+| CY      | `cy/vat`           | ΦΠΑ          |
+| CZ      | `cz/dic`           | DIČ          |
+|         | `cz/ico`           | IČO          |
+|         | `cz/rc`            | RČ           |
+| DE      | `de/handelsreg`    | HReg         |
+|         | `de/idnr`          | IdNr         |
+|         | `de/stnr`          | StNr         |
+|         | `de/svnr`          | SVNR         |
+|         | `de/vat`           | USt-IdNr.    |
+| DK      | `dk/cpr`           | CPR          |
+|         | `dk/cvr`           | CVR          |
+|         | `dk/vat`           | CVR          |
+| DO      | `do/rnc`           | RNC          |
+| EC      | `ec/ruc`           | RUC          |
+| EE      | `ee/ik`            | IK           |
+|         | `ee/registrikood`  | Registrikood |
+|         | `ee/vat`           | KMKR         |
+| EG      | `eg/tn`            | TN           |
+| ES      | `es/cif`           | CIF          |
+|         | `es/dni`           | DNI          |
+|         | `es/nie`           | NIE          |
+|         | `es/nss`           | NSS          |
+|         | `es/vat`           | NIF          |
+| FI      | `fi/hetu`          | HETU         |
+|         | `fi/vat`           | ALV nro      |
+|         | `fi/ytunnus`       | Y-tunnus     |
+| FR      | `fr/nif`           | NIF          |
+|         | `fr/nir`           | NIR          |
+|         | `fr/siren`         | SIREN        |
+|         | `fr/siret`         | SIRET        |
+|         | `fr/tva`           | TVA          |
+| GB      | `gb/nhs`           | NHS          |
+|         | `gb/nino`          | NINO         |
+|         | `gb/sedol`         | SEDOL        |
+|         | `gb/utr`           | UTR          |
+|         | `gb/vat`           | VAT          |
+| GE      | `ge/pin`           | PIN          |
+| GH      | `gh/tin`           | TIN          |
+| GR      | `gr/amka`          | ΑΜΚΑ         |
+|         | `gr/vat`           | ΑΦΜ          |
+| GT      | `gt/nit`           | NIT          |
+| HK      | `hk/hkid`          | HKID         |
+| HR      | `hr/vat`           | OIB          |
+| HU      | `hu/vat`           | ANUM         |
+| ID      | `id/npwp`          | NPWP         |
+| IE      | `ie/pps`           | PPS          |
+|         | `ie/vat`           | VAT          |
+| IL      | `il/idnr`          | ת.ז.         |
+| IN      | `in/aadhaar`       | Aadhaar      |
+|         | `in/gstin`         | GSTIN        |
+|         | `in/pan`           | PAN          |
+| IQ      | `iq/nid`           | NID          |
+| IR      | `ir/nid`           | NID          |
+| IS      | `is/kennitala`     | kt.          |
+|         | `is/vsk`           | VSK          |
+| IT      | `it/codicefiscale` | CF           |
+|         | `it/iva`           | P.IVA        |
+| JP      | `jp/cn`            | CN           |
+|         | `jp/mynumber`      | My Number    |
+| KR      | `kr/brn`           | BRN          |
+|         | `kr/rrn`           | RRN          |
+| KW      | `kw/civil`         | Civil ID     |
+| KZ      | `kz/iin`           | IIN          |
+| LI      | `li/peid`          | PEID         |
+| LK      | `lk/nic`           | NIC          |
+| LT      | `lt/asmens`        | AK           |
+|         | `lt/vat`           | PVM kodas    |
+| LU      | `lu/vat`           | TVA          |
+| LV      | `lv/vat`           | PVN          |
+| MA      | `ma/ice`           | ICE          |
+| MC      | `mc/tva`           | TVA          |
+| MD      | `md/idno`          | IDNO         |
+| ME      | `me/pib`           | PIB          |
+| MK      | `mk/edb`           | EDB          |
+| MT      | `mt/vat`           | VAT          |
+| MU      | `mu/brn`           | BRN          |
+| MX      | `mx/clabe`         | CLABE        |
+|         | `mx/curp`          | CURP         |
+|         | `mx/rfc`           | RFC          |
+| MY      | `my/nric`          | NRIC         |
+| NG      | `ng/nin`           | NIN          |
+| NI      | `ni/ruc`           | RUC          |
+| NL      | `nl/bsn`           | BSN          |
+|         | `nl/kvk`           | KvK          |
+|         | `nl/vat`           | BTW          |
+| NO      | `no/fodselsnummer` | Fødselsnr    |
+|         | `no/mva`           | MVA          |
+|         | `no/orgnr`         | Orgnr        |
+| NZ      | `nz/ird`           | IRD          |
+| PA      | `pa/ruc`           | RUC          |
+| PE      | `pe/ruc`           | RUC          |
+| PH      | `ph/philid`        | PhilID       |
+| PK      | `pk/cnic`          | CNIC         |
+| PL      | `pl/nip`           | NIP          |
+|         | `pl/pesel`         | PESEL        |
+|         | `pl/regon`         | REGON        |
+| PT      | `pt/cc`            | CC           |
+|         | `pt/vat`           | NIF          |
+| RO      | `ro/cnp`           | CNP          |
+|         | `ro/vat`           | CIF          |
+| RS      | `rs/pib`           | PIB          |
+| RU      | `ru/inn`           | ИНН          |
+| SE      | `se/orgnr`         | Orgnr        |
+|         | `se/personnummer`  | PN           |
+|         | `se/vat`           | Momsnr.      |
+| SG      | `sg/uen`           | UEN          |
+| SI      | `si/emso`          | EMŠO         |
+|         | `si/vat`           | DDV          |
+| SK      | `sk/dic`           | IČ DPH       |
+|         | `sk/ico`           | IČO          |
+|         | `sk/rc`            | RČ           |
+| TH      | `th/tin`           | TIN          |
+| TR      | `tr/tckimlik`      | T.C. Kimlik  |
+|         | `tr/vkn`           | VKN          |
+| TW      | `tw/ubn`           | UBN          |
+| UA      | `ua/edrpou`        | ЄДРПОУ       |
+| US      | `us/ein`           | EIN          |
+|         | `us/itin`          | ITIN         |
+|         | `us/rtn`           | RTN          |
+|         | `us/ssn`           | SSN          |
+| UY      | `uy/rut`           | RUT          |
+| VE      | `ve/rif`           | RIF          |
+| VN      | `vn/mst`           | MST          |
+| ZA      | `za/idnr`          | SA ID        |
 
 </details>
+<!-- END GENERATED: supported-identifiers -->
 
 ## API
 
@@ -335,6 +387,8 @@ handled automatically.
 
 ```bash
 bun install
+bun run rust:check
+bun run codegen:check
 bun run typecheck
 bun test
 bun run lint     # oxlint

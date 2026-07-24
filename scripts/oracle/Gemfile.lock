@@ -1,0 +1,18 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rexml (3.4.4)
+    social_security_number (0.1.12)
+    valvat (2.0.1)
+      rexml (>= 3.3.6, < 4.0.0)
+
+PLATFORMS
+  arm64-darwin-25
+  x86_64-linux
+
+DEPENDENCIES
+  social_security_number (= 0.1.12)
+  valvat (= 2.0.1)
+
+BUNDLED WITH
+   2.4.22

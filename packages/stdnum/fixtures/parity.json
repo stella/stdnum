@@ -1,0 +1,1867 @@
+{
+  "schemaVersion": 1,
+  "fixtures": [
+    {
+      "id": "ad.nrt",
+      "value": "U132950X",
+      "expected": true,
+      "compact": "U132950X",
+      "format": "U-132950-X"
+    },
+    {
+      "id": "ad.nrt",
+      "value": "D059888N",
+      "expected": true,
+      "compact": "D059888N",
+      "format": "D-059888-N"
+    },
+    {
+      "id": "ad.nrt",
+      "value": "F123456M",
+      "expected": true,
+      "compact": "F123456M",
+      "format": "F-123456-M"
+    },
+    {
+      "id": "ae.eid",
+      "value": "784198012345678",
+      "expected": true,
+      "compact": "784198012345678",
+      "format": "784-1980-1234567-8"
+    },
+    {
+      "id": "ae.eid",
+      "value": "784197912345671",
+      "expected": true,
+      "compact": "784197912345671",
+      "format": "784-1979-1234567-1"
+    },
+    {
+      "id": "ae.eid",
+      "value": "784195204640486",
+      "expected": true,
+      "compact": "784195204640486",
+      "format": "784-1952-0464048-6"
+    },
+    {
+      "id": "ae.eid",
+      "value": "784196865703050",
+      "expected": true,
+      "compact": "784196865703050",
+      "format": "784-1968-6570305-0"
+    },
+    {
+      "id": "ai.tin",
+      "value": "1234567890",
+      "expected": true,
+      "compact": "1234567890",
+      "format": "12345-67890"
+    },
+    {
+      "id": "ai.tin",
+      "value": "2345678901",
+      "expected": true,
+      "compact": "2345678901",
+      "format": "23456-78901"
+    },
+    {
+      "id": "al.nipt",
+      "value": "J91402501L",
+      "expected": true,
+      "compact": "J91402501L",
+      "format": "J91402501L"
+    },
+    {
+      "id": "al.nipt",
+      "value": "K22218003V",
+      "expected": true,
+      "compact": "K22218003V",
+      "format": "K22218003V"
+    },
+    {
+      "id": "am.tin",
+      "value": "01234561",
+      "expected": true,
+      "compact": "01234561",
+      "format": "01234561"
+    },
+    {
+      "id": "am.tin",
+      "value": "10048376",
+      "expected": true,
+      "compact": "10048376",
+      "format": "10048376"
+    },
+    {
+      "id": "ar.cbu",
+      "value": "2850590940090418135201",
+      "expected": true,
+      "compact": "2850590940090418135201",
+      "format": "28505909 40090418135201"
+    },
+    {
+      "id": "ar.cuit",
+      "value": "20267565393",
+      "expected": true,
+      "compact": "20267565393",
+      "format": "20-26756539-3"
+    },
+    {
+      "id": "ar.cuit",
+      "value": "20055361682",
+      "expected": true,
+      "compact": "20055361682",
+      "format": "20-05536168-2"
+    },
+    {
+      "id": "ar.dni",
+      "value": "20123456",
+      "expected": true,
+      "compact": "20123456",
+      "format": "20.123.456"
+    },
+    {
+      "id": "ar.dni",
+      "value": "12345678",
+      "expected": true,
+      "compact": "12345678",
+      "format": "12.345.678"
+    },
+    {
+      "id": "at.businessid",
+      "value": "122119m",
+      "expected": true,
+      "compact": "122119m",
+      "format": "FN 122119m"
+    },
+    {
+      "id": "at.tin",
+      "value": "591199013",
+      "expected": true,
+      "compact": "591199013",
+      "format": "59-119901/3"
+    },
+    {
+      "id": "at.uid",
+      "value": "U13585627",
+      "expected": true,
+      "compact": "U13585627",
+      "format": "ATU13585627"
+    },
+    {
+      "id": "at.vnr",
+      "value": "1237010180",
+      "expected": true,
+      "compact": "1237010180",
+      "format": "1237 010180"
+    },
+    {
+      "id": "au.abn",
+      "value": "83914571673",
+      "expected": true,
+      "compact": "83914571673",
+      "format": "83 914 571 673"
+    },
+    {
+      "id": "au.abn",
+      "value": "51824753556",
+      "expected": true,
+      "compact": "51824753556",
+      "format": "51 824 753 556"
+    },
+    {
+      "id": "au.acn",
+      "value": "004085616",
+      "expected": true,
+      "compact": "004085616",
+      "format": "004 085 616"
+    },
+    {
+      "id": "au.acn",
+      "value": "010499966",
+      "expected": true,
+      "compact": "010499966",
+      "format": "010 499 966"
+    },
+    {
+      "id": "au.tfn",
+      "value": "87650006",
+      "expected": true,
+      "compact": "87650006",
+      "format": "876 500 06"
+    },
+    {
+      "id": "au.tfn",
+      "value": "123456782",
+      "expected": true,
+      "compact": "123456782",
+      "format": "123 456 782"
+    },
+    {
+      "id": "az.voen",
+      "value": "1401555071",
+      "expected": true,
+      "compact": "1401555071",
+      "format": "140 155 5071"
+    },
+    {
+      "id": "az.voen",
+      "value": "1400057421",
+      "expected": true,
+      "compact": "1400057421",
+      "format": "140 005 7421"
+    },
+    {
+      "id": "ba.jmbg",
+      "value": "0101006500006",
+      "expected": true,
+      "compact": "0101006500006",
+      "format": "0101006500006"
+    },
+    {
+      "id": "bd.nid",
+      "value": "1592824588424",
+      "expected": true,
+      "compact": "1592824588424",
+      "format": "1592824588424"
+    },
+    {
+      "id": "bd.nid",
+      "value": "19841592824588424",
+      "expected": true,
+      "compact": "19841592824588424",
+      "format": "19841592824588424"
+    },
+    {
+      "id": "bd.nid",
+      "value": "2610413965404",
+      "expected": true,
+      "compact": "2610413965404",
+      "format": "2610413965404"
+    },
+    {
+      "id": "bd.nid",
+      "value": "19892610413965404",
+      "expected": true,
+      "compact": "19892610413965404",
+      "format": "19892610413965404"
+    },
+    {
+      "id": "be.bis",
+      "value": "98472899765",
+      "expected": true,
+      "compact": "98472899765",
+      "format": "98.47.28-997.65"
+    },
+    {
+      "id": "be.nn",
+      "value": "93051822361",
+      "expected": true,
+      "compact": "93051822361",
+      "format": "93.05.18-223.61"
+    },
+    {
+      "id": "be.vat",
+      "value": "0776091951",
+      "expected": true,
+      "compact": "0776091951",
+      "format": "BE0776091951"
+    },
+    {
+      "id": "bg.egn",
+      "value": "7523169263",
+      "expected": true,
+      "compact": "7523169263",
+      "format": "7523169263"
+    },
+    {
+      "id": "bg.pnf",
+      "value": "7111042925",
+      "expected": true,
+      "compact": "7111042925",
+      "format": "7111042925"
+    },
+    {
+      "id": "bg.vat",
+      "value": "175074752",
+      "expected": true,
+      "compact": "175074752",
+      "format": "BG175074752"
+    },
+    {
+      "id": "bh.cpr",
+      "value": "890112345",
+      "expected": true,
+      "compact": "890112345",
+      "format": "89-01-12345"
+    },
+    {
+      "id": "bh.cpr",
+      "value": "000612345",
+      "expected": true,
+      "compact": "000612345",
+      "format": "00-06-12345"
+    },
+    {
+      "id": "bic",
+      "value": "DEUTDEFF",
+      "expected": true,
+      "compact": "DEUTDEFF",
+      "format": "DEUT DE FF"
+    },
+    {
+      "id": "bic",
+      "value": "DEUTDEFF500",
+      "expected": true,
+      "compact": "DEUTDEFF500",
+      "format": "DEUT DE FF 500"
+    },
+    {
+      "id": "br.cnpj",
+      "value": "33000167000101",
+      "expected": true,
+      "compact": "33000167000101",
+      "format": "33.000.167/0001-01"
+    },
+    {
+      "id": "br.cnpj",
+      "value": "00000000000191",
+      "expected": true,
+      "compact": "00000000000191",
+      "format": "00.000.000/0001-91"
+    },
+    {
+      "id": "br.cpf",
+      "value": "39053344705",
+      "expected": true,
+      "compact": "39053344705",
+      "format": "390.533.447-05"
+    },
+    {
+      "id": "by.unp",
+      "value": "200988541",
+      "expected": true,
+      "compact": "200988541",
+      "format": "200988541"
+    },
+    {
+      "id": "by.unp",
+      "value": "MA1953684",
+      "expected": true,
+      "compact": "MA1953684",
+      "format": "MA1953684"
+    },
+    {
+      "id": "bz.tin",
+      "value": "000005",
+      "expected": true,
+      "compact": "000005",
+      "format": "000005"
+    },
+    {
+      "id": "bz.tin",
+      "value": "00000510",
+      "expected": true,
+      "compact": "00000510",
+      "format": "000005-10"
+    },
+    {
+      "id": "bz.tin",
+      "value": "00000513",
+      "expected": true,
+      "compact": "00000513",
+      "format": "000005-13"
+    },
+    {
+      "id": "ca.bn",
+      "value": "123026635",
+      "expected": true,
+      "compact": "123026635",
+      "format": "123 026 635"
+    },
+    {
+      "id": "ca.bn",
+      "value": "123026635RC0001",
+      "expected": true,
+      "compact": "123026635RC0001",
+      "format": "123 026 635 RC 0001"
+    },
+    {
+      "id": "ca.sin",
+      "value": "123456782",
+      "expected": true,
+      "compact": "123456782",
+      "format": "123-456-782"
+    },
+    {
+      "id": "ch.ssn",
+      "value": "7561234567897",
+      "expected": true,
+      "compact": "7561234567897",
+      "format": "756.1234.5678.97"
+    },
+    {
+      "id": "ch.uid",
+      "value": "CHE100155212",
+      "expected": true,
+      "compact": "CHE100155212",
+      "format": "CHE-100.155.212"
+    },
+    {
+      "id": "ch.vat",
+      "value": "CHE107787577IVA",
+      "expected": true,
+      "compact": "CHE107787577IVA",
+      "format": "CHE-107.787.577 IVA"
+    },
+    {
+      "id": "cl.rut",
+      "value": "760864285",
+      "expected": true,
+      "compact": "760864285",
+      "format": "76.086.428-5"
+    },
+    {
+      "id": "cl.rut",
+      "value": "125319092",
+      "expected": true,
+      "compact": "125319092",
+      "format": "12.531.909-2"
+    },
+    {
+      "id": "cn.ric",
+      "value": "11010519491231002X",
+      "expected": true,
+      "compact": "11010519491231002X",
+      "format": "11010519491231002X"
+    },
+    {
+      "id": "cn.ric",
+      "value": "440524188001010014",
+      "expected": true,
+      "compact": "440524188001010014",
+      "format": "440524188001010014"
+    },
+    {
+      "id": "cn.uscc",
+      "value": "91110000600037341L",
+      "expected": true,
+      "compact": "91110000600037341L",
+      "format": "91110000600037341L"
+    },
+    {
+      "id": "co.nit",
+      "value": "2131234321",
+      "expected": true,
+      "compact": "2131234321",
+      "format": "213.123.432-1"
+    },
+    {
+      "id": "co.nit",
+      "value": "8001234565",
+      "expected": true,
+      "compact": "8001234565",
+      "format": "800.123.456-5"
+    },
+    {
+      "id": "cr.cpf",
+      "value": "0304550175",
+      "expected": true,
+      "compact": "0304550175",
+      "format": "03-0455-0175"
+    },
+    {
+      "id": "cr.cpf",
+      "value": "0109130259",
+      "expected": true,
+      "compact": "0109130259",
+      "format": "01-0913-0259"
+    },
+    {
+      "id": "creditcard",
+      "value": "4111111111111111",
+      "expected": true,
+      "compact": "4111111111111111",
+      "format": "4111 1111 1111 1111"
+    },
+    {
+      "id": "creditcard",
+      "value": "5500000000000004",
+      "expected": true,
+      "compact": "5500000000000004",
+      "format": "5500 0000 0000 0004"
+    },
+    {
+      "id": "crypto.btcbase58",
+      "value": "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
+      "expected": true,
+      "compact": "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
+      "format": "1BoatSLRHtKNngkdXEeobR76b53LETtpyT"
+    },
+    {
+      "id": "crypto.btcbase58",
+      "value": "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
+      "expected": true,
+      "compact": "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
+      "format": "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy"
+    },
+    {
+      "id": "crypto.btcbech32",
+      "value": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4",
+      "expected": true,
+      "compact": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4",
+      "format": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"
+    },
+    {
+      "id": "crypto.btcbech32",
+      "value": "bc1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qccfmv3",
+      "expected": true,
+      "compact": "bc1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qccfmv3",
+      "format": "bc1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qccfmv3"
+    },
+    {
+      "id": "crypto.eth",
+      "value": "0xde709f2102306220921060314715629080e2fb77",
+      "expected": true,
+      "compact": "0xde709f2102306220921060314715629080e2fb77",
+      "format": "0xde709f2102306220921060314715629080e2fb77"
+    },
+    {
+      "id": "crypto.wallet",
+      "value": "0xde709f2102306220921060314715629080e2fb77",
+      "expected": true,
+      "compact": "0xde709f2102306220921060314715629080e2fb77",
+      "format": "0xde709f2102306220921060314715629080e2fb77"
+    },
+    {
+      "id": "crypto.wallet",
+      "value": "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
+      "expected": true,
+      "compact": "1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
+      "format": "1BoatSLRHtKNngkdXEeobR76b53LETtpyT"
+    },
+    {
+      "id": "crypto.wallet",
+      "value": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4",
+      "expected": true,
+      "compact": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4",
+      "format": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"
+    },
+    {
+      "id": "cu.ni",
+      "value": "91021027775",
+      "expected": true,
+      "compact": "91021027775",
+      "format": "91021027775"
+    },
+    {
+      "id": "cu.ni",
+      "value": "72062506561",
+      "expected": true,
+      "compact": "72062506561",
+      "format": "72062506561"
+    },
+    {
+      "id": "cy.vat",
+      "value": "10259033P",
+      "expected": true,
+      "compact": "10259033P",
+      "format": "CY10259033P"
+    },
+    {
+      "id": "cz.dic",
+      "value": "25123891",
+      "expected": true,
+      "compact": "25123891",
+      "format": "CZ25123891"
+    },
+    {
+      "id": "cz.dic",
+      "value": "7103192745",
+      "expected": true,
+      "compact": "7103192745",
+      "format": "CZ7103192745"
+    },
+    {
+      "id": "cz.ico",
+      "value": "25123891",
+      "expected": true,
+      "compact": "25123891",
+      "format": "25123891"
+    },
+    {
+      "id": "cz.ico",
+      "value": "27074358",
+      "expected": true,
+      "compact": "27074358",
+      "format": "27074358"
+    },
+    {
+      "id": "cz.rc",
+      "value": "7103192745",
+      "expected": true,
+      "compact": "7103192745",
+      "format": "710319/2745"
+    },
+    {
+      "id": "de.handelsreg",
+      "value": "HRB 12345",
+      "expected": true,
+      "compact": "HRB 12345",
+      "format": "HRB 12345"
+    },
+    {
+      "id": "de.idnr",
+      "value": "36574261809",
+      "expected": true,
+      "compact": "36574261809",
+      "format": "36 574 261 809"
+    },
+    {
+      "id": "de.stnr",
+      "value": "2181508150",
+      "expected": true,
+      "compact": "2181508150",
+      "format": "21/815/0815/0"
+    },
+    {
+      "id": "de.stnr",
+      "value": "18181508155",
+      "expected": true,
+      "compact": "18181508155",
+      "format": "181/815/0815/5"
+    },
+    {
+      "id": "de.svnr",
+      "value": "12010188M011",
+      "expected": true,
+      "compact": "12010188M011",
+      "format": "12 010188 M 01 1"
+    },
+    {
+      "id": "de.vat",
+      "value": "136695976",
+      "expected": true,
+      "compact": "136695976",
+      "format": "DE136695976"
+    },
+    {
+      "id": "dk.cpr",
+      "value": "2110625629",
+      "expected": true,
+      "compact": "2110625629",
+      "format": "211062-5629"
+    },
+    {
+      "id": "dk.cvr",
+      "value": "13585628",
+      "expected": true,
+      "compact": "13585628",
+      "format": "13585628"
+    },
+    {
+      "id": "dk.vat",
+      "value": "13585628",
+      "expected": true,
+      "compact": "13585628",
+      "format": "DK13585628"
+    },
+    {
+      "id": "do.rnc",
+      "value": "131098193",
+      "expected": true,
+      "compact": "131098193",
+      "format": "1-31-09819-3"
+    },
+    {
+      "id": "do.rnc",
+      "value": "00113918205",
+      "expected": true,
+      "compact": "00113918205",
+      "format": "001-1391820-5"
+    },
+    {
+      "id": "ec.ruc",
+      "value": "1792060346001",
+      "expected": true,
+      "compact": "1792060346001",
+      "format": "1792060346001"
+    },
+    {
+      "id": "ec.ruc",
+      "value": "1790011674001",
+      "expected": true,
+      "compact": "1790011674001",
+      "format": "1790011674001"
+    },
+    {
+      "id": "ee.ik",
+      "value": "36805280109",
+      "expected": true,
+      "compact": "36805280109",
+      "format": "36805280109"
+    },
+    {
+      "id": "ee.registrikood",
+      "value": "12345678",
+      "expected": true,
+      "compact": "12345678",
+      "format": "12345678"
+    },
+    {
+      "id": "ee.vat",
+      "value": "100931558",
+      "expected": true,
+      "compact": "100931558",
+      "format": "EE100931558"
+    },
+    {
+      "id": "eg.tn",
+      "value": "100531385",
+      "expected": true,
+      "compact": "100531385",
+      "format": "100-531-385"
+    },
+    {
+      "id": "eg.tn",
+      "value": "331105268",
+      "expected": true,
+      "compact": "331105268",
+      "format": "331-105-268"
+    },
+    {
+      "id": "es.cif",
+      "value": "A13585625",
+      "expected": true,
+      "compact": "A13585625",
+      "format": "A13585625"
+    },
+    {
+      "id": "es.dni",
+      "value": "54362315K",
+      "expected": true,
+      "compact": "54362315K",
+      "format": "54362315K"
+    },
+    {
+      "id": "es.dni",
+      "value": "1234567L",
+      "expected": true,
+      "compact": "1234567L",
+      "format": "1234567L"
+    },
+    {
+      "id": "es.nie",
+      "value": "X5253868R",
+      "expected": true,
+      "compact": "X5253868R",
+      "format": "X5253868R"
+    },
+    {
+      "id": "es.nss",
+      "value": "281234567840",
+      "expected": true,
+      "compact": "281234567840",
+      "format": "28/12345678/40"
+    },
+    {
+      "id": "es.vat",
+      "value": "12345678Z",
+      "expected": true,
+      "compact": "12345678Z",
+      "format": "ES12345678Z"
+    },
+    {
+      "id": "es.vat",
+      "value": "A78304516",
+      "expected": true,
+      "compact": "A78304516",
+      "format": "ESA78304516"
+    },
+    {
+      "id": "eu.vat",
+      "value": "ATU13585627",
+      "expected": true,
+      "compact": "ATU13585627",
+      "format": "ATU13585627"
+    },
+    {
+      "id": "eu.vat",
+      "value": "DE136695976",
+      "expected": true,
+      "compact": "DE136695976",
+      "format": "DE136695976"
+    },
+    {
+      "id": "fi.hetu",
+      "value": "131052-308T",
+      "expected": true,
+      "compact": "131052-308T",
+      "format": "131052-308T"
+    },
+    {
+      "id": "fi.vat",
+      "value": "20774740",
+      "expected": true,
+      "compact": "20774740",
+      "format": "FI20774740"
+    },
+    {
+      "id": "fi.ytunnus",
+      "value": "20774740",
+      "expected": true,
+      "compact": "20774740",
+      "format": "2077474-0"
+    },
+    {
+      "id": "fr.nif",
+      "value": "3023217600053",
+      "expected": true,
+      "compact": "3023217600053",
+      "format": "30 23 217 600 053"
+    },
+    {
+      "id": "fr.nir",
+      "value": "295117823456784",
+      "expected": true,
+      "compact": "295117823456784",
+      "format": "2 95 11 78 234 567 84"
+    },
+    {
+      "id": "fr.siren",
+      "value": "552008443",
+      "expected": true,
+      "compact": "552008443",
+      "format": "552 008 443"
+    },
+    {
+      "id": "fr.siret",
+      "value": "73282932000074",
+      "expected": true,
+      "compact": "73282932000074",
+      "format": "732 829 320 00074"
+    },
+    {
+      "id": "fr.tva",
+      "value": "40303265045",
+      "expected": true,
+      "compact": "40303265045",
+      "format": "FR40303265045"
+    },
+    {
+      "id": "fr.tva",
+      "value": "K7399859412",
+      "expected": true,
+      "compact": "K7399859412",
+      "format": "FRK7399859412"
+    },
+    {
+      "id": "gb.nhs",
+      "value": "4010232137",
+      "expected": true,
+      "compact": "4010232137",
+      "format": "401 023 2137"
+    },
+    {
+      "id": "gb.nino",
+      "value": "AB123456C",
+      "expected": true,
+      "compact": "AB123456C",
+      "format": "AB 12 34 56 C"
+    },
+    {
+      "id": "gb.sedol",
+      "value": "B15KXQ8",
+      "expected": true,
+      "compact": "B15KXQ8",
+      "format": "B15KXQ8"
+    },
+    {
+      "id": "gb.utr",
+      "value": "1955839661",
+      "expected": true,
+      "compact": "1955839661",
+      "format": "19558 39661"
+    },
+    {
+      "id": "gb.vat",
+      "value": "980780684",
+      "expected": true,
+      "compact": "980780684",
+      "format": "GB 980 7806 84"
+    },
+    {
+      "id": "ge.pin",
+      "value": "010043120",
+      "expected": true,
+      "compact": "010043120",
+      "format": "010043120"
+    },
+    {
+      "id": "ge.pin",
+      "value": "01024030303",
+      "expected": true,
+      "compact": "01024030303",
+      "format": "01024030303"
+    },
+    {
+      "id": "gh.tin",
+      "value": "C0000803561",
+      "expected": true,
+      "compact": "C0000803561",
+      "format": "C0000803561"
+    },
+    {
+      "id": "gr.amka",
+      "value": "01013099997",
+      "expected": true,
+      "compact": "01013099997",
+      "format": "01013099997"
+    },
+    {
+      "id": "gr.vat",
+      "value": "094259216",
+      "expected": true,
+      "compact": "094259216",
+      "format": "EL094259216"
+    },
+    {
+      "id": "gt.nit",
+      "value": "576937K",
+      "expected": true,
+      "compact": "576937K",
+      "format": "576937-K"
+    },
+    {
+      "id": "gt.nit",
+      "value": "39525503",
+      "expected": true,
+      "compact": "39525503",
+      "format": "3952550-3"
+    },
+    {
+      "id": "gt.nit",
+      "value": "71080",
+      "expected": true,
+      "compact": "71080",
+      "format": "7108-0"
+    },
+    {
+      "id": "hk.hkid",
+      "value": "G123456A",
+      "expected": true,
+      "compact": "G123456A",
+      "format": "G123456(A)"
+    },
+    {
+      "id": "hk.hkid",
+      "value": "AB9876543",
+      "expected": true,
+      "compact": "AB9876543",
+      "format": "AB987654(3)"
+    },
+    {
+      "id": "hr.vat",
+      "value": "33392005961",
+      "expected": true,
+      "compact": "33392005961",
+      "format": "HR33392005961"
+    },
+    {
+      "id": "hu.vat",
+      "value": "12892312",
+      "expected": true,
+      "compact": "12892312",
+      "format": "HU12892312"
+    },
+    {
+      "id": "iban",
+      "value": "GB29NWBK60161331926819",
+      "expected": true,
+      "compact": "GB29NWBK60161331926819",
+      "format": "GB29 NWBK 6016 1331 9268 19"
+    },
+    {
+      "id": "iban",
+      "value": "DE89370400440532013000",
+      "expected": true,
+      "compact": "DE89370400440532013000",
+      "format": "DE89 3704 0044 0532 0130 00"
+    },
+    {
+      "id": "id.npwp",
+      "value": "013000666091000",
+      "expected": true,
+      "compact": "013000666091000",
+      "format": "01.300.066.6-091.000"
+    },
+    {
+      "id": "id.npwp",
+      "value": "016090524017000",
+      "expected": true,
+      "compact": "016090524017000",
+      "format": "01.609.052.4-017.000"
+    },
+    {
+      "id": "ie.pps",
+      "value": "6433435F",
+      "expected": true,
+      "compact": "6433435F",
+      "format": "6433435F"
+    },
+    {
+      "id": "ie.vat",
+      "value": "6433435F",
+      "expected": true,
+      "compact": "6433435F",
+      "format": "IE6433435F"
+    },
+    {
+      "id": "ie.vat",
+      "value": "8D79739I",
+      "expected": true,
+      "compact": "8D79739I",
+      "format": "IE8D79739I"
+    },
+    {
+      "id": "il.idnr",
+      "value": "039337423",
+      "expected": true,
+      "compact": "039337423",
+      "format": "03933742-3"
+    },
+    {
+      "id": "il.idnr",
+      "value": "000000018",
+      "expected": true,
+      "compact": "000000018",
+      "format": "00000001-8"
+    },
+    {
+      "id": "in.aadhaar",
+      "value": "234123412346",
+      "expected": true,
+      "compact": "234123412346",
+      "format": "2341 2341 2346"
+    },
+    {
+      "id": "in.aadhaar",
+      "value": "295274982189",
+      "expected": true,
+      "compact": "295274982189",
+      "format": "2952 7498 2189"
+    },
+    {
+      "id": "in.gstin",
+      "value": "27AAPFU0939F1ZV",
+      "expected": true,
+      "compact": "27AAPFU0939F1ZV",
+      "format": "27AAPFU0939F1ZV"
+    },
+    {
+      "id": "in.gstin",
+      "value": "29AAGCB7383J1Z4",
+      "expected": true,
+      "compact": "29AAGCB7383J1Z4",
+      "format": "29AAGCB7383J1Z4"
+    },
+    {
+      "id": "in.pan",
+      "value": "ABCPP1234C",
+      "expected": true,
+      "compact": "ABCPP1234C",
+      "format": "ABCPP1234C"
+    },
+    {
+      "id": "in.pan",
+      "value": "AAACR5055K",
+      "expected": true,
+      "compact": "AAACR5055K",
+      "format": "AAACR5055K"
+    },
+    {
+      "id": "iq.nid",
+      "value": "012345678901",
+      "expected": true,
+      "compact": "012345678901",
+      "format": "012345678901"
+    },
+    {
+      "id": "ir.nid",
+      "value": "0932833810",
+      "expected": true,
+      "compact": "0932833810",
+      "format": "0932833810"
+    },
+    {
+      "id": "is.kennitala",
+      "value": "4504013150",
+      "expected": true,
+      "compact": "4504013150",
+      "format": "450401-3150"
+    },
+    {
+      "id": "is.kennitala",
+      "value": "1201743399",
+      "expected": true,
+      "compact": "1201743399",
+      "format": "120174-3399"
+    },
+    {
+      "id": "is.vsk",
+      "value": "00621",
+      "expected": true,
+      "compact": "00621",
+      "format": "00621"
+    },
+    {
+      "id": "is.vsk",
+      "value": "123456",
+      "expected": true,
+      "compact": "123456",
+      "format": "123456"
+    },
+    {
+      "id": "isin",
+      "value": "US0378331005",
+      "expected": true,
+      "compact": "US0378331005",
+      "format": "US 0378 3310 05"
+    },
+    {
+      "id": "isin",
+      "value": "GB0002634946",
+      "expected": true,
+      "compact": "GB0002634946",
+      "format": "GB 0002 6349 46"
+    },
+    {
+      "id": "it.codiceFiscale",
+      "value": "RCCMNL83S18D969H",
+      "expected": true,
+      "compact": "RCCMNL83S18D969H",
+      "format": "RCCMNL83S18D969H"
+    },
+    {
+      "id": "it.iva",
+      "value": "00743110157",
+      "expected": true,
+      "compact": "00743110157",
+      "format": "IT00743110157"
+    },
+    {
+      "id": "jp.cn",
+      "value": "5835678256246",
+      "expected": true,
+      "compact": "5835678256246",
+      "format": "5835678256246"
+    },
+    {
+      "id": "jp.cn",
+      "value": "2021001052596",
+      "expected": true,
+      "compact": "2021001052596",
+      "format": "2021001052596"
+    },
+    {
+      "id": "jp.mynumber",
+      "value": "123456789018",
+      "expected": true,
+      "compact": "123456789018",
+      "format": "1234 5678 9018"
+    },
+    {
+      "id": "jp.mynumber",
+      "value": "000000000019",
+      "expected": true,
+      "compact": "000000000019",
+      "format": "0000 0000 0019"
+    },
+    {
+      "id": "kr.brn",
+      "value": "1168200131",
+      "expected": true,
+      "compact": "1168200131",
+      "format": "116-82-00131"
+    },
+    {
+      "id": "kr.brn",
+      "value": "2208162517",
+      "expected": true,
+      "compact": "2208162517",
+      "format": "220-81-62517"
+    },
+    {
+      "id": "kr.rrn",
+      "value": "9710139019902",
+      "expected": true,
+      "compact": "9710139019902",
+      "format": "971013-9019902"
+    },
+    {
+      "id": "kr.rrn",
+      "value": "9501011000109",
+      "expected": true,
+      "compact": "9501011000109",
+      "format": "950101-1000109"
+    },
+    {
+      "id": "kw.civil",
+      "value": "289011200032",
+      "expected": true,
+      "compact": "289011200032",
+      "format": "2 890112 0003 2"
+    },
+    {
+      "id": "kw.civil",
+      "value": "305031512348",
+      "expected": true,
+      "compact": "305031512348",
+      "format": "3 050315 1234 8"
+    },
+    {
+      "id": "kz.iin",
+      "value": "880515300120",
+      "expected": true,
+      "compact": "880515300120",
+      "format": "880515 300120"
+    },
+    {
+      "id": "kz.iin",
+      "value": "950101400012",
+      "expected": true,
+      "compact": "950101400012",
+      "format": "950101 400012"
+    },
+    {
+      "id": "lei",
+      "value": "5493006MHB84DD0ZWV18",
+      "expected": true,
+      "compact": "5493006MHB84DD0ZWV18",
+      "format": "5493 006M HB84 DD0Z WV18"
+    },
+    {
+      "id": "li.peid",
+      "value": "1234567",
+      "expected": true,
+      "compact": "1234567",
+      "format": "1234567"
+    },
+    {
+      "id": "lk.nic",
+      "value": "197819202757",
+      "expected": true,
+      "compact": "197819202757",
+      "format": "197819202757"
+    },
+    {
+      "id": "lk.nic",
+      "value": "862348753V",
+      "expected": true,
+      "compact": "862348753V",
+      "format": "862348753V"
+    },
+    {
+      "id": "lt.asmens",
+      "value": "33309240064",
+      "expected": true,
+      "compact": "33309240064",
+      "format": "33309240064"
+    },
+    {
+      "id": "lt.vat",
+      "value": "119511515",
+      "expected": true,
+      "compact": "119511515",
+      "format": "LT119511515"
+    },
+    {
+      "id": "lt.vat",
+      "value": "100001919017",
+      "expected": true,
+      "compact": "100001919017",
+      "format": "LT100001919017"
+    },
+    {
+      "id": "lu.vat",
+      "value": "15027442",
+      "expected": true,
+      "compact": "15027442",
+      "format": "LU15027442"
+    },
+    {
+      "id": "luhn",
+      "value": "4111111111111111",
+      "expected": true,
+      "compact": "4111111111111111",
+      "format": "4111111111111111"
+    },
+    {
+      "id": "luhn",
+      "value": "18",
+      "expected": true,
+      "compact": "18",
+      "format": "18"
+    },
+    {
+      "id": "lv.vat",
+      "value": "40003521600",
+      "expected": true,
+      "compact": "40003521600",
+      "format": "LV40003521600"
+    },
+    {
+      "id": "lv.vat",
+      "value": "32999999999",
+      "expected": true,
+      "compact": "32999999999",
+      "format": "LV32999999999"
+    },
+    {
+      "id": "ma.ice",
+      "value": "001561191000066",
+      "expected": true,
+      "compact": "001561191000066",
+      "format": "001561191000066"
+    },
+    {
+      "id": "ma.ice",
+      "value": "002136093000040",
+      "expected": true,
+      "compact": "002136093000040",
+      "format": "002136093000040"
+    },
+    {
+      "id": "mc.tva",
+      "value": "FR53000004605",
+      "expected": true,
+      "compact": "FR53000004605",
+      "format": "FR53000004605"
+    },
+    {
+      "id": "md.idno",
+      "value": "1008600038413",
+      "expected": true,
+      "compact": "1008600038413",
+      "format": "1008600038413"
+    },
+    {
+      "id": "me.pib",
+      "value": "02655284",
+      "expected": true,
+      "compact": "02655284",
+      "format": "02655284"
+    },
+    {
+      "id": "mk.edb",
+      "value": "4002012527974",
+      "expected": true,
+      "compact": "4002012527974",
+      "format": "4002012527974"
+    },
+    {
+      "id": "mt.vat",
+      "value": "11679112",
+      "expected": true,
+      "compact": "11679112",
+      "format": "MT11679112"
+    },
+    {
+      "id": "mu.brn",
+      "value": "C07015330",
+      "expected": true,
+      "compact": "C07015330",
+      "format": "C07015330"
+    },
+    {
+      "id": "mu.brn",
+      "value": "C16135302",
+      "expected": true,
+      "compact": "C16135302",
+      "format": "C16135302"
+    },
+    {
+      "id": "mx.clabe",
+      "value": "032180000118359719",
+      "expected": true,
+      "compact": "032180000118359719",
+      "format": "032 180 00011835971 9"
+    },
+    {
+      "id": "mx.curp",
+      "value": "BOXW310820HNERXN09",
+      "expected": true,
+      "compact": "BOXW310820HNERXN09",
+      "format": "BOXW310820HNERXN09"
+    },
+    {
+      "id": "mx.rfc",
+      "value": "GODE561231GR8",
+      "expected": true,
+      "compact": "GODE561231GR8",
+      "format": "GODE561231GR8"
+    },
+    {
+      "id": "mx.rfc",
+      "value": "MAB9307148T4",
+      "expected": true,
+      "compact": "MAB9307148T4",
+      "format": "MAB9307148T4"
+    },
+    {
+      "id": "mx.rfc",
+      "value": "ORJÑ610528G5A",
+      "expected": true,
+      "compact": "ORJÑ610528G5A",
+      "format": "ORJÑ610528G5A"
+    },
+    {
+      "id": "my.nric",
+      "value": "770305021234",
+      "expected": true,
+      "compact": "770305021234",
+      "format": "770305-02-1234"
+    },
+    {
+      "id": "my.nric",
+      "value": "880715141234",
+      "expected": true,
+      "compact": "880715141234",
+      "format": "880715-14-1234"
+    },
+    {
+      "id": "ng.nin",
+      "value": "13478900989",
+      "expected": true,
+      "compact": "13478900989",
+      "format": "134 7890 0989"
+    },
+    {
+      "id": "ng.nin",
+      "value": "70123456789",
+      "expected": true,
+      "compact": "70123456789",
+      "format": "701 2345 6789"
+    },
+    {
+      "id": "ni.ruc",
+      "value": "6071904680001F",
+      "expected": true,
+      "compact": "6071904680001F",
+      "format": "607-190468-0001F"
+    },
+    {
+      "id": "ni.ruc",
+      "value": "2811505850012D",
+      "expected": true,
+      "compact": "2811505850012D",
+      "format": "281-150585-0012D"
+    },
+    {
+      "id": "nl.bsn",
+      "value": "111222333",
+      "expected": true,
+      "compact": "111222333",
+      "format": "111222333"
+    },
+    {
+      "id": "nl.kvk",
+      "value": "12345678",
+      "expected": true,
+      "compact": "12345678",
+      "format": "12345678"
+    },
+    {
+      "id": "nl.vat",
+      "value": "000099998B57",
+      "expected": true,
+      "compact": "000099998B57",
+      "format": "NL000099998B57"
+    },
+    {
+      "id": "no.fodselsnummer",
+      "value": "15108695088",
+      "expected": true,
+      "compact": "15108695088",
+      "format": "151086 95088"
+    },
+    {
+      "id": "no.mva",
+      "value": "995525828MVA",
+      "expected": true,
+      "compact": "995525828MVA",
+      "format": "NO 995 525 828 MVA"
+    },
+    {
+      "id": "no.orgnr",
+      "value": "923609016",
+      "expected": true,
+      "compact": "923609016",
+      "format": "923 609 016"
+    },
+    {
+      "id": "nz.ird",
+      "value": "49091850",
+      "expected": true,
+      "compact": "49091850",
+      "format": "49-091-850"
+    },
+    {
+      "id": "nz.ird",
+      "value": "136410132",
+      "expected": true,
+      "compact": "136410132",
+      "format": "136-410-132"
+    },
+    {
+      "id": "pa.ruc",
+      "value": "1-184-921 DV49",
+      "expected": true,
+      "compact": "1-184-921 DV49",
+      "format": "1-184-921 DV 49"
+    },
+    {
+      "id": "pa.ruc",
+      "value": "2588017-1-831938 DV20",
+      "expected": true,
+      "compact": "2588017-1-831938 DV20",
+      "format": "2588017-1-831938 DV 20"
+    },
+    {
+      "id": "pe.ruc",
+      "value": "20131312955",
+      "expected": true,
+      "compact": "20131312955",
+      "format": "20131312955"
+    },
+    {
+      "id": "pe.ruc",
+      "value": "20100047218",
+      "expected": true,
+      "compact": "20100047218",
+      "format": "20100047218"
+    },
+    {
+      "id": "ph.philid",
+      "value": "123456789012",
+      "expected": true,
+      "compact": "123456789012",
+      "format": "1234-5678901-2"
+    },
+    {
+      "id": "ph.philid",
+      "value": "000011112222",
+      "expected": true,
+      "compact": "000011112222",
+      "format": "0000-1111222-2"
+    },
+    {
+      "id": "pk.cnic",
+      "value": "3520112345671",
+      "expected": true,
+      "compact": "3520112345671",
+      "format": "35201-1234567-1"
+    },
+    {
+      "id": "pk.cnic",
+      "value": "4210112345672",
+      "expected": true,
+      "compact": "4210112345672",
+      "format": "42101-1234567-2"
+    },
+    {
+      "id": "pl.nip",
+      "value": "2234567895",
+      "expected": true,
+      "compact": "2234567895",
+      "format": "PL2234567895"
+    },
+    {
+      "id": "pl.pesel",
+      "value": "02070803628",
+      "expected": true,
+      "compact": "02070803628",
+      "format": "02070803628"
+    },
+    {
+      "id": "pl.regon",
+      "value": "123456785",
+      "expected": true,
+      "compact": "123456785",
+      "format": "123456785"
+    },
+    {
+      "id": "pl.regon",
+      "value": "12345678512347",
+      "expected": true,
+      "compact": "12345678512347",
+      "format": "12345678512347"
+    },
+    {
+      "id": "pt.cc",
+      "value": "000000000ZZ8",
+      "expected": true,
+      "compact": "000000000ZZ8",
+      "format": "000000000 ZZ 8"
+    },
+    {
+      "id": "pt.vat",
+      "value": "501964843",
+      "expected": true,
+      "compact": "501964843",
+      "format": "PT501964843"
+    },
+    {
+      "id": "ro.cnp",
+      "value": "1630615123457",
+      "expected": true,
+      "compact": "1630615123457",
+      "format": "1630615123457"
+    },
+    {
+      "id": "ro.vat",
+      "value": "18547290",
+      "expected": true,
+      "compact": "18547290",
+      "format": "RO18547290"
+    },
+    {
+      "id": "rs.pib",
+      "value": "101134702",
+      "expected": true,
+      "compact": "101134702",
+      "format": "101134702"
+    },
+    {
+      "id": "ru.inn",
+      "value": "7707083893",
+      "expected": true,
+      "compact": "7707083893",
+      "format": "7707083893"
+    },
+    {
+      "id": "ru.inn",
+      "value": "526317984689",
+      "expected": true,
+      "compact": "526317984689",
+      "format": "526317984689"
+    },
+    {
+      "id": "se.orgnr",
+      "value": "1234567897",
+      "expected": true,
+      "compact": "1234567897",
+      "format": "123456-7897"
+    },
+    {
+      "id": "se.personnummer",
+      "value": "880320-0016",
+      "expected": true,
+      "compact": "880320-0016",
+      "format": "880320-0016"
+    },
+    {
+      "id": "se.vat",
+      "value": "556188840401",
+      "expected": true,
+      "compact": "556188840401",
+      "format": "SE556188840401"
+    },
+    {
+      "id": "sg.uen",
+      "value": "00192200M",
+      "expected": true,
+      "compact": "00192200M",
+      "format": "00192200M"
+    },
+    {
+      "id": "sg.uen",
+      "value": "197401143C",
+      "expected": true,
+      "compact": "197401143C",
+      "format": "197401143C"
+    },
+    {
+      "id": "sg.uen",
+      "value": "S16FC0121D",
+      "expected": true,
+      "compact": "S16FC0121D",
+      "format": "S16FC0121D"
+    },
+    {
+      "id": "si.emso",
+      "value": "0101006500006",
+      "expected": true,
+      "compact": "0101006500006",
+      "format": "0101006500006"
+    },
+    {
+      "id": "si.vat",
+      "value": "15012557",
+      "expected": true,
+      "compact": "15012557",
+      "format": "SI15012557"
+    },
+    {
+      "id": "sk.dic",
+      "value": "2021853504",
+      "expected": true,
+      "compact": "2021853504",
+      "format": "SK2021853504"
+    },
+    {
+      "id": "sk.ico",
+      "value": "25123891",
+      "expected": true,
+      "compact": "25123891",
+      "format": "25123891"
+    },
+    {
+      "id": "sk.rc",
+      "value": "7103192745",
+      "expected": true,
+      "compact": "7103192745",
+      "format": "710319/2745"
+    },
+    {
+      "id": "th.tin",
+      "value": "1101700230708",
+      "expected": true,
+      "compact": "1101700230708",
+      "format": "1 1017 00230 70 8"
+    },
+    {
+      "id": "th.tin",
+      "value": "3100600445015",
+      "expected": true,
+      "compact": "3100600445015",
+      "format": "3 1006 00445 01 5"
+    },
+    {
+      "id": "tr.tckimlik",
+      "value": "17291716060",
+      "expected": true,
+      "compact": "17291716060",
+      "format": "17291716060"
+    },
+    {
+      "id": "tr.vkn",
+      "value": "4540536920",
+      "expected": true,
+      "compact": "4540536920",
+      "format": "4540536920"
+    },
+    {
+      "id": "tw.ubn",
+      "value": "00501503",
+      "expected": true,
+      "compact": "00501503",
+      "format": "00501503"
+    },
+    {
+      "id": "tw.ubn",
+      "value": "04595257",
+      "expected": true,
+      "compact": "04595257",
+      "format": "04595257"
+    },
+    {
+      "id": "ua.edrpou",
+      "value": "14360570",
+      "expected": true,
+      "compact": "14360570",
+      "format": "14360570"
+    },
+    {
+      "id": "us.ein",
+      "value": "042103594",
+      "expected": true,
+      "compact": "042103594",
+      "format": "04-2103594"
+    },
+    {
+      "id": "us.itin",
+      "value": "912-90-3456",
+      "expected": true,
+      "compact": "912903456",
+      "format": "912-90-3456"
+    },
+    {
+      "id": "us.rtn",
+      "value": "111000025",
+      "expected": true,
+      "compact": "111000025",
+      "format": "111000025"
+    },
+    {
+      "id": "us.rtn",
+      "value": "021000021",
+      "expected": true,
+      "compact": "021000021",
+      "format": "021000021"
+    },
+    {
+      "id": "us.ssn",
+      "value": "536904399",
+      "expected": true,
+      "compact": "536904399",
+      "format": "536-90-4399"
+    },
+    {
+      "id": "uy.rut",
+      "value": "010100010013",
+      "expected": true,
+      "compact": "010100010013",
+      "format": "01-010001-001-3"
+    },
+    {
+      "id": "uy.rut",
+      "value": "102000010017",
+      "expected": true,
+      "compact": "102000010017",
+      "format": "10-200001-001-7"
+    },
+    {
+      "id": "ve.rif",
+      "value": "V309876543",
+      "expected": true,
+      "compact": "V309876543",
+      "format": "V-30987654-3"
+    },
+    {
+      "id": "ve.rif",
+      "value": "J309876546",
+      "expected": true,
+      "compact": "J309876546",
+      "format": "J-30987654-6"
+    },
+    {
+      "id": "vn.mst",
+      "value": "0100233488",
+      "expected": true,
+      "compact": "0100233488",
+      "format": "0100233488"
+    },
+    {
+      "id": "vn.mst",
+      "value": "0314409058002",
+      "expected": true,
+      "compact": "0314409058002",
+      "format": "0314409058-002"
+    },
+    {
+      "id": "za.idnr",
+      "value": "7503305044089",
+      "expected": true,
+      "compact": "7503305044089",
+      "format": "750330 5044 08 9"
+    },
+    {
+      "id": "za.idnr",
+      "value": "8001015009087",
+      "expected": true,
+      "compact": "8001015009087",
+      "format": "800101 5009 08 7"
+    }
+  ]
+}

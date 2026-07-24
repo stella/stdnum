@@ -8,12 +8,26 @@ import { fileURLToPath } from "node:url";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const VERSION_PATTERN =
   /^[0-9]+\.[0-9]+\.[0-9]+(?:-(?:alpha|beta|rc)\.[0-9]+)?$/;
-
+const PUBLISHED_PACKAGES = [
+  "packages/stdnum/package.json",
+  "packages/stdnum-darwin-arm64/package.json",
+  "packages/stdnum-darwin-x64/package.json",
+  "packages/stdnum-linux-arm64-gnu/package.json",
+  "packages/stdnum-linux-x64-gnu/package.json",
+  "packages/stdnum-wasm/package.json",
+  "packages/stdnum-win32-x64-msvc/package.json",
+];
 const repoPath = (...segments) =>
   path.join(ROOT, ...segments);
 
 const readJson = (filePath) =>
   JSON.parse(fs.readFileSync(filePath, "utf8"));
+
+const FIXED_DEPENDENCIES = new Set(
+  PUBLISHED_PACKAGES.map(
+    (packageFile) => readJson(repoPath(packageFile)).name,
+  ),
+);
 
 const writeJson = (filePath, value) => {
   fs.writeFileSync(
@@ -64,16 +78,49 @@ const expectedVersion = (args) => {
 };
 
 const syncVersion = (version) => {
-  const packageJsonPath = repoPath("package.json");
-  const manifest = readJson(packageJsonPath);
+  const cargoManifestPath = repoPath("Cargo.toml");
+  const cargoManifest = fs.readFileSync(
+    cargoManifestPath,
+    "utf8",
+  );
   writeVersion(version);
-  manifest.version = version;
-  writeJson(packageJsonPath, manifest);
+  for (const packageFile of PUBLISHED_PACKAGES) {
+    const packageJsonPath = repoPath(packageFile);
+    const manifest = readJson(packageJsonPath);
+    manifest.version = version;
+    for (const dependencyField of [
+      "dependencies",
+      "optionalDependencies",
+      "peerDependencies",
+    ]) {
+      const dependencies = manifest[dependencyField];
+      if (dependencies == null) continue;
+      for (const dependency of Object.keys(dependencies)) {
+        if (FIXED_DEPENDENCIES.has(dependency)) {
+          dependencies[dependency] = version;
+        }
+      }
+    }
+    writeJson(packageJsonPath, manifest);
+  }
+  fs.writeFileSync(
+    cargoManifestPath,
+    cargoManifest.replace(
+      /(\[workspace\.package\][\s\S]*?\nversion = ")[^"]+("\n)/,
+      `$1${version}$2`,
+    ),
+  );
 };
 
 const checkVersion = (version) => {
-  const packageJsonPath = repoPath("package.json");
-  const manifest = readJson(packageJsonPath);
+  const cargoManifestPath = repoPath("Cargo.toml");
+  const cargoManifest = fs.readFileSync(
+    cargoManifestPath,
+    "utf8",
+  );
+  const cargoVersion = cargoManifest.match(
+    /\[workspace\.package\][\s\S]*?\nversion = "([^"]+)"\n/,
+  )?.[1];
   const mismatches = [];
 
   if (readVersion() !== version) {
@@ -81,9 +128,39 @@ const checkVersion = (version) => {
       `${repoPath("VERSION")}: expected ${version}`,
     );
   }
-  if (manifest.version !== version) {
+  for (const packageFile of PUBLISHED_PACKAGES) {
+    const packageJsonPath = repoPath(packageFile);
+    const manifest = readJson(packageJsonPath);
+    if (manifest.version !== version) {
+      mismatches.push(
+        `${packageJsonPath}: version=${manifest.version}; expected ${version}`,
+      );
+    }
+    for (const dependencyField of [
+      "dependencies",
+      "optionalDependencies",
+      "peerDependencies",
+    ]) {
+      const dependencies = manifest[dependencyField];
+      if (dependencies == null) continue;
+      for (const [
+        dependency,
+        dependencyVersion,
+      ] of Object.entries(dependencies)) {
+        if (
+          FIXED_DEPENDENCIES.has(dependency) &&
+          dependencyVersion !== version
+        ) {
+          mismatches.push(
+            `${packageJsonPath}: ${dependency}=${dependencyVersion}; expected ${version}`,
+          );
+        }
+      }
+    }
+  }
+  if (cargoVersion !== version) {
     mismatches.push(
-      `${packageJsonPath}: version=${manifest.version}; expected ${version}`,
+      `${cargoManifestPath}: workspace.package.version=${cargoVersion}; expected ${version}`,
     );
   }
 

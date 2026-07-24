@@ -1,0 +1,24 @@
+{
+  "name": "@stll/stdnum-win32-x64-msvc",
+  "version": "2.1.1",
+  "description": "Windows x64 native binding for @stll/stdnum",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stella/stdnum.git"
+  },
+  "files": [
+    "index.cjs",
+    "stella_stdnum_napi.node"
+  ],
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "main": "index.cjs",
+  "publishConfig": {
+    "access": "public"
+  }
+}

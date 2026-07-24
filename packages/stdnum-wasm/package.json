@@ -1,0 +1,37 @@
+{
+  "name": "@stll/stdnum-wasm",
+  "version": "2.1.1",
+  "description": "Standard identifier validation for browsers via WebAssembly",
+  "homepage": "https://github.com/stella/stdnum",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stella/stdnum.git"
+  },
+  "files": [
+    "dist",
+    "native"
+  ],
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "node ../../scripts/build-wasm.mjs && tsdown",
+    "build:js": "tsdown",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@stll/stdnum": "workspace:*",
+    "tsdown": "0.22.2",
+    "typescript": "^6.0.3"
+  }
+}

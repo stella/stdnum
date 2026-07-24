@@ -1,0 +1,24 @@
+{
+  "name": "@stll/stdnum-darwin-x64",
+  "version": "2.1.1",
+  "description": "macOS x64 native binding for @stll/stdnum",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stella/stdnum.git"
+  },
+  "files": [
+    "index.cjs",
+    "stella_stdnum_napi.node"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "main": "index.cjs",
+  "publishConfig": {
+    "access": "public"
+  }
+}

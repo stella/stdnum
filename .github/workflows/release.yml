@@ -1,13 +1,16 @@
 name: Release
 
+env:
+  NPM_VERSION: "11.11.1"
+
 on:
   push:
     branches: [main]
     paths: [VERSION]
   workflow_dispatch:
     inputs:
-      publish_to_npm:
-        description: Publish the current VERSION to npm after verification
+      publish_to_registries:
+        description: Publish npm packages and PyPI wheels after verification
         required: true
         default: false
         type: boolean
@@ -20,104 +23,430 @@ permissions:
   contents: read
 
 jobs:
-  release-ref:
-    name: Release ref
-    if: >-
-      github.event_name == 'workflow_dispatch'
-      && inputs.publish_to_npm
-      && github.ref != 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - run: |
-          echo "::error::Manual npm publishing must run from main."
-          exit 1
-
-  preflight:
-    name: Preflight
-    if: >-
-      github.event_name != 'workflow_dispatch'
-      || inputs.publish_to_npm != true
-      || github.ref == 'refs/heads/main'
-    uses: stella/.github/.github/workflows/npm-version-preflight.yml@1cf2d8c99d478e37c653dbe25816bfe5b26157ce
-    with:
-      package-files: package.json
-      publish-to-npm: >-
-        ${{ github.event_name == 'push'
-            || (inputs.publish_to_npm && github.ref == 'refs/heads/main') }}
-
   verify:
-    name: Verify
-    needs: preflight
-    if: needs.preflight.outputs.already-released != 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    name: Verify release
+    runs-on: ubuntu-24.04
+    outputs:
+      dist_tag: ${{ steps.version.outputs.dist_tag }}
+      publish: ${{ steps.scope.outputs.publish }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
-          node-version: "22.21.1"
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-      - run: bun install --frozen-lockfile
-      - run: bun run version:check
-      - run: bun run lint
-      - run: bun test
-      - run: bun run typecheck
-      - run: bun run build
-      - run: bun run sync-exports:check
-      - run: ORACLE_SAMPLES=500 bun run oracle
-      - run: npm pack --json --ignore-scripts --dry-run
+          fetch-depth: 0
 
-  pack:
-    name: Pack
-    needs: [preflight, verify]
-    if: needs.preflight.outputs.already-released != 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
-        with:
-          node-version: "22.21.1"
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-      - run: bun install --frozen-lockfile
-      - run: bun run build
-
-      - name: Pack release tarball
-        shell: bash
+      - name: Resolve publish scope
+        id: scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_PUBLISH: ${{ inputs.publish_to_registries }}
         run: |
           set -euo pipefail
-          mkdir -p release-artifacts
-          npm pack --json --ignore-scripts --pack-destination release-artifacts
-          (
-            cd release-artifacts
-            sha256sum -- ./*.tgz > SHA256SUMS
-          )
+          publish=false
+          if [[ "$EVENT_NAME" == "push" || "$MANUAL_PUBLISH" == "true" ]]; then
+            publish=true
+          fi
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+
+      - name: Validate VERSION and derive npm tag
+        id: version
+        run: |
+          set -euo pipefail
+          version="$(tr -d '[:space:]' < VERSION)"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-(rc|beta|alpha)\.[0-9]+)?$ ]]; then
+            echo "::error::Invalid VERSION: $version"
+            exit 1
+          fi
+          dist_tag=latest
+          if [[ "$version" =~ -(rc|beta|alpha)\. ]]; then
+            dist_tag="${BASH_REMATCH[1]}"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "dist_tag=$dist_tag" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: "22.21.1"
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version-file: package.json
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Rust toolchain
+        run: |
+          rustup toolchain install 1.96.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.96.0
+
+      - name: Verify versions and generated sources
+        run: |
+          bun run version:check
+          bun run codegen:check
+
+      - name: Verify source and bindings
+        run: |
+          bun run typecheck
+          bun run lint
+          bun run format:check
+          cargo test --workspace --locked
+          bun test
+
+      - name: Build and smoke the host package
+        run: |
+          bun run build
+          bun run smoke:native
+          bun run smoke:pack
+
+  pack-native:
+    name: Pack ${{ matrix.package }}
+    needs: verify
+    if: needs.verify.outputs.publish == 'true'
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: stdnum-linux-x64-gnu
+            runner: ubuntu-24.04
+          - package: stdnum-linux-arm64-gnu
+            runner: ubuntu-24.04-arm
+          - package: stdnum-darwin-x64
+            runner: macos-15-intel
+          - package: stdnum-darwin-arm64
+            runner: macos-15
+          - package: stdnum-win32-x64-msvc
+            runner: windows-2025
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: "22.21.1"
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version-file: package.json
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Rust toolchain
+        run: |
+          rustup toolchain install 1.96.0 --profile minimal
+          rustup default 1.96.0
+
+      - name: Build native addon
+        run: node scripts/build-native-node.mjs
+
+      - name: Pack native sidecar
+        id: pack
+        working-directory: packages/${{ matrix.package }}
+        run: |
+          set -euo pipefail
+          pack_dir="$RUNNER_TEMP/npm-tarballs"
+          mkdir -p "$pack_dir"
+          pack_json="$(npm pack --json --ignore-scripts --pack-destination "$pack_dir")"
+          filename="$(node -e '
+            const pack = JSON.parse(process.argv[1])[0];
+            const files = new Set(pack.files.map(file => file.path));
+            for (const required of ["index.cjs", "stella_stdnum_napi.node"]) {
+              if (!files.has(required)) throw new Error(`${pack.name} is missing ${required}`);
+            }
+            process.stdout.write(pack.filename);
+          ' "$pack_json")"
+          echo "tarball=$pack_dir/$filename" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: release-artifacts
-          path: release-artifacts
+          name: npm-tarball-${{ matrix.package }}
+          path: ${{ steps.pack.outputs.tarball }}
           if-no-files-found: error
 
-  finalize:
-    name: Finalize
-    needs: [preflight, pack]
-    if: >-
-      needs.preflight.outputs.already-released != 'true'
-      && (github.event_name == 'push'
-          || (inputs.publish_to_npm && github.ref == 'refs/heads/main'))
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@1cf2d8c99d478e37c653dbe25816bfe5b26157ce
-    with:
-      package-files: package.json
-      publish-to-npm: >-
-        ${{ github.event_name == 'push'
-            || (inputs.publish_to_npm && github.ref == 'refs/heads/main') }}
+  publish-native:
+    name: Publish ${{ matrix.artifact }}
+    needs: [verify, pack-native]
+    if: needs.verify.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        artifact:
+          - stdnum-linux-x64-gnu
+          - stdnum-linux-arm64-gnu
+          - stdnum-darwin-x64
+          - stdnum-darwin-arm64
+          - stdnum-win32-x64-msvc
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: npm-tarball-${{ matrix.artifact }}
+          path: native-tarball
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: "22.21.1"
+          registry-url: https://registry.npmjs.org
+
+      - name: Install npm for trusted publishing
+        run: npm install --global --ignore-scripts "npm@${NPM_VERSION}"
+
+      - name: Resolve tarball
+        id: tarball
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          tarballs=(native-tarball/*.tgz)
+          if [[ "${#tarballs[@]}" -ne 1 ]]; then
+            echo "::error::Expected one native tarball, found ${#tarballs[@]}"
+            exit 1
+          fi
+          echo "path=${tarballs[0]}" >> "$GITHUB_OUTPUT"
+
+      - uses: stella/.github/.github/actions/npm-publish-hardened@4292546b5b6e5bd8660bd727913b4038644c3d0b
+        with:
+          tarball: ${{ steps.tarball.outputs.path }}
+          tag: ${{ needs.verify.outputs.dist_tag }}
+
+  pack-portable:
+    name: Pack JavaScript and WebAssembly packages
+    needs: verify
+    if: needs.verify.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: "22.21.1"
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version-file: package.json
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Rust and wasm-bindgen
+        run: |
+          rustup toolchain install 1.96.0 --profile minimal
+          rustup target add wasm32-unknown-unknown --toolchain 1.96.0
+          rustup default 1.96.0
+          cargo install wasm-bindgen-cli --version 0.2.126 --locked
+
+      - name: Build portable packages
+        run: |
+          bun run codegen:check
+          bun run build:ts
+          bun run build:wasm
+          bun run smoke:wasm
+
+      - name: Pack main package
+        id: main
+        working-directory: packages/stdnum
+        run: |
+          set -euo pipefail
+          pack_dir="$RUNNER_TEMP/npm-main"
+          mkdir -p "$pack_dir"
+          pack_json="$(npm pack --json --ignore-scripts --pack-destination "$pack_dir")"
+          filename="$(node -e 'process.stdout.write(JSON.parse(process.argv[1])[0].filename)' "$pack_json")"
+          echo "tarball=$pack_dir/$filename" >> "$GITHUB_OUTPUT"
+
+      - name: Pack WebAssembly package
+        id: wasm
+        working-directory: packages/stdnum-wasm
+        run: |
+          set -euo pipefail
+          pack_dir="$RUNNER_TEMP/npm-wasm"
+          mkdir -p "$pack_dir"
+          pack_json="$(npm pack --json --ignore-scripts --pack-destination "$pack_dir")"
+          filename="$(node -e '
+            const pack = JSON.parse(process.argv[1])[0];
+            const files = new Set(pack.files.map(file => file.path));
+            for (const required of ["native/stella_stdnum_wasm.js", "native/stella_stdnum_wasm_bg.wasm"]) {
+              if (!files.has(required)) throw new Error(`${pack.name} is missing ${required}`);
+            }
+            process.stdout.write(pack.filename);
+          ' "$pack_json")"
+          echo "tarball=$pack_dir/$filename" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: npm-tarball-stdnum
+          path: ${{ steps.main.outputs.tarball }}
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: npm-tarball-stdnum-wasm
+          path: ${{ steps.wasm.outputs.tarball }}
+          if-no-files-found: error
+
+  publish-wasm:
+    name: Publish @stll/stdnum-wasm
+    needs: [verify, pack-portable]
+    if: needs.verify.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: npm-tarball-stdnum-wasm
+          path: npm-tarball
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: "22.21.1"
+          registry-url: https://registry.npmjs.org
+
+      - name: Install npm for trusted publishing
+        run: npm install --global --ignore-scripts "npm@${NPM_VERSION}"
+
+      - name: Resolve tarball
+        id: tarball
+        run: echo "path=$(find npm-tarball -name '*.tgz' -print -quit)" >> "$GITHUB_OUTPUT"
+
+      - uses: stella/.github/.github/actions/npm-publish-hardened@4292546b5b6e5bd8660bd727913b4038644c3d0b
+        with:
+          tarball: ${{ steps.tarball.outputs.path }}
+          tag: ${{ needs.verify.outputs.dist_tag }}
+
+  publish-main:
+    name: Publish @stll/stdnum
+    needs:
+      [verify, pack-portable, publish-native, publish-wasm]
+    if: needs.verify.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: npm-tarball-stdnum
+          path: npm-tarball
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: "22.21.1"
+          registry-url: https://registry.npmjs.org
+
+      - name: Install npm for trusted publishing
+        run: npm install --global --ignore-scripts "npm@${NPM_VERSION}"
+
+      - name: Resolve tarball
+        id: tarball
+        run: echo "path=$(find npm-tarball -name '*.tgz' -print -quit)" >> "$GITHUB_OUTPUT"
+
+      - uses: stella/.github/.github/actions/npm-publish-hardened@4292546b5b6e5bd8660bd727913b4038644c3d0b
+        with:
+          tarball: ${{ steps.tarball.outputs.path }}
+          tag: ${{ needs.verify.outputs.dist_tag }}
+
+  build-wheels:
+    name: Build Python wheel ${{ matrix.target }}
+    needs: verify
+    if: needs.verify.outputs.publish == 'true'
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            runner: ubuntu-24.04
+            manylinux: auto
+          - target: aarch64-unknown-linux-gnu
+            runner: ubuntu-24.04-arm
+            manylinux: auto
+          - target: x86_64-apple-darwin
+            runner: macos-15-intel
+          - target: aarch64-apple-darwin
+            runner: macos-15
+          - target: x86_64-pc-windows-msvc
+            runner: windows-2025
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Build abi3 wheel
+        uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
+        with:
+          target: ${{ matrix.target }}
+          manylinux: ${{ matrix.manylinux || 'auto' }}
+          rust-toolchain: "1.96.0"
+          args: >-
+            --release
+            --locked
+            --manifest-path crates/stdnum-py/Cargo.toml
+            --out dist
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: python-wheel-${{ matrix.target }}
+          path: dist/*.whl
+          if-no-files-found: error
+
+  publish-pypi:
+    name: Publish stella-stdnum to PyPI
+    needs: [verify, build-wheels]
+    if: needs.verify.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          pattern: python-wheel-*
+          path: dist
+          merge-multiple: true
+
+      - name: Verify five wheels are present
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          wheels=(dist/*.whl)
+          if [[ "${#wheels[@]}" -ne 5 ]]; then
+            echo "::error::Expected five wheels, found ${#wheels[@]}"
+            exit 1
+          fi
+
+      - uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
+        with:
+          packages-dir: dist
+
+  github-release:
+    name: Create GitHub release
+    needs: [verify, publish-main, publish-pypi]
+    if: needs.verify.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
-      id-token: write
-      pull-requests: write
-    secrets: inherit
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Create release if missing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ needs.verify.outputs.version }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "$TAG already exists"
+            exit 0
+          fi
+          git tag -a "$TAG" -m "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" --generate-notes --verify-tag
