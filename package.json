@@ -41,7 +41,6 @@
     "changeset:check": "bun scripts/check-changeset.ts",
     "changeset:check:test": "bun test scripts/changeset-policy.test.ts",
     "changeset:version": "changeset version && node scripts/sync-changeset-version.mjs && bun install",
-    "changeset:version:test": "bun test scripts/sync-cargo-lock-workspace-versions.test.ts",
     "sync-ai": "bash scripts/sync-ai-skills.sh",
     "sync-ai:check": "bash scripts/sync-ai-skills.sh --check",
     "secrets:check:staged": "bash scripts/check-staged-secrets.sh",
