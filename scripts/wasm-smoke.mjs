@@ -108,6 +108,11 @@ for (const fixture of fixtures.fixtures) {
     );
   }
 }
+if (!binding.validate("be.nn", "01010100126").valid) {
+  throw new Error(
+    "WASM date-sensitive validation did not use the host clock",
+  );
+}
 const publicPackage = await import(
   join(root, "packages/stdnum-wasm/dist/index.js")
 );

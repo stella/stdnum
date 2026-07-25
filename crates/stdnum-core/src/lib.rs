@@ -13,8 +13,7 @@ pub use types::{
 };
 
 use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
-#[cfg(not(target_arch = "wasm32"))]
-use std::time::{SystemTime, UNIX_EPOCH};
+use web_time::{SystemTime, UNIX_EPOCH};
 
 const RANDOM_INITIAL_STATE: u64 = 0x9e37_79b9_7f4a_7c15;
 static RANDOM_STATE: AtomicU64 = AtomicU64::new(RANDOM_INITIAL_STATE);
@@ -183,14 +182,11 @@ fn validator_candidate(value: &str, input: Option<&str>) -> String {
 }
 
 fn next_random_u64() -> u64 {
-  #[cfg(not(target_arch = "wasm32"))]
   let timestamp = SystemTime::now()
     .duration_since(UNIX_EPOCH)
     .map_or(0, |duration| {
       u64::try_from(duration.as_nanos()).unwrap_or(u64::MAX)
     });
-  #[cfg(target_arch = "wasm32")]
-  let timestamp = u64::from(RUNTIME_DATE.load(Ordering::Relaxed));
   let mut next =
     RANDOM_STATE.fetch_add(RANDOM_INITIAL_STATE, Ordering::Relaxed) ^ timestamp;
   next ^= next << 13;
@@ -2671,7 +2667,7 @@ pub(crate) fn current_year() -> u32 {
   current_date().0
 }
 
-/// Supply the host date for runtimes without `std::time::SystemTime` support.
+/// Override the current date used by date-sensitive validators.
 #[doc(hidden)]
 pub fn set_runtime_date(year: u32, month: u32, day: u32) {
   if (1..=12).contains(&month) && (1..=31).contains(&day) {
@@ -2692,21 +2688,14 @@ fn current_date() -> (u32, u32, u32) {
       configured % 100,
     );
   }
-  #[cfg(target_arch = "wasm32")]
-  return (1970, 1, 1);
-  #[cfg(not(target_arch = "wasm32"))]
   let Ok(duration) = SystemTime::now().duration_since(UNIX_EPOCH) else {
     return (1970, 1, 1);
   };
-  #[cfg(not(target_arch = "wasm32"))]
   let days = i64::try_from(duration.as_secs().div_euclid(86_400)).unwrap_or(0);
-  #[cfg(not(target_arch = "wasm32"))]
   let (year, month, day) = civil_from_days(days);
-  #[cfg(not(target_arch = "wasm32"))]
   (u32::try_from(year).unwrap_or(1970), month, day)
 }
 
-#[cfg(not(target_arch = "wasm32"))]
 fn civil_from_days(days_since_epoch: i64) -> (i32, u32, u32) {
   let z = days_since_epoch.saturating_add(719_468);
   let era =

@@ -775,6 +775,7 @@ dependencies = [
  "sha3",
  "stats_alloc",
  "thiserror",
+ "web-time",
 ]
 
 [[package]]
@@ -800,7 +801,6 @@ dependencies = [
 name = "stella-stdnum-wasm"
 version = "2.1.2"
 dependencies = [
- "js-sys",
  "serde",
  "serde-wasm-bindgen",
  "stella-stdnum-core",
@@ -953,6 +953,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc1b4cb0cc549fcf58d7dfc081778139b3d283a081644e833e84682ad71cea24"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "web-time"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a6580f308b1fad9207618087a65c04e7a10bc77e02c8e84e9b00dd4b12fa0bb"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
 ]
 
 [[package]]
