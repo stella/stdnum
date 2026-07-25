@@ -5,16 +5,6 @@ use stella_stdnum_core::{
 };
 use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen(start)]
-pub fn initialize_runtime_date() {
-  let now = js_sys::Date::new_0();
-  stella_stdnum_core::set_runtime_date(
-    now.get_utc_full_year(),
-    now.get_utc_month().saturating_add(1),
-    now.get_utc_date(),
-  );
-}
-
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 struct WasmValidationError {
