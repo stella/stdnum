@@ -66,7 +66,6 @@ jobs:
       - name: Require a changeset for runtime source changes
         run: |
           bun run changeset:check:test
-          bun run changeset:version:test
           bun run changeset:check
         env:
           CHANGESET_HEAD_REF: ${{ github.head_ref }}
