@@ -1,3 +1,5 @@
 # @stll/stdnum-darwin-x64
 
+## 2.1.3
+
 ## 2.1.2
