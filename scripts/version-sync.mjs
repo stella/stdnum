@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -16,6 +17,9 @@ const PUBLISHED_PACKAGES = [
   "packages/stdnum-linux-x64-gnu/package.json",
   "packages/stdnum-wasm/package.json",
   "packages/stdnum-win32-x64-msvc/package.json",
+];
+const STANDALONE_CARGO_MANIFESTS = [
+  "crates/stdnum-wasm-size-fixture/Cargo.toml",
 ];
 const repoPath = (...segments) =>
   path.join(ROOT, ...segments);
@@ -41,6 +45,36 @@ const readVersion = () =>
 
 const writeVersion = (version) => {
   fs.writeFileSync(repoPath("VERSION"), `${version}\n`);
+};
+
+const cargoMetadata = (manifest) =>
+  JSON.parse(
+    execFileSync(
+      "cargo",
+      [
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        repoPath(manifest),
+        "--format-version",
+        "1",
+      ],
+      { encoding: "utf8" },
+    ),
+  );
+
+const syncStandaloneCargoLocks = () => {
+  for (const manifest of STANDALONE_CARGO_MANIFESTS) {
+    execFileSync(
+      "cargo",
+      [
+        "generate-lockfile",
+        "--manifest-path",
+        repoPath(manifest),
+      ],
+      { stdio: "inherit" },
+    );
+  }
 };
 
 const parseArgs = () => {
@@ -110,6 +144,7 @@ const syncVersion = (version) => {
       `$1${version}$2`,
     ),
   );
+  syncStandaloneCargoLocks();
 };
 
 const checkVersion = (version) => {
@@ -162,6 +197,16 @@ const checkVersion = (version) => {
     mismatches.push(
       `${cargoManifestPath}: workspace.package.version=${cargoVersion}; expected ${version}`,
     );
+  }
+  for (const manifest of STANDALONE_CARGO_MANIFESTS) {
+    const core = cargoMetadata(manifest).packages.find(
+      ({ name }) => name === "stella-stdnum-core",
+    );
+    if (core?.version !== version) {
+      mismatches.push(
+        `${repoPath(manifest)}: stella-stdnum-core=${core?.version ?? "missing"}; expected ${version}`,
+      );
+    }
   }
 
   if (mismatches.length === 0) {
