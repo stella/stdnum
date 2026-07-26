@@ -399,6 +399,12 @@ impl Validator {
     self.id
   }
 
+  pub(crate) const fn validation_function(
+    &self,
+  ) -> fn(&str) -> ValidationResult {
+    self.validate
+  }
+
   #[must_use]
   pub const fn name(&self) -> &'static str {
     self.name

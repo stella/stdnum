@@ -6,29 +6,49 @@ import { fileURLToPath } from "node:url";
 const root = dirname(
   dirname(fileURLToPath(import.meta.url)),
 );
-const maximumBytes = 640 * 1024;
-const build = spawnSync(
-  "cargo",
-  [
-    "build",
-    "--locked",
-    "--package",
-    "stella-stdnum-wasm-size-fixture",
-    "--release",
-    "--target",
-    "wasm32-unknown-unknown",
-  ],
-  { cwd: root, encoding: "utf8" },
+const fixtureManifest = join(
+  root,
+  "crates/stdnum-wasm-size-fixture/Cargo.toml",
 );
-if (build.status !== 0) {
-  process.stderr.write(build.stdout);
-  process.stderr.write(build.stderr);
-  process.exit(build.status ?? 1);
-}
+const targetDirectory = join(
+  root,
+  "target/downstream-wasm-size",
+);
+const maximumBytes = 720 * 1024;
+
+const cargo = (command, args = []) => {
+  const result = spawnSync(
+    "cargo",
+    [
+      command,
+      "--locked",
+      "--manifest-path",
+      fixtureManifest,
+      ...args,
+    ],
+    { cwd: root, encoding: "utf8" },
+  );
+  if (result.status !== 0) {
+    process.stderr.write(result.stdout);
+    process.stderr.write(result.stderr);
+    process.exit(result.status ?? 1);
+  }
+};
+
+// The native test independently pins and exercises every validator in the
+// workload before its default-profile WebAssembly build is measured.
+cargo("test", ["--target-dir", targetDirectory]);
+cargo("build", [
+  "--release",
+  "--target",
+  "wasm32-unknown-unknown",
+  "--target-dir",
+  targetDirectory,
+]);
 
 const artifact = join(
-  root,
-  "target/wasm32-unknown-unknown/release/stella_stdnum_wasm_size_fixture.wasm",
+  targetDirectory,
+  "wasm32-unknown-unknown/release/stella_stdnum_wasm_size_fixture.wasm",
 );
 const { size } = await stat(artifact);
 if (size > maximumBytes) {

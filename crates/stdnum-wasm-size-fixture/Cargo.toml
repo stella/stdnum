@@ -1,18 +1,19 @@
 [package]
 name = "stella-stdnum-wasm-size-fixture"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.96"
+license = "MIT"
 publish = false
 
 [lib]
 crate-type = ["cdylib"]
-test = false
 doctest = false
 
 [dependencies]
 stella-stdnum-core = { path = "../stdnum-core" }
-wasm-bindgen = "0.2"
+wasm-bindgen = "=0.2.126"
 
-[lints]
-workspace = true
+# Keep this fixture independent so its release build uses Cargo's downstream
+# defaults rather than the parent workspace's optimized release profile.
+[workspace]
