@@ -1,5 +1,11 @@
 # @stll/stdnum-wasm
 
+## 2.1.4
+
+### Patch Changes
+
+- [#157](https://github.com/stella/stdnum/pull/157) [`2c41a7a`](https://github.com/stella/stdnum/commit/2c41a7a82c39635b12c4b5c2a79014339d771fbd) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Reduce WebAssembly size for selected validator sets and expose validation-only Rust dispatch.
+
 ## 2.1.3
 
 ### Patch Changes
