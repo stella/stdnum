@@ -64,6 +64,34 @@ pub fn validate(value: &str) -> ValidationResult {
   Ok(value)
 }
 
+/// Validate the exact output of [`compact`] without allocating.
+#[must_use]
+pub fn is_valid_canonical(value: &str) -> bool {
+  let Ok(bytes) = <&[u8; 10]>::try_from(value.as_bytes()) else {
+    return false;
+  };
+  let &[d0, d1, d2, check_digit, day0, day1, d6, d7, d8, d9] = bytes;
+  if !bytes.iter().all(u8::is_ascii_digit) || d0 == b'0' {
+    return false;
+  }
+  let day = u32::from(day0.saturating_sub(b'0'))
+    .saturating_mul(10)
+    .saturating_add(u32::from(day1.saturating_sub(b'0')));
+  if !(1..=31).contains(&day) {
+    return false;
+  }
+  let payload = [d0, d1, d2, day0, day1, d6, d7, d8, d9];
+  let check = payload.iter().zip([3_u32, 7, 9, 5, 8, 4, 2, 1, 6]).fold(
+    0_u32,
+    |sum, (byte, weight)| {
+      sum.saturating_add(
+        u32::from(byte.saturating_sub(b'0')).saturating_mul(weight),
+      )
+    },
+  ) % 11;
+  check != 10 && u32::from(check_digit.saturating_sub(b'0')) == check
+}
+
 #[must_use]
 pub fn generate() -> String {
   generate_from_examples(EXAMPLES, compact, validate)

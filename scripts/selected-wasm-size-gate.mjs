@@ -14,7 +14,12 @@ const targetDirectory = join(
   root,
   "target/downstream-wasm-size",
 );
+const canonicalTargetDirectory = join(
+  root,
+  "target/downstream-canonical-wasm-size",
+);
 const maximumBytes = 720 * 1024;
+const maximumCanonicalBytes = 384 * 1024;
 
 const cargo = (command, args = []) => {
   const result = spawnSync(
@@ -53,6 +58,31 @@ cargo("build", [
   "--target-dir",
   targetDirectory,
 ]);
+for (const command of ["clippy", "test", "build"]) {
+  const arguments_ = [
+    "--no-default-features",
+    "--features",
+    "canonical-predicates",
+    "--target-dir",
+    canonicalTargetDirectory,
+  ];
+  if (command === "clippy") {
+    arguments_.push(
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings",
+    );
+  }
+  if (command === "build") {
+    arguments_.push(
+      "--release",
+      "--target",
+      "wasm32-unknown-unknown",
+    );
+  }
+  cargo(command, arguments_);
+}
 
 const artifact = join(
   targetDirectory,
@@ -65,6 +95,22 @@ if (size > maximumBytes) {
   );
 }
 
+const canonicalArtifact = join(
+  canonicalTargetDirectory,
+  "wasm32-unknown-unknown/release/stella_stdnum_wasm_size_fixture.wasm",
+);
+const { size: canonicalSize } = await stat(
+  canonicalArtifact,
+);
+if (canonicalSize > maximumCanonicalBytes) {
+  throw new Error(
+    `Canonical-predicate WebAssembly grew to ${String(canonicalSize)} bytes; budget is ${String(maximumCanonicalBytes)} bytes. Check for registry or heavyweight dependency coupling.`,
+  );
+}
+
 console.log(
   `Selected-validator WebAssembly size gate passed (${String(size)} bytes; budget ${String(maximumBytes)} bytes).`,
+);
+console.log(
+  `Canonical-predicate WebAssembly size gate passed (${String(canonicalSize)} bytes; budget ${String(maximumCanonicalBytes)} bytes).`,
 );

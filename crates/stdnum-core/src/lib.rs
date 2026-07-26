@@ -21,7 +21,6 @@ const RANDOM_INITIAL_STATE: u64 = 0x9e37_79b9_7f4a_7c15;
 static RANDOM_STATE: AtomicU64 = AtomicU64::new(RANDOM_INITIAL_STATE);
 static RUNTIME_DATE: AtomicU32 = AtomicU32::new(0);
 
-const AUSTRIAN_UID_LUHN_OFFSET: u32 = 6;
 const BASE58_ALPHABET: &str =
   "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const BECH32_CHARSET: &str = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
@@ -46,7 +45,6 @@ const BTC_MAINNET_P2SH_VERSION: u8 = 0x05;
 const CH_UID_WEIGHTS: &[u32] = &[5, 4, 3, 2, 7, 6, 5, 4];
 const CY_VAT_ODD_VALUES: &[u32] = &[1, 0, 5, 7, 9, 13, 15, 17, 19, 21];
 const DIGITS_AND_UPPERCASE: &str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const FRENCH_TVA_ALPHABET: &str = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 const IT_CODICE_FISCALE_CHECK_LETTERS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const PORTUGUESE_CC_ALPHABET: &str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const RIC_CHECK_CHARS: &str = "10X98765432";
@@ -60,30 +58,6 @@ const ROMANIAN_CNP_COUNTIES: &[u32] = &[
 const SPANISH_CIF_LETTERS: &str = "JABCDEFGHI";
 const FI_HETU_CHECK_CHARS: &str = "0123456789ABCDEFHJKLMNPRSTUVWXY";
 const IE_PPS_ALPHABET: &str = "WABCDEFGHIJKLMNOPQRSTUV";
-const DE_STNR_PATTERNS: &[&str] = &[
-  "FFBBBUUUUP",
-  "28FF0BBBUUUUP",
-  "FFFBBBUUUUP",
-  "9FFF0BBBUUUUP",
-  "11FF0BBBUUUUP",
-  "0FFBBBUUUUP",
-  "30FF0BBBUUUUP",
-  "24FF0BBBUUUUP",
-  "22FF0BBBUUUUP",
-  "26FF0BBBUUUUP",
-  "40FF0BBBUUUUP",
-  "23FF0BBBUUUUP",
-  "FFFBBBBUUUP",
-  "5FFF0BBBBUUUP",
-  "27FF0BBBUUUUP",
-  "10FF0BBBUUUUP",
-  "2FFBBBUUUUP",
-  "32FF0BBBUUUUP",
-  "1FFBBBUUUUP",
-  "31FF0BBBUUUUP",
-  "21FF0BBBUUUUP",
-  "41FF0BBBUUUUP",
-];
 const INVALID_NINO_PREFIXES: &[(char, char)] = &[
   ('B', 'G'),
   ('G', 'B'),
@@ -221,20 +195,7 @@ fn validate_at_uid(value: &str) -> bool {
   if starts_with_ignore_ascii_case(&compact, "AT") {
     compact = compact.chars().skip(2).collect();
   }
-  let compact = compact.to_uppercase();
-  let mut chars = compact.chars();
-  if chars.next() != Some('U') || compact.len() != 9 {
-    return false;
-  }
-  let digits = decimal_digits_strict(chars.as_str());
-  let Ok(digits) = <[u32; 8]>::try_from(digits) else {
-    return false;
-  };
-  let check = AUSTRIAN_UID_LUHN_OFFSET
-    .saturating_add(10)
-    .saturating_sub(luhn_checksum(digits.get(..7).unwrap_or(&[])))
-    .rem_euclid(10);
-  digits.get(7).copied() == Some(check)
+  validators::at::uid::is_valid_canonical(&compact.to_uppercase())
 }
 
 fn validate_be_nn(value: &str) -> bool {
@@ -277,20 +238,7 @@ fn validate_be_vat(value: &str) -> bool {
   if compact.len() == 9 {
     compact.insert(0, '0');
   }
-  let digits = decimal_digits_strict(&compact);
-  if digits.len() != 10 || digits.iter().all(|digit| *digit == 0) {
-    return false;
-  }
-  if !matches!(digits.first(), Some(0 | 1)) {
-    return false;
-  }
-  let Some(front) = number_from_digits(digits.get(..8)) else {
-    return false;
-  };
-  let Some(check) = number_from_digits(digits.get(8..10)) else {
-    return false;
-  };
-  front.saturating_add(check).is_multiple_of(97)
+  validators::be::vat::is_valid_canonical(&compact)
 }
 
 fn validate_bg_vat(value: &str) -> bool {
@@ -787,63 +735,7 @@ fn cnpj_char_value(ch: char) -> Option<u32> {
 
 fn validate_cz_rc(value: &str) -> bool {
   let compact = compact_without(value, &[' ', '/']);
-  let digits = decimal_digits_strict(&compact);
-  let len = digits.len();
-  if len != 9 && len != 10 {
-    return false;
-  }
-
-  let Some(yy) = number_from_digits(digits.get(0..2)) else {
-    return false;
-  };
-  let Some(raw_month) = number_from_digits(digits.get(2..4)) else {
-    return false;
-  };
-  let Some(day) = number_from_digits(digits.get(4..6)) else {
-    return false;
-  };
-
-  let mut year = 1900_u32.saturating_add(yy);
-  if len == 9 {
-    if year >= 1980 {
-      year = year.saturating_sub(100);
-    }
-    if year > 1953 {
-      return false;
-    }
-  } else if year < 1954 {
-    year = year.saturating_add(100);
-  }
-
-  let Some(month) = decode_cz_month(raw_month, year, len) else {
-    return false;
-  };
-  if !valid_date(year, month, day) {
-    return false;
-  }
-  if len != 10 {
-    return true;
-  }
-
-  let Some(front) = number_from_digits(digits.get(0..9)) else {
-    return false;
-  };
-  let Some(check) = digits.get(9).copied() else {
-    return false;
-  };
-  (front % 11) % 10 == check
-}
-
-fn decode_cz_month(raw_month: u32, year: u32, len: usize) -> Option<u32> {
-  let offsets: &[u32] = if len == 10 && year >= 2004 {
-    &[0, 50, 20, 70]
-  } else {
-    &[0, 50]
-  };
-  offsets.iter().find_map(|offset| {
-    let month = raw_month.checked_sub(*offset)?;
-    (1..=12).contains(&month).then_some(month)
-  })
+  validators::cz::rc::is_valid_canonical(&compact)
 }
 
 fn validate_cz_dic(value: &str) -> bool {
@@ -851,172 +743,27 @@ fn validate_cz_dic(value: &str) -> bool {
   if compact.starts_with("CZ") || compact.starts_with("cz") {
     compact = compact.chars().skip(2).collect();
   }
-  let digits = decimal_digits_strict(&compact);
-  if !(8..=10).contains(&digits.len()) {
-    return false;
-  }
-  match digits.len() {
-    8 => validate_cz_dic_legal(&digits),
-    9 if digits.first() == Some(&6) => validate_cz_dic_special(&digits),
-    9 | 10 => validate_cz_rc(&compact),
-    _ => false,
-  }
-}
-
-fn validate_cz_dic_legal(digits: &[u32]) -> bool {
-  if digits.first() == Some(&9) {
-    return false;
-  }
-  let Some(check) = digits.get(7).copied() else {
-    return false;
-  };
-  let sum =
-    weighted_sum(digits.get(0..7).unwrap_or(&[]), &[8, 7, 6, 5, 4, 3, 2])
-      .rem_euclid(11);
-  let v11 = 11_u32.saturating_sub(sum).rem_euclid(11);
-  let expected = if v11 == 0 { 1 } else { v11 % 10 };
-  check == expected
-}
-
-fn validate_cz_dic_special(digits: &[u32]) -> bool {
-  let Some(check_digit) = digits.get(8).copied() else {
-    return false;
-  };
-  let sum =
-    weighted_sum(digits.get(1..8).unwrap_or(&[]), &[8, 7, 6, 5, 4, 3, 2])
-      .rem_euclid(11);
-  let inner = 10_u32.saturating_add(11).saturating_sub(sum).rem_euclid(11);
-  let check = 8_u32
-    .saturating_add(10)
-    .saturating_sub(inner)
-    .rem_euclid(10);
-  check_digit == check
+  validators::cz::dic::is_valid_canonical(&compact)
 }
 
 fn validate_de_idnr(value: &str) -> bool {
   let compact = compact_without(value, &[' ', '-', '/']);
-  let Ok(digits) = <[u32; 11]>::try_from(decimal_digits_strict(&compact))
-  else {
-    return false;
-  };
-  if digits.first() == Some(&0) || !valid_de_idnr_distribution(&digits) {
-    return false;
-  }
-  mod1110_check_digit(digits.get(..10).unwrap_or(&[]))
-    == digits.get(10).copied()
-}
-
-fn valid_de_idnr_distribution(digits: &[u32; 11]) -> bool {
-  let mut counts = [0_u8; 10];
-  for digit in digits.iter().take(10) {
-    let Ok(index) = usize::try_from(*digit) else {
-      return false;
-    };
-    let Some(count) = counts.get_mut(index) else {
-      return false;
-    };
-    *count = count.saturating_add(1);
-  }
-  let mut doubles = 0_u8;
-  let mut triples = 0_u8;
-  for count in counts {
-    if count == 2 {
-      doubles = doubles.saturating_add(1);
-    }
-    if count == 3 {
-      triples = triples.saturating_add(1);
-    }
-    if count > 3 {
-      return false;
-    }
-  }
-  (doubles == 1 && triples == 0) || (doubles == 0 && triples == 1)
+  validators::de::idnr::is_valid_canonical(&compact)
 }
 
 fn validate_de_stnr(value: &str) -> bool {
   let compact = compact_without(value, &[' ', '-', '/', '.']);
-  let digits = decimal_digits_strict(&compact);
-  if !matches!(digits.len(), 10 | 11 | 13) {
-    return false;
-  }
-  DE_STNR_PATTERNS
-    .iter()
-    .any(|pattern| de_stnr_pattern_matches(&compact, pattern))
-}
-
-fn de_stnr_pattern_matches(value: &str, pattern: &str) -> bool {
-  if value.len() != pattern.len() {
-    return false;
-  }
-  value.chars().zip(pattern.chars()).all(|(ch, marker)| {
-    if marker.is_ascii_digit() {
-      ch == marker
-    } else {
-      ch.is_ascii_digit()
-    }
-  })
+  validators::de::stnr::is_valid_canonical(&compact)
 }
 
 fn validate_de_svnr(value: &str) -> bool {
   let compact = compact_without(value, &[' ', '-', '/']).to_uppercase();
-  let chars = compact.chars().collect::<Vec<_>>();
-  let Ok(chars) = <[char; 12]>::try_from(chars) else {
-    return false;
-  };
-  let [a0, a1, d0, d1, m0, m1, y0, y1, initial, s0, s1, check] = chars;
-  if ![a0, a1, d0, d1, m0, m1, y0, y1, s0, s1, check]
-    .iter()
-    .all(char::is_ascii_digit)
-    || !initial.is_ascii_uppercase()
-  {
-    return false;
-  }
-  let Some(day) = number_from_ascii_digits(&[d0, d1]) else {
-    return false;
-  };
-  let Some(month) = number_from_ascii_digits(&[m0, m1]) else {
-    return false;
-  };
-  let Some(yy) = number_from_ascii_digits(&[y0, y1]) else {
-    return false;
-  };
-  if !valid_date(resolve_two_digit_year(yy), month, day) {
-    return false;
-  }
-  de_svnr_check_digit(&chars) == ascii_digit_value(check)
-}
-
-fn de_svnr_check_digit(chars: &[char; 12]) -> Option<u32> {
-  let mut digits = Vec::with_capacity(12);
-  for ch in chars.iter().take(8) {
-    digits.push(ascii_digit_value(*ch)?);
-  }
-  let letter_value = u32::from(chars.get(8).copied()?)
-    .saturating_sub(u32::from('A'))
-    .saturating_add(1);
-  digits.push(letter_value.div_euclid(10));
-  digits.push(letter_value % 10);
-  digits.push(ascii_digit_value(chars.get(9).copied()?)?);
-  digits.push(ascii_digit_value(chars.get(10).copied()?)?);
-  let mut sum = 0_u32;
-  for (digit, weight) in digits.iter().zip([2, 1, 2, 5, 7, 1, 2, 1, 2, 1, 2, 1])
-  {
-    let product = digit.saturating_mul(weight);
-    sum = sum
-      .saturating_add(product.div_euclid(10))
-      .saturating_add(product % 10);
-  }
-  Some(sum.rem_euclid(10))
+  validators::de::svnr::is_valid_canonical(&compact)
 }
 
 fn validate_de_vat(value: &str) -> bool {
   let compact = strip_prefix_after_compact(value, &[' ', '-', '/'], "DE");
-  let Ok(digits) = <[u32; 9]>::try_from(decimal_digits_strict(&compact)) else {
-    return false;
-  };
-  digits.first() != Some(&0)
-    && mod1110_check_digit(digits.get(..8).unwrap_or(&[]))
-      == digits.get(8).copied()
+  validators::de::vat::is_valid_canonical(&compact)
 }
 
 fn validate_dk_cpr(value: &str) -> bool {
@@ -1285,62 +1032,7 @@ fn validate_fr_siret(value: &str) -> bool {
 fn validate_fr_tva(value: &str) -> bool {
   let compact =
     strip_prefix_after_compact(value, &[' ', '-', '.'], "FR").to_uppercase();
-  if compact.len() != 11 {
-    return false;
-  }
-  let Some(prefix) = compact.get(0..2) else {
-    return false;
-  };
-  let Some(siren) = compact.get(2..) else {
-    return false;
-  };
-  if !is_ascii_digits(siren) {
-    return false;
-  }
-  if !siren.starts_with("000") && !validate_fr_siren(siren) {
-    return false;
-  }
-  let mut prefix_chars = prefix.chars();
-  let Some(first) = prefix_chars.next() else {
-    return false;
-  };
-  let Some(second) = prefix_chars.next() else {
-    return false;
-  };
-  let Some(c0) = FRENCH_TVA_ALPHABET.find(first) else {
-    return false;
-  };
-  let Some(c1) = FRENCH_TVA_ALPHABET.find(second) else {
-    return false;
-  };
-  let Ok(c0) = u64::try_from(c0) else {
-    return false;
-  };
-  let Ok(c1) = u64::try_from(c1) else {
-    return false;
-  };
-  let Some(siren_number) = siren.parse::<u64>().ok() else {
-    return false;
-  };
-  if c0 < 10 && c1 < 10 {
-    return prefix.parse::<u64>().ok()
-      == Some(
-        siren_number
-          .saturating_mul(100)
-          .saturating_add(12)
-          .rem_euclid(97),
-      );
-  }
-  let combined = if c0 < 10 {
-    c0.saturating_mul(24).saturating_add(c1).saturating_sub(10)
-  } else {
-    c0.saturating_mul(34).saturating_add(c1).saturating_sub(100)
-  };
-  siren_number
-    .saturating_add(1)
-    .saturating_add(combined.div_euclid(11))
-    .rem_euclid(11)
-    == combined.rem_euclid(11)
+  validators::fr::tva::is_valid_canonical(&compact)
 }
 
 fn validate_gb_nhs(value: &str) -> bool {
@@ -2231,28 +1923,7 @@ fn validate_si_vat(value: &str) -> bool {
 
 fn validate_sk_dic(value: &str) -> bool {
   let compact = strip_prefix_after_compact(value, &[' ', '-'], "SK");
-  let digits = decimal_digits_strict(&compact);
-  if digits.len() != 10 {
-    return false;
-  }
-  if validate_cz_rc(&compact) {
-    return true;
-  }
-  if digits.first() == Some(&0) {
-    return false;
-  }
-  if !matches!(digits.get(2), Some(2 | 3 | 4 | 7 | 8 | 9)) {
-    return false;
-  }
-  // A 10-digit value can reach 9_999_999_999, which overflows u32; fold into a
-  // u64 so numbers above u32::MAX (e.g. 4320000003) reach the modulo check and
-  // stay in parity with the TS validator.
-  digits
-    .iter()
-    .try_fold(0_u64, |total, &digit| {
-      total.checked_mul(10)?.checked_add(u64::from(digit))
-    })
-    .is_some_and(|number| number.is_multiple_of(11))
+  validators::sk::dic::is_valid_canonical(&compact)
 }
 
 fn validate_es_dni(value: &str) -> bool {
@@ -2403,28 +2074,7 @@ fn validate_au_acn(value: &str) -> bool {
 
 fn validate_at_tin(value: &str) -> bool {
   let compact = compact_without(value, &[' ', '-', '.', '/', ',']);
-  let Ok(digits) = <[u32; 9]>::try_from(decimal_digits_strict(&compact)) else {
-    return false;
-  };
-  at_tin_check_digit(digits.get(..8).unwrap_or(&[])) == digits.get(8).copied()
-}
-
-fn at_tin_check_digit(digits: &[u32]) -> Option<u32> {
-  if digits.len() != 8 {
-    return None;
-  }
-  let double = [0_u32, 2, 4, 6, 8, 1, 3, 5, 7, 9];
-  let mut sum = 0_u32;
-  for (index, digit) in digits.iter().enumerate() {
-    let value = if index.is_multiple_of(2) {
-      *digit
-    } else {
-      let digit_index = usize::try_from(*digit).ok()?;
-      *double.get(digit_index)?
-    };
-    sum = sum.saturating_add(value);
-  }
-  Some(10_u32.saturating_sub(sum.rem_euclid(10)).rem_euclid(10))
+  validators::at::tin::is_valid_canonical(&compact)
 }
 
 fn validate_no_orgnr(value: &str) -> bool {
@@ -2654,15 +2304,6 @@ fn valid_date(year: u32, month: u32, day: u32) -> bool {
 const fn is_leap_year(year: u32) -> bool {
   year.is_multiple_of(4) && !year.is_multiple_of(100)
     || year.is_multiple_of(400)
-}
-
-fn resolve_two_digit_year(year: u32) -> u32 {
-  let candidate = 2000_u32.saturating_add(year);
-  if candidate > current_year() {
-    candidate.saturating_sub(100)
-  } else {
-    candidate
-  }
 }
 
 pub(crate) fn current_year() -> u32 {

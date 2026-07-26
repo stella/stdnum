@@ -65,6 +65,17 @@ pub fn validate(value: &str) -> ValidationResult {
   Ok(value)
 }
 
+/// Validate the exact output of [`compact`] without allocating.
+#[must_use]
+pub fn is_valid_canonical(value: &str) -> bool {
+  let Some((kind, number)) = value.split_once(' ') else {
+    return false;
+  };
+  KINDS.contains(&kind)
+    && (1..=7).contains(&number.len())
+    && number.bytes().all(|byte| byte.is_ascii_digit())
+}
+
 #[must_use]
 pub fn generate() -> String {
   generate_from_examples(EXAMPLES, compact, validate)

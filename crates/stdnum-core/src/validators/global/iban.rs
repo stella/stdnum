@@ -222,8 +222,12 @@ fn expected_length(country: &str) -> Option<usize> {
 }
 
 fn mod97(value: &str) -> Option<u32> {
+  mod97_segments(&[value])
+}
+
+fn mod97_segments(segments: &[&str]) -> Option<u32> {
   let mut remainder = 0_u32;
-  for ch in value.chars() {
+  for ch in segments.iter().flat_map(|segment| segment.chars()) {
     if ch.is_ascii_digit() {
       remainder = (remainder
         .saturating_mul(10)
@@ -239,6 +243,28 @@ fn mod97(value: &str) -> Option<u32> {
     }
   }
   Some(remainder)
+}
+
+/// Validate the exact output of [`compact`] without allocating.
+#[must_use]
+pub fn is_valid_canonical(value: &str) -> bool {
+  let Some(country) = value.get(..2) else {
+    return false;
+  };
+  let Some(check_digits) = value.get(2..4) else {
+    return false;
+  };
+  let Some(bban) = value.get(4..) else {
+    return false;
+  };
+  let Some(expected_length) = expected_length(country) else {
+    return false;
+  };
+  value.len() == expected_length
+    && country.bytes().all(|byte| byte.is_ascii_uppercase())
+    && check_digits.bytes().all(|byte| byte.is_ascii_digit())
+    && has_valid_bban(country, bban)
+    && mod97_segments(&[bban, country, check_digits]) == Some(1)
 }
 
 #[must_use]
@@ -317,7 +343,9 @@ pub fn generate() -> String {
 
 #[cfg(test)]
 mod tests {
-  use super::{ValidationError, expected_length, mod97, validate};
+  use super::{
+    ValidationError, expected_length, is_valid_canonical, mod97, validate,
+  };
 
   #[test]
   fn rejects_every_unassigned_country_even_with_valid_check_digits() {
@@ -339,6 +367,10 @@ mod tests {
             ))
           ),
           "unassigned country {country} was accepted",
+        );
+        assert!(
+          !is_valid_canonical(&candidate),
+          "canonical predicate accepted unassigned country {country}",
         );
       }
     }
