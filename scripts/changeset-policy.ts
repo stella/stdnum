@@ -33,6 +33,7 @@ export const GENERATED_VERSION_METADATA = new Set([
   "CHANGELOG.md",
   "VERSION",
   "bun.lock",
+  "crates/stdnum-wasm-size-fixture/Cargo.lock",
 ]);
 
 export const generatedVersionMetadataOnly = (

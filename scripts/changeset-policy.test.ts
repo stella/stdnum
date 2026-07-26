@@ -28,6 +28,7 @@ describe("generated version metadata", () => {
         ...runtimePackageChangelogs,
         "packages/stdnum/package.json",
         "Cargo.toml",
+        "crates/stdnum-wasm-size-fixture/Cargo.lock",
         "VERSION",
         ".changeset/runtime-release.md",
       ]),
