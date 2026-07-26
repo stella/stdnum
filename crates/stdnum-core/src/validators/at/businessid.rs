@@ -60,6 +60,17 @@ pub fn validate(value: &str) -> ValidationResult {
   Ok(compact)
 }
 
+/// Validate the exact output of [`compact`] without allocating.
+#[must_use]
+pub fn is_valid_canonical(value: &str) -> bool {
+  let Some((last, digits)) = value.as_bytes().split_last() else {
+    return false;
+  };
+  !digits.is_empty()
+    && digits.iter().all(u8::is_ascii_digit)
+    && last.is_ascii_lowercase()
+}
+
 #[must_use]
 pub fn generate() -> String {
   let digit_count = 5_usize.saturating_add(random_below(2));

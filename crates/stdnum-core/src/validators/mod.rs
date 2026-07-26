@@ -8,6 +8,7 @@ pub mod au;
 pub mod be;
 pub mod bg;
 pub mod br;
+mod canonical;
 pub mod ch;
 pub mod cn;
 mod common;

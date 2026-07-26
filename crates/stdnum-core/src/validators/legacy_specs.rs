@@ -1359,10 +1359,13 @@ fn format_for(id: &str, value: &str) -> String {
 }
 
 fn format_de_stnr(value: &str) -> String {
-  let Some(pattern) = crate::DE_STNR_PATTERNS.iter().find(|pattern| {
-    pattern.len() == value.len()
-      && crate::de_stnr_pattern_matches(value, pattern)
-  }) else {
+  let Some(pattern) = crate::validators::canonical::DE_STNR_PATTERNS
+    .iter()
+    .find(|pattern| {
+      pattern.len() == value.len()
+        && crate::validators::canonical::de_stnr_pattern_matches(value, pattern)
+    })
+  else {
     return value.to_owned();
   };
   let mut segments = Vec::new();
