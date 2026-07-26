@@ -1,5 +1,11 @@
 # @stll/stdnum
 
+## 2.1.6
+
+### Patch Changes
+
+- [#166](https://github.com/stella/stdnum/pull/166) [`85a5db6`](https://github.com/stella/stdnum/commit/85a5db644ad333ccb5dc41fa56dd5fdce380746c) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Correct BBAN shape validation for Hungary, Jordan, Nicaragua, and Poland.
+
 ## 2.1.5
 
 ### Patch Changes
