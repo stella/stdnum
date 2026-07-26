@@ -317,7 +317,7 @@ pub fn generate() -> String {
 
 #[cfg(test)]
 mod tests {
-  use super::{expected_length, mod97, validate};
+  use super::{ValidationError, expected_length, mod97, validate};
 
   #[test]
   fn rejects_every_unassigned_country_even_with_valid_check_digits() {
@@ -332,7 +332,12 @@ mod tests {
         let check = 98_u32.saturating_sub(mod97(&placeholder).unwrap_or(0));
         let candidate = format!("{country}{check:02}{BBAN}");
         assert!(
-          validate(&candidate).is_err(),
+          matches!(
+            validate(&candidate),
+            Err(ValidationError::InvalidComponent(
+              "IBAN country code is not assigned"
+            ))
+          ),
           "unassigned country {country} was accepted",
         );
       }
