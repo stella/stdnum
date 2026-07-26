@@ -1,5 +1,7 @@
 # @stll/stdnum-wasm
 
+## 2.1.5
+
 ## 2.1.4
 
 ### Patch Changes
