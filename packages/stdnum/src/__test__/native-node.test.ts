@@ -43,14 +43,19 @@ describe("loadNativeStdnumBinding", () => {
         requireModule: requireNothing,
       });
     } catch (error) {
-      message = error instanceof Error ? error.message : String(error);
+      message =
+        error instanceof Error
+          ? error.message
+          : String(error);
     }
 
     expect(message).toContain("IS a build target");
     expect(message).toContain("optionalDependency");
     // The old message listed every supported target and nothing else, which
     // read as "your platform is unsupported" for a platform that is.
-    expect(message).not.toMatch(/^Unable to load native stdnum binding.*supported targets/u);
+    expect(message).not.toMatch(
+      /^Unable to load native stdnum binding.*supported targets/u,
+    );
   });
 
   test("reports an unsupported platform as unsupported", () => {
@@ -64,10 +69,15 @@ describe("loadNativeStdnumBinding", () => {
         requireModule: requireNothing,
       });
     } catch (error) {
-      message = error instanceof Error ? error.message : String(error);
+      message =
+        error instanceof Error
+          ? error.message
+          : String(error);
     }
 
-    expect(message).toContain("not among the build targets");
+    expect(message).toContain(
+      "not among the build targets",
+    );
     expect(message).toContain("linux-x64-musl");
   });
 
@@ -82,10 +92,16 @@ describe("loadNativeStdnumBinding", () => {
       platform: "linux",
       arch: "x64",
       libc: "gnu",
-      env: { STELLA_STDNUM_NATIVE_LIBRARY_PATH: "/tmp/custom.node" },
+      env: {
+        STELLA_STDNUM_NATIVE_LIBRARY_PATH:
+          "/tmp/custom.node",
+      },
       requireModule: (specifier) => {
-        if (specifier === "/tmp/custom.node") return binding;
-        throw new Error(`Cannot find module '${specifier}'`);
+        if (specifier === "/tmp/custom.node")
+          return binding;
+        throw new Error(
+          `Cannot find module '${specifier}'`,
+        );
       },
     });
 
