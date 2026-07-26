@@ -1,7 +1,3 @@
-use std::{collections::HashMap, sync::LazyLock};
-
-use regex::Regex;
-
 use crate::{
   compact_without, random_below, random_digits,
   types::{
@@ -10,96 +6,109 @@ use crate::{
   },
 };
 
-static BBAN_FORMATS: LazyLock<HashMap<&'static str, Regex>> =
-  LazyLock::new(|| {
-    let formats = [
-      ("AD", r"^\d{8}[A-Z0-9]{12}$"),
-      ("AE", r"^\d{19}$"),
-      ("AL", r"^\d{8}[A-Z0-9]{16}$"),
-      ("AT", r"^\d{16}$"),
-      ("AZ", r"^[A-Z]{4}[A-Z0-9]{20}$"),
-      ("BA", r"^\d{16}$"),
-      ("BE", r"^\d{12}$"),
-      ("BG", r"^[A-Z]{4}\d{6}[A-Z0-9]{8}$"),
-      ("BH", r"^[A-Z]{4}[A-Z0-9]{14}$"),
-      ("BR", r"^\d{23}[A-Z][A-Z0-9]$"),
-      ("BY", r"^[A-Z0-9]{4}\d{20}$"),
-      ("CH", r"^\d{17}$"),
-      ("CR", r"^0\d{17}$"),
-      ("CY", r"^\d{8}[A-Z0-9]{16}$"),
-      ("CZ", r"^\d{20}$"),
-      ("DE", r"^\d{18}$"),
-      ("DK", r"^\d{14}$"),
-      ("DO", r"^[A-Z0-9]{4}\d{20}$"),
-      ("EE", r"^\d{16}$"),
-      ("EG", r"^\d{25}$"),
-      ("ES", r"^\d{20}$"),
-      ("FI", r"^\d{14}$"),
-      ("FO", r"^\d{14}$"),
-      ("FR", r"^\d{10}[A-Z0-9]{11}\d{2}$"),
-      ("GB", r"^[A-Z]{4}\d{14}$"),
-      ("GE", r"^[A-Z]{2}\d{16}$"),
-      ("GI", r"^[A-Z]{4}[A-Z0-9]{15}$"),
-      ("GL", r"^\d{14}$"),
-      ("GR", r"^\d{7}[A-Z0-9]{16}$"),
-      ("GT", r"^[A-Z0-9]{24}$"),
-      ("HR", r"^\d{17}$"),
-      ("HU", r"^\d{24}$"),
-      ("IE", r"^[A-Z]{4}\d{14}$"),
-      ("IL", r"^\d{19}$"),
-      ("IQ", r"^[A-Z]{4}\d{15}$"),
-      ("IS", r"^\d{22}$"),
-      ("IT", r"^[A-Z]\d{10}[A-Z0-9]{12}$"),
-      ("JO", r"^[A-Z]{4}\d{22}$"),
-      ("KW", r"^[A-Z]{4}[A-Z0-9]{22}$"),
-      ("KZ", r"^\d{16}$"),
-      ("LB", r"^\d{4}[A-Z0-9]{20}$"),
-      ("LC", r"^[A-Z]{4}[A-Z0-9]{24}$"),
-      ("LI", r"^\d{17}$"),
-      ("LT", r"^\d{16}$"),
-      ("LU", r"^\d{16}$"),
-      ("LV", r"^[A-Z]{4}[A-Z0-9]{13}$"),
-      ("MC", r"^\d{10}[A-Z0-9]{11}\d{2}$"),
-      ("MD", r"^[A-Z0-9]{20}$"),
-      ("ME", r"^\d{18}$"),
-      ("MK", r"^\d{3}[A-Z0-9]{10}\d{2}$"),
-      ("MR", r"^\d{23}$"),
-      ("MT", r"^[A-Z]{4}\d{5}[A-Z0-9]{18}$"),
-      ("MU", r"^[A-Z]{4}\d{19}[A-Z]{3}$"),
-      ("NI", r"^[A-Z]{4}\d{24}$"),
-      ("NL", r"^[A-Z]{4}\d{10}$"),
-      ("NO", r"^\d{11}$"),
-      ("PK", r"^[A-Z]{4}[A-Z0-9]{16}$"),
-      ("PL", r"^\d{24}$"),
-      ("PS", r"^[A-Z]{4}[A-Z0-9]{21}$"),
-      ("PT", r"^\d{21}$"),
-      ("QA", r"^[A-Z]{4}[A-Z0-9]{21}$"),
-      ("RO", r"^[A-Z]{4}[A-Z0-9]{16}$"),
-      ("RS", r"^\d{18}$"),
-      ("SA", r"^\d{20}$"),
-      ("SC", r"^[A-Z]{4}\d{20}[A-Z]{3}$"),
-      ("SD", r"^\d{14}$"),
-      ("SE", r"^\d{20}$"),
-      ("SI", r"^\d{15}$"),
-      ("SK", r"^\d{20}$"),
-      ("SM", r"^[A-Z]\d{10}[A-Z0-9]{12}$"),
-      ("ST", r"^\d{21}$"),
-      ("SV", r"^[A-Z]{4}\d{20}$"),
-      ("TL", r"^\d{19}$"),
-      ("TN", r"^\d{20}$"),
-      ("TR", r"^\d{6}[A-Z0-9]{16}$"),
-      ("UA", r"^\d{6}[A-Z0-9]{19}$"),
-      ("VA", r"^\d{18}$"),
-      ("VG", r"^[A-Z]{4}\d{16}$"),
-      ("XK", r"^\d{16}$"),
-    ];
-    formats
-      .into_iter()
-      .filter_map(|(country, pattern)| {
-        Regex::new(pattern).ok().map(|regex| (country, regex))
-      })
-      .collect()
-  });
+#[derive(Clone, Copy)]
+enum BbanCharacterClass {
+  Digit,
+  UppercaseLetter,
+  UppercaseAlphanumeric,
+}
+
+type BbanPart = (usize, BbanCharacterClass);
+
+const fn digits(length: usize) -> BbanPart {
+  (length, BbanCharacterClass::Digit)
+}
+
+const fn uppercase(length: usize) -> BbanPart {
+  (length, BbanCharacterClass::UppercaseLetter)
+}
+
+const fn alphanumeric(length: usize) -> BbanPart {
+  (length, BbanCharacterClass::UppercaseAlphanumeric)
+}
+
+fn matches_bban_shape(value: &str, shape: &[BbanPart]) -> bool {
+  let mut bytes = value.bytes();
+  for (length, class) in shape {
+    for _ in 0..*length {
+      let Some(byte) = bytes.next() else {
+        return false;
+      };
+      let matches = match class {
+        BbanCharacterClass::Digit => byte.is_ascii_digit(),
+        BbanCharacterClass::UppercaseLetter => byte.is_ascii_uppercase(),
+        BbanCharacterClass::UppercaseAlphanumeric => {
+          byte.is_ascii_digit() || byte.is_ascii_uppercase()
+        }
+      };
+      if !matches {
+        return false;
+      }
+    }
+  }
+  bytes.next().is_none()
+}
+
+#[allow(clippy::match_same_arms)]
+fn has_valid_bban(country: &str, bban: &str) -> bool {
+  let shape: &[BbanPart] = match country {
+    "AD" => &[digits(8), alphanumeric(12)],
+    "AE" => &[digits(19)],
+    "AL" => &[digits(8), alphanumeric(16)],
+    "AT" | "BA" | "EE" | "KZ" | "LT" | "LU" | "XK" => &[digits(16)],
+    "AZ" => &[uppercase(4), alphanumeric(20)],
+    "BE" => &[digits(12)],
+    "BG" => &[uppercase(4), digits(6), alphanumeric(8)],
+    "BH" => &[uppercase(4), alphanumeric(14)],
+    "BR" => &[digits(23), uppercase(1), alphanumeric(1)],
+    "BY" | "DO" => &[alphanumeric(4), digits(20)],
+    "CH" | "HR" | "LI" => &[digits(17)],
+    "CR" => {
+      return bban.len() == 18
+        && bban.starts_with('0')
+        && bban.bytes().all(|byte| byte.is_ascii_digit());
+    }
+    "CY" => &[digits(8), alphanumeric(16)],
+    "CZ" | "ES" | "HU" | "PL" | "SE" | "SK" | "TN" => &[digits(20)],
+    "DE" | "ME" | "RS" | "VA" => &[digits(18)],
+    "DK" | "FI" | "FO" | "GL" | "SD" => &[digits(14)],
+    "EG" => &[digits(25)],
+    "FR" | "MC" => &[digits(10), alphanumeric(11), digits(2)],
+    "GB" | "IE" => &[uppercase(4), digits(14)],
+    "GE" => &[uppercase(2), digits(16)],
+    "GI" => &[uppercase(4), alphanumeric(15)],
+    "GR" => &[digits(7), alphanumeric(16)],
+    "GT" => &[alphanumeric(24)],
+    "IL" | "TL" => &[digits(19)],
+    "IQ" => &[uppercase(4), digits(15)],
+    "IS" => &[digits(22)],
+    "IT" | "SM" => &[uppercase(1), digits(10), alphanumeric(12)],
+    "JO" | "SV" => &[uppercase(4), digits(20)],
+    "KW" => &[uppercase(4), alphanumeric(22)],
+    "LB" => &[digits(4), alphanumeric(20)],
+    "LC" => &[uppercase(4), alphanumeric(24)],
+    "LV" => &[uppercase(4), alphanumeric(13)],
+    "MD" => &[alphanumeric(20)],
+    "MK" => &[digits(3), alphanumeric(10), digits(2)],
+    "MR" => &[digits(23)],
+    "MT" => &[uppercase(4), digits(5), alphanumeric(18)],
+    "MU" => &[uppercase(4), digits(19), uppercase(3)],
+    "NI" => &[uppercase(4), digits(24)],
+    "NL" => &[uppercase(4), digits(10)],
+    "NO" => &[digits(11)],
+    "PK" | "RO" => &[uppercase(4), alphanumeric(16)],
+    "PS" | "QA" => &[uppercase(4), alphanumeric(21)],
+    "PT" | "ST" => &[digits(21)],
+    "SA" => &[digits(20)],
+    "SC" => &[uppercase(4), digits(20), uppercase(3)],
+    "SI" => &[digits(15)],
+    "TR" => &[digits(6), alphanumeric(16)],
+    "UA" => &[digits(6), alphanumeric(19)],
+    "VG" => &[uppercase(4), digits(16)],
+    _ => return true,
+  };
+  matches_bban_shape(bban, shape)
+}
 
 pub static VALIDATOR: Validator = Validator::new(ValidatorSpec {
   id: "iban",
@@ -273,10 +282,7 @@ pub fn validate(value: &str) -> ValidationResult {
     ));
   }
   let bban = value.get(4..).unwrap_or("");
-  if BBAN_FORMATS
-    .get(country)
-    .is_some_and(|regex| !regex.is_match(bban))
-  {
+  if !has_valid_bban(country, bban) {
     return Err(ValidationError::InvalidFormat(
       "IBAN BBAN format is invalid for its country",
     ));

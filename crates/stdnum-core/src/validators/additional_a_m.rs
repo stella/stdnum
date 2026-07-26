@@ -2473,25 +2473,7 @@ validator!(
     "Documento de Identidad"
   ]
 );
-validator!(
-  at_vnr,
-  "at.vnr",
-  CountryCode::At,
-  EntityType::Person,
-  "Austrian Social Insurance Number",
-  "Versicherungsnummer",
-  "VNR",
-  r"\d{4}\s?\d{6}",
-  "https://de.wikipedia.org/wiki/Sozialversicherungsnummer",
-  &[10],
-  &["1237010180"],
-  &[
-    "VNR",
-    "SVNR",
-    "Versicherungsnummer",
-    "Sozialversicherungsnummer"
-  ]
-);
+pub use crate::validators::at::vnr as at_vnr;
 validator!(
   au_tfn,
   "au.tfn",
@@ -2665,34 +2647,8 @@ validator!(
   &["123456782"],
   &["SIN", "Social Insurance Number", "NAS"]
 );
-validator!(
-  ch_ssn,
-  "ch.ssn",
-  CountryCode::Ch,
-  EntityType::Person,
-  "Swiss Social Security Number",
-  "AHV-Versichertennummer",
-  "AHV",
-  r"756\.?\d{4}\.?\d{4}\.?\d{2}",
-  "https://www.bsv.admin.ch/",
-  &[],
-  &["7561234567897"],
-  &["AHV-Nummer", "numéro AVS", "AVS", "AHV"]
-);
-validator!(
-  ch_vat,
-  "ch.vat",
-  CountryCode::Ch,
-  EntityType::Company,
-  "Swiss VAT Number",
-  "Mehrwertsteuernummer",
-  "MWST",
-  r"CHE-?\d{3}\.?\d{3}\.?\d{3}\s?(?:MWST|TVA|IVA)",
-  "https://www.estv.admin.ch/",
-  &[],
-  &["CHE107787577IVA"],
-  &["MWST", "TVA", "IVA"]
-);
+pub use crate::validators::ch::ssn as ch_ssn;
+pub use crate::validators::ch::vat as ch_vat;
 validator!(
   cl_rut,
   "cl.rut",
@@ -2763,34 +2719,8 @@ validator!(
   &["91021027775", "72062506561"],
   &["NI", "número de identidad", "carnet de identidad"]
 );
-validator!(
-  cz_ico,
-  "cz.ico",
-  CountryCode::Cz,
-  EntityType::Company,
-  "Czech Company ID",
-  "Identifikační číslo osoby",
-  "IČO",
-  r"\d{8}",
-  "https://www.czso.cz/",
-  &[8],
-  &["25123891", "27074358"],
-  &["IČO", "IČ", "identifikační číslo"]
-);
-validator!(
-  de_handelsreg,
-  "de.handelsreg",
-  CountryCode::De,
-  EntityType::Company,
-  "German Company Register Number",
-  "Handelsregisternummer",
-  "HReg",
-  r"(?:HRA|HRB|GnR|PR|VR)\s*\d{1,7}",
-  "https://de.wikipedia.org/wiki/Handelsregister_(Deutschland)",
-  &[],
-  &["HRB 12345"],
-  &["Handelsregisternummer", "Handelsregister", "HRB", "HRA"]
-);
+pub use crate::validators::cz::ico as cz_ico;
+pub use crate::validators::de::handelsreg as de_handelsreg;
 validator!(
   dk_cvr,
   "dk.cvr",
