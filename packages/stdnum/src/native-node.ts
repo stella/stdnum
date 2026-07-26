@@ -69,12 +69,31 @@ export const loadNativeStdnumBinding = (
       );
     }
   }
+  const current = [platform, arch, libc]
+    .filter(Boolean)
+    .join("-");
   const supported = targets
     .map(([p, a, l]) => [p, a, l].filter(Boolean).join("-"))
     .join(", ");
+
+  // Distinguish "we do not build for this platform" from "we do, but the
+  // package holding the binary is not installed". They read identically in a
+  // stack trace and have completely different fixes, and the second is the
+  // common one: the platform packages are optionalDependencies, so anything
+  // that declines to install them — `--no-optional`, an install-time version
+  // gate such as a release-age policy, a partial lockfile — leaves this
+  // package importable and non-functional, with no error until first use.
+  const reason =
+    match === undefined
+      ? `This platform is not among the build targets (${supported}).`
+      : `This platform IS a build target, so ${match[3]} exists but was not ` +
+        `installed. It is an optionalDependency: check that optional ` +
+        `dependencies are enabled, that ${match[3]} is not excluded by an ` +
+        `install policy, and that it appears in your lockfile.`;
+
   throw new Error(
-    `Unable to load native stdnum binding for ${[platform, arch, libc].filter(Boolean).join("-")}; ` +
-      `supported targets: ${supported}.\n${errors.join("\n")}`,
+    `Unable to load the native stdnum binding for ${current}. ${reason}\n` +
+      `Tried:\n${errors.map((line) => `  ${line}`).join("\n")}`,
   );
 };
 
