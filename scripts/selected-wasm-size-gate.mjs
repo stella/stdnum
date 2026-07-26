@@ -37,6 +37,14 @@ const cargo = (command, args = []) => {
 
 // The native test independently pins and exercises every validator in the
 // workload before its default-profile WebAssembly build is measured.
+cargo("clippy", [
+  "--all-targets",
+  "--target-dir",
+  targetDirectory,
+  "--",
+  "-D",
+  "warnings",
+]);
 cargo("test", ["--target-dir", targetDirectory]);
 cargo("build", [
   "--release",
