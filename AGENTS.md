@@ -306,6 +306,11 @@ oxlint (ultracite preset) + oxfmt. To suppress a rule:
   and human-readable diagnostics only when their public contract needs them.
 - Specialize checksum algorithms while keeping registry dispatch, metadata,
   fixtures, bindings, and generated public surfaces generic.
+- Differentially test every specialized canonical kernel against the full
+  validator. Use valid-by-construction inputs and targeted invalid mutations to
+  exercise every jurisdiction and algorithm branch, not only example fixtures.
+- Derive duplicated declarative metadata from one source of truth where
+  practical. Otherwise exhaustively assert its consistency across every entry.
 - Keep binding calls coarse. Prefer indexed dispatch and batch operations so
   Node and Python callers can amortize FFI crossings.
 - Treat performance as a tested product contract. Require deterministic

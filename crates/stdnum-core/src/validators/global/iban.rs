@@ -15,6 +15,43 @@ enum BbanCharacterClass {
 
 type BbanPart = (usize, BbanCharacterClass);
 
+#[derive(Clone, Copy)]
+enum BbanShape {
+  One([BbanPart; 1]),
+  Two([BbanPart; 2]),
+  Three([BbanPart; 3]),
+}
+
+impl BbanShape {
+  const fn parts(&self) -> &[BbanPart] {
+    match self {
+      Self::One(parts) => parts,
+      Self::Two(parts) => parts,
+      Self::Three(parts) => parts,
+    }
+  }
+
+  fn length(self) -> usize {
+    self.parts().iter().map(|(length, _)| length).sum::<usize>()
+  }
+}
+
+const fn shape(part: BbanPart) -> BbanShape {
+  BbanShape::One([part])
+}
+
+const fn shape2(first: BbanPart, second: BbanPart) -> BbanShape {
+  BbanShape::Two([first, second])
+}
+
+const fn shape3(
+  first: BbanPart,
+  second: BbanPart,
+  third: BbanPart,
+) -> BbanShape {
+  BbanShape::Three([first, second, third])
+}
+
 const fn digits(length: usize) -> BbanPart {
   (length, BbanCharacterClass::Digit)
 }
@@ -27,9 +64,9 @@ const fn alphanumeric(length: usize) -> BbanPart {
   (length, BbanCharacterClass::UppercaseAlphanumeric)
 }
 
-fn matches_bban_shape(value: &str, shape: &[BbanPart]) -> bool {
+fn matches_bban_shape(value: &str, shape: BbanShape) -> bool {
   let mut bytes = value.bytes();
-  for (length, class) in shape {
+  for (length, class) in shape.parts() {
     for _ in 0..*length {
       let Some(byte) = bytes.next() else {
         return false;
@@ -50,64 +87,71 @@ fn matches_bban_shape(value: &str, shape: &[BbanPart]) -> bool {
 }
 
 #[allow(clippy::match_same_arms)]
-fn has_valid_bban(country: &str, bban: &str) -> bool {
-  let shape: &[BbanPart] = match country {
-    "AD" => &[digits(8), alphanumeric(12)],
-    "AE" => &[digits(19)],
-    "AL" => &[digits(8), alphanumeric(16)],
-    "AT" | "BA" | "EE" | "KZ" | "LT" | "LU" | "XK" => &[digits(16)],
-    "AZ" => &[uppercase(4), alphanumeric(20)],
-    "BE" => &[digits(12)],
-    "BG" => &[uppercase(4), digits(6), alphanumeric(8)],
-    "BH" => &[uppercase(4), alphanumeric(14)],
-    "BR" => &[digits(23), uppercase(1), alphanumeric(1)],
-    "BY" | "DO" => &[alphanumeric(4), digits(20)],
-    "CH" | "HR" | "LI" => &[digits(17)],
-    "CR" => {
-      return bban.len() == 18
-        && bban.starts_with('0')
-        && bban.bytes().all(|byte| byte.is_ascii_digit());
-    }
-    "CY" => &[digits(8), alphanumeric(16)],
-    "CZ" | "ES" | "HU" | "PL" | "SE" | "SK" | "TN" => &[digits(20)],
-    "DE" | "ME" | "RS" | "VA" => &[digits(18)],
-    "DK" | "FI" | "FO" | "GL" | "SD" => &[digits(14)],
-    "EG" => &[digits(25)],
-    "FR" | "MC" => &[digits(10), alphanumeric(11), digits(2)],
-    "GB" | "IE" => &[uppercase(4), digits(14)],
-    "GE" => &[uppercase(2), digits(16)],
-    "GI" => &[uppercase(4), alphanumeric(15)],
-    "GR" => &[digits(7), alphanumeric(16)],
-    "GT" => &[alphanumeric(24)],
-    "IL" | "TL" => &[digits(19)],
-    "IQ" => &[uppercase(4), digits(15)],
-    "IS" => &[digits(22)],
-    "IT" | "SM" => &[uppercase(1), digits(10), alphanumeric(12)],
-    "JO" | "SV" => &[uppercase(4), digits(20)],
-    "KW" => &[uppercase(4), alphanumeric(22)],
-    "LB" => &[digits(4), alphanumeric(20)],
-    "LC" => &[uppercase(4), alphanumeric(24)],
-    "LV" => &[uppercase(4), alphanumeric(13)],
-    "MD" => &[alphanumeric(20)],
-    "MK" => &[digits(3), alphanumeric(10), digits(2)],
-    "MR" => &[digits(23)],
-    "MT" => &[uppercase(4), digits(5), alphanumeric(18)],
-    "MU" => &[uppercase(4), digits(19), uppercase(3)],
-    "NI" => &[uppercase(4), digits(24)],
-    "NL" => &[uppercase(4), digits(10)],
-    "NO" => &[digits(11)],
-    "PK" | "RO" => &[uppercase(4), alphanumeric(16)],
-    "PS" | "QA" => &[uppercase(4), alphanumeric(21)],
-    "PT" | "ST" => &[digits(21)],
-    "SA" => &[digits(20)],
-    "SC" => &[uppercase(4), digits(20), uppercase(3)],
-    "SI" => &[digits(15)],
-    "TR" => &[digits(6), alphanumeric(16)],
-    "UA" => &[digits(6), alphanumeric(19)],
-    "VG" => &[uppercase(4), digits(16)],
-    _ => return true,
+fn bban_shape(country: &str) -> Option<BbanShape> {
+  let shape = match country {
+    "AD" => shape2(digits(8), alphanumeric(12)),
+    "AE" => shape(digits(19)),
+    "AL" => shape2(digits(8), alphanumeric(16)),
+    "AT" | "BA" | "EE" | "KZ" | "LT" | "LU" | "XK" => shape(digits(16)),
+    "AZ" => shape2(uppercase(4), alphanumeric(20)),
+    "BE" => shape(digits(12)),
+    "BG" => shape3(uppercase(4), digits(6), alphanumeric(8)),
+    "BH" => shape2(uppercase(4), alphanumeric(14)),
+    "BR" => shape3(digits(23), uppercase(1), alphanumeric(1)),
+    "BY" | "DO" => shape2(alphanumeric(4), digits(20)),
+    "CH" | "HR" | "LI" => shape(digits(17)),
+    "CR" => shape(digits(18)),
+    "CY" => shape2(digits(8), alphanumeric(16)),
+    "CZ" | "ES" | "SE" | "SK" | "TN" => shape(digits(20)),
+    "HU" | "PL" => shape(digits(24)),
+    "DE" | "ME" | "RS" | "VA" => shape(digits(18)),
+    "DK" | "FI" | "FO" | "GL" | "SD" => shape(digits(14)),
+    "EG" => shape(digits(25)),
+    "FR" | "MC" => shape3(digits(10), alphanumeric(11), digits(2)),
+    "GB" | "IE" => shape2(uppercase(4), digits(14)),
+    "GE" => shape2(uppercase(2), digits(16)),
+    "GI" => shape2(uppercase(4), alphanumeric(15)),
+    "GR" => shape2(digits(7), alphanumeric(16)),
+    "GT" => shape(alphanumeric(24)),
+    "IL" | "TL" => shape(digits(19)),
+    "IQ" => shape2(uppercase(4), digits(15)),
+    "IS" => shape(digits(22)),
+    "IT" | "SM" => shape3(uppercase(1), digits(10), alphanumeric(12)),
+    "JO" => shape3(uppercase(4), digits(4), alphanumeric(18)),
+    "SV" => shape2(uppercase(4), digits(20)),
+    "KW" => shape2(uppercase(4), alphanumeric(22)),
+    "LB" => shape2(digits(4), alphanumeric(20)),
+    "LC" => shape2(uppercase(4), alphanumeric(24)),
+    "LV" => shape2(uppercase(4), alphanumeric(13)),
+    "MD" => shape(alphanumeric(20)),
+    "MK" => shape3(digits(3), alphanumeric(10), digits(2)),
+    "MR" => shape(digits(23)),
+    "MT" => shape3(uppercase(4), digits(5), alphanumeric(18)),
+    "MU" => shape3(uppercase(4), digits(19), uppercase(3)),
+    "NI" => shape2(uppercase(4), digits(20)),
+    "NL" => shape2(uppercase(4), digits(10)),
+    "NO" => shape(digits(11)),
+    "PK" | "RO" => shape2(uppercase(4), alphanumeric(16)),
+    "PS" | "QA" => shape2(uppercase(4), alphanumeric(21)),
+    "PT" | "ST" => shape(digits(21)),
+    "SA" => shape(digits(20)),
+    "SC" => shape3(uppercase(4), digits(20), uppercase(3)),
+    "SI" => shape(digits(15)),
+    "TR" => shape2(digits(6), alphanumeric(16)),
+    "UA" => shape2(digits(6), alphanumeric(19)),
+    "VG" => shape2(uppercase(4), digits(16)),
+    _ => return None,
   };
-  matches_bban_shape(bban, shape)
+  Some(shape)
+}
+
+fn has_valid_bban(country: &str, bban: &str) -> bool {
+  if country == "CR" {
+    return bban.len() == 18
+      && bban.starts_with('0')
+      && bban.bytes().all(|byte| byte.is_ascii_digit());
+  }
+  bban_shape(country).is_none_or(|shape| matches_bban_shape(bban, shape))
 }
 
 pub static VALIDATOR: Validator = Validator::new(ValidatorSpec {
@@ -136,87 +180,19 @@ pub fn compact(value: &str) -> String {
   compact_without(value, &[' ', '-']).to_uppercase()
 }
 
-// Grouping these by country keeps the ISO table auditable against its source.
-#[allow(clippy::match_same_arms)]
+// Shaped countries derive their total length from the BBAN descriptor. Keep an
+// explicit assigned length only when this validator does not encode the shape.
 fn expected_length(country: &str) -> Option<usize> {
+  if let Some(shape) = bban_shape(country) {
+    return Some(4_usize.saturating_add(shape.length()));
+  }
   Some(match country {
-    "AD" => 24,
-    "AE" => 23,
-    "AL" => 28,
-    "AT" => 20,
-    "AZ" => 28,
-    "BA" => 20,
-    "BE" => 16,
-    "BG" | "BH" => 22,
-    "BI" => 27,
-    "BR" => 29,
-    "BY" => 28,
-    "CH" => 21,
-    "CR" => 22,
-    "CY" => 28,
-    "CZ" => 24,
-    "DE" => 22,
-    "DJ" => 27,
-    "DK" => 18,
-    "DO" => 28,
-    "EE" => 20,
-    "EG" => 29,
-    "ES" => 24,
-    "FI" | "FO" => 18,
-    "FR" => 27,
-    "GB" | "GE" => 22,
-    "GI" => 23,
-    "GL" => 18,
-    "GR" => 27,
-    "GT" => 28,
-    "HR" => 21,
-    "HU" => 28,
-    "IE" => 22,
-    "IL" | "IQ" => 23,
-    "IS" => 26,
-    "IT" => 27,
-    "JO" | "KW" => 30,
-    "KZ" => 20,
-    "LB" => 28,
-    "LC" => 32,
-    "LI" => 21,
-    "LT" | "LU" => 20,
-    "LV" => 21,
+    "BI" | "DJ" => 27,
     "LY" => 25,
-    "MC" => 27,
-    "MD" => 24,
-    "ME" => 22,
-    "MK" => 19,
     "MN" => 20,
-    "MR" => 27,
-    "MT" => 31,
-    "MU" => 30,
-    "NI" => 28,
-    "NL" => 18,
-    "NO" => 15,
-    "PK" => 24,
-    "PL" => 28,
-    "PS" | "QA" => 29,
-    "PT" => 25,
-    "RO" => 24,
-    "RS" => 22,
     "RU" => 33,
-    "SA" => 24,
-    "SC" => 31,
-    "SD" => 18,
-    "SE" | "SK" => 24,
-    "SI" => 19,
-    "SM" => 27,
     "SN" => 28,
-    "SO" | "TL" => 23,
-    "ST" => 25,
-    "SV" => 28,
-    "TN" => 24,
-    "TR" => 26,
-    "UA" => 29,
-    "VA" => 22,
-    "VG" => 24,
-    "XK" => 20,
+    "SO" => 23,
     _ => return None,
   })
 }
@@ -344,8 +320,114 @@ pub fn generate() -> String {
 #[cfg(test)]
 mod tests {
   use super::{
-    ValidationError, expected_length, is_valid_canonical, mod97, validate,
+    BbanCharacterClass, BbanShape, ValidationError, bban_shape,
+    expected_length, is_valid_canonical, mod97, validate,
   };
+
+  fn with_valid_check_digits(country: &str, bban: &str) -> String {
+    let placeholder = format!("{bban}{country}00");
+    let check = 98_u32.saturating_sub(mod97(&placeholder).unwrap_or(0));
+    format!("{country}{check:02}{bban}")
+  }
+
+  fn valid_bban(shape: BbanShape) -> String {
+    shape
+      .parts()
+      .iter()
+      .flat_map(|(length, class)| {
+        let character = match class {
+          BbanCharacterClass::Digit => '0',
+          BbanCharacterClass::UppercaseLetter
+          | BbanCharacterClass::UppercaseAlphanumeric => 'A',
+        };
+        std::iter::repeat_n(character, *length)
+      })
+      .collect()
+  }
+
+  fn invalid_class_bban(shape: BbanShape) -> Option<String> {
+    let mut offset = 0_usize;
+    for (length, class) in shape.parts() {
+      let replacement = match class {
+        BbanCharacterClass::Digit => Some("A"),
+        BbanCharacterClass::UppercaseLetter => Some("0"),
+        BbanCharacterClass::UppercaseAlphanumeric => None,
+      };
+      if let Some(replacement) = replacement {
+        let mut bban = valid_bban(shape);
+        bban.replace_range(offset..offset.saturating_add(1), replacement);
+        return Some(bban);
+      }
+      offset = offset.saturating_add(*length);
+    }
+    None
+  }
+
+  #[test]
+  fn corrected_registry_shapes_accept_their_electronic_examples() {
+    for candidate in [
+      "HU42117730161111101800000000",
+      "JO94CBJO0010000000000131000302",
+      "NI45BAPR00000013000003558124",
+      "PL61109010140000071219812874",
+    ] {
+      assert_eq!(validate(candidate).as_deref(), Ok(candidate));
+      assert!(is_valid_canonical(candidate));
+    }
+  }
+
+  #[test]
+  fn every_explicit_shape_matches_its_length_and_both_validation_paths() {
+    for first in b'A'..=b'Z' {
+      for second in b'A'..=b'Z' {
+        let country = format!("{}{}", char::from(first), char::from(second));
+        let (Some(expected), Some(shape)) =
+          (expected_length(&country), bban_shape(&country))
+        else {
+          continue;
+        };
+        assert_eq!(
+          expected,
+          4_usize.saturating_add(shape.length()),
+          "{country} has inconsistent IBAN and BBAN lengths",
+        );
+        let candidate = with_valid_check_digits(&country, &valid_bban(shape));
+        assert_eq!(
+          validate(&candidate).as_deref(),
+          Ok(candidate.as_str()),
+          "full validator rejected valid-by-construction {country} IBAN",
+        );
+        assert!(
+          is_valid_canonical(&candidate),
+          "canonical validator rejected valid-by-construction {country} IBAN",
+        );
+
+        if let Some(invalid_bban) = invalid_class_bban(shape) {
+          let invalid = with_valid_check_digits(&country, &invalid_bban);
+          assert!(
+            validate(&invalid).is_err(),
+            "full validator accepted a class-invalid {country} BBAN",
+          );
+          assert!(
+            !is_valid_canonical(&invalid),
+            "canonical validator accepted a class-invalid {country} BBAN",
+          );
+        }
+      }
+    }
+  }
+
+  #[test]
+  fn rejects_a_checksum_valid_polish_iban_with_a_non_numeric_bban() {
+    let candidate = with_valid_check_digits("PL", "10901014A000071219812874");
+    assert!(matches!(
+      validate(&candidate),
+      Err(ValidationError::InvalidFormat(
+        "IBAN BBAN format is invalid for its country"
+      ))
+    ));
+    assert!(!is_valid_canonical(&candidate));
+  }
 
   #[test]
   fn rejects_every_unassigned_country_even_with_valid_check_digits() {
@@ -356,9 +438,7 @@ mod tests {
         if expected_length(&country).is_some() {
           continue;
         }
-        let placeholder = format!("{BBAN}{country}00");
-        let check = 98_u32.saturating_sub(mod97(&placeholder).unwrap_or(0));
-        let candidate = format!("{country}{check:02}{BBAN}");
+        let candidate = with_valid_check_digits(&country, BBAN);
         assert!(
           matches!(
             validate(&candidate),
