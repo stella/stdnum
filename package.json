@@ -9,7 +9,7 @@
   "scripts": {
     "build": "bun run codegen:check && bun run --cwd packages/stdnum build",
     "build:ts": "bun run --cwd packages/stdnum build:js && bun run --cwd packages/stdnum-wasm build:js",
-    "build:wasm": "bun run --cwd packages/stdnum-wasm build",
+    "build:wasm": "bun run --cwd packages/stdnum-wasm build && bun run performance:wasm-size",
     "typecheck": "tsc -p tsconfig.json && bun run --cwd packages/stdnum typecheck && bun run --cwd packages/stdnum-wasm typecheck",
     "test": "bun test packages/stdnum/src/__test__",
     "smoke:native": "node scripts/native-smoke.mjs",
@@ -17,6 +17,7 @@
     "smoke:pack": "node scripts/pack-smoke.mjs",
     "readme:check": "node scripts/readme-smoke.mjs",
     "performance": "node scripts/performance-gate.mjs",
+    "performance:wasm-size": "node scripts/selected-wasm-size-gate.mjs",
     "performance:oracles": "node scripts/oracle-performance-gate.mjs",
     "codegen": "bun scripts/generate-public-surface.ts",
     "codegen:check": "bun scripts/generate-public-surface.ts --check",

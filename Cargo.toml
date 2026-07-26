@@ -4,6 +4,7 @@ members = [
   "crates/stdnum-napi",
   "crates/stdnum-py",
   "crates/stdnum-wasm",
+  "crates/stdnum-wasm-size-fixture",
 ]
 exclude = ["scripts/rust-oracle"]
 resolver = "3"

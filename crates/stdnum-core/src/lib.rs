@@ -2,10 +2,12 @@
 
 mod catalog;
 pub mod registry;
+mod set;
 pub mod types;
 pub mod validators;
 
 pub use registry::{validator, validators};
+pub use set::{ValidatorEntry, ValidatorSet};
 pub use types::{
   CanonicalValidation, CountryCode, EntityType, Gender, IsoDate,
   ParsedIdentifier, ValidationError, ValidationErrorCode, ValidationResult,
