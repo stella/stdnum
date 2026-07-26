@@ -276,7 +276,12 @@ pub fn validate(value: &str) -> ValidationResult {
       "IBAN must start with a 2-letter country code",
     ));
   }
-  if expected_length(country).is_some_and(|length| value.len() != length) {
+  let Some(expected_length) = expected_length(country) else {
+    return Err(ValidationError::InvalidComponent(
+      "IBAN country code is not assigned",
+    ));
+  };
+  if value.len() != expected_length {
     return Err(ValidationError::InvalidLength(
       "IBAN has an invalid country-specific length",
     ));
@@ -308,4 +313,29 @@ pub fn generate() -> String {
   let placeholder = format!("{bban}{country}00");
   let check = 98_u32.saturating_sub(mod97(&placeholder).unwrap_or(0));
   format!("{country}{check:02}{bban}")
+}
+
+#[cfg(test)]
+mod tests {
+  use super::{expected_length, mod97, validate};
+
+  #[test]
+  fn rejects_every_unassigned_country_even_with_valid_check_digits() {
+    const BBAN: &str = "01101050000010547023795";
+    for first in b'A'..=b'Z' {
+      for second in b'A'..=b'Z' {
+        let country = format!("{}{}", char::from(first), char::from(second));
+        if expected_length(&country).is_some() {
+          continue;
+        }
+        let placeholder = format!("{BBAN}{country}00");
+        let check = 98_u32.saturating_sub(mod97(&placeholder).unwrap_or(0));
+        let candidate = format!("{country}{check:02}{BBAN}");
+        assert!(
+          validate(&candidate).is_err(),
+          "unassigned country {country} was accepted",
+        );
+      }
+    }
+  }
 }
