@@ -2,7 +2,7 @@
 import { createValidator } from "../../runtime";
 import type { GlobalValidator } from "../../types";
 
-const vat: GlobalValidator = createValidator("eu.vat", 69);
+const vat: GlobalValidator = createValidator("eu.vat", 70);
 
 export default vat;
 export const compact = vat.compact;

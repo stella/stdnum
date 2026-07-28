@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const pps: CountryValidator<"IE"> = createValidator(
   "ie.pps",
-  93,
+  94,
 );
 
 export default pps;

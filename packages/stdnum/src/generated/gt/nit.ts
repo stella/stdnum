@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const nit: CountryValidator<"GT"> = createValidator(
   "gt.nit",
-  87,
+  88,
 );
 
 export default nit;

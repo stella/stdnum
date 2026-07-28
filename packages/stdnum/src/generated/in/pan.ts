@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const pan: CountryValidator<"IN"> = createValidator(
   "in.pan",
-  98,
+  99,
 );
 
 export default pan;

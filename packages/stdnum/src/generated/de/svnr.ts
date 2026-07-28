@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const svnr: CountryValidator<"DE"> = createValidator(
   "de.svnr",
-  53,
+  54,
 );
 
 export default svnr;

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const ein: CountryValidator<"US"> = createValidator(
   "us.ein",
-  167,
+  168,
 );
 
 export default ein;

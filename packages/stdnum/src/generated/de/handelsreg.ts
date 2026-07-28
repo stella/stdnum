@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const handelsreg: CountryValidator<"DE"> = createValidator(
   "de.handelsreg",
-  50,
+  51,
 );
 
 export default handelsreg;

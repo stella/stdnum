@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const edrpou: CountryValidator<"UA"> = createValidator(
   "ua.edrpou",
-  166,
+  167,
 );
 
 export default edrpou;

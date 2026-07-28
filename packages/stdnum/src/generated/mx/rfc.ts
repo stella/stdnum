@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const rfc: CountryValidator<"MX"> = createValidator(
   "mx.rfc",
-  129,
+  130,
 );
 
 export default rfc;

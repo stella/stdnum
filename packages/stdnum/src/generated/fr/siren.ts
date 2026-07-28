@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const siren: CountryValidator<"FR"> = createValidator(
   "fr.siren",
-  75,
+  76,
 );
 
 export default siren;

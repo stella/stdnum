@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const vkn: CountryValidator<"TR"> = createValidator(
   "tr.vkn",
-  164,
+  165,
 );
 
 export default vkn;

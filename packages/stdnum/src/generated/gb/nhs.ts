@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const nhs: CountryValidator<"GB"> = createValidator(
   "gb.nhs",
-  78,
+  79,
 );
 
 export default nhs;

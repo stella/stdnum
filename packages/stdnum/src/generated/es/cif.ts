@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const cif: CountryValidator<"ES"> = createValidator(
   "es.cif",
-  64,
+  65,
 );
 
 export default cif;

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const dic: CountryValidator<"CZ"> = createValidator(
   "cz.dic",
-  47,
+  48,
 );
 
 export default dic;

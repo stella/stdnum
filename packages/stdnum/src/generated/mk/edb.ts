@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const edb: CountryValidator<"MK"> = createValidator(
   "mk.edb",
-  124,
+  125,
 );
 
 export default edb;

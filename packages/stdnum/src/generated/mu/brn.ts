@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const brn: CountryValidator<"MU"> = createValidator(
   "mu.brn",
-  126,
+  127,
 );
 
 export default brn;

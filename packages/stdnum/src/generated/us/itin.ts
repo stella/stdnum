@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const itin: CountryValidator<"US"> = createValidator(
   "us.itin",
-  168,
+  169,
 );
 
 export default itin;

@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const cpr: CountryValidator<"DK", ParsedPersonId> =
-  createValidator("dk.cpr", 55);
+  createValidator("dk.cpr", 56);
 
 export default cpr;
 export const compact = cpr.compact;

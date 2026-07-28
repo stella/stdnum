@@ -32,7 +32,7 @@ fn registry_and_committed_fixtures_are_in_parity() {
   });
 
   let registered = validators();
-  assert_eq!(registered.len(), 175);
+  assert_eq!(registered.len(), 176);
   let unique = registered
     .iter()
     .map(|candidate| candidate.id())

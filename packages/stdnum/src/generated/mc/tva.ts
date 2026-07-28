@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const tva: CountryValidator<"MC"> = createValidator(
   "mc.tva",
-  121,
+  122,
 );
 
 export default tva;

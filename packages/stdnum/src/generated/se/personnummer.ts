@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const personnummer: CountryValidator<"SE", ParsedPersonId> =
-  createValidator("se.personnummer", 154);
+  createValidator("se.personnummer", 155);
 
 export default personnummer;
 export const compact = personnummer.compact;

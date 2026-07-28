@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const idnr: CountryValidator<"DE"> = createValidator(
   "de.idnr",
-  51,
+  52,
 );
 
 export default idnr;

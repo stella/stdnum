@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const mva: CountryValidator<"NO"> = createValidator(
   "no.mva",
-  137,
+  138,
 );
 
 export default mva;

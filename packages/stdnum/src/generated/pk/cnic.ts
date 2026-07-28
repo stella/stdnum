@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const cnic: CountryValidator<"PK"> = createValidator(
   "pk.cnic",
-  143,
+  144,
 );
 
 export default cnic;

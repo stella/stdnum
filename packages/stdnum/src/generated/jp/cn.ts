@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const cn: CountryValidator<"JP"> = createValidator(
   "jp.cn",
-  106,
+  107,
 );
 
 export default cn;

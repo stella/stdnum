@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const hetu: CountryValidator<"FI", ParsedPersonId> =
-  createValidator("fi.hetu", 70);
+  createValidator("fi.hetu", 71);
 
 export default hetu;
 export const compact = hetu.compact;

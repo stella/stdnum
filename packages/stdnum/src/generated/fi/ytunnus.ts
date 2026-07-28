@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const ytunnus: CountryValidator<"FI"> = createValidator(
   "fi.ytunnus",
-  72,
+  73,
 );
 
 export default ytunnus;

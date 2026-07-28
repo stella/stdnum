@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const cvr: CountryValidator<"DK"> = createValidator(
   "dk.cvr",
-  56,
+  57,
 );
 
 export default cvr;

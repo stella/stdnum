@@ -569,6 +569,13 @@
       "format": "CY10259033P"
     },
     {
+      "id": "cz.bankaccount",
+      "value": "34278-727558021/0100",
+      "expected": true,
+      "compact": "034278-0727558021/0100",
+      "format": "034278-0727558021/0100"
+    },
+    {
       "id": "cz.dic",
       "value": "25123891",
       "expected": true,

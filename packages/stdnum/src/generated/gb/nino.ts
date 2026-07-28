@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const nino: CountryValidator<"GB"> = createValidator(
   "gb.nino",
-  79,
+  80,
 );
 
 export default nino;

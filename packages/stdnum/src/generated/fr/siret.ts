@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const siret: CountryValidator<"FR"> = createValidator(
   "fr.siret",
-  76,
+  77,
 );
 
 export default siret;

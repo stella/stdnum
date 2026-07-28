@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const iin: CountryValidator<"KZ", ParsedPersonId> =
-  createValidator("kz.iin", 111);
+  createValidator("kz.iin", 112);
 
 export default iin;
 export const compact = iin.compact;

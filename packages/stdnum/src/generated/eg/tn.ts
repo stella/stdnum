@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const tn: CountryValidator<"EG"> = createValidator(
   "eg.tn",
-  63,
+  64,
 );
 
 export default tn;

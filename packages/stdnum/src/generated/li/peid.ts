@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const peid: CountryValidator<"LI"> = createValidator(
   "li.peid",
-  113,
+  114,
 );
 
 export default peid;

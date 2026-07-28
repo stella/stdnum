@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const rtn: CountryValidator<"US"> = createValidator(
   "us.rtn",
-  169,
+  170,
 );
 
 export default rtn;

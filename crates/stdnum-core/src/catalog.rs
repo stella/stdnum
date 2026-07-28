@@ -23,6 +23,9 @@ pub(crate) fn description(id: &str) -> Option<&'static str> {
       Some("18-character tax/registration code for Chinese entities")
     }
     "co.nit" => Some("Tax identifier issued by the DIAN"),
+    "cz.bankaccount" => Some(
+      "National-format account number with modulo-11 checks and a ČNB-assigned bank code",
+    ),
     "cz.ico" => {
       Some("8-digit company ID assigned by the Czech Statistical Office")
     }

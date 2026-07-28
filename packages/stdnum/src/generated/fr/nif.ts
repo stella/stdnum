@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const nif: CountryValidator<"FR"> = createValidator(
   "fr.nif",
-  73,
+  74,
 );
 
 export default nif;

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const tin: CountryValidator<"GH"> = createValidator(
   "gh.tin",
-  84,
+  85,
 );
 
 export default tin;

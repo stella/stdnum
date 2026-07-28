@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const uen: CountryValidator<"SG"> = createValidator(
   "sg.uen",
-  156,
+  157,
 );
 
 export default uen;

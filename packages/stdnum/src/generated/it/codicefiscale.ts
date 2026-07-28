@@ -8,7 +8,7 @@ import type {
 const codiceFiscale: CountryValidator<
   "IT",
   ParsedPersonId
-> = createValidator("it.codiceFiscale", 104);
+> = createValidator("it.codiceFiscale", 105);
 
 export default codiceFiscale;
 export const compact = codiceFiscale.compact;

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const pin: CountryValidator<"GE"> = createValidator(
   "ge.pin",
-  83,
+  84,
 );
 
 export default pin;

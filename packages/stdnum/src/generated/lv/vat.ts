@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const vat: CountryValidator<"LV"> = createValidator(
   "lv.vat",
-  119,
+  120,
 );
 
 export default vat;

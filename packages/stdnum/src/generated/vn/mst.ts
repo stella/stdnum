@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const mst: CountryValidator<"VN"> = createValidator(
   "vn.mst",
-  173,
+  174,
 );
 
 export default mst;
