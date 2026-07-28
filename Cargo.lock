@@ -764,7 +764,7 @@ checksum = "5c0e04424e733e69714ca1bbb9204c1a57f09f5493439520f9f68c132ad25eec"
 
 [[package]]
 name = "stella-stdnum-core"
-version = "2.2.0"
+version = "2.2.1"
 dependencies = [
  "insta",
  "proptest",
@@ -780,7 +780,7 @@ dependencies = [
 
 [[package]]
 name = "stella-stdnum-napi"
-version = "2.2.0"
+version = "2.2.1"
 dependencies = [
  "napi",
  "napi-build",
@@ -790,7 +790,7 @@ dependencies = [
 
 [[package]]
 name = "stella-stdnum-py"
-version = "2.2.0"
+version = "2.2.1"
 dependencies = [
  "pyo3",
  "pyo3-build-config",
@@ -799,7 +799,7 @@ dependencies = [
 
 [[package]]
 name = "stella-stdnum-wasm"
-version = "2.2.0"
+version = "2.2.1"
 dependencies = [
  "serde",
  "serde-wasm-bindgen",
