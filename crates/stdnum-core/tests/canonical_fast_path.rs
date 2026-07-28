@@ -163,6 +163,18 @@ fn canonical_validation_invariants() {
         allocations.bytes_allocated, 0,
         "{id} canonical validation allocated bytes"
       );
+
+      for padded in [format!(" {value}"), format!("{value} ")] {
+        assert_eq!(
+          validator.validate_canonical(&padded),
+          CanonicalValidation::NotCanonical,
+          "{id} must fall back when trimming changes the input"
+        );
+        assert!(
+          validator.validate(&padded).is_ok(),
+          "{id} full validation must preserve trimmed input compatibility"
+        );
+      }
     }
   }
   let fixtures = [
