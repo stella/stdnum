@@ -9,6 +9,7 @@
         "@changesets/changelog-github": "^0.7.0",
         "@changesets/cli": "^2.31.0",
         "@stll/oxlint-config": "0.6.0",
+        "@stll/stdnum-wasm": "workspace:*",
         "@stll/typescript-config": "0.6.0",
         "@types/node": "^26.1.1",
         "bun-types": "^1.3.14",
@@ -34,7 +35,6 @@
       "name": "@stll/stdnum",
       "version": "2.2.0",
       "devDependencies": {
-        "@stll/stdnum-wasm": "workspace:*",
         "tsdown": "0.22.9",
         "typescript": "7.0.2",
       },

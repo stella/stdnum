@@ -14,7 +14,7 @@ const collect = (directory: string): string[] => {
       result.push(...collect(path));
     else if (
       entry.isFile() === true &&
-      name.endsWith(".ts")
+      name.endsWith(".ts") === true
     )
       result.push(path);
   }
@@ -39,7 +39,7 @@ const entries = Object.fromEntries([
 export default defineConfig({
   entry: entries,
   deps: {
-    neverBundle: ["#stdnum-runtime"],
+    neverBundle: ["#stdnum-runtime", "@stll/stdnum-wasm"],
   },
   format: ["esm"],
   unbundle: true,
