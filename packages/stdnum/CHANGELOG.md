@@ -1,5 +1,11 @@
 # @stll/stdnum
 
+## 2.3.1
+
+### Patch Changes
+
+- [#176](https://github.com/stella/stdnum/pull/176) [`5059ce8`](https://github.com/stella/stdnum/commit/5059ce8be84753b9d017902f71cdc49be8c83eb9) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Expose allocation-free Czech bank-code membership checks from the Rust core.
+
 ## 2.3.0
 
 ### Minor Changes
