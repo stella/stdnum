@@ -6,7 +6,8 @@ use crate::types::{
 };
 
 const PART_WEIGHTS: &[u32; 10] = &[6, 3, 7, 9, 10, 5, 8, 4, 2, 1];
-const BANK_CODES: &[u16] = include!("bank_codes.rs");
+const BANK_CODES: &[u16] =
+  include!(concat!(env!("OUT_DIR"), "/cz_bank_codes.rs"));
 const CANONICAL_LENGTH: usize = 22;
 
 pub static VALIDATOR: Validator = Validator::new(ValidatorSpec {
