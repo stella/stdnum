@@ -66,6 +66,11 @@ fn validate_canonical(value: &str) -> CanonicalValidation {
   if bytes.len() != CANONICAL_LENGTH {
     return CanonicalValidation::NotCanonical;
   }
+  if value.chars().next().is_some_and(char::is_whitespace)
+    || value.chars().next_back().is_some_and(char::is_whitespace)
+  {
+    return CanonicalValidation::NotCanonical;
+  }
 
   let mut prefix_sum = 0_u32;
   let mut root_sum = 0_u32;
@@ -116,9 +121,6 @@ fn validate_canonical(value: &str) -> CanonicalValidation {
           }
           _ => {}
         }
-      }
-      0 | 21 if byte.is_ascii_whitespace() => {
-        return CanonicalValidation::NotCanonical;
       }
       _ => {
         return CanonicalValidation::Invalid(ValidationError::InvalidFormat(
@@ -262,8 +264,8 @@ mod tests {
   use proptest::prelude::*;
 
   use super::{
-    BANK_CODES, PART_WEIGHTS, ValidationError, compact, is_valid_canonical,
-    validate,
+    BANK_CODES, CanonicalValidation, PART_WEIGHTS, ValidationError, compact,
+    is_valid_canonical, validate, validate_canonical,
   };
 
   const BANK_CODE_COUNT: usize = 47;
@@ -278,6 +280,19 @@ mod tests {
       assert_eq!(validate(value).as_deref(), Ok(expected), "{value}");
       assert_eq!(compact(value), expected, "{value}");
       assert!(is_valid_canonical(expected), "{expected}");
+    }
+  }
+
+  #[test]
+  fn canonical_path_falls_back_for_trimmed_twenty_two_byte_inputs() {
+    let canonical = "034278-0727558021/0100";
+    for value in ["34278-0727558021/0100 ", "\t34278-0727558021/0100"] {
+      assert_eq!(validate(value).as_deref(), Ok(canonical), "{value:?}");
+      assert_eq!(
+        validate_canonical(value),
+        CanonicalValidation::NotCanonical,
+        "{value:?}"
+      );
     }
   }
 
