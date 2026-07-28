@@ -15,6 +15,16 @@ let bindingLoader: (() => NativeStdnumBinding) | undefined;
 let bindingGeneration = 0;
 const resetValidationBindings: (() => void)[] = [];
 
+export class StdnumNotInitializedError extends Error {
+  override readonly name = "StdnumNotInitializedError";
+
+  constructor() {
+    super(
+      "stdnum runtime binding is not initialized; initialize the runtime before calling validators",
+    );
+  }
+}
+
 export const setBindingLoader = (
   loader: () => NativeStdnumBinding,
 ): void => {
@@ -36,9 +46,7 @@ export const getBinding = (): NativeStdnumBinding => {
   if (bindingOverride !== undefined) return bindingOverride;
   nativeBinding ??= bindingLoader?.();
   if (nativeBinding === undefined)
-    throw new Error(
-      "stdnum runtime binding is not initialized",
-    );
+    throw new StdnumNotInitializedError();
   return nativeBinding;
 };
 
