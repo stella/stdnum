@@ -24,7 +24,7 @@
         "oxlint-tsgolint": "7.0.2001",
         "rut.js": "^2.1.0",
         "stdnum": "^1.12.3",
-        "tsdown": "0.22.9",
+        "tsdown": "0.22.14",
         "typescript": "7.0.2",
         "validate-polish": "^2.1.40",
         "vite": "8.1.5",
@@ -32,48 +32,48 @@
     },
     "packages/stdnum": {
       "name": "@stll/stdnum",
-      "version": "2.2.0",
+      "version": "2.3.1",
       "devDependencies": {
-        "tsdown": "0.22.9",
+        "tsdown": "0.22.14",
         "typescript": "7.0.2",
       },
       "optionalDependencies": {
-        "@stll/stdnum-darwin-arm64": "2.2.0",
-        "@stll/stdnum-darwin-x64": "2.2.0",
-        "@stll/stdnum-linux-arm64-gnu": "2.2.0",
-        "@stll/stdnum-linux-x64-gnu": "2.2.0",
-        "@stll/stdnum-wasm": "2.2.0",
-        "@stll/stdnum-win32-x64-msvc": "2.2.0",
+        "@stll/stdnum-darwin-arm64": "2.3.1",
+        "@stll/stdnum-darwin-x64": "2.3.1",
+        "@stll/stdnum-linux-arm64-gnu": "2.3.1",
+        "@stll/stdnum-linux-x64-gnu": "2.3.1",
+        "@stll/stdnum-wasm": "2.3.1",
+        "@stll/stdnum-win32-x64-msvc": "2.3.1",
       },
     },
     "packages/stdnum-darwin-arm64": {
       "name": "@stll/stdnum-darwin-arm64",
-      "version": "2.2.0",
+      "version": "2.3.1",
     },
     "packages/stdnum-darwin-x64": {
       "name": "@stll/stdnum-darwin-x64",
-      "version": "2.2.0",
+      "version": "2.3.1",
     },
     "packages/stdnum-linux-arm64-gnu": {
       "name": "@stll/stdnum-linux-arm64-gnu",
-      "version": "2.2.0",
+      "version": "2.3.1",
     },
     "packages/stdnum-linux-x64-gnu": {
       "name": "@stll/stdnum-linux-x64-gnu",
-      "version": "2.2.0",
+      "version": "2.3.1",
     },
     "packages/stdnum-wasm": {
       "name": "@stll/stdnum-wasm",
-      "version": "2.2.0",
+      "version": "2.3.1",
       "devDependencies": {
         "@stll/stdnum": "workspace:*",
-        "tsdown": "0.22.9",
+        "tsdown": "0.22.14",
         "typescript": "7.0.2",
       },
     },
     "packages/stdnum-win32-x64-msvc": {
       "name": "@stll/stdnum-win32-x64-msvc",
-      "version": "2.2.0",
+      "version": "2.3.1",
     },
   },
   "packages": {
@@ -633,7 +633,7 @@
 
     "tree-kill": ["tree-kill@1.2.2", "", { "bin": { "tree-kill": "cli.js" } }, "sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A=="],
 
-    "tsdown": ["tsdown@0.22.9", "", { "dependencies": { "ansis": "^4.3.1", "cac": "^7.0.0", "defu": "^6.1.7", "empathic": "^2.0.1", "hookable": "^6.1.1", "import-without-cache": "^0.4.0", "obug": "^2.1.3", "picomatch": "^4.0.5", "rolldown": "~1.2.0", "rolldown-plugin-dts": "^0.27.9", "semver": "^7.8.5", "tinyexec": "^1.2.4", "tinyglobby": "^0.2.17", "tree-kill": "^1.2.2", "unconfig-core": "^7.5.0" }, "peerDependencies": { "@arethetypeswrong/core": "^0.18.1", "@tsdown/css": "0.22.9", "@tsdown/exe": "0.22.9", "@vitejs/devtools": "*", "publint": "^0.3.8", "tsx": "*", "typescript": "^5.0.0 || ^6.0.0 || ^7.0.0", "unplugin-unused": "^0.5.0", "unrun": "*" }, "optionalPeers": ["@arethetypeswrong/core", "@tsdown/css", "@tsdown/exe", "@vitejs/devtools", "publint", "tsx", "typescript", "unplugin-unused", "unrun"], "bin": { "tsdown": "./dist/run.mjs" } }, "sha512-/0QEjQEhOU1t1YxOIAGzFN7bIssd8P0pBpkOmNLCQi3c5UtrcMF5bvq3f30xHJNW9QCA9aUNcNAorMr2CTd6Lg=="],
+    "tsdown": ["tsdown@0.22.14", "", { "dependencies": { "ansis": "^4.3.1", "cac": "^7.0.0", "defu": "^6.1.7", "empathic": "^2.0.1", "hookable": "^6.1.1", "import-without-cache": "^0.4.0", "obug": "^2.1.4", "picomatch": "^4.0.5", "rolldown": "~1.2.0", "rolldown-plugin-dts": "^0.27.13", "tinyexec": "^1.2.4", "tinyglobby": "^0.2.17", "tree-kill": "^1.2.2", "unconfig-core": "^7.5.0", "verkit": "^0.3.0" }, "peerDependencies": { "@arethetypeswrong/core": "^0.18.1", "@tsdown/css": "0.22.14", "@tsdown/exe": "0.22.14", "@vitejs/devtools": "*", "publint": "^0.3.8", "tsx": "*", "typescript": "^5.0.0 || ^6.0.0 || ^7.0.0", "unplugin-unused": "^0.5.0", "unrun": "*" }, "optionalPeers": ["@arethetypeswrong/core", "@tsdown/css", "@tsdown/exe", "@vitejs/devtools", "publint", "tsx", "typescript", "unplugin-unused", "unrun"], "bin": { "tsdown": "./dist/run.mjs" } }, "sha512-ule7Y+fsAN2iZbLDoo7C4KYljFJNJJ+fLshyn+9gozeTspVersWHxwdGB+Dm2hzA38s6muFnUTl0jK3vJm9ifQ=="],
 
     "tslib": ["tslib@2.4.1", "", {}, "sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA=="],
 
@@ -646,6 +646,8 @@
     "universalify": ["universalify@0.1.2", "", {}, "sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg=="],
 
     "validate-polish": ["validate-polish@2.1.40", "", { "dependencies": { "tslib": "2.4.1" } }, "sha512-mdkFvl7/DRFmjRrBliKIbuaw10BkXfnFRHd1gJSLgc/6h64QatmRrGpA08CRGCWBMdn9eyE6yhxY5A115Armgw=="],
+
+    "verkit": ["verkit@0.3.0", "", {}, "sha512-Njrh4U8UODGajoZ44QS2C/BsoEM9DTI/aCqY5swsizb+/ap0FamvnCMcZAxrR5+aoC0ZqkawEfpC/N2SBc+xeA=="],
 
     "vite": ["vite@8.1.5", "", { "dependencies": { "lightningcss": "^1.32.0", "picomatch": "^4.0.5", "postcss": "^8.5.17", "rolldown": "~1.1.5", "tinyglobby": "^0.2.17" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^20.19.0 || >=22.12.0", "@vitejs/devtools": "^0.3.0", "esbuild": "^0.27.0 || ^0.28.0", "jiti": ">=1.21.0", "less": "^4.0.0", "sass": "^1.70.0", "sass-embedded": "^1.70.0", "stylus": ">=0.54.8", "sugarss": "^5.0.0", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "@vitejs/devtools", "esbuild", "jiti", "less", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-7ULLwsCdYx/nRyrpiEwvqb5TFHrMVZyBt+rg/OAXT7rgj/z+DtTDyKFeLAdDkubDVDKD8jOsndmy7m55XcfUsw=="],
 
@@ -678,8 +680,6 @@
     "read-yaml-file/js-yaml": ["js-yaml@3.15.0", "", { "dependencies": { "argparse": "^1.0.7", "esprima": "^4.0.0" }, "bin": { "js-yaml": "bin/js-yaml.js" } }, "sha512-ttBQIIQPDeLjpPOohtUdXuXUVoA2uIB6fEH9HyJ7234s5mBJ5wTx20njxplLZQgLaOfpmPQA7X2t5AX6tIPbog=="],
 
     "tinyglobby/picomatch": ["picomatch@4.0.4", "", {}, "sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A=="],
-
-    "tsdown/semver": ["semver@7.8.5", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA=="],
 
     "unconfig-core/quansync": ["quansync@1.0.0", "", {}, "sha512-5xZacEEufv3HSTPQuchrvV6soaiACMFnq1H8wkVioctoH3TRha9Sz66lOxRwPK/qZj7HPiSveih9yAyh98gvqA=="],
 
