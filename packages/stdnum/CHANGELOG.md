@@ -1,5 +1,11 @@
 # @stll/stdnum
 
+## 2.2.1
+
+### Patch Changes
+
+- [#171](https://github.com/stella/stdnum/pull/171) [`c9a13a3`](https://github.com/stella/stdnum/commit/c9a13a35c07a01ef10d651e72bc850769a1c281c) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Make synchronous validator subpath imports browser-safe by selecting the WebAssembly runtime through conditional package imports.
+
 ## 2.2.0
 
 ### Minor Changes
