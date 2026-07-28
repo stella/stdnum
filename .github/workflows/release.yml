@@ -248,6 +248,7 @@ jobs:
           bun run build:ts
           bun run build:wasm
           bun run smoke:wasm
+          bun run smoke:browser
 
       - name: Pack main package
         id: main

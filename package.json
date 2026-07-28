@@ -13,6 +13,7 @@
     "typecheck": "tsc -p tsconfig.json && bun run --cwd packages/stdnum typecheck && bun run --cwd packages/stdnum-wasm typecheck",
     "test": "bun test packages/stdnum/src/__test__",
     "smoke:native": "node scripts/native-smoke.mjs",
+    "smoke:browser": "node scripts/browser-smoke.mjs",
     "smoke:wasm": "node scripts/wasm-smoke.mjs",
     "smoke:pack": "node scripts/pack-smoke.mjs",
     "readme:check": "node scripts/readme-smoke.mjs",
@@ -70,7 +71,8 @@
     "stdnum": "^1.12.3",
     "tsdown": "0.22.9",
     "typescript": "7.0.2",
-    "validate-polish": "^2.1.40"
+    "validate-polish": "^2.1.40",
+    "vite": "8.1.5"
   },
   "packageManager": "bun@1.3.12"
 }
