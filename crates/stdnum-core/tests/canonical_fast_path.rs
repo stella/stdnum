@@ -221,4 +221,15 @@ fn canonical_validation_invariants() {
       );
     }
   }
+
+  for (code, expected) in [(800_u16, true), (1124_u16, false)] {
+    let allocations = Region::new(GLOBAL);
+    let assigned = cz::bankaccount::is_assigned_bank_code(black_box(code));
+    let allocations = allocations.change();
+
+    assert_eq!(assigned, expected, "{code:04}");
+    assert_eq!(allocations.allocations, 0, "{code:04} allocated");
+    assert_eq!(allocations.reallocations, 0, "{code:04} reallocated");
+    assert_eq!(allocations.bytes_allocated, 0, "{code:04} allocated bytes");
+  }
 }

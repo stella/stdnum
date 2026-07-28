@@ -232,7 +232,12 @@ fn has_valid_checksum(part: &str) -> bool {
     .is_multiple_of(11)
 }
 
-fn is_assigned_bank_code(bank: u16) -> bool {
+/// Return whether a four-digit code is assigned by the Czech National Bank.
+///
+/// This is the allocation-free catalog boundary for callers that already parse
+/// a bank account and do not need normalized account output or diagnostics.
+#[must_use]
+pub fn is_assigned_bank_code(bank: u16) -> bool {
   BANK_CODES.binary_search(&bank).is_ok()
 }
 
