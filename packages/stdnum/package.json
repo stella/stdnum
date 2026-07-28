@@ -1,6 +1,6 @@
 {
   "name": "@stll/stdnum",
-  "version": "2.1.6",
+  "version": "2.2.0",
   "description": "Standard identifier validation backed by a single Rust core",
   "homepage": "https://github.com/stella/stdnum",
   "license": "MIT",
@@ -945,11 +945,11 @@
     "typescript": "7.0.2"
   },
   "optionalDependencies": {
-    "@stll/stdnum-darwin-arm64": "2.1.6",
-    "@stll/stdnum-darwin-x64": "2.1.6",
-    "@stll/stdnum-linux-arm64-gnu": "2.1.6",
-    "@stll/stdnum-linux-x64-gnu": "2.1.6",
-    "@stll/stdnum-wasm": "2.1.6",
-    "@stll/stdnum-win32-x64-msvc": "2.1.6"
+    "@stll/stdnum-darwin-arm64": "2.2.0",
+    "@stll/stdnum-darwin-x64": "2.2.0",
+    "@stll/stdnum-linux-arm64-gnu": "2.2.0",
+    "@stll/stdnum-linux-x64-gnu": "2.2.0",
+    "@stll/stdnum-wasm": "2.2.0",
+    "@stll/stdnum-win32-x64-msvc": "2.2.0"
   }
 }

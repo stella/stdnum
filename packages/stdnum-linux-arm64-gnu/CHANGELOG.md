@@ -1,5 +1,7 @@
 # @stll/stdnum-linux-arm64-gnu
 
+## 2.2.0
+
 ## 2.1.6
 
 ## 2.1.5
