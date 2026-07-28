@@ -15,7 +15,7 @@ import {
 import { createServer } from "node:http";
 import { dirname, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { build } from "vite";
+import { build, createLogger } from "vite";
 
 const root = dirname(
   dirname(fileURLToPath(import.meta.url)),
@@ -41,6 +41,38 @@ try {
     tarballRoot,
   );
 
+  const dependencyRoot = join(
+    temporaryRoot,
+    "transitive-dependency",
+  );
+  mkdirSync(dependencyRoot);
+  writeFileSync(
+    join(dependencyRoot, "package.json"),
+    `${JSON.stringify(
+      {
+        name: "stdnum-transitive-browser-fixture",
+        version: "1.0.0",
+        private: true,
+        type: "module",
+        exports: "./index.js",
+        dependencies: {
+          "@stll/stdnum": `file:${join(tarballRoot, mainPack.filename)}`,
+          "@stll/stdnum-wasm": `file:${join(tarballRoot, wasmPack.filename)}`,
+        },
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  writeFileSync(
+    join(dependencyRoot, "index.js"),
+    `
+      export { initialize, StdnumNotInitializedError } from "@stll/stdnum/browser";
+      export { validate } from "@stll/stdnum/cz/ico";
+    `,
+  );
+  const dependencyPack = pack(dependencyRoot, tarballRoot);
+
   const consumerRoot = join(temporaryRoot, "consumer");
   mkdirSync(consumerRoot);
   writeFileSync(
@@ -51,8 +83,7 @@ try {
         private: true,
         type: "module",
         dependencies: {
-          "@stll/stdnum": `file:${join(tarballRoot, mainPack.filename)}`,
-          "@stll/stdnum-wasm": `file:${join(tarballRoot, wasmPack.filename)}`,
+          "stdnum-transitive-browser-fixture": `file:${join(tarballRoot, dependencyPack.filename)}`,
         },
       },
       null,
@@ -66,10 +97,40 @@ try {
   writeFileSync(
     join(consumerRoot, "src.js"),
     `
-      import { validate } from "@stll/stdnum/cz/ico";
-      const result = validate("25596641");
-      document.body.dataset.result = result.valid ? "pass" : "fail";
-      document.body.dataset.compact = result.valid ? result.compact : "";
+      import {
+        initialize,
+        StdnumNotInitializedError,
+        validate,
+      } from "stdnum-transitive-browser-fixture";
+
+      try {
+        validate("25596641");
+        throw new Error("validator unexpectedly ran before initialization");
+      } catch (error) {
+        if (!(error instanceof StdnumNotInitializedError)) throw error;
+        document.body.dataset.preinit = error.name;
+      }
+
+      const initialization = initialize();
+      const concurrentInitializations = Array.from(
+        { length: 32 },
+        () => initialize(),
+      );
+      if (concurrentInitializations.some((candidate) => candidate !== initialization)) {
+        throw new Error("concurrent initialization calls returned different promises");
+      }
+
+      initialization.then(() => {
+        const result = validate("25596641");
+        if (result instanceof Promise) {
+          throw new Error("validator returned a promise after initialization");
+        }
+        document.body.dataset.result = result.valid ? "pass" : "fail";
+        document.body.dataset.compact = result.valid ? result.compact : "";
+      }).catch((error) => {
+        document.body.dataset.result = "error";
+        document.body.dataset.error = String(error);
+      });
     `,
   );
   execFileSync(
@@ -84,13 +145,15 @@ try {
     { cwd: consumerRoot, stdio: "inherit" },
   );
 
+  const logger = compatibilityLogger();
   await build({
     root: consumerRoot,
     configFile: false,
-    logLevel: "warn",
+    customLogger: logger,
     build: {
       outDir: "dist",
       emptyOutDir: true,
+      target: "es2019",
     },
   });
 
@@ -134,6 +197,14 @@ try {
       throw new Error(
         `Browser validator did not execute successfully:\n${html}`,
       );
+    if (
+      !html.includes(
+        'data-preinit="StdnumNotInitializedError"',
+      )
+    )
+      throw new Error(
+        `Browser validator did not report the typed pre-initialization error:\n${html}`,
+      );
     if (!html.includes('data-compact="25596641"'))
       throw new Error(
         `Browser validator returned the wrong compact value:\n${html}`,
@@ -150,8 +221,33 @@ try {
 }
 
 console.log(
-  "Browser smoke passed (Vite production bundle, WASM runtime, synchronous validator subpath).",
+  "Browser smoke passed (transitive ES2019 bundle, concurrent WASM initialization, synchronous validator subpath).",
 );
+
+function compatibilityLogger() {
+  const logger = createLogger("warn");
+  const warn = logger.warn.bind(logger);
+  const warnOnce = logger.warnOnce.bind(logger);
+  const rejectTopLevelAwait = (message) => {
+    if (
+      /top[- ]level await|TOLERATED_TRANSFORM/iu.test(
+        message,
+      )
+    )
+      throw new Error(
+        `ES2019 browser bundle used unsupported syntax:\n${message}`,
+      );
+  };
+  logger.warn = (message, options) => {
+    rejectTopLevelAwait(message);
+    warn(message, options);
+  };
+  logger.warnOnce = (message, options) => {
+    rejectTopLevelAwait(message);
+    warnOnce(message, options);
+  };
+  return logger;
+}
 
 function pack(directory, destination) {
   const packed = JSON.parse(

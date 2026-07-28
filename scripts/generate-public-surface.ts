@@ -803,6 +803,7 @@ const writePackageExports = async (
   };
   const pinned = new Map<string, unknown>([
     [".", conditionalExport("index")],
+    ["./browser", conditionalExport("runtime-browser")],
     ["./types", conditionalExport("types")],
   ]);
   const rest = new Map<string, unknown>([

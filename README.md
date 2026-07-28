@@ -24,10 +24,10 @@ npm install @stll/stdnum
 bun add @stll/stdnum
 ```
 
-For browser or edge runtimes:
+For browser or edge runtimes, install both packages:
 
 ```bash
-npm install @stll/stdnum-wasm
+npm install @stll/stdnum @stll/stdnum-wasm
 ```
 
 For Python 3.11 or newer:
@@ -68,7 +68,22 @@ iban.validate("CZ65 0800 0000 1920 0014 5399");
 
 ### Browser and edge runtimes
 
-The WASM package exposes the registry API asynchronously:
+Initialize the WebAssembly runtime once before calling the synchronous validator
+subpaths:
+
+```typescript
+import { initialize } from "@stll/stdnum/browser";
+import ico from "@stll/stdnum/cz/ico";
+
+await initialize();
+ico.validate("25596641");
+```
+
+Concurrent calls to `initialize()` share the same promise. Calling a validator
+before initialization throws `StdnumNotInitializedError` from
+`@stll/stdnum/browser`.
+
+The WASM package also exposes the registry API asynchronously:
 
 ```typescript
 import { validate } from "@stll/stdnum-wasm";

@@ -20,7 +20,7 @@ const executable = [
     source?.includes('from "@stll/stdnum'),
   );
 
-const expectedExecutableExamples = 5;
+const expectedExecutableExamples = 6;
 if (executable.length !== expectedExecutableExamples) {
   throw new Error(
     `README executable example count drifted: ${String(executable.length)} != ${String(expectedExecutableExamples)}`,
@@ -37,6 +37,10 @@ try {
       `example-${String(index)}.ts`,
     );
     const localSource = source
+      .replaceAll(
+        '"@stll/stdnum/browser"',
+        '"../../packages/stdnum/dist/runtime-browser.js"',
+      )
       .replaceAll(
         '"@stll/stdnum-wasm"',
         '"../../packages/stdnum-wasm/dist/index.js"',

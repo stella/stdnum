@@ -25,6 +25,7 @@ const validatorExports = Object.keys(
     /^\.\/[a-z0-9]+(?:\/[a-z0-9]+)?$/u.test(key) &&
     ![
       "./catalog",
+      "./browser",
       "./native",
       "./patterns",
       "./types",
@@ -71,6 +72,7 @@ try {
     "dist/index.d.ts",
     "dist/runtime.js",
     "dist/runtime-browser.js",
+    "dist/runtime-browser.d.ts",
     "dist/runtime-core.js",
     "index.cjs",
     "registry.json",
