@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const rif: CountryValidator<"VE"> = createValidator(
   "ve.rif",
-  172,
+  173,
 );
 
 export default rif;

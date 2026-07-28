@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const bsn: CountryValidator<"NL"> = createValidator(
   "nl.bsn",
-  133,
+  134,
 );
 
 export default bsn;

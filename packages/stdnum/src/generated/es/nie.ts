@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const nie: CountryValidator<"ES"> = createValidator(
   "es.nie",
-  66,
+  67,
 );
 
 export default nie;

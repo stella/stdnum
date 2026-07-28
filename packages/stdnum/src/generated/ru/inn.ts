@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const inn: CountryValidator<"RU"> = createValidator(
   "ru.inn",
-  152,
+  153,
 );
 
 export default inn;

@@ -30,9 +30,9 @@ const validatorExports = Object.keys(
       "./types",
     ].includes(key),
 );
-if (validatorExports.length !== 175) {
+if (validatorExports.length !== 176) {
   throw new Error(
-    `Expected 175 validator subpaths, found ${validatorExports.length}`,
+    `Expected 176 validator subpaths, found ${validatorExports.length}`,
   );
 }
 for (const value of Object.values(manifest.exports)) {

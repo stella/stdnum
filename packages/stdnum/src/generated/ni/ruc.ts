@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const ruc: CountryValidator<"NI"> = createValidator(
   "ni.ruc",
-  132,
+  133,
 );
 
 export default ruc;

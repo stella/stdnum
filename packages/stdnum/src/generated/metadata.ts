@@ -1346,6 +1346,33 @@ export const registryMetadata = [
     subpath: "cy/vat",
   },
   {
+    abbreviation: "Číslo účtu",
+    aliases: [
+      "číslo účtu",
+      "bankovní účet",
+      "bankovní spojení",
+    ],
+    canGenerate: false,
+    candidatePattern: "(?:\\d{1,6}-)?\\d{2,10}/\\d{4}",
+    country: "CZ",
+    description:
+      "National-format account number with modulo-11 checks and a ČNB-assigned bank code",
+    entityType: "any",
+    examples: ["034278-0727558021/0100"],
+    exportName: "bankaccount",
+    id: "cz.bankaccount",
+    lengths: [22],
+    localName: "Číslo účtu v národním formátu",
+    name: "Czech Bank Account Number",
+    namedExports: ["compact", "format", "validate"],
+    namespaceExport: "cz",
+    parseKind: null,
+    scope: "country",
+    sourceUrl:
+      "https://www.cnb.cz/cs/platebni-styk/ucty-kody-bank/",
+    subpath: "cz/bankaccount",
+  },
+  {
     abbreviation: "DIČ",
     aliases: ["DIČ", "daňové identifikační číslo"],
     canGenerate: true,

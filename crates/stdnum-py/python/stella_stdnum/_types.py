@@ -49,6 +49,7 @@ ValidatorId: TypeAlias = Literal[
     "crypto.wallet",
     "cu.ni",
     "cy.vat",
+    "cz.bankaccount",
     "cz.dic",
     "cz.ico",
     "cz.rc",

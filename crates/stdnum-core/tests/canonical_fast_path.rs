@@ -9,9 +9,10 @@ use stella_stdnum_core::{
 #[global_allocator]
 static GLOBAL: &StatsAlloc<System> = &INSTRUMENTED_SYSTEM;
 
-const CANONICAL_FIXTURES: [(&str, &str); 3] = [
+const CANONICAL_FIXTURES: [(&str, &str); 4] = [
   ("br.cpf", "39053344705"),
   ("cl.rut", "760864285"),
+  ("cz.bankaccount", "034278-0727558021/0100"),
   ("pl.nip", "2234567895"),
 ];
 
@@ -65,6 +66,12 @@ const SELECTED_MODULE_FIXTURES: &[(
     "7561234567897",
     ch::ssn::is_valid_canonical,
     ch::ssn::validate,
+  ),
+  (
+    "cz.bankaccount",
+    "034278-0727558021/0100",
+    cz::bankaccount::is_valid_canonical,
+    cz::bankaccount::validate,
   ),
   (
     "cz.dic",
@@ -156,6 +163,18 @@ fn canonical_validation_invariants() {
         allocations.bytes_allocated, 0,
         "{id} canonical validation allocated bytes"
       );
+
+      for padded in [format!(" {value}"), format!("{value} ")] {
+        assert_eq!(
+          validator.validate_canonical(&padded),
+          CanonicalValidation::NotCanonical,
+          "{id} must fall back when trimming changes the input"
+        );
+        assert!(
+          validator.validate(&padded).is_ok(),
+          "{id} full validation must preserve trimmed input compatibility"
+        );
+      }
     }
   }
   let fixtures = [

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const clabe: CountryValidator<"MX"> = createValidator(
   "mx.clabe",
-  127,
+  128,
 );
 
 export default clabe;

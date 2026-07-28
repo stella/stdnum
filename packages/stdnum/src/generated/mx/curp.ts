@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 const curp: CountryValidator<"MX", ParsedPersonId> =
-  createValidator("mx.curp", 128);
+  createValidator("mx.curp", 129);
 
 export default curp;
 export const compact = curp.compact;

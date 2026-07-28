@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const sedol: CountryValidator<"GB"> = createValidator(
   "gb.sedol",
-  80,
+  81,
 );
 
 export default sedol;

@@ -2,7 +2,7 @@
 import { createValidator, getBinding } from "../runtime";
 import type { GlobalValidator } from "../types";
 
-const luhn: GlobalValidator = createValidator("luhn", 118);
+const luhn: GlobalValidator = createValidator("luhn", 119);
 
 export default luhn;
 export const compact = luhn.compact;

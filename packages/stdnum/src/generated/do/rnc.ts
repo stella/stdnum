@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const rnc: CountryValidator<"DO"> = createValidator(
   "do.rnc",
-  58,
+  59,
 );
 
 export default rnc;

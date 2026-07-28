@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const kvk: CountryValidator<"NL"> = createValidator(
   "nl.kvk",
-  134,
+  135,
 );
 
 export default kvk;

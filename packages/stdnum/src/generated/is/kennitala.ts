@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const kennitala: CountryValidator<"IS"> = createValidator(
   "is.kennitala",
-  101,
+  102,
 );
 
 export default kennitala;

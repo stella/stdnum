@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const philid: CountryValidator<"PH"> = createValidator(
   "ph.philid",
-  142,
+  143,
 );
 
 export default philid;

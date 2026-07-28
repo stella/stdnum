@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const nin: CountryValidator<"NG"> = createValidator(
   "ng.nin",
-  131,
+  132,
 );
 
 export default nin;

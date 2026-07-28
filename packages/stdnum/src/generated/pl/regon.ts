@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const regon: CountryValidator<"PL"> = createValidator(
   "pl.regon",
-  146,
+  147,
 );
 
 export default regon;

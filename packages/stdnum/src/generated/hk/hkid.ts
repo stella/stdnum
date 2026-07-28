@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const hkid: CountryValidator<"HK"> = createValidator(
   "hk.hkid",
-  88,
+  89,
 );
 
 export default hkid;

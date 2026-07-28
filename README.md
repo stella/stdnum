@@ -11,7 +11,7 @@ same registry is available from Python as `stella-stdnum`.
 
 <!-- BEGIN GENERATED: registry-summary -->
 
-This package covers 11 global identifiers and 96 countries through 175
+This package covers 11 global identifiers and 96 countries through 176
 per-module entry points.
 
 <!-- END GENERATED: registry-summary -->
@@ -189,7 +189,8 @@ new upstream versions before they can merge.
 | CR      | `cr/cpf`           | CPF          |
 | CU      | `cu/ni`            | NI           |
 | CY      | `cy/vat`           | ΦΠΑ          |
-| CZ      | `cz/dic`           | DIČ          |
+| CZ      | `cz/bankaccount`   | Číslo účtu   |
+|         | `cz/dic`           | DIČ          |
 |         | `cz/ico`           | IČO          |
 |         | `cz/rc`            | RČ           |
 | DE      | `de/handelsreg`    | HReg         |

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const ico: CountryValidator<"SK"> = createValidator(
   "sk.ico",
-  160,
+  161,
 );
 
 export default ico;

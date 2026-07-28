@@ -269,6 +269,11 @@
       "import": "./dist/cy/vat.js",
       "default": "./dist/cy/vat.js"
     },
+    "./cz/bankaccount": {
+      "types": "./dist/cz/bankaccount.d.ts",
+      "import": "./dist/cz/bankaccount.js",
+      "default": "./dist/cz/bankaccount.js"
+    },
     "./cz/dic": {
       "types": "./dist/cz/dic.d.ts",
       "import": "./dist/cz/dic.js",

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const gstin: CountryValidator<"IN"> = createValidator(
   "in.gstin",
-  97,
+  98,
 );
 
 export default gstin;

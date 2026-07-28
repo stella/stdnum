@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const cc: CountryValidator<"PT"> = createValidator(
   "pt.cc",
-  147,
+  148,
 );
 
 export default cc;

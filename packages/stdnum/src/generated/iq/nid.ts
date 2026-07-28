@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const nid: CountryValidator<"IQ"> = createValidator(
   "iq.nid",
-  99,
+  100,
 );
 
 export default nid;

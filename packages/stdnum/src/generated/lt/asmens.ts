@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const asmens: CountryValidator<"LT"> = createValidator(
   "lt.asmens",
-  115,
+  116,
 );
 
 export default asmens;

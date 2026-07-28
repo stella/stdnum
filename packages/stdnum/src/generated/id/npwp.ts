@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const npwp: CountryValidator<"ID"> = createValidator(
   "id.npwp",
-  92,
+  93,
 );
 
 export default npwp;

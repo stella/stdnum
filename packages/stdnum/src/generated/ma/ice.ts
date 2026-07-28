@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const ice: CountryValidator<"MA"> = createValidator(
   "ma.ice",
-  120,
+  121,
 );
 
 export default ice;

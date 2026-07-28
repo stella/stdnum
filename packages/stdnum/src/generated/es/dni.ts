@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const dni: CountryValidator<"ES"> = createValidator(
   "es.dni",
-  65,
+  66,
 );
 
 export default dni;

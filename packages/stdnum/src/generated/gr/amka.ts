@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const amka: CountryValidator<"GR"> = createValidator(
   "gr.amka",
-  85,
+  86,
 );
 
 export default amka;

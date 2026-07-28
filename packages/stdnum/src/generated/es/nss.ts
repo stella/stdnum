@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const nss: CountryValidator<"ES"> = createValidator(
   "es.nss",
-  67,
+  68,
 );
 
 export default nss;

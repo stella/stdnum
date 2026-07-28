@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const vsk: CountryValidator<"IS"> = createValidator(
   "is.vsk",
-  102,
+  103,
 );
 
 export default vsk;

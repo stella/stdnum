@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const ird: CountryValidator<"NZ"> = createValidator(
   "nz.ird",
-  139,
+  140,
 );
 
 export default ird;

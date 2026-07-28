@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const dic: CountryValidator<"SK"> = createValidator(
   "sk.dic",
-  159,
+  160,
 );
 
 export default dic;

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const ubn: CountryValidator<"TW"> = createValidator(
   "tw.ubn",
-  165,
+  166,
 );
 
 export default ubn;

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const pib: CountryValidator<"ME"> = createValidator(
   "me.pib",
-  123,
+  124,
 );
 
 export default pib;

@@ -8,6 +8,7 @@ static PRIMARY_VALIDATORS: &[&Validator] = &[
   &country_validators::at::businessid::VALIDATOR,
   &country_validators::au::abn::VALIDATOR,
   &country_validators::br::cpf::VALIDATOR,
+  &country_validators::cz::bankaccount::VALIDATOR,
   &country_validators::crypto::btcbase58::VALIDATOR,
   &country_validators::crypto::btcbech32::VALIDATOR,
   &country_validators::crypto::eth::VALIDATOR,

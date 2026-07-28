@@ -2,7 +2,7 @@
 import { createValidator } from "../runtime";
 import type { GlobalValidator } from "../types";
 
-const isin: GlobalValidator = createValidator("isin", 103);
+const isin: GlobalValidator = createValidator("isin", 104);
 
 export default isin;
 export const compact = isin.compact;

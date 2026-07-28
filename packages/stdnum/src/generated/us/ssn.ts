@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const ssn: CountryValidator<"US"> = createValidator(
   "us.ssn",
-  170,
+  171,
 );
 
 export default ssn;

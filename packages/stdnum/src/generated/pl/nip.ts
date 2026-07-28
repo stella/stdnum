@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const nip: CountryValidator<"PL"> = createValidator(
   "pl.nip",
-  144,
+  145,
 );
 
 export default nip;

@@ -4,7 +4,7 @@ import type { CountryValidator } from "../../types";
 
 const utr: CountryValidator<"GB"> = createValidator(
   "gb.utr",
-  81,
+  82,
 );
 
 export default utr;
