@@ -947,6 +947,7 @@
     "codegen:check": "bun ../../scripts/generate-public-surface.ts --check"
   },
   "devDependencies": {
+    "@stll/stdnum-wasm": "workspace:*",
     "tsdown": "0.22.9",
     "typescript": "7.0.2"
   },
