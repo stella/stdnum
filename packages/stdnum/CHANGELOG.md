@@ -1,5 +1,19 @@
 # @stll/stdnum
 
+## 2.2.0
+
+### Minor Changes
+
+- [#170](https://github.com/stella/stdnum/pull/170) [`76a6f1d`](https://github.com/stella/stdnum/commit/76a6f1d5ab05e0307ef9888c62e3912f8ce3d390) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Add Czech national bank account validation as `cz.bankaccount`.
+
+### Patch Changes
+
+- [#168](https://github.com/stella/stdnum/pull/168) [`676724f`](https://github.com/stella/stdnum/commit/676724f9481d64b5a942188ea00e8187a2cf4ede) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Say which package is missing when the native binding cannot load. The platform
+  binaries are optional dependencies, so an installer that declines them leaves
+  the package importable and dead, throwing only on first use. The previous error
+  listed every supported target, including the one it was running on, which reads
+  as a portability problem rather than a missing install.
+
 ## 2.1.6
 
 ### Patch Changes
