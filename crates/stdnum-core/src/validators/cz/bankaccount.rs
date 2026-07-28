@@ -6,7 +6,7 @@ use crate::types::{
 };
 
 const PART_WEIGHTS: &[u32; 10] = &[6, 3, 7, 9, 10, 5, 8, 4, 2, 1];
-const BANK_CODES: &str = include_str!("bank_codes.txt");
+const BANK_CODES: &[u16] = include!("bank_codes.rs");
 const CANONICAL_LENGTH: usize = 22;
 
 pub static VALIDATOR: Validator = Validator::new(ValidatorSpec {
@@ -61,20 +61,88 @@ pub fn is_valid_canonical(value: &str) -> bool {
 }
 
 fn validate_canonical(value: &str) -> CanonicalValidation {
-  if value.trim() != value {
+  let bytes = value.as_bytes();
+  if bytes.len() != CANONICAL_LENGTH {
     return CanonicalValidation::NotCanonical;
   }
-  let parts = match parse_parts(value) {
-    Ok(parts) => parts,
-    Err(error) => return CanonicalValidation::Invalid(error),
-  };
-  if parts.prefix.map(str::len) != Some(6) || parts.root.len() != 10 {
-    return CanonicalValidation::NotCanonical;
+
+  let mut prefix_sum = 0_u32;
+  let mut root_sum = 0_u32;
+  let mut root_nonzero_digits = 0_u8;
+  let mut bank_code = 0_u16;
+
+  for (index, byte) in bytes.iter().copied().enumerate() {
+    if !byte.is_ascii() {
+      return CanonicalValidation::NotCanonical;
+    }
+    match index {
+      6 if byte == b'-' => {}
+      17 if byte == b'/' => {}
+      0..=5 | 7..=16 | 18..=21 if byte.is_ascii_digit() => {
+        let digit = u32::from(byte.saturating_sub(b'0'));
+        match index {
+          0..=5 => {
+            let Some(weight) =
+              PART_WEIGHTS.get(index.saturating_add(4)).copied()
+            else {
+              return CanonicalValidation::Invalid(
+                ValidationError::InvalidFormat(
+                  "Czech bank account prefix position is invalid",
+                ),
+              );
+            };
+            prefix_sum =
+              prefix_sum.saturating_add(digit.saturating_mul(weight));
+          }
+          7..=16 => {
+            let Some(weight) =
+              PART_WEIGHTS.get(index.saturating_sub(7)).copied()
+            else {
+              return CanonicalValidation::Invalid(
+                ValidationError::InvalidFormat(
+                  "Czech bank account root position is invalid",
+                ),
+              );
+            };
+            root_sum = root_sum.saturating_add(digit.saturating_mul(weight));
+            root_nonzero_digits =
+              root_nonzero_digits.saturating_add(u8::from(digit != 0));
+          }
+          18..=21 => {
+            bank_code = bank_code
+              .saturating_mul(10)
+              .saturating_add(u16::from(byte.saturating_sub(b'0')));
+          }
+          _ => {}
+        }
+      }
+      0 | 21 if byte.is_ascii_whitespace() => {
+        return CanonicalValidation::NotCanonical;
+      }
+      _ => {
+        return CanonicalValidation::Invalid(ValidationError::InvalidFormat(
+          "Czech bank account must use the canonical digit and separator positions",
+        ));
+      }
+    }
   }
-  match validate_parts(parts) {
-    Ok(()) => CanonicalValidation::Valid,
-    Err(error) => CanonicalValidation::Invalid(error),
+
+  if root_nonzero_digits < 2 {
+    return CanonicalValidation::Invalid(ValidationError::InvalidComponent(
+      "Czech basic account number must contain at least two non-zero digits",
+    ));
   }
+  if !prefix_sum.is_multiple_of(11) || !root_sum.is_multiple_of(11) {
+    return CanonicalValidation::Invalid(ValidationError::InvalidChecksum(
+      "Czech bank account part fails the modulo 11 check",
+    ));
+  }
+  if !is_assigned_bank_code(bank_code) {
+    return CanonicalValidation::Invalid(ValidationError::InvalidComponent(
+      "Czech bank code is not assigned by the Czech National Bank",
+    ));
+  }
+  CanonicalValidation::Valid
 }
 
 fn parse_parts(value: &str) -> Result<AccountParts<'_>, ValidationError> {
@@ -118,6 +186,11 @@ fn parse_parts(value: &str) -> Result<AccountParts<'_>, ValidationError> {
 }
 
 fn validate_parts(parts: AccountParts<'_>) -> Result<(), ValidationError> {
+  if parts.root.bytes().filter(|digit| *digit != b'0').count() < 2 {
+    return Err(ValidationError::InvalidComponent(
+      "Czech basic account number must contain at least two non-zero digits",
+    ));
+  }
   if parts
     .prefix
     .is_some_and(|prefix| !has_valid_checksum(prefix))
@@ -127,7 +200,12 @@ fn validate_parts(parts: AccountParts<'_>) -> Result<(), ValidationError> {
       "Czech bank account part fails the modulo 11 check",
     ));
   }
-  if !is_assigned_bank_code(parts.bank) {
+  let bank_code = parts.bank.bytes().fold(0_u16, |code, digit| {
+    code
+      .saturating_mul(10)
+      .saturating_add(u16::from(digit.saturating_sub(b'0')))
+  });
+  if !is_assigned_bank_code(bank_code) {
     return Err(ValidationError::InvalidComponent(
       "Czech bank code is not assigned by the Czech National Bank",
     ));
@@ -151,8 +229,8 @@ fn has_valid_checksum(part: &str) -> bool {
     .is_multiple_of(11)
 }
 
-fn is_assigned_bank_code(bank: &str) -> bool {
-  BANK_CODES.lines().any(|code| code == bank)
+fn is_assigned_bank_code(bank: u16) -> bool {
+  BANK_CODES.binary_search(&bank).is_ok()
 }
 
 fn canonicalize(parts: AccountParts<'_>) -> String {
@@ -204,6 +282,13 @@ mod tests {
 
   #[test]
   fn rejects_invalid_components_with_stable_error_kinds() {
+    for zero_root in ["00/0100", "000000-0000000000/0100"] {
+      assert!(matches!(
+        validate(zero_root),
+        Err(ValidationError::InvalidComponent(_))
+      ));
+      assert!(!is_valid_canonical(zero_root));
+    }
     assert!(matches!(
       validate("4278-727558021/0100"),
       Err(ValidationError::InvalidChecksum(_))
@@ -225,13 +310,9 @@ mod tests {
 
   #[test]
   fn bank_code_data_is_sorted_unique_and_exhaustive_for_membership() {
-    let codes = BANK_CODES
-      .lines()
-      .filter(|line| !line.starts_with('#'))
-      .collect::<Vec<_>>();
-    assert_eq!(codes.len(), BANK_CODE_COUNT, "bank code count changed");
+    assert_eq!(BANK_CODES.len(), BANK_CODE_COUNT, "bank code count changed");
     assert!(
-      codes.windows(2).all(|pair| {
+      BANK_CODES.windows(2).all(|pair| {
         pair
           .first()
           .zip(pair.last())
@@ -240,12 +321,11 @@ mod tests {
       "bank codes must remain sorted and unique"
     );
     for code in 0_u16..=9_999 {
-      let code = format!("{code:04}");
-      let expected = codes.contains(&code.as_str());
+      let expected = BANK_CODES.contains(&code);
       assert_eq!(
-        validate(&format!("000019-2000145399/{code}")).is_ok(),
+        validate(&format!("000019-2000145399/{code:04}")).is_ok(),
         expected,
-        "{code}"
+        "{code:04}"
       );
     }
   }
@@ -289,15 +369,12 @@ mod tests {
         return Ok(());
       };
       prop_assume!(root.bytes().filter(|digit| *digit != b'0').count() >= 2);
-      let Some(bank) = BANK_CODES
-        .lines()
-        .filter(|line| !line.starts_with('#'))
-        .nth(bank_index)
-      else {
+      let Some(bank) = BANK_CODES.get(bank_index) else {
         return Ok(());
       };
-      let candidate = format!("{prefix}-{root}/{bank}");
+      let candidate = format!("{prefix}-{root}/{bank:04}");
       prop_assert!(validate(&candidate).is_ok(), "{candidate}");
+      prop_assert!(is_valid_canonical(&candidate), "{candidate}");
 
       let mut digit_offsets = (0_usize..6).collect::<Vec<_>>();
       digit_offsets.extend(7_usize..17);
@@ -315,7 +392,32 @@ mod tests {
           return Ok(());
         };
         prop_assert!(validate(&mutation).is_err(), "{mutation}");
+        prop_assert!(!is_valid_canonical(&mutation), "{mutation}");
       }
+    }
+
+    #[test]
+    fn roots_with_fewer_than_two_nonzero_digits_are_invalid_components(
+      include_nonzero in any::<bool>(),
+      nonzero_position in 0_usize..10,
+      nonzero_digit in 1_u8..=9,
+    ) {
+      let mut root = vec![b'0'; 10];
+      if include_nonzero {
+        let Some(digit) = root.get_mut(nonzero_position) else {
+          return Ok(());
+        };
+        *digit = b'0'.saturating_add(nonzero_digit);
+      }
+      let Ok(root) = String::from_utf8(root) else {
+        return Ok(());
+      };
+      let candidate = format!("{root}/0100");
+      let result = validate(&candidate);
+      prop_assert!(matches!(
+        result,
+        Err(ValidationError::InvalidComponent(_))
+      ), "{candidate}");
     }
   }
 }
