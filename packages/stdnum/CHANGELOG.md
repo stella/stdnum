@@ -1,5 +1,11 @@
 # @stll/stdnum
 
+## 2.3.0
+
+### Minor Changes
+
+- [#174](https://github.com/stella/stdnum/pull/174) [`72c4772`](https://github.com/stella/stdnum/commit/72c4772160b37841d78589ffea95267a2632197d) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Add explicit, idempotent browser initialization without top-level await, plus a typed error for validator calls made before initialization.
+
 ## 2.2.1
 
 ### Patch Changes
