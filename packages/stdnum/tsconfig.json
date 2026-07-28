@@ -2,6 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "noEmit": true,
+    "paths": {
+      "#stdnum-runtime": ["./src/runtime.ts"]
+    },
     "rootDir": "src",
     "types": ["node", "bun-types"]
   },

@@ -69,6 +69,9 @@ try {
   assertPackFiles(mainPack, [
     "dist/index.js",
     "dist/index.d.ts",
+    "dist/runtime.js",
+    "dist/runtime-browser.js",
+    "dist/runtime-core.js",
     "index.cjs",
     "registry.json",
   ]);

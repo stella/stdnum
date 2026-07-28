@@ -352,7 +352,8 @@ const validatorModule = (
     ) || validator.id === "luhn";
   const lines = [
     generatedHeader.trimEnd(),
-    `import { createValidator${hasSpecialExports ? ", getBinding" : ""} } from ${quote(`${relative}runtime`)};`,
+    "",
+    `import { createValidator${hasSpecialExports ? ", getBinding" : ""} } from "#stdnum-runtime";`,
     `import type { ${imports}${parsedImport} } from ${quote(`${relative}types`)};`,
     "",
     `const ${validator.exportName}: ${typeName} = createValidator(${quote(validator.id)}, ${String(index)});`,
@@ -794,6 +795,12 @@ const writePackageExports = async (
   const manifest = JSON.parse(
     await readFile(path, "utf8"),
   ) as Record<string, unknown>;
+  manifest.imports = {
+    "#stdnum-runtime": {
+      browser: "./dist/runtime-browser.js",
+      default: "./dist/runtime.js",
+    },
+  };
   const pinned = new Map<string, unknown>([
     [".", conditionalExport("index")],
     ["./types", conditionalExport("types")],
