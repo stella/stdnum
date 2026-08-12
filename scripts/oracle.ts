@@ -1273,7 +1273,10 @@ const SURVEY_ONLY_ENTRIES = new Set([
   "python-stdnum:in_.pan",
 ]);
 
-const tierFor = (source: string, key: string): OracleMode =>
+const tierFor = (
+  source: string,
+  key: string,
+): OracleMode =>
   SURVEY_ONLY_SOURCES.has(source) ||
   SURVEY_ONLY_ENTRIES.has(`${source}:${key}`)
     ? "survey"
