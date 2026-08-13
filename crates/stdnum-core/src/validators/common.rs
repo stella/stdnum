@@ -1,6 +1,6 @@
 use crate::{ValidationError, ValidationResult, compact_without, random_below};
 
-pub(super) const fn invalid_length() -> ValidationError {
+const fn invalid_length() -> ValidationError {
   ValidationError::InvalidLength("identifier has an invalid length")
 }
 

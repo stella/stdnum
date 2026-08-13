@@ -1623,7 +1623,7 @@ fn validate_pl_nip(value: &str) -> bool {
   validate_pl_nip_ascii(compact.as_bytes())
 }
 
-pub(crate) fn validate_pl_nip_ascii(bytes: &[u8]) -> bool {
+fn validate_pl_nip_ascii(bytes: &[u8]) -> bool {
   let Ok(digits) = <&[u8; 10]>::try_from(bytes) else {
     return false;
   };
@@ -2306,7 +2306,7 @@ const fn is_leap_year(year: u32) -> bool {
     || year.is_multiple_of(400)
 }
 
-pub(crate) fn current_year() -> u32 {
+fn current_year() -> u32 {
   current_date().0
 }
 

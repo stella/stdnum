@@ -28,6 +28,7 @@
     "rust:fmt": "cargo ci-fmt",
     "rust:fmt:check": "cargo ci-fmt",
     "rust:lint": "cargo ci-clippy",
+    "rust:hawk": "cargo +1.97.1 hawk check --target-dir target/hawk -D warnings -A hawk::dead_public -A hawk::unnecessary_public",
     "rust:dylint": "cargo ci-dylint",
     "rust:test": "cargo ci-test && cargo ci-test-doc",
     "rust:deny": "cargo ci-deny",
@@ -51,11 +52,11 @@
   },
   "devDependencies": {
     "@brazilian-utils/brazilian-utils": "^2.3.0",
-    "@changesets/changelog-github": "^0.7.0",
-    "@changesets/cli": "^2.31.0",
+    "@changesets/changelog-github": "^1.0.0",
+    "@changesets/cli": "^3.0.0",
     "@stll/oxlint-config": "0.6.0",
     "@stll/typescript-config": "0.6.0",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.2.0",
     "bun-types": "^1.3.14",
     "fast-check": "^4.9.0",
     "fast-luhn": "^2.0.2",
@@ -64,15 +65,15 @@
     "jsvat": "^2.5.4",
     "lefthook": "^2.1.10",
     "luhn": "^2.4.1",
-    "oxfmt": "^0.53.0",
-    "oxlint": "1.75.0",
+    "oxfmt": "^0.63.0",
+    "oxlint": "1.78.0",
     "oxlint-tsgolint": "7.0.2001",
     "rut.js": "^2.1.0",
-    "stdnum": "^1.12.3",
-    "tsdown": "0.22.9",
+    "stdnum": "^1.12.6",
+    "tsdown": "0.22.14",
     "typescript": "7.0.2",
     "validate-polish": "^2.1.40",
-    "vite": "8.1.5"
+    "vite": "8.2.1"
   },
-  "packageManager": "bun@1.3.12"
+  "packageManager": "bun@1.3.14"
 }
