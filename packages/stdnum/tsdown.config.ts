@@ -39,7 +39,14 @@ const entries = Object.fromEntries([
 export default defineConfig({
   entry: entries,
   deps: {
-    neverBundle: ["#stdnum-runtime", "@stll/stdnum-wasm"],
+    // index.cjs ships as-is: its literal `require` table is what lets
+    // consumer bundlers resolve the platform addon; inlining it rewrites
+    // those calls into a runtime helper they cannot see.
+    neverBundle: [
+      "#stdnum-runtime",
+      "@stll/stdnum-wasm",
+      /\/index\.cjs$/u,
+    ],
   },
   format: ["esm"],
   unbundle: true,
