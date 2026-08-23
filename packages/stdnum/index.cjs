@@ -1,13 +1,14 @@
 "use strict";
 
 // Every specifier in this file is a string literal, and every `require` sits
-// directly inside a `try` block, on purpose. Bundlers (Bun, esbuild) resolve
-// literal requires at build time and ship the matching `.node` addon as a
-// sidecar asset; a specifier computed at runtime is invisible to them, so the
-// bundle imports cleanly and throws on first use. The `try` is what lets a
-// bundler tolerate the platform packages that are not installed on the build
-// host. src/native-node.ts keeps `NATIVE_BINDING_TARGETS` in sync with this
-// table (guarded by test).
+// directly inside a `try` block, on purpose. Bundlers resolve literal requires
+// at build time and can ship the matching `.node` addon as a sidecar asset
+// (Bun does so by default; esbuild needs `loader: { ".node": "file" }`); a
+// specifier computed at runtime is invisible to them, so the bundle imports
+// cleanly and throws on first use. The `try` is what lets a bundler tolerate
+// the platform packages that are not installed on the build host.
+// src/native-node.ts keeps `NATIVE_BINDING_TARGETS` in sync with this table
+// (guarded by test).
 
 // Mirrors detectLibc in src/native-node.ts; only glibc builds are published.
 const isGlibc = () =>
