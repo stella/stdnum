@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import process from "node:process";
 
+import { loadNativeBinding } from "../index.cjs";
 import {
   asNativeBinding,
   type NativeStdnumBinding,
@@ -15,7 +16,7 @@ export type LoadNativeBindingOptions = {
   requireModule?: (specifier: string) => unknown;
 };
 
-const targets = [
+export const NATIVE_BINDING_TARGETS = [
   [
     "darwin",
     "arm64",
@@ -41,24 +42,48 @@ export const loadNativeStdnumBinding = (
   const libc = options.libc ?? detectLibc(platform);
   const requireModule =
     options.requireModule ?? createRequire(import.meta.url);
-  const match = targets.find(
+  const match = NATIVE_BINDING_TARGETS.find(
     ([targetPlatform, targetArch, targetLibc]) =>
       targetPlatform === platform &&
       targetArch === arch &&
       (targetLibc === undefined || targetLibc === libc),
   );
-  const candidates = [
+  // The host platform loads through index.cjs, whose specifiers are string
+  // literals so bundlers resolve the addon at build time and ship it as a
+  // sidecar. A computed specifier (the injectable path below) is invisible to
+  // them, so a `bun build --compile` binary would import fine and throw here.
+  const useStaticLoader =
+    options.requireModule === undefined &&
+    match !== undefined &&
+    isHostTarget({ platform, arch, libc });
+  const libraryPath =
     options.env?.["STELLA_STDNUM_NATIVE_LIBRARY_PATH"] ??
-      process.env["STELLA_STDNUM_NATIVE_LIBRARY_PATH"],
-    "../index.cjs",
-    match?.[3],
-  ].filter((value): value is string => value !== undefined);
+    process.env["STELLA_STDNUM_NATIVE_LIBRARY_PATH"];
+  const candidates: Array<[string, () => unknown]> = [];
+  if (libraryPath !== undefined) {
+    candidates.push([
+      libraryPath,
+      () => requireModule(libraryPath),
+    ]);
+  }
+  if (useStaticLoader) {
+    candidates.push(["../index.cjs", loadNativeBinding]);
+  } else {
+    candidates.push([
+      "../index.cjs",
+      () => requireModule("../index.cjs"),
+    ]);
+    if (match !== undefined) {
+      candidates.push([
+        match[3],
+        () => requireModule(match[3]),
+      ]);
+    }
+  }
   const errors: string[] = [];
-  for (const specifier of candidates) {
+  for (const [specifier, load] of candidates) {
     try {
-      const binding = asNativeBinding(
-        requireModule(specifier),
-      );
+      const binding = asNativeBinding(load());
       if (binding !== null) return binding;
       errors.push(
         `${specifier}: module does not match the stdnum binding contract`,
@@ -72,9 +97,9 @@ export const loadNativeStdnumBinding = (
   const current = [platform, arch, libc]
     .filter(Boolean)
     .join("-");
-  const supported = targets
-    .map(([p, a, l]) => [p, a, l].filter(Boolean).join("-"))
-    .join(", ");
+  const supported = NATIVE_BINDING_TARGETS.map(
+    ([p, a, l]) => [p, a, l].filter(Boolean).join("-"),
+  ).join(", ");
 
   // Distinguish "we do not build for this platform" from "we do, but the
   // package holding the binary is not installed". They read identically in a
@@ -96,6 +121,19 @@ export const loadNativeStdnumBinding = (
       `Tried:\n${errors.map((line) => `  ${line}`).join("\n")}`,
   );
 };
+
+const isHostTarget = ({
+  platform,
+  arch,
+  libc,
+}: {
+  platform: string;
+  arch: string;
+  libc: NativeLibc | undefined;
+}): boolean =>
+  platform === process.platform &&
+  arch === process.arch &&
+  (platform !== "linux" || libc === detectLibc(platform));
 
 const detectLibc = (
   platform: string,

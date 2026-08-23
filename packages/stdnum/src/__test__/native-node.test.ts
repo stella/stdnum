@@ -11,9 +11,13 @@
  */
 
 import { describe, expect, test } from "bun:test";
+import { readFile } from "node:fs/promises";
 
 import type { NativeStdnumBinding } from "../native";
-import { loadNativeStdnumBinding } from "../native-node";
+import {
+  loadNativeStdnumBinding,
+  NATIVE_BINDING_TARGETS,
+} from "../native-node";
 
 /** Nothing resolves: the shape an install with no platform package has. */
 const requireNothing = (specifier: string): unknown => {
@@ -106,5 +110,24 @@ describe("loadNativeStdnumBinding", () => {
     });
 
     expect(loaded).toBe(binding);
+  });
+});
+
+describe("index.cjs static loader", () => {
+  test("names every build target as a literal require", async () => {
+    // Bundlers only see literal specifiers, so a target missing from the
+    // table loads in a plain install and fails inside a compiled bundle.
+    const source = await readFile(
+      new URL("../../index.cjs", import.meta.url),
+      "utf8",
+    );
+    for (const [
+      ,
+      ,
+      ,
+      packageName,
+    ] of NATIVE_BINDING_TARGETS) {
+      expect(source).toContain(`require("${packageName}")`);
+    }
   });
 });
