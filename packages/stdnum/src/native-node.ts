@@ -71,7 +71,12 @@ export const loadNativeStdnumBinding = (
   } else {
     candidates.push([
       "../index.cjs",
-      () => requireModule("../index.cjs"),
+      () => {
+        const loaded = requireModule("../index.cjs");
+        return isLoaderModule(loaded)
+          ? loaded.loadNativeBinding()
+          : loaded;
+      },
     ]);
     if (match !== undefined) {
       candidates.push([
@@ -121,6 +126,16 @@ export const loadNativeStdnumBinding = (
       `Tried:\n${errors.map((line) => `  ${line}`).join("\n")}`,
   );
 };
+
+// index.cjs exports a loader, not the binding; an injected `requireModule`
+// hands the module back verbatim.
+const isLoaderModule = (
+  value: unknown,
+): value is { loadNativeBinding: () => unknown } =>
+  typeof value === "object" &&
+  value !== null &&
+  "loadNativeBinding" in value &&
+  typeof value.loadNativeBinding === "function";
 
 const isHostTarget = ({
   platform,

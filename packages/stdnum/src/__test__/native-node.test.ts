@@ -113,6 +113,30 @@ describe("loadNativeStdnumBinding", () => {
   });
 });
 
+describe("injected requireModule", () => {
+  test("invokes the loader that ../index.cjs exports", () => {
+    const binding = new Proxy(
+      {},
+      { get: () => () => undefined },
+    ) as NativeStdnumBinding;
+    const loaded = loadNativeStdnumBinding({
+      platform: "linux",
+      arch: "x64",
+      libc: "gnu",
+      env: {},
+      requireModule: (specifier) => {
+        if (specifier === "../index.cjs")
+          return { loadNativeBinding: () => binding };
+        throw new Error(
+          `Cannot find module '${specifier}'`,
+        );
+      },
+    });
+
+    expect(loaded).toBe(binding);
+  });
+});
+
 describe("index.cjs static loader", () => {
   test("names every build target as a literal require", async () => {
     // Bundlers only see literal specifiers, so a target missing from the
