@@ -1,6 +1,6 @@
 {
   "name": "@stll/stdnum-wasm",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Standard identifier validation for browsers via WebAssembly",
   "homepage": "https://github.com/stella/stdnum",
   "license": "MIT",
