@@ -69,15 +69,19 @@ export const loadNativeStdnumBinding = (
   if (useStaticLoader) {
     candidates.push(["../index.cjs", loadNativeBinding]);
   } else {
-    candidates.push([
-      "../index.cjs",
-      () => {
-        const loaded = requireModule("../index.cjs");
-        return isLoaderModule(loaded)
-          ? loaded.loadNativeBinding()
-          : loaded;
-      },
-    ]);
+    // index.cjs always loads the host addon, so a caller asking for another
+    // target must not consult it unless it injected the require itself.
+    if (options.requireModule !== undefined) {
+      candidates.push([
+        "../index.cjs",
+        () => {
+          const loaded = requireModule("../index.cjs");
+          return isLoaderModule(loaded)
+            ? loaded.loadNativeBinding()
+            : loaded;
+        },
+      ]);
+    }
     if (match !== undefined) {
       candidates.push([
         match[3],
