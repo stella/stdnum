@@ -427,35 +427,23 @@ jobs:
           packages-dir: dist
 
   github-release:
-    name: Create GitHub release
+    name: Finalize release
     needs: [verify, publish-main, publish-pypi]
     if: needs.verify.outputs.publish == 'true'
-    runs-on: ubuntu-24.04
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@7198083e27bdd963cacc0b7d70ca54fe3ec83393
+    with:
+      package-files: |
+        packages/stdnum/package.json
+        packages/stdnum-wasm/package.json
+        packages/stdnum-linux-x64-gnu/package.json
+        packages/stdnum-linux-arm64-gnu/package.json
+        packages/stdnum-darwin-x64/package.json
+        packages/stdnum-darwin-arm64/package.json
+        packages/stdnum-win32-x64-msvc/package.json
+      artifact-pattern: npm-tarball-*
+      publish-to-npm: true
+      update-changelog: false
     permissions:
       contents: write
-    steps:
-      - name: Mint release token
-        id: release-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ secrets.CHANGELOG_APP_ID }}
-          private-key: ${{ secrets.CHANGELOG_APP_PRIVATE_KEY }}
-
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          token: ${{ steps.release-token.outputs.token }}
-
-      - name: Create release if missing
-        env:
-          GH_TOKEN: ${{ steps.release-token.outputs.token }}
-          TAG: v${{ needs.verify.outputs.version }}
-        run: |
-          set -euo pipefail
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "$TAG already exists"
-            exit 0
-          fi
-          gh release create "$TAG" \
-            --target "$GITHUB_SHA" \
-            --generate-notes
+      id-token: write
+    secrets: inherit
