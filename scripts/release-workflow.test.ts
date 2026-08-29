@@ -34,26 +34,23 @@ const permissionWrites = (
 
 const privilegedContract = (source: string) => {
   const parsed = YAML.parse(source);
+  const { jobs, ...workflowScope } = parsed;
   const workflowPermissions = parsed.permissions ?? {};
   const writes = [
     ...permissionWrites("workflow", workflowPermissions),
-    ...Object.entries(parsed.jobs).flatMap(
-      ([jobName, job]) =>
-        permissionWrites(
-          jobName,
-          job.permissions ?? workflowPermissions,
-        ),
+    ...Object.entries(jobs).flatMap(([jobName, job]) =>
+      permissionWrites(
+        jobName,
+        job.permissions ?? workflowPermissions,
+      ),
     ),
   ].sort();
   return {
     jobs: {
-      "github-release": fingerprint(
-        parsed.jobs["github-release"],
-      ),
-      "publish-pypi": fingerprint(
-        parsed.jobs["publish-pypi"],
-      ),
+      "github-release": fingerprint(jobs["github-release"]),
+      "publish-pypi": fingerprint(jobs["publish-pypi"]),
     },
+    workflow: fingerprint(workflowScope),
     writes,
   };
 };
@@ -66,6 +63,8 @@ const assertPrivilegedContract = (source: string) => {
       "publish-pypi":
         "616df460cd1c840541fad8b522e98c461b09c9a095f065137adce66e83310f0e",
     },
+    workflow:
+      "f62460e541e129b6fe93832099cfa0c0bc6cfef669d87ef0f028a4d78489ec0a",
     writes: [
       "github-release:contents",
       "github-release:id-token",
@@ -122,6 +121,10 @@ describe("release privilege boundary", () => {
       workflow.replace(
         "permissions:\n  contents: read",
         "permissions: write-all",
+      ),
+      workflow.replace(
+        "\npermissions:\n",
+        "\ndefaults:\n  run:\n    shell: 'bash -c \"unreviewed-command; {0}\"'\n\npermissions:\n",
       ),
       workflow.replace(
         "  pack-portable:\n    name:",
