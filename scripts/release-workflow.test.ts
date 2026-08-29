@@ -1,4 +1,7 @@
+import { YAML } from "bun";
 import { describe, expect, test } from "bun:test";
+import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 
 const workflowPath =
@@ -8,6 +11,55 @@ const workflow = readFileSync(workflowPath, "utf8");
 const jobsMarker = workflow.indexOf("\njobs:\n");
 expect(jobsMarker).not.toBe(-1);
 const workflowPreamble = workflow.slice(0, jobsMarker);
+
+const fingerprint = (value: unknown) =>
+  createHash("sha256")
+    .update(JSON.stringify(value))
+    .digest("hex");
+
+const privilegedContract = (source: string) => {
+  const parsed = YAML.parse(source);
+  const writes = [
+    ...Object.entries(parsed.permissions ?? {})
+      .filter(([, access]) => access === "write")
+      .map(([permission]) => `workflow:${permission}`),
+    ...Object.entries(parsed.jobs).flatMap(
+      ([jobName, job]) =>
+        Object.entries(job.permissions ?? {})
+          .filter(([, access]) => access === "write")
+          .map(
+            ([permission]) => `${jobName}:${permission}`,
+          ),
+    ),
+  ].sort();
+  return {
+    jobs: {
+      "github-release": fingerprint(
+        parsed.jobs["github-release"],
+      ),
+      "publish-pypi": fingerprint(
+        parsed.jobs["publish-pypi"],
+      ),
+    },
+    writes,
+  };
+};
+
+const assertPrivilegedContract = (source: string) => {
+  assert.deepEqual(privilegedContract(source), {
+    jobs: {
+      "github-release":
+        "1063a7c222b32f3597ceb64c19f35804f21db9a7cf5c09d53a215694e0190bed",
+      "publish-pypi":
+        "616df460cd1c840541fad8b522e98c461b09c9a095f065137adce66e83310f0e",
+    },
+    writes: [
+      "github-release:contents",
+      "github-release:id-token",
+      "publish-pypi:id-token",
+    ],
+  });
+};
 
 const parseJobs = (source: string) => {
   const marker = source.match(/^jobs:\n/m);
@@ -44,6 +96,32 @@ const privilegedJobNames = Object.entries(jobs)
   .sort();
 
 describe("release privilege boundary", () => {
+  test("fingerprints every complete privileged job and write permission", () => {
+    assertPrivilegedContract(workflow);
+  });
+
+  test("rejects execution fields and unrelated write grants", () => {
+    for (const mutation of [
+      workflow.replace(
+        "permissions:\n  contents: read",
+        "permissions:\n  contents: write",
+      ),
+      workflow.replace(
+        "pattern: python-wheel-*",
+        "repository: attacker/repository\n          pattern: python-wheel-*",
+      ),
+      workflow.replace(
+        "      - name: Verify exact wheel release set\n        env:",
+        "      - name: Verify exact wheel release set\n        shell: bash -c 'echo unreviewed; {0}'\n        env:",
+      ),
+    ]) {
+      expect(mutation).not.toBe(workflow);
+      expect(() =>
+        assertPrivilegedContract(mutation),
+      ).toThrow();
+    }
+  });
+
   test("parses every valid GitHub Actions job identifier shape", () => {
     const parsed = parseJobs(
       "jobs:\n  a:\n    runs-on: ubuntu-latest\n  _publish:\n    runs-on: ubuntu-latest\n  publish_npm:\n    runs-on: ubuntu-latest\n  Publish-1:\n    runs-on: ubuntu-latest\n  '_quoted':\n    runs-on: ubuntu-latest\n",
