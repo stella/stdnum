@@ -358,18 +358,16 @@ jobs:
           )
           expected_platforms = {
               "linux-aarch64": re.compile(
-                  r"^manylinux(?:_\d+_\d+|\d{4})_aarch64"
-                  r"(?:\.manylinux(?:_\d+_\d+|\d{4})_aarch64)*$"
+                  r"^manylinux_2_17_aarch64\.manylinux2014_aarch64$"
               ),
               "linux-x86_64": re.compile(
-                  r"^manylinux(?:_\d+_\d+|\d{4})_x86_64"
-                  r"(?:\.manylinux(?:_\d+_\d+|\d{4})_x86_64)*$"
+                  r"^manylinux_2_17_x86_64\.manylinux2014_x86_64$"
               ),
               "macos-arm64": re.compile(
-                  r"^macosx_\d+_\d+_arm64(?:\.macosx_\d+_\d+_arm64)*$"
+                  r"^macosx_11_0_arm64$"
               ),
               "macos-x86_64": re.compile(
-                  r"^macosx_\d+_\d+_x86_64(?:\.macosx_\d+_\d+_x86_64)*$"
+                  r"^macosx_10_12_x86_64$"
               ),
               "windows-x86_64": re.compile(r"^win_amd64$"),
           }

@@ -61,7 +61,7 @@ const assertPrivilegedContract = (source: string) => {
       "github-release":
         "1063a7c222b32f3597ceb64c19f35804f21db9a7cf5c09d53a215694e0190bed",
       "publish-pypi":
-        "616df460cd1c840541fad8b522e98c461b09c9a095f065137adce66e83310f0e",
+        "4cbad06b321957ac642d877ed1e9be2459bb709ba125087f7e7f779d39efddaf",
     },
     workflow:
       "f62460e541e129b6fe93832099cfa0c0bc6cfef669d87ef0f028a4d78489ec0a",

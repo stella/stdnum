@@ -37,6 +37,10 @@ if mode == "duplicate-platform":
     platforms[-1] = "macosx_12_0_arm64"
 if mode == "mixed-platform-tag":
     platforms[-1] = "manylinux_2_17_x86_64.win_amd64"
+if mode == "unsupported-linux-baseline":
+    platforms[0] = "manylinux_999_999_x86_64.manylinux9999_x86_64"
+if mode == "unsupported-macos-baseline":
+    platforms[2] = "macosx_999_0_x86_64"
 
 with tempfile.TemporaryDirectory() as temporary:
     root = Path(temporary)
@@ -72,6 +76,8 @@ test.each([
   "mixed-platform-tag",
   "wrong-name",
   "wrong-version",
+  "unsupported-linux-baseline",
+  "unsupported-macos-baseline",
 ])("rejects %s", (mode) => {
   expect(runVerifier(mode).exitCode).not.toBe(0);
 });
