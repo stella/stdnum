@@ -6,19 +6,25 @@ const workflowPath =
   ".github/workflows/release.yml";
 const workflow = readFileSync(workflowPath, "utf8");
 
-const jobEntries = [
-  ...workflow.matchAll(/^  ([a-z][a-z0-9-]*):\n/gm),
-].map((match, index, matches) => {
-  const next = matches.at(index + 1);
-  return [
-    match[1],
-    workflow.slice(
-      match.index,
-      next?.index ?? workflow.length,
-    ),
+const parseJobs = (source: string) => {
+  const matches = [
+    ...source.matchAll(/^  ([A-Za-z_][A-Za-z0-9_-]*):\n/gm),
   ];
-});
-const jobs = Object.fromEntries(jobEntries);
+  return Object.fromEntries(
+    matches.map((match, index) => {
+      const next = matches.at(index + 1);
+      return [
+        match[1],
+        source.slice(
+          match.index,
+          next?.index ?? source.length,
+        ),
+      ];
+    }),
+  );
+};
+
+const jobs = parseJobs(workflow);
 
 const privilegedJobNames = Object.entries(jobs)
   .filter(([, job]) => /^      id-token: write$/m.test(job))
@@ -29,6 +35,19 @@ const packageOrBuildPattern =
   /actions\/checkout@|actions\/setup-node@|oven-sh\/setup-bun@|(?:bun|npm|pnpm|yarn) (?:ci|install)|npm pack|bun run (?:build|codegen)|cargo (?:build|install|package|test)/;
 
 describe("release privilege boundary", () => {
+  test("parses every valid GitHub Actions job identifier shape", () => {
+    const parsed = parseJobs(
+      "jobs:\n  a:\n    runs-on: ubuntu-latest\n  _publish:\n    runs-on: ubuntu-latest\n  publish_npm:\n    runs-on: ubuntu-latest\n  Publish-1:\n    runs-on: ubuntu-latest\n",
+    );
+
+    expect(Object.keys(parsed)).toEqual([
+      "a",
+      "_publish",
+      "publish_npm",
+      "Publish-1",
+    ]);
+  });
+
   test("OIDC jobs only consume prepared artifacts", () => {
     expect(privilegedJobNames).toEqual([
       "github-release",
