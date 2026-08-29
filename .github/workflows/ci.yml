@@ -217,7 +217,7 @@ jobs:
         # snapshot-hygiene gate, `cargo ci-snapshot`); avoids a from-source
         # compile on every CI run. taiki-e/install-action verifies release
         # checksums, unlike a raw `curl | tar`.
-        uses: taiki-e/install-action@b6b84cf49ebfe0176417bdce007c624f0db37f20 # v2.86.2
+        uses: taiki-e/install-action@b6ff580856c41316412a0b9b60540fbc6f8c82cc # v2.86.7
         with:
           tool: nextest@0.9.140,cargo-deny@0.20.2,cargo-insta@1.48.0
 
