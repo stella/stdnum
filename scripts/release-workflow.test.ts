@@ -5,19 +5,29 @@ const workflowPath =
   process.env.RELEASE_WORKFLOW_PATH ??
   ".github/workflows/release.yml";
 const workflow = readFileSync(workflowPath, "utf8");
+const jobsMarker = workflow.indexOf("\njobs:\n");
+expect(jobsMarker).not.toBe(-1);
+const workflowPreamble = workflow.slice(0, jobsMarker);
 
 const parseJobs = (source: string) => {
+  const marker = source.match(/^jobs:\n/m);
+  expect(marker).not.toBeNull();
+  const jobsSource = source.slice(
+    (marker?.index ?? 0) + (marker?.[0].length ?? 0),
+  );
   const matches = [
-    ...source.matchAll(/^  ([A-Za-z_][A-Za-z0-9_-]*):\n/gm),
+    ...jobsSource.matchAll(
+      /^  (?:(?:"([A-Za-z_][A-Za-z0-9_-]*)")|(?:'([A-Za-z_][A-Za-z0-9_-]*)')|([A-Za-z_][A-Za-z0-9_-]*)):\n/gm,
+    ),
   ];
   return Object.fromEntries(
     matches.map((match, index) => {
       const next = matches.at(index + 1);
       return [
-        match[1],
-        source.slice(
+        match[1] ?? match[2] ?? match[3],
+        jobsSource.slice(
           match.index,
-          next?.index ?? source.length,
+          next?.index ?? jobsSource.length,
         ),
       ];
     }),
@@ -27,17 +37,16 @@ const parseJobs = (source: string) => {
 const jobs = parseJobs(workflow);
 
 const privilegedJobNames = Object.entries(jobs)
-  .filter(([, job]) => /^      id-token: write$/m.test(job))
+  .filter(([, job]) =>
+    /^      id-token: write\s*(?:#.*)?$/m.test(job),
+  )
   .map(([name]) => name)
   .sort();
-
-const packageOrBuildPattern =
-  /actions\/checkout@|actions\/setup-node@|oven-sh\/setup-bun@|(?:bun|npm|pnpm|yarn) (?:ci|install)|npm pack|bun run (?:build|codegen)|cargo (?:build|install|package|test)/;
 
 describe("release privilege boundary", () => {
   test("parses every valid GitHub Actions job identifier shape", () => {
     const parsed = parseJobs(
-      "jobs:\n  a:\n    runs-on: ubuntu-latest\n  _publish:\n    runs-on: ubuntu-latest\n  publish_npm:\n    runs-on: ubuntu-latest\n  Publish-1:\n    runs-on: ubuntu-latest\n",
+      "jobs:\n  a:\n    runs-on: ubuntu-latest\n  _publish:\n    runs-on: ubuntu-latest\n  publish_npm:\n    runs-on: ubuntu-latest\n  Publish-1:\n    runs-on: ubuntu-latest\n  '_quoted':\n    runs-on: ubuntu-latest\n",
     );
 
     expect(Object.keys(parsed)).toEqual([
@@ -45,6 +54,7 @@ describe("release privilege boundary", () => {
       "_publish",
       "publish_npm",
       "Publish-1",
+      "_quoted",
     ]);
   });
 
@@ -54,9 +64,32 @@ describe("release privilege boundary", () => {
       "publish-pypi",
     ]);
 
-    for (const name of privilegedJobNames) {
-      expect(jobs[name]).not.toMatch(packageOrBuildPattern);
-    }
+    expect(workflowPreamble).toContain(
+      "permissions:\n  contents: read",
+    );
+    expect(workflowPreamble).not.toContain(
+      "id-token: write",
+    );
+
+    const publishPyPI = jobs["publish-pypi"];
+    const actionRefs = [
+      ...publishPyPI.matchAll(
+        /^\s+(?:-\s+)?uses:\s+(\S+)/gm,
+      ),
+    ].map((match) => match[1]);
+    expect(actionRefs).toEqual([
+      "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c",
+      "pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33",
+    ]);
+    expect([
+      ...publishPyPI.matchAll(/^\s+run:\s*[|>]?(?:\s*)$/gm),
+    ]).toHaveLength(1);
+    expect(publishPyPI).toContain(
+      "Verify exact wheel release set",
+    );
+    expect(publishPyPI).toContain(
+      "if found_platforms != set(expected_platforms)",
+    );
   });
 
   test("the hardened finalizer owns all npm publishing", () => {
@@ -81,16 +114,57 @@ describe("release privilege boundary", () => {
     expect(jobs["github-release"]).not.toContain(
       "pull-requests: write",
     );
-    for (const secret of [
+    const expectedSecrets = [
       "RELEASE_APP_ID",
       "RELEASE_APP_PRIVATE_KEY",
       "CHANGELOG_APP_ID",
       "CHANGELOG_APP_PRIVATE_KEY",
-    ]) {
+    ].sort();
+    for (const secret of expectedSecrets) {
       expect(jobs["github-release"]).toContain(
         `${secret}:`,
       );
     }
+    const forwardedSecrets = [
+      ...jobs["github-release"].matchAll(
+        /^      ([A-Z][A-Z0-9_]+):\s+\$\{\{ secrets\.\1 \}\}$/gm,
+      ),
+    ]
+      .map((match) => match[1])
+      .sort();
+    expect(forwardedSecrets).toEqual(expectedSecrets);
+  });
+
+  test("binds PyPI publication to the exact wheel identities", () => {
+    const publishPyPI = jobs["publish-pypi"];
+
+    expect(publishPyPI).toContain(
+      "EXPECTED_VERSION: ${{ needs.verify.outputs.version }}",
+    );
+    expect(publishPyPI).toContain(
+      'distribution != "stella_stdnum"',
+    );
+    expect(publishPyPI).toContain(
+      'metadata["Version"] != expected_version',
+    );
+    expect(publishPyPI).toContain(
+      'python_tag != "cp311" or abi_tag != "abi3"',
+    );
+    for (const platform of [
+      "linux-aarch64",
+      "linux-x86_64",
+      "macos-arm64",
+      "macos-x86_64",
+      "windows-x86_64",
+    ]) {
+      expect(publishPyPI).toContain(`"${platform}":`);
+    }
+    expect(
+      readFileSync(
+        "scripts/pypi-wheel-set.test.ts",
+        "utf8",
+      ),
+    ).toContain("accepts the exact five-wheel release set");
   });
 
   test("manual publishing and the root tarball fail closed", () => {
