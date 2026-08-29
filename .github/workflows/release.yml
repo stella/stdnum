@@ -28,6 +28,19 @@ jobs:
       publish: ${{ steps.scope.outputs.publish }}
       version: ${{ steps.version.outputs.version }}
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version-file: package.json
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: "22.21.1"
+
       - name: Require main for manual publishing
         if: >-
           github.event_name == 'workflow_dispatch'
@@ -36,11 +49,6 @@ jobs:
         run: |
           echo "::error::Manual publishing must run from main."
           exit 1
-
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
 
       - name: Resolve publish scope
         id: scope
@@ -70,14 +78,6 @@ jobs:
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "dist_tag=$dist_tag" >> "$GITHUB_OUTPUT"
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
-        with:
-          node-version: "22.21.1"
-
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version-file: package.json
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -133,13 +133,13 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
-        with:
-          node-version: "22.21.1"
-
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version-file: package.json
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: "22.21.1"
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -187,13 +187,13 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
-        with:
-          node-version: "22.21.1"
-
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version-file: package.json
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: "22.21.1"
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -324,119 +324,26 @@ jobs:
   publish-pypi:
     name: Publish stella-stdnum to PyPI
     needs: [verify, build-wheels]
-    if: needs.verify.outputs.publish == 'true'
+    if: github.ref == 'refs/heads/main' && (needs.verify.outputs.publish == 'true')
     runs-on: ubuntu-24.04
     permissions:
       id-token: write # Required only for PyPI trusted publishing.
     steps:
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+      - name: Validate and publish exact Python wheel set
+        uses: stella/.github/.github/actions/pypi-publish-hardened@437d9d78c38114a15c368daed7d3d1b36fd6b8fc
         with:
-          pattern: python-wheel-*
-          path: dist
-          merge-multiple: true
-
-      - name: Verify exact wheel release set
-        env:
-          EXPECTED_VERSION: ${{ needs.verify.outputs.version }}
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import email.parser
-          import os
-          import re
-          import zipfile
-          from pathlib import Path
-
-          expected_version = re.sub(
-              r"-(alpha|beta|rc)\.(\d+)$",
-              lambda match: {
-                  "alpha": "a",
-                  "beta": "b",
-                  "rc": "rc",
-              }[match.group(1)] + match.group(2),
-              os.environ["EXPECTED_VERSION"],
-          )
-          expected_platforms = {
-              "linux-aarch64": re.compile(
-                  r"^manylinux_2_17_aarch64\.manylinux2014_aarch64$"
-              ),
-              "linux-x86_64": re.compile(
-                  r"^manylinux_2_17_x86_64\.manylinux2014_x86_64$"
-              ),
-              "macos-arm64": re.compile(
-                  r"^macosx_11_0_arm64$"
-              ),
-              "macos-x86_64": re.compile(
-                  r"^macosx_10_12_x86_64$"
-              ),
-              "windows-x86_64": re.compile(r"^win_amd64$"),
-          }
-          wheels = sorted(Path("dist").glob("*.whl"))
-          if len(wheels) != len(expected_platforms):
-              raise SystemExit(
-                  f"Expected {len(expected_platforms)} wheels, found {len(wheels)}"
-              )
-
-          found_platforms = set()
-          for wheel in wheels:
-              package, python_tag, abi_tag, platform_tag = wheel.stem.rsplit("-", 3)
-              distribution, filename_version = package.rsplit("-", 1)
-              if distribution != "stella_stdnum":
-                  raise SystemExit(f"Unexpected wheel distribution: {distribution}")
-              if filename_version != expected_version:
-                  raise SystemExit(
-                      f"Wheel version {filename_version} does not match {expected_version}"
-                  )
-              if python_tag != "cp311" or abi_tag != "abi3":
-                  raise SystemExit(
-                      f"Unexpected Python/ABI tag: {python_tag}-{abi_tag}"
-                  )
-
-              matches = [
-                  name
-                  for name, pattern in expected_platforms.items()
-                  if pattern.fullmatch(platform_tag)
-              ]
-              if len(matches) != 1:
-                  raise SystemExit(f"Unexpected wheel platform tag: {platform_tag}")
-              found_platforms.add(matches[0])
-
-              with zipfile.ZipFile(wheel) as archive:
-                  metadata_files = [
-                      name
-                      for name in archive.namelist()
-                      if name.endswith(".dist-info/METADATA")
-                  ]
-                  if len(metadata_files) != 1:
-                      raise SystemExit(
-                          f"{wheel.name} contains {len(metadata_files)} METADATA files"
-                      )
-                  metadata = email.parser.BytesParser().parsebytes(
-                      archive.read(metadata_files[0])
-                  )
-              normalized_name = re.sub(r"[-_.]+", "-", metadata["Name"].lower())
-              if normalized_name != "stella-stdnum":
-                  raise SystemExit(f"Unexpected METADATA Name: {metadata['Name']}")
-              if metadata["Version"] != expected_version:
-                  raise SystemExit(
-                      f"METADATA version {metadata['Version']} does not match {expected_version}"
-                  )
-
-          if found_platforms != set(expected_platforms):
-              missing = sorted(set(expected_platforms) - found_platforms)
-              raise SystemExit(f"Missing wheel platforms: {', '.join(missing)}")
-          PY
-
-      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
-        with:
-          packages-dir: dist
+          expected-version: ${{ needs.verify.outputs.version }}
+          project-name: stella-stdnum
+          distribution-name: stella_stdnum
+          wheel-contract: >-
+            {"python-wheel-x86_64-unknown-linux-gnu":["manylinux_2_17_x86_64","manylinux2014_x86_64"],"python-wheel-aarch64-unknown-linux-gnu":["manylinux_2_17_aarch64","manylinux2014_aarch64"],"python-wheel-x86_64-apple-darwin":["macosx_10_12_x86_64"],"python-wheel-aarch64-apple-darwin":["macosx_11_0_arm64"],"python-wheel-x86_64-pc-windows-msvc":["win_amd64"]}
 
   github-release:
     name: Finalize release
     needs:
       [verify, pack-native, pack-portable, publish-pypi]
-    if: needs.verify.outputs.publish == 'true'
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@1ce0079bbdbf93a4c1917d2857496b89aedcec14
+    if: github.ref == 'refs/heads/main' && (needs.verify.outputs.publish == 'true')
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@437d9d78c38114a15c368daed7d3d1b36fd6b8fc
     with:
       package-files: |
         packages/stdnum/package.json
