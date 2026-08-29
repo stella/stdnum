@@ -17,19 +17,32 @@ const fingerprint = (value: unknown) =>
     .update(JSON.stringify(value))
     .digest("hex");
 
+const permissionWrites = (
+  owner: string,
+  permissions: unknown,
+) => {
+  assert(
+    typeof permissions === "object" &&
+      permissions !== null &&
+      !Array.isArray(permissions),
+    `${owner} permissions must be a mapping`,
+  );
+  return Object.entries(permissions)
+    .filter(([, access]) => access === "write")
+    .map(([permission]) => `${owner}:${permission}`);
+};
+
 const privilegedContract = (source: string) => {
   const parsed = YAML.parse(source);
+  const workflowPermissions = parsed.permissions ?? {};
   const writes = [
-    ...Object.entries(parsed.permissions ?? {})
-      .filter(([, access]) => access === "write")
-      .map(([permission]) => `workflow:${permission}`),
+    ...permissionWrites("workflow", workflowPermissions),
     ...Object.entries(parsed.jobs).flatMap(
       ([jobName, job]) =>
-        Object.entries(job.permissions ?? {})
-          .filter(([, access]) => access === "write")
-          .map(
-            ([permission]) => `${jobName}:${permission}`,
-          ),
+        permissionWrites(
+          jobName,
+          job.permissions ?? workflowPermissions,
+        ),
     ),
   ].sort();
   return {
@@ -105,6 +118,14 @@ describe("release privilege boundary", () => {
       workflow.replace(
         "permissions:\n  contents: read",
         "permissions:\n  contents: write",
+      ),
+      workflow.replace(
+        "permissions:\n  contents: read",
+        "permissions: write-all",
+      ),
+      workflow.replace(
+        "  pack-portable:\n    name:",
+        "  pack-portable:\n    permissions: write-all\n    name:",
       ),
       workflow.replace(
         "pattern: python-wheel-*",
@@ -237,12 +258,6 @@ describe("release privilege boundary", () => {
     ]) {
       expect(publishPyPI).toContain(`"${platform}":`);
     }
-    expect(
-      readFileSync(
-        "scripts/pypi-wheel-set.test.ts",
-        "utf8",
-      ),
-    ).toContain("accepts the exact five-wheel release set");
   });
 
   test("manual publishing and the root tarball fail closed", () => {

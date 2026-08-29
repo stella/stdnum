@@ -12,7 +12,7 @@
     "build:wasm": "bun run --cwd packages/stdnum-wasm build && bun run performance:wasm-size",
     "typecheck": "tsc -p tsconfig.json && bun run --cwd packages/stdnum typecheck && bun run --cwd packages/stdnum-wasm typecheck",
     "test": "bun test packages/stdnum/src/__test__",
-    "test:release-workflow": "bun test scripts/release-workflow.test.ts",
+    "test:release-workflow": "bun test scripts/release-workflow.test.ts scripts/pypi-wheel-set.test.ts",
     "smoke:native": "node scripts/native-smoke.mjs",
     "smoke:browser": "node scripts/browser-smoke.mjs",
     "smoke:wasm": "node scripts/wasm-smoke.mjs",
