@@ -1,8 +1,5 @@
 name: Release
 
-env:
-  NPM_VERSION: "11.11.1"
-
 on:
   push:
     branches: [main]
@@ -31,9 +28,19 @@ jobs:
       publish: ${{ steps.scope.outputs.publish }}
       version: ${{ steps.version.outputs.version }}
     steps:
+      - name: Require main for manual publishing
+        if: >-
+          github.event_name == 'workflow_dispatch'
+          && inputs.publish_to_registries
+          && github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Manual publishing must run from main."
+          exit 1
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Resolve publish scope
         id: scope
@@ -123,6 +130,8 @@ jobs:
             runner: windows-2025
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
@@ -151,6 +160,7 @@ jobs:
           pack_dir="$RUNNER_TEMP/npm-tarballs"
           mkdir -p "$pack_dir"
           pack_json="$(npm pack --json --ignore-scripts --pack-destination "$pack_dir")"
+          # shellcheck disable=SC2016
           filename="$(node -e '
             const pack = JSON.parse(process.argv[1])[0];
             const files = new Set(pack.files.map(file => file.path));
@@ -167,55 +177,6 @@ jobs:
           path: ${{ steps.pack.outputs.tarball }}
           if-no-files-found: error
 
-  publish-native:
-    name: Publish ${{ matrix.artifact }}
-    needs: [verify, pack-native]
-    if: needs.verify.outputs.publish == 'true'
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      id-token: write
-      attestations: write
-    strategy:
-      fail-fast: false
-      matrix:
-        artifact:
-          - stdnum-linux-x64-gnu
-          - stdnum-linux-arm64-gnu
-          - stdnum-darwin-x64
-          - stdnum-darwin-arm64
-          - stdnum-win32-x64-msvc
-    steps:
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: npm-tarball-${{ matrix.artifact }}
-          path: native-tarball
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
-        with:
-          node-version: "22.21.1"
-          registry-url: https://registry.npmjs.org
-
-      - name: Install npm for trusted publishing
-        run: npm install --global --ignore-scripts "npm@${NPM_VERSION}"
-
-      - name: Resolve tarball
-        id: tarball
-        run: |
-          set -euo pipefail
-          shopt -s nullglob
-          tarballs=(native-tarball/*.tgz)
-          if [[ "${#tarballs[@]}" -ne 1 ]]; then
-            echo "::error::Expected one native tarball, found ${#tarballs[@]}"
-            exit 1
-          fi
-          echo "path=${tarballs[0]}" >> "$GITHUB_OUTPUT"
-
-      - uses: stella/.github/.github/actions/npm-publish-hardened@48aacae31829ce15216a6b766b03a92fd2e84da3
-        with:
-          tarball: ${{ steps.tarball.outputs.path }}
-          tag: ${{ needs.verify.outputs.dist_tag }}
-
   pack-portable:
     name: Pack JavaScript and WebAssembly packages
     needs: verify
@@ -223,6 +184,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
@@ -253,13 +216,35 @@ jobs:
       - name: Pack main package
         id: main
         working-directory: packages/stdnum
+        env:
+          EXPECTED_VERSION: ${{ needs.verify.outputs.version }}
         run: |
           set -euo pipefail
           pack_dir="$RUNNER_TEMP/npm-main"
           mkdir -p "$pack_dir"
           pack_json="$(npm pack --json --ignore-scripts --pack-destination "$pack_dir")"
-          filename="$(node -e 'process.stdout.write(JSON.parse(process.argv[1])[0].filename)' "$pack_json")"
-          echo "tarball=$pack_dir/$filename" >> "$GITHUB_OUTPUT"
+          # shellcheck disable=SC2016
+          filename="$(node -e '
+            const packs = JSON.parse(process.argv[1]);
+            if (packs.length !== 1) throw new Error(`Expected one root tarball, found ${packs.length}`);
+            const [pack] = packs;
+            if (pack.name !== "@stll/stdnum") throw new Error(`Unexpected root package ${pack.name}`);
+            if (pack.version !== process.env.EXPECTED_VERSION) {
+              throw new Error(`Root package version ${pack.version} does not match ${process.env.EXPECTED_VERSION}`);
+            }
+            process.stdout.write(pack.filename);
+          ' "$pack_json")"
+          tarball="$pack_dir/$filename"
+          manifest="$(tar -xOf "$tarball" package/package.json)"
+          # shellcheck disable=SC2016
+          node -e '
+            const manifest = JSON.parse(process.argv[1]);
+            if (manifest.name !== "@stll/stdnum") throw new Error(`Unexpected root manifest ${manifest.name}`);
+            if (manifest.version !== process.env.EXPECTED_VERSION) {
+              throw new Error(`Root manifest version ${manifest.version} does not match ${process.env.EXPECTED_VERSION}`);
+            }
+          ' "$manifest"
+          echo "tarball=$tarball" >> "$GITHUB_OUTPUT"
 
       - name: Pack WebAssembly package
         id: wasm
@@ -269,6 +254,7 @@ jobs:
           pack_dir="$RUNNER_TEMP/npm-wasm"
           mkdir -p "$pack_dir"
           pack_json="$(npm pack --json --ignore-scripts --pack-destination "$pack_dir")"
+          # shellcheck disable=SC2016
           filename="$(node -e '
             const pack = JSON.parse(process.argv[1])[0];
             const files = new Set(pack.files.map(file => file.path));
@@ -290,71 +276,6 @@ jobs:
           name: npm-tarball-stdnum-wasm
           path: ${{ steps.wasm.outputs.tarball }}
           if-no-files-found: error
-
-  publish-wasm:
-    name: Publish @stll/stdnum-wasm
-    needs: [verify, pack-portable]
-    if: needs.verify.outputs.publish == 'true'
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      id-token: write
-      attestations: write
-    steps:
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: npm-tarball-stdnum-wasm
-          path: npm-tarball
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
-        with:
-          node-version: "22.21.1"
-          registry-url: https://registry.npmjs.org
-
-      - name: Install npm for trusted publishing
-        run: npm install --global --ignore-scripts "npm@${NPM_VERSION}"
-
-      - name: Resolve tarball
-        id: tarball
-        run: echo "path=$(find npm-tarball -name '*.tgz' -print -quit)" >> "$GITHUB_OUTPUT"
-
-      - uses: stella/.github/.github/actions/npm-publish-hardened@48aacae31829ce15216a6b766b03a92fd2e84da3
-        with:
-          tarball: ${{ steps.tarball.outputs.path }}
-          tag: ${{ needs.verify.outputs.dist_tag }}
-
-  publish-main:
-    name: Publish @stll/stdnum
-    needs:
-      [verify, pack-portable, publish-native, publish-wasm]
-    if: needs.verify.outputs.publish == 'true'
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      id-token: write
-      attestations: write
-    steps:
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: npm-tarball-stdnum
-          path: npm-tarball
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
-        with:
-          node-version: "22.21.1"
-          registry-url: https://registry.npmjs.org
-
-      - name: Install npm for trusted publishing
-        run: npm install --global --ignore-scripts "npm@${NPM_VERSION}"
-
-      - name: Resolve tarball
-        id: tarball
-        run: echo "path=$(find npm-tarball -name '*.tgz' -print -quit)" >> "$GITHUB_OUTPUT"
-
-      - uses: stella/.github/.github/actions/npm-publish-hardened@48aacae31829ce15216a6b766b03a92fd2e84da3
-        with:
-          tarball: ${{ steps.tarball.outputs.path }}
-          tag: ${{ needs.verify.outputs.dist_tag }}
 
   build-wheels:
     name: Build Python wheel ${{ matrix.target }}
@@ -379,6 +300,8 @@ jobs:
             runner: windows-2025
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Build abi3 wheel
         uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
@@ -428,9 +351,10 @@ jobs:
 
   github-release:
     name: Finalize release
-    needs: [verify, publish-main, publish-pypi]
+    needs:
+      [verify, pack-native, pack-portable, publish-pypi]
     if: needs.verify.outputs.publish == 'true'
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@7198083e27bdd963cacc0b7d70ca54fe3ec83393
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@1ce0079bbdbf93a4c1917d2857496b89aedcec14
     with:
       package-files: |
         packages/stdnum/package.json
@@ -446,4 +370,8 @@ jobs:
     permissions:
       contents: write
       id-token: write
-    secrets: inherit
+    secrets:
+      RELEASE_APP_ID: ${{ secrets.RELEASE_APP_ID }}
+      RELEASE_APP_PRIVATE_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+      CHANGELOG_APP_ID: ${{ secrets.CHANGELOG_APP_ID }}
+      CHANGELOG_APP_PRIVATE_KEY: ${{ secrets.CHANGELOG_APP_PRIVATE_KEY }}
