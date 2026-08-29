@@ -5,79 +5,67 @@ const workflow = readFileSync(
   ".github/workflows/release.yml",
   "utf8",
 );
-const startMarker = "          python3 - <<'PY'\n";
-const start = workflow.indexOf(startMarker);
-const end = workflow.indexOf("\n          PY", start);
+const byName = (left: string, right: string) =>
+  left.localeCompare(right);
 
-expect(start).not.toBe(-1);
-expect(end).not.toBe(-1);
-
-const verifier = workflow
-  .slice(start + startMarker.length, end)
-  .split("\n")
-  .map((line) => line.replace(/^          /, ""))
-  .join("\n");
-
-const harness = String.raw`
-import os
-import sys
-import tempfile
-import zipfile
-from pathlib import Path
-
-verifier, mode = sys.argv[1:]
-platforms = [
-    "manylinux_2_17_x86_64.manylinux2014_x86_64",
-    "manylinux_2_17_aarch64.manylinux2014_aarch64",
-    "macosx_10_12_x86_64",
+const expectedContract = {
+  "python-wheel-aarch64-apple-darwin": [
     "macosx_11_0_arm64",
-    "win_amd64",
-]
-if mode == "duplicate-platform":
-    platforms[-1] = "macosx_12_0_arm64"
-if mode == "mixed-platform-tag":
-    platforms[-1] = "manylinux_2_17_x86_64.win_amd64"
-if mode == "unsupported-linux-baseline":
-    platforms[0] = "manylinux_999_999_x86_64.manylinux9999_x86_64"
-if mode == "unsupported-macos-baseline":
-    platforms[2] = "macosx_999_0_x86_64"
+  ],
+  "python-wheel-aarch64-unknown-linux-gnu": [
+    "manylinux_2_17_aarch64",
+    "manylinux2014_aarch64",
+  ],
+  "python-wheel-x86_64-apple-darwin": [
+    "macosx_10_12_x86_64",
+  ],
+  "python-wheel-x86_64-pc-windows-msvc": ["win_amd64"],
+  "python-wheel-x86_64-unknown-linux-gnu": [
+    "manylinux_2_17_x86_64",
+    "manylinux2014_x86_64",
+  ],
+};
 
-with tempfile.TemporaryDirectory() as temporary:
-    root = Path(temporary)
-    dist = root / "dist"
-    dist.mkdir()
-    for index, platform in enumerate(platforms):
-        version = "9.0.0" if mode == "wrong-version" and index == 0 else "2.3.2"
-        metadata_name = "other-project" if mode == "wrong-name" and index == 0 else "stella-stdnum"
-        wheel = dist / f"stella_stdnum-{version}-cp311-abi3-{platform}.whl"
-        with zipfile.ZipFile(wheel, "w") as archive:
-            archive.writestr(
-                f"stella_stdnum-{version}.dist-info/METADATA",
-                f"Metadata-Version: 2.4\nName: {metadata_name}\nVersion: {version}\n",
-            )
-    os.chdir(root)
-    os.environ["EXPECTED_VERSION"] = "2.3.2"
-    exec(compile(verifier, "release-wheel-verifier", "exec"), {})
-`;
+const assertCallerContract = (source: string) => {
+  expect(source).toContain(
+    "expected-version: ${{ needs.verify.outputs.version }}",
+  );
+  expect(source).toContain("project-name: stella-stdnum");
+  expect(source).toContain(
+    "distribution-name: stella_stdnum",
+  );
 
-const runVerifier = (mode: string) =>
-  Bun.spawnSync({
-    cmd: ["python3", "-c", harness, verifier, mode],
-    stdout: "pipe",
-    stderr: "pipe",
-  });
+  const contract = source.match(
+    /^          wheel-contract: >-\n            (\{.+\})$/m,
+  );
+  expect(contract).not.toBeNull();
+  expect(JSON.parse(contract?.[1] ?? "{}")).toEqual(
+    expectedContract,
+  );
 
-test("accepts the exact five-wheel release set", () => {
-  expect(runVerifier("valid").exitCode).toBe(0);
+  const targets = [
+    ...source.matchAll(
+      /^          - target: ([a-z0-9_-]+)$/gm,
+    ),
+  ].map((match) => `python-wheel-${match[1]}`);
+  expect(targets.toSorted(byName)).toEqual(
+    Object.keys(expectedContract).toSorted(byName),
+  );
+};
+
+test("binds the shared publisher to the exact stdnum wheel set", () => {
+  assertCallerContract(workflow);
 });
 
 test.each([
-  "duplicate-platform",
-  "mixed-platform-tag",
-  "wrong-name",
-  "wrong-version",
-  "unsupported-linux-baseline",
-  "unsupported-macos-baseline",
-])("rejects %s", (mode) => {
-  expect(runVerifier(mode).exitCode).not.toBe(0);
+  ["project-name: stella-stdnum", "project-name: other"],
+  ["macosx_10_12_x86_64", "macosx_12_0_x86_64"],
+  [
+    '"python-wheel-x86_64-pc-windows-msvc":["win_amd64"]',
+    '"python-wheel-x86_64-pc-windows-msvc":["win32"]',
+  ],
+])("rejects caller contract drift in %s", (from, to) => {
+  const mutation = workflow.replace(from, to);
+  expect(mutation).not.toBe(workflow);
+  expect(() => assertCallerContract(mutation)).toThrow();
 });

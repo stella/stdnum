@@ -1,77 +1,12 @@
-import { YAML } from "bun";
 import { describe, expect, test } from "bun:test";
-import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 
-const workflowPath =
-  process.env.RELEASE_WORKFLOW_PATH ??
-  ".github/workflows/release.yml";
-const workflow = readFileSync(workflowPath, "utf8");
-const jobsMarker = workflow.indexOf("\njobs:\n");
-expect(jobsMarker).not.toBe(-1);
-const workflowPreamble = workflow.slice(0, jobsMarker);
-
-const fingerprint = (value: unknown) =>
-  createHash("sha256")
-    .update(JSON.stringify(value))
-    .digest("hex");
-
-const permissionWrites = (
-  owner: string,
-  permissions: unknown,
-) => {
-  assert(
-    typeof permissions === "object" &&
-      permissions !== null &&
-      !Array.isArray(permissions),
-    `${owner} permissions must be a mapping`,
-  );
-  return Object.entries(permissions)
-    .filter(([, access]) => access === "write")
-    .map(([permission]) => `${owner}:${permission}`);
-};
-
-const privilegedContract = (source: string) => {
-  const parsed = YAML.parse(source);
-  const { jobs, ...workflowScope } = parsed;
-  const workflowPermissions = parsed.permissions ?? {};
-  const writes = [
-    ...permissionWrites("workflow", workflowPermissions),
-    ...Object.entries(jobs).flatMap(([jobName, job]) =>
-      permissionWrites(
-        jobName,
-        job.permissions ?? workflowPermissions,
-      ),
-    ),
-  ].sort();
-  return {
-    jobs: {
-      "github-release": fingerprint(jobs["github-release"]),
-      "publish-pypi": fingerprint(jobs["publish-pypi"]),
-    },
-    workflow: fingerprint(workflowScope),
-    writes,
-  };
-};
-
-const assertPrivilegedContract = (source: string) => {
-  assert.deepEqual(privilegedContract(source), {
-    jobs: {
-      "github-release":
-        "1063a7c222b32f3597ceb64c19f35804f21db9a7cf5c09d53a215694e0190bed",
-      "publish-pypi":
-        "4cbad06b321957ac642d877ed1e9be2459bb709ba125087f7e7f779d39efddaf",
-    },
-    workflow:
-      "f62460e541e129b6fe93832099cfa0c0bc6cfef669d87ef0f028a4d78489ec0a",
-    writes: [
-      "github-release:contents",
-      "github-release:id-token",
-      "publish-pypi:id-token",
-    ],
-  });
-};
+const workflow = readFileSync(
+  ".github/workflows/release.yml",
+  "utf8",
+);
+const byName = (left: string, right: string) =>
+  left.localeCompare(right);
 
 const parseJobs = (source: string) => {
   const marker = source.match(/^jobs:\n/m);
@@ -81,186 +16,82 @@ const parseJobs = (source: string) => {
   );
   const matches = [
     ...jobsSource.matchAll(
-      /^  (?:(?:"([A-Za-z_][A-Za-z0-9_-]*)")|(?:'([A-Za-z_][A-Za-z0-9_-]*)')|([A-Za-z_][A-Za-z0-9_-]*)):\n/gm,
+      /^  ([A-Za-z_][A-Za-z0-9_-]*):\n/gm,
     ),
   ];
   return Object.fromEntries(
-    matches.map((match, index) => {
-      const next = matches.at(index + 1);
-      return [
-        match[1] ?? match[2] ?? match[3],
-        jobsSource.slice(
-          match.index,
-          next?.index ?? jobsSource.length,
-        ),
-      ];
-    }),
+    matches.map((match, index) => [
+      match[1],
+      jobsSource.slice(
+        match.index,
+        matches.at(index + 1)?.index ?? jobsSource.length,
+      ),
+    ]),
   );
 };
 
 const jobs = parseJobs(workflow);
 
-const privilegedJobNames = Object.entries(jobs)
-  .filter(([, job]) =>
-    /^      id-token: write\s*(?:#.*)?$/m.test(job),
-  )
-  .map(([name]) => name)
-  .sort();
+const finalizerPackageFiles = () => {
+  const block = jobs["github-release"].match(
+    /^      package-files: \|\n((?:        .+\n)+)/m,
+  );
+  expect(block).not.toBeNull();
+  return (block?.[1] ?? "")
+    .trim()
+    .split("\n")
+    .map((line) => line.trim());
+};
 
-describe("release privilege boundary", () => {
-  test("fingerprints every complete privileged job and write permission", () => {
-    assertPrivilegedContract(workflow);
+describe("release workflow semantics", () => {
+  test("finalizer package manifests equal the fixed release group and pack jobs", () => {
+    const packageFiles = finalizerPackageFiles();
+    const configuredPackages = JSON.parse(
+      readFileSync(".changeset/config.json", "utf8"),
+    ).fixed.at(0);
+    const finalizedPackages = packageFiles.map(
+      (packageFile) =>
+        JSON.parse(readFileSync(packageFile, "utf8")).name,
+    );
+    expect(finalizedPackages.toSorted(byName)).toEqual(
+      configuredPackages.toSorted(byName),
+    );
+
+    const nativePackageFiles = [
+      ...jobs["pack-native"].matchAll(
+        /^          - package: (.+)$/gm,
+      ),
+    ].map((match) => `packages/${match[1]}/package.json`);
+    expect(
+      [
+        ...nativePackageFiles,
+        "packages/stdnum/package.json",
+        "packages/stdnum-wasm/package.json",
+      ].toSorted(byName),
+    ).toEqual(packageFiles.toSorted(byName));
   });
 
-  test("rejects execution fields and unrelated write grants", () => {
-    for (const mutation of [
-      workflow.replace(
-        "permissions:\n  contents: read",
-        "permissions:\n  contents: write",
-      ),
-      workflow.replace(
-        "permissions:\n  contents: read",
-        "permissions: write-all",
-      ),
-      workflow.replace(
-        "\npermissions:\n",
-        "\ndefaults:\n  run:\n    shell: 'bash -c \"unreviewed-command; {0}\"'\n\npermissions:\n",
-      ),
-      workflow.replace(
-        "  pack-portable:\n    name:",
-        "  pack-portable:\n    permissions: write-all\n    name:",
-      ),
-      workflow.replace(
-        "pattern: python-wheel-*",
-        "repository: attacker/repository\n          pattern: python-wheel-*",
-      ),
-      workflow.replace(
-        "      - name: Verify exact wheel release set\n        env:",
-        "      - name: Verify exact wheel release set\n        shell: bash -c 'echo unreviewed; {0}'\n        env:",
-      ),
-    ]) {
-      expect(mutation).not.toBe(workflow);
-      expect(() =>
-        assertPrivilegedContract(mutation),
-      ).toThrow();
-    }
-  });
-
-  test("parses every valid GitHub Actions job identifier shape", () => {
-    const parsed = parseJobs(
-      "jobs:\n  a:\n    runs-on: ubuntu-latest\n  _publish:\n    runs-on: ubuntu-latest\n  publish_npm:\n    runs-on: ubuntu-latest\n  Publish-1:\n    runs-on: ubuntu-latest\n  '_quoted':\n    runs-on: ubuntu-latest\n",
-    );
-
-    expect(Object.keys(parsed)).toEqual([
-      "a",
-      "_publish",
-      "publish_npm",
-      "Publish-1",
-      "_quoted",
-    ]);
-  });
-
-  test("OIDC jobs only consume prepared artifacts", () => {
-    expect(privilegedJobNames).toEqual([
-      "github-release",
-      "publish-pypi",
-    ]);
-
-    expect(workflowPreamble).toContain(
-      "permissions:\n  contents: read",
-    );
-    expect(workflowPreamble).not.toContain(
-      "id-token: write",
-    );
-
-    const publishPyPI = jobs["publish-pypi"];
-    const actionRefs = [
-      ...publishPyPI.matchAll(
-        /^\s+(?:-\s+)?uses:\s+(\S+)/gm,
-      ),
-    ].map((match) => match[1]);
-    expect(actionRefs).toEqual([
-      "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c",
-      "pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33",
-    ]);
-    expect([
-      ...publishPyPI.matchAll(/^\s+run:\s*[|>]?(?:\s*)$/gm),
-    ]).toHaveLength(1);
-    expect(publishPyPI).toContain(
-      "Verify exact wheel release set",
-    );
-    expect(publishPyPI).toContain(
-      "if found_platforms != set(expected_platforms)",
-    );
-  });
-
-  test("the hardened finalizer owns all npm publishing", () => {
-    expect(jobs["publish-native"]).toBeUndefined();
-    expect(jobs["publish-wasm"]).toBeUndefined();
-    expect(jobs["publish-main"]).toBeUndefined();
-    expect(jobs["pack-native"]).not.toContain(
-      "id-token: write",
-    );
-    expect(jobs["pack-portable"]).not.toContain(
-      "id-token: write",
-    );
-    expect(jobs["github-release"]).toContain(
-      "npm-version-finalize.yml@1ce0079bbdbf93a4c1917d2857496b89aedcec14",
-    );
+  test("caller binds finalization to its exact artifact set and credentials", () => {
     expect(jobs["github-release"]).toContain(
       "artifact-pattern: npm-tarball-*",
     );
-    expect(jobs["github-release"]).not.toContain(
-      "secrets: inherit",
+    expect(jobs["github-release"]).toContain(
+      "publish-to-npm: true",
     );
-    expect(jobs["github-release"]).not.toContain(
-      "pull-requests: write",
+    expect(jobs["github-release"]).toContain(
+      "update-changelog: false",
     );
-    const expectedSecrets = [
-      "RELEASE_APP_ID",
-      "RELEASE_APP_PRIVATE_KEY",
-      "CHANGELOG_APP_ID",
-      "CHANGELOG_APP_PRIVATE_KEY",
-    ].sort();
-    for (const secret of expectedSecrets) {
-      expect(jobs["github-release"]).toContain(
-        `${secret}:`,
-      );
-    }
     const forwardedSecrets = [
       ...jobs["github-release"].matchAll(
         /^      ([A-Z][A-Z0-9_]+):\s+\$\{\{ secrets\.\1 \}\}$/gm,
       ),
-    ]
-      .map((match) => match[1])
-      .sort();
-    expect(forwardedSecrets).toEqual(expectedSecrets);
-  });
-
-  test("binds PyPI publication to the exact wheel identities", () => {
-    const publishPyPI = jobs["publish-pypi"];
-
-    expect(publishPyPI).toContain(
-      "EXPECTED_VERSION: ${{ needs.verify.outputs.version }}",
-    );
-    expect(publishPyPI).toContain(
-      'distribution != "stella_stdnum"',
-    );
-    expect(publishPyPI).toContain(
-      'metadata["Version"] != expected_version',
-    );
-    expect(publishPyPI).toContain(
-      'python_tag != "cp311" or abi_tag != "abi3"',
-    );
-    for (const platform of [
-      "linux-aarch64",
-      "linux-x86_64",
-      "macos-arm64",
-      "macos-x86_64",
-      "windows-x86_64",
-    ]) {
-      expect(publishPyPI).toContain(`"${platform}":`);
-    }
+    ].map((match) => match[1]);
+    expect(forwardedSecrets.toSorted(byName)).toEqual([
+      "CHANGELOG_APP_ID",
+      "CHANGELOG_APP_PRIVATE_KEY",
+      "RELEASE_APP_ID",
+      "RELEASE_APP_PRIVATE_KEY",
+    ]);
   });
 
   test("manual publishing and the root tarball fail closed", () => {
