@@ -211,7 +211,7 @@ jobs:
           fi
           echo "path=${tarballs[0]}" >> "$GITHUB_OUTPUT"
 
-      - uses: stella/.github/.github/actions/npm-publish-hardened@48aacae31829ce15216a6b766b03a92fd2e84da3
+      - uses: stella/.github/.github/actions/npm-publish-hardened@7198083e27bdd963cacc0b7d70ca54fe3ec83393
         with:
           tarball: ${{ steps.tarball.outputs.path }}
           tag: ${{ needs.verify.outputs.dist_tag }}
@@ -318,7 +318,7 @@ jobs:
         id: tarball
         run: echo "path=$(find npm-tarball -name '*.tgz' -print -quit)" >> "$GITHUB_OUTPUT"
 
-      - uses: stella/.github/.github/actions/npm-publish-hardened@48aacae31829ce15216a6b766b03a92fd2e84da3
+      - uses: stella/.github/.github/actions/npm-publish-hardened@7198083e27bdd963cacc0b7d70ca54fe3ec83393
         with:
           tarball: ${{ steps.tarball.outputs.path }}
           tag: ${{ needs.verify.outputs.dist_tag }}
@@ -351,7 +351,7 @@ jobs:
         id: tarball
         run: echo "path=$(find npm-tarball -name '*.tgz' -print -quit)" >> "$GITHUB_OUTPUT"
 
-      - uses: stella/.github/.github/actions/npm-publish-hardened@48aacae31829ce15216a6b766b03a92fd2e84da3
+      - uses: stella/.github/.github/actions/npm-publish-hardened@7198083e27bdd963cacc0b7d70ca54fe3ec83393
         with:
           tarball: ${{ steps.tarball.outputs.path }}
           tag: ${{ needs.verify.outputs.dist_tag }}
