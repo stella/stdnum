@@ -436,7 +436,7 @@ jobs:
     needs:
       [verify, pack-native, pack-portable, publish-pypi]
     if: needs.verify.outputs.publish == 'true'
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@1ce0079bbdbf93a4c1917d2857496b89aedcec14
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@c75efcc5483920fb2984fe0f22e4489cd6d01f57
     with:
       package-files: |
         packages/stdnum/package.json
