@@ -27,12 +27,31 @@ const expectedContract = {
 };
 
 const assertCallerContract = (source: string) => {
-  expect(source).toContain(
-    "expected-version: ${{ needs.verify.outputs.version }}",
+  expect(source).toMatch(
+    /^        uses: stella\/\.github\/\.github\/actions\/pypi-publish-hardened@[0-9a-f]{40}$/m,
   );
-  expect(source).toContain("project-name: stella-stdnum");
-  expect(source).toContain(
-    "distribution-name: stella_stdnum",
+  expect(source).toMatch(
+    /^        uses: pypa\/gh-action-pypi-publish@[0-9a-f]{40}/m,
+  );
+  expect(source).toMatch(
+    /^        uses: stella\/\.github\/\.github\/actions\/pypi-publish-hardened\/verify@[0-9a-f]{40}$/m,
+  );
+  expect(
+    source.match(
+      /^          expected-version: \$\{\{ needs\.verify\.outputs\.version \}\}$/gm,
+    ),
+  ).toHaveLength(2);
+  expect(
+    source.match(
+      /^          project-name: stella-stdnum$/gm,
+    ),
+  ).toHaveLength(2);
+  expect(source).toMatch(
+    /^          distribution-name: stella_stdnum$/m,
+  );
+  expect(source).toMatch(/^          packages-dir: dist$/m);
+  expect(source).toMatch(
+    /^          skip-existing: true$/m,
   );
 
   const contract = source.match(
@@ -53,7 +72,7 @@ const assertCallerContract = (source: string) => {
   );
 };
 
-test("binds the shared publisher to the exact stdnum wheel set", () => {
+test("binds the publisher to the exact stdnum wheel set", () => {
   assertCallerContract(workflow);
 });
 
