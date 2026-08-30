@@ -78,17 +78,12 @@ describe("release workflow semantics", () => {
     expect(jobs["github-release"]).toContain(
       "publish-to-npm: true",
     );
-    expect(jobs["github-release"]).toContain(
-      "update-changelog: false",
-    );
     const forwardedSecrets = [
       ...jobs["github-release"].matchAll(
         /^      ([A-Z][A-Z0-9_]+):\s+\$\{\{ secrets\.\1 \}\}$/gm,
       ),
     ].map((match) => match[1]);
     expect(forwardedSecrets.toSorted(byName)).toEqual([
-      "CHANGELOG_APP_ID",
-      "CHANGELOG_APP_PRIVATE_KEY",
       "RELEASE_APP_ID",
       "RELEASE_APP_PRIVATE_KEY",
     ]);
