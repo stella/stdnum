@@ -1217,6 +1217,11 @@ const SURVEY_ONLY_ENTRIES = new Set([
   "stdnum-js:is_.kennitala",
   "stdnum-js:ie.pps",
   "stdnum-js:se.personnummer",
+  // stdnum-js rejects birth dates after the current
+  // wall-clock date. Our deterministic component
+  // validation and python-stdnum accept every valid
+  // calendar date, so this is not an equivalent gate.
+  "stdnum-js:no.fodselsnummer",
   // stdnum-js validatePerson("NL", ...) also runs the
   // Onderwijsnummer validator, so it accepts values
   // that are not valid BSNs.
