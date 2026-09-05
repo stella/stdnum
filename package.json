@@ -54,17 +54,17 @@
   "devDependencies": {
     "@brazilian-utils/brazilian-utils": "^2.3.0",
     "@changesets/changelog-github": "^1.0.0",
-    "@changesets/cli": "^3.0.0",
+    "@changesets/cli": "^3.0.1",
     "@stll/oxlint-config": "0.6.0",
     "@stll/typescript-config": "0.6.0",
-    "@types/node": "^26.2.0",
+    "@types/node": "^26.4.0",
     "bun-types": "1.4.1",
     "fast-check": "^4.9.0",
     "fast-luhn": "^2.0.2",
     "iban": "^0.0.14",
     "ibantools": "^4.5.4",
     "jsvat": "^2.5.4",
-    "lefthook": "^2.1.10",
+    "lefthook": "^2.1.12",
     "luhn": "^2.4.1",
     "oxfmt": "^0.63.0",
     "oxlint": "1.78.0",
@@ -74,7 +74,7 @@
     "tsdown": "0.22.14",
     "typescript": "7.0.2",
     "validate-polish": "^2.1.40",
-    "vite": "8.2.1"
+    "vite": "8.2.2"
   },
   "packageManager": "bun@1.4.1"
 }
