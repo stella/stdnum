@@ -1,0 +1,22 @@
+# Hawk cannot observe npm, Python, or WebAssembly consumers of these libraries.
+# The rust:hawk script preserves public APIs and denies restricted-visibility findings.
+
+[[production]]
+package = "stella-stdnum-core"
+lib = "stella_stdnum_core"
+reason = "workspace library; audit restricted visibility without changing its public API"
+
+[[production]]
+package = "stella-stdnum-napi"
+lib = "stella_stdnum_napi"
+reason = "Node binding; audit restricted visibility without changing its public API"
+
+[[production]]
+package = "stella-stdnum-py"
+lib = "_native"
+reason = "Python binding; audit restricted visibility without changing its public API"
+
+[[production]]
+package = "stella-stdnum-wasm"
+lib = "stella_stdnum_wasm"
+reason = "WebAssembly binding; audit restricted visibility without changing its public API"

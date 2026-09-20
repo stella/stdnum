@@ -1,0 +1,16 @@
+name: Package quarantine policy
+
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  enforce:
+    name: Enforce package quarantine
+    if: github.repository == 'stella/stdnum'
+    permissions:
+      contents: read
+    uses: stella/.github/.github/workflows/quarantine-policy.yml@9e1915536efc226c5ec9d3ca0f2192be5aa6ec7e

@@ -8,9 +8,10 @@ const root = dirname(
   dirname(fileURLToPath(import.meta.url)),
 );
 const require = createRequire(import.meta.url);
-const binding = require(
+const { loadNativeBinding } = require(
   join(root, "packages/stdnum/index.cjs"),
 );
+const binding = loadNativeBinding();
 const fixtureSet = JSON.parse(
   readFileSync(
     join(root, "packages/stdnum/fixtures/parity.json"),

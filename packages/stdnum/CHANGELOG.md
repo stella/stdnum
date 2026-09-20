@@ -1,5 +1,13 @@
 # @stll/stdnum
 
+## 2.3.2
+
+### Patch Changes
+
+- [#183](https://github.com/stella/stdnum/pull/183) [`0c1bb1e`](https://github.com/stella/stdnum/commit/0c1bb1e8692b10756c2100f62c2ab3f6d1bcde06) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Publish refreshed package builds after updating dependencies and Rust quality tooling.
+
+- [#190](https://github.com/stella/stdnum/pull/190) [`a5a5cd8`](https://github.com/stella/stdnum/commit/a5a5cd82c5ed24222801028ce5d3a2260775b994) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Resolve the host platform's native binding through literal `require` specifiers in `index.cjs`, so bundlers (Bun `--compile`, esbuild) embed the addon as a sidecar instead of failing on first use inside a bundle.
+
 ## 2.3.1
 
 ### Patch Changes

@@ -13,7 +13,6 @@ same registry is available from Python as `stella-stdnum`.
 
 This package covers 11 global identifiers and 96 countries through 176
 per-module entry points.
-
 <!-- END GENERATED: registry-summary -->
 
 ## Install

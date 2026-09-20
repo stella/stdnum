@@ -1,0 +1,23 @@
+name: Release policy
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/release.yml
+      - .github/workflows/release-policy.yml
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/release.yml
+      - .github/workflows/release-policy.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  enforce:
+    name: Enforce release boundaries
+    uses: stella/.github/.github/workflows/release-policy.yml@0f814e1a0c6c7401778e661209553b6e15f8d92a
+    permissions:
+      contents: read

@@ -1,0 +1,19 @@
+name: Package quarantine prune
+
+on:
+  schedule:
+    - cron: "11 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  prune:
+    name: Remove expired quarantine exceptions
+    if: github.repository == 'stella/stdnum'
+    permissions:
+      contents: read
+    uses: stella/.github/.github/workflows/quarantine-prune.yml@9e1915536efc226c5ec9d3ca0f2192be5aa6ec7e
+    secrets:
+      CHANGELOG_APP_ID: ${{ secrets.CHANGELOG_APP_ID }}
+      CHANGELOG_APP_PRIVATE_KEY: ${{ secrets.CHANGELOG_APP_PRIVATE_KEY }}
