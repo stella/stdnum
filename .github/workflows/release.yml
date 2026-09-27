@@ -37,7 +37,7 @@ jobs:
         with:
           bun-version-file: package.json
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22.21.1"
 
@@ -137,7 +137,7 @@ jobs:
         with:
           bun-version-file: package.json
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22.21.1"
 
@@ -191,7 +191,7 @@ jobs:
         with:
           bun-version-file: package.json
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22.21.1"
 
@@ -203,7 +203,7 @@ jobs:
           rustup toolchain install 1.96.0 --profile minimal
           rustup target add wasm32-unknown-unknown --toolchain 1.96.0
           rustup default 1.96.0
-          cargo install wasm-bindgen-cli --version 0.2.126 --locked
+          cargo install wasm-bindgen-cli --version 0.2.128 --locked
 
       - name: Build portable packages
         run: |
@@ -331,7 +331,7 @@ jobs:
       id-token: write # Required only for PyPI trusted publishing.
     steps:
       - name: Prepare exact Python wheel set
-        uses: stella/.github/.github/actions/pypi-publish-hardened@0f814e1a0c6c7401778e661209553b6e15f8d92a
+        uses: stella/.github/.github/actions/pypi-publish-hardened@636b7841096c8f0cc5a1572077b78768ef8fea42
         with:
           expected-version: ${{ needs.verify.outputs.version }}
           project-name: stella-stdnum
@@ -344,7 +344,7 @@ jobs:
           packages-dir: dist
           skip-existing: true
       - name: Verify published PyPI files
-        uses: stella/.github/.github/actions/pypi-publish-hardened/verify@0f814e1a0c6c7401778e661209553b6e15f8d92a
+        uses: stella/.github/.github/actions/pypi-publish-hardened/verify@636b7841096c8f0cc5a1572077b78768ef8fea42
         with:
           expected-version: ${{ needs.verify.outputs.version }}
           project-name: stella-stdnum
@@ -354,7 +354,7 @@ jobs:
     needs:
       [verify, pack-native, pack-portable, publish-pypi]
     if: github.ref == 'refs/heads/main' && (needs.verify.outputs.publish == 'true')
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@0f814e1a0c6c7401778e661209553b6e15f8d92a
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@636b7841096c8f0cc5a1572077b78768ef8fea42
     with:
       package-files: |
         packages/stdnum/package.json
