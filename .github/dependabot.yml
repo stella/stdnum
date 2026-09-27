@@ -4,8 +4,8 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "03:00"
+      interval: "cron"
+      cronjob: "0 3 * * *"
       timezone: "Europe/Prague"
     cooldown:
       default-days: 5
@@ -27,8 +27,8 @@ updates:
     directories:
       - "/"
     schedule:
-      interval: "daily"
-      time: "03:00"
+      interval: "cron"
+      cronjob: "0 3 * * *"
       timezone: "Europe/Prague"
     cooldown:
       default-days: 5
@@ -55,8 +55,8 @@ updates:
       - "/scripts/oracle"
       - "/crates/stdnum-py/tests"
     schedule:
-      interval: "daily"
-      time: "03:00"
+      interval: "cron"
+      cronjob: "0 3 * * *"
       timezone: "Europe/Prague"
     cooldown:
       default-days: 5
@@ -77,8 +77,8 @@ updates:
   - package-ecosystem: "bundler"
     directory: "/scripts/oracle"
     schedule:
-      interval: "daily"
-      time: "03:00"
+      interval: "cron"
+      cronjob: "0 3 * * *"
       timezone: "Europe/Prague"
     cooldown:
       default-days: 5
@@ -99,8 +99,8 @@ updates:
   - package-ecosystem: "composer"
     directory: "/scripts/oracle"
     schedule:
-      interval: "daily"
-      time: "03:00"
+      interval: "cron"
+      cronjob: "0 3 * * *"
       timezone: "Europe/Prague"
     cooldown:
       default-days: 5
@@ -121,8 +121,8 @@ updates:
   - package-ecosystem: "cargo"
     directory: "/scripts/rust-oracle"
     schedule:
-      interval: "daily"
-      time: "03:00"
+      interval: "cron"
+      cronjob: "0 3 * * *"
       timezone: "Europe/Prague"
     cooldown:
       default-days: 5
