@@ -132,7 +132,7 @@ whole. The benchmark alternates execution order and compares paired medians to
 reduce host noise.
 
 Dependabot watches every JavaScript, Python, Ruby, PHP, and Rust oracle
-manifest. Its weekly update PRs rerun the strict correctness gates against the
+manifest. Its daily update PRs rerun the strict correctness gates against the
 new upstream versions before they can merge.
 
 ## Supported Identifiers
