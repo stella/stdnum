@@ -3,12 +3,13 @@
   "version": "2.3.2",
   "description": "Standard identifier validation for browsers via WebAssembly",
   "homepage": "https://github.com/stella/stdnum",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stella/stdnum.git"
   },
   "files": [
+    "NOTICE",
     "dist",
     "native"
   ],

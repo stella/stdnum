@@ -15,7 +15,7 @@ edition = "2024"
 # (rust-toolchain.toml). With resolver "3" this also makes dependency
 # resolution MSRV-aware and fails fast on an older rustc.
 rust-version = "1.96"
-license = "MIT"
+license = "Apache-2.0"
 publish = false
 repository = "https://github.com/stella/stdnum"
 

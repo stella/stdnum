@@ -159,6 +159,7 @@ jobs:
           set -euo pipefail
           pack_dir="$RUNNER_TEMP/npm-tarballs"
           mkdir -p "$pack_dir"
+          cp "$GITHUB_WORKSPACE/LICENSE" "$GITHUB_WORKSPACE/NOTICE" .
           pack_json="$(npm pack --json --ignore-scripts --pack-destination "$pack_dir")"
           # shellcheck disable=SC2016
           filename="$(node -e '
@@ -222,6 +223,7 @@ jobs:
           set -euo pipefail
           pack_dir="$RUNNER_TEMP/npm-main"
           mkdir -p "$pack_dir"
+          cp "$GITHUB_WORKSPACE/LICENSE" "$GITHUB_WORKSPACE/NOTICE" .
           pack_json="$(npm pack --json --ignore-scripts --pack-destination "$pack_dir")"
           # shellcheck disable=SC2016
           filename="$(node -e '
@@ -253,6 +255,7 @@ jobs:
           set -euo pipefail
           pack_dir="$RUNNER_TEMP/npm-wasm"
           mkdir -p "$pack_dir"
+          cp "$GITHUB_WORKSPACE/LICENSE" "$GITHUB_WORKSPACE/NOTICE" .
           pack_json="$(npm pack --json --ignore-scripts --pack-destination "$pack_dir")"
           # shellcheck disable=SC2016
           filename="$(node -e '
