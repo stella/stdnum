@@ -8,6 +8,7 @@
     "url": "git+https://github.com/stella/stdnum.git"
   },
   "files": [
+    "NOTICE",
     "index.cjs",
     "stella_stdnum_napi.node"
   ],

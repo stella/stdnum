@@ -9,6 +9,7 @@
     "url": "git+https://github.com/stella/stdnum.git"
   },
   "files": [
+    "NOTICE",
     "dist",
     "index.cjs",
     "registry.json",
