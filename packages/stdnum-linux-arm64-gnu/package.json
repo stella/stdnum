@@ -2,7 +2,7 @@
   "name": "@stll/stdnum-linux-arm64-gnu",
   "version": "2.3.2",
   "description": "Linux arm64 glibc native binding for @stll/stdnum",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stella/stdnum.git"

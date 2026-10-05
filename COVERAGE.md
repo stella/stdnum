@@ -18,7 +18,7 @@
 | rs    | tax-ids                | Rust       | MIT     | EU+UK+CH+NO | ~30     | Covered by jsvat/valvat |
 | net   | CountryValidator       | C#/.NET    | MIT     | ~60         | ~120    | Reference (no runtime)  |
 | tid   | Tax ID Pro             | API        | Paid    | 100+        | 200+    | Reference (paid API)    |
-| stll  | @stll/stdnum           | TypeScript | MIT     | 34          | 83      | All of the above        |
+| stll  | @stll/stdnum           | TypeScript | Apache-2.0 | 34          | 83      | All of the above        |
 
 ## Coverage by country
 

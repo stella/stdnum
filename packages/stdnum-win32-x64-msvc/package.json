@@ -2,7 +2,7 @@
   "name": "@stll/stdnum-win32-x64-msvc",
   "version": "2.3.2",
   "description": "Windows x64 native binding for @stll/stdnum",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stella/stdnum.git"
