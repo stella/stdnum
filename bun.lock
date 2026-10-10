@@ -32,7 +32,7 @@
     },
     "packages/stdnum": {
       "name": "@stll/stdnum",
-      "version": "2.3.2",
+      "version": "2.3.3",
       "devDependencies": {
         "tsdown": "0.23.0",
         "typescript": "7.0.2",
@@ -48,23 +48,23 @@
     },
     "packages/stdnum-darwin-arm64": {
       "name": "@stll/stdnum-darwin-arm64",
-      "version": "2.3.2",
+      "version": "2.3.3",
     },
     "packages/stdnum-darwin-x64": {
       "name": "@stll/stdnum-darwin-x64",
-      "version": "2.3.2",
+      "version": "2.3.3",
     },
     "packages/stdnum-linux-arm64-gnu": {
       "name": "@stll/stdnum-linux-arm64-gnu",
-      "version": "2.3.2",
+      "version": "2.3.3",
     },
     "packages/stdnum-linux-x64-gnu": {
       "name": "@stll/stdnum-linux-x64-gnu",
-      "version": "2.3.2",
+      "version": "2.3.3",
     },
     "packages/stdnum-wasm": {
       "name": "@stll/stdnum-wasm",
-      "version": "2.3.2",
+      "version": "2.3.3",
       "devDependencies": {
         "@stll/stdnum": "workspace:*",
         "tsdown": "0.23.0",
@@ -73,7 +73,7 @@
     },
     "packages/stdnum-win32-x64-msvc": {
       "name": "@stll/stdnum-win32-x64-msvc",
-      "version": "2.3.2",
+      "version": "2.3.3",
     },
   },
   "packages": {
