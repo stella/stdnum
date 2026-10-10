@@ -8,10 +8,10 @@
         "@brazilian-utils/brazilian-utils": "^2.4.0",
         "@changesets/changelog-github": "^1.0.1",
         "@changesets/cli": "^3.0.3",
-        "@stll/oxlint-config": "0.7.0",
+        "@stll/oxlint-config": "0.8.0",
         "@stll/typescript-config": "0.6.0",
         "@types/node": "^26.6.2",
-        "bun-types": "1.4.2",
+        "bun-types": "1.4.3",
         "fast-check": "^4.10.2",
         "fast-luhn": "^2.0.2",
         "iban": "^0.0.14",
@@ -249,7 +249,7 @@
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.1", "", {}, "sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw=="],
 
-    "@stll/oxlint-config": ["@stll/oxlint-config@0.7.0", "", { "peerDependencies": { "oxlint": ">=1.80.0 <2", "oxlint-tsgolint": ">=7.0.2001 <8" } }, "sha512-USieO469Q1aZVpE+sB14uaq0V6FxQ/BAdT0yWN9tmGbOy9xYWjQ85Avhp6VmjcyjGmwANeUjY8C++xSd5kXk6Q=="],
+    "@stll/oxlint-config": ["@stll/oxlint-config@0.8.0", "", { "peerDependencies": { "oxlint": ">=1.80.0 <2", "oxlint-tsgolint": ">=7.0.2001 <8" }, "bin": { "stll-toolchain-check": "dist/toolchain-check-cli.mjs" } }, "sha512-ly5Lzm1ZSdCoy0tCD69oPK8XUn2rMjICiyJNL9gYgAltFPPg1730/2aecRYXKAUHiyi/xWpQQL88km2Ab5F9Sw=="],
 
     "@stll/stdnum": ["@stll/stdnum@workspace:packages/stdnum"],
 
@@ -359,7 +359,7 @@
 
     "@yuku-toolchain/types": ["@yuku-toolchain/types@0.10.2", "", {}, "sha512-sSeo4SSSToiS+sSD+bwn/s94EEcaLJ7tG5LCp8gFYC1G5VzxzX7fqB6m9RU1yMD8KTpu6zdU/I1NlQf8hVBJ9Q=="],
 
-    "bun-types": ["bun-types@1.4.2", "", { "dependencies": { "@types/node": "*" } }, "sha512-bxV1FgK7yBIzjRe5zBozIM4Bem11ZJcCXSrjWRG3YWLt8yFDePu4cLjpebO8OvPeIE9trbyPF4fuj3Cia4Fj3w=="],
+    "bun-types": ["bun-types@1.4.3", "", { "dependencies": { "@types/node": "*", "undici-types": "*" } }, "sha512-tinRJNGOmUN+tEAsn2y2e942n9JHRHR42iUYzDH75NmhJqVBokGSQkkfSFdNWwsANIdrK6ACH9t01M452YyTwg=="],
 
     "cac": ["cac@7.0.0", "", {}, "sha512-tixWYgm5ZoOD+3g6UTea91eow5z6AAHaho3g0V9CNSNb45gM8SmflpAc+GRd1InC4AqN/07Unrgp56Y94N9hJQ=="],
 
