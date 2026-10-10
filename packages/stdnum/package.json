@@ -949,7 +949,8 @@
   "scripts": {
     "build": "tsdown && node ../../scripts/build-native-node.mjs",
     "build:js": "tsdown",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "bun check --no-pretty --all --project=tsconfig.json",
+    "check:typecheck-parity": "stll-typecheck-parity",
     "codegen:check": "bun ../../scripts/generate-public-surface.ts --check"
   },
   "devDependencies": {
