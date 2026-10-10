@@ -37,17 +37,25 @@ test("typecheck and parity cover every workspace configuration", async () => {
   expect(parityCommands.shift()).toBe(
     "stll-typecheck-parity",
   );
-  expect(typecheckCommands.toSorted()).toEqual(
+  expect(
+    typecheckCommands.toSorted((left, right) =>
+      left.localeCompare(right),
+    ),
+  ).toEqual(
     typecheckDirectories
       .map((path) => `bun run --cwd ${path} typecheck`)
-      .toSorted(),
+      .toSorted((left, right) => left.localeCompare(right)),
   );
-  expect(parityCommands.toSorted()).toEqual(
+  expect(
+    parityCommands.toSorted((left, right) =>
+      left.localeCompare(right),
+    ),
+  ).toEqual(
     typecheckDirectories
       .map(
         (path) =>
           `bun run --cwd ${path} check:typecheck-parity`,
       )
-      .toSorted(),
+      .toSorted((left, right) => left.localeCompare(right)),
   );
 });
