@@ -28,7 +28,8 @@
   "scripts": {
     "build": "node ../../scripts/build-wasm.mjs && tsdown",
     "build:js": "tsdown",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "bun check --no-pretty --all --project=tsconfig.json",
+    "check:typecheck-parity": "stll-typecheck-parity"
   },
   "devDependencies": {
     "@stll/stdnum": "workspace:*",

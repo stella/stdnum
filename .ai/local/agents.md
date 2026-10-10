@@ -7,7 +7,8 @@
 - `bun install`
 - `bun run lint`
 - `bun run format:check`
-- `bun run typecheck`
+- `bun run typecheck` (Bun checks the root and both package tsconfigs)
+- `bun run check:typecheck-parity`
 - `bun test`
 - `bun run oracle`
 - `bun run codegen:check`
@@ -49,3 +50,7 @@
 - Do not add `unsafe` for speculative speedups. Require a measured material gain,
   a small isolated boundary, equivalence tests, and fuzz coverage before making
   an exception to the workspace default.
+
+### TypeScript Tooling
+
+Use `bun run typecheck` for type checking and `bun run check:typecheck-parity` to verify diagnostic coverage against TypeScript for every checked project. Editors keep the TypeScript language service because Bun has no language server. Keep `typescript` for editor support and declaration generation through tsdown.

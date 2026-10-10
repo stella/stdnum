@@ -17,7 +17,8 @@ a pull request.
 bun install
 bun run rust:check     # lint and test the Rust implementation
 bun run codegen:check  # verify generated bindings, types, and README
-bun run typecheck      # type-check binding code
+bun run typecheck      # bun check for root and binding code
+bun run check:typecheck-parity # compare diagnostic coverage with TypeScript
 bun test               # test the TypeScript adapter
 bun run lint           # oxlint
 bun run format         # oxfmt
@@ -70,3 +71,7 @@ thin adapters over the one Rust implementation.
 Open a [GitHub issue](https://github.com/stella/stdnum/issues).
 For security vulnerabilities, see
 [SECURITY.md](./SECURITY.md).
+
+## TypeScript tooling
+
+Type checking uses `bun check --no-pretty --all --project=tsconfig.json` in the root and each package. CI also runs `bun run check:typecheck-parity` for all three projects. Editors continue to use the TypeScript language service because Bun has no language server; `typescript` also remains required for declaration generation through tsdown.
