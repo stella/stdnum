@@ -8,7 +8,7 @@
         "@brazilian-utils/brazilian-utils": "^2.4.0",
         "@changesets/changelog-github": "^1.0.1",
         "@changesets/cli": "^3.0.3",
-        "@stll/oxlint-config": "1.0.0",
+        "@stll/oxlint-config": "1.0.1",
         "@stll/typescript-config": "0.6.0",
         "@types/node": "^26.6.2",
         "bun-types": "1.4.3",
@@ -301,7 +301,7 @@
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.1", "", {}, "sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw=="],
 
-    "@stll/oxlint-config": ["@stll/oxlint-config@1.0.0", "", { "dependencies": { "acorn": "8.15.0", "esbuild": "0.28.2", "picomatch": "4.0.5", "semver": "7.8.5", "smol-toml": "1.9.0", "tsx": "4.23.13", "yaml": "2.9.0" }, "peerDependencies": { "oxlint": ">=1.87.0 <2", "oxlint-tsgolint": ">=7.0.2003 <8", "vite": "8.1.5" }, "optionalPeers": ["vite"], "bin": { "stll-cloud-setup": "dist/cloud-setup-cli.mjs", "stll-consumer-compat": "dist/consumer-compat-cli.mjs", "stll-toolchain-check": "dist/toolchain-check-cli.mjs", "stll-typecheck-probe": "dist/typecheck-probe-cli.mjs", "stll-publish-contract": "dist/publish-contract-cli.mjs", "stll-typecheck-parity": "dist/typecheck-parity-cli.mjs", "stll-toolchain-changed": "dist/toolchain-changed-cli.mjs" } }, "sha512-xAdvErhhrBUjr3QvxHX2+ca/kooc+G4WpwA2UAKhZJRjPV+DOpEXhVgcxMJGm/0fdWzVfkCM5EwQ5uO75JqYCw=="],
+    "@stll/oxlint-config": ["@stll/oxlint-config@1.0.1", "", { "dependencies": { "acorn": "8.15.0", "esbuild": "0.28.2", "picomatch": "4.0.5", "semver": "7.8.5", "smol-toml": "1.9.0", "tsx": "4.23.13", "yaml": "2.9.0" }, "peerDependencies": { "oxlint": ">=1.87.0 <2", "oxlint-tsgolint": ">=7.0.2003 <8", "vite": "8.1.5" }, "optionalPeers": ["vite"], "bin": { "stll-cloud-setup": "dist/cloud-setup-cli.mjs", "stll-consumer-compat": "dist/consumer-compat-cli.mjs", "stll-toolchain-check": "dist/toolchain-check-cli.mjs", "stll-typecheck-probe": "dist/typecheck-probe-cli.mjs", "stll-publish-contract": "dist/publish-contract-cli.mjs", "stll-typecheck-parity": "dist/typecheck-parity-cli.mjs", "stll-toolchain-changed": "dist/toolchain-changed-cli.mjs" } }, "sha512-2P+zNsUzOr7J5zA7YRNeR5SmXu3OLhvOoTKkHHO8RwZpEs/QKzP9mC3ja0d0zKP04COMAw7qTZlUhlxpUez4Ng=="],
 
     "@stll/stdnum": ["@stll/stdnum@workspace:packages/stdnum"],
 
