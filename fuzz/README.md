@@ -1,6 +1,6 @@
 # Fuzzing the stdnum core
 
-Coverage-guided fuzz targets for the boundary-sensitive part of
+Fuzz target code for the boundary-sensitive part of
 `stella-stdnum-core`: the public `validate_id` entry point. Every jurisdiction
 validator takes untrusted strings and does offset / codepoint math, so a
 regression there is exactly the class of bug that examples miss (see the
@@ -9,12 +9,11 @@ regression there is exactly the class of bug that examples miss (see the
 
 This crate is its **own workspace** (empty `[workspace]` in `Cargo.toml`) so it
 stays out of the main `--workspace` build and the strict release lints, and so
-its nightly-only sanitizer dependencies never touch the default build.
+its target dependencies never touch the default build.
 
 ## Requirements
 
-- A nightly toolchain: `nightly` (or a pinned `nightly-*`).
-- `cargo-fuzz`: `cargo install cargo-fuzz --locked`
+- The repository Rust 1.99.0 toolchain.
 
 ## Targets
 
@@ -24,21 +23,18 @@ its nightly-only sanitizer dependencies never touch the default build.
 
 ## Running
 
-```sh
-# From this directory. Short local smoke run:
-cargo +nightly fuzz run validate_id -- -max_total_time=30
+Compile and smoke-run the target on the pinned stable toolchain:
 
-# Longer campaign:
-cargo +nightly fuzz run validate_id -- -max_total_time=600
+```sh
+cargo check --manifest-path fuzz/Cargo.toml --bins
+cargo run --manifest-path fuzz/Cargo.toml --locked --bin validate_id -- -runs=1000 -seed=20261011 -max_len=768
 ```
 
-List targets with `cargo +nightly fuzz list`.
-
-Crashes land in `fuzz/artifacts/<target>/`; reproduce with
-`cargo +nightly fuzz run <target> fuzz/artifacts/<target>/<crash-file>`.
-Discovered corpus lives in `fuzz/corpus/<target>/`. Both directories are
-git-ignored (see `.gitignore`); commit a minimized reproducer as a regression
-case in `crates/stdnum-core/tests/robustness.rs` instead of the raw corpus.
+The smoke run exercises invariants without sanitizer or coverage
+instrumentation. Generated robustness tests in
+`crates/stdnum-core/tests/robustness.rs` provide deterministic regression
+coverage. Coverage-guided cargo-fuzz execution requires compiler features
+unavailable on stable Rust.
 
 ## Adding a target
 

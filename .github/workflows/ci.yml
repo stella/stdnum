@@ -64,7 +64,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: "package.json"
       - run: bun install --frozen-lockfile
@@ -90,7 +90,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
@@ -113,7 +113,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "22.21.1"
+          node-version-file: .node-version
       - run: node scripts/version-sync.mjs check
 
   test:
@@ -128,7 +128,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
@@ -147,7 +147,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
@@ -185,23 +185,27 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
 
       - name: Setup Rust
-        # 1.96.0 is the pinned toolchain (rust-toolchain.toml); the nightly with
-        # rustc-dev is only needed to build the shared Dylint lint libraries.
+        # Use the repository stable toolchain for Clippy and the shared source lint.
         run: |
-          rustup toolchain install 1.96.0 --profile minimal \
-            --component rustfmt,clippy
-          rustup toolchain install nightly-2026-04-16 --profile minimal \
-            --component rustc-dev \
-            --component llvm-tools-preview
-          rustup default 1.96.0
-          cargo install cargo-dylint --version 6.0.1 --locked
-          cargo install dylint-link --version 6.0.1 --locked
+          rustup toolchain install 1.99.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.99.0
+
+      - name: Cache shared Rust source lint
+        id: source-lint-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cargo/bin/cargo-stella-lint
+          key: ${{ runner.os }}-${{ runner.arch }}-stella-source-lint-a1bd81740ecb4b66999f56d1716e1190c4e7272f
+
+      - name: Install shared Rust source lint
+        if: steps.source-lint-cache.outputs.cache-hit != 'true'
+        run: cargo install --git https://github.com/stella/tooling --rev a1bd81740ecb4b66999f56d1716e1190c4e7272f --locked stella_source_lint
 
       - name: Install pinned Hawk
         shell: bash
@@ -219,7 +223,7 @@ jobs:
           mkdir -p "$install_dir"
           tar -xzf "$archive" -C "$install_dir" --strip-components=1
           echo "$install_dir" >> "$GITHUB_PATH"
-          rustup toolchain install "$HAWK_RUST_TOOLCHAIN" --profile minimal
+          rustup toolchain install 1.97.1 --profile minimal # cargo-hawk exception tracked in stll-toolchain.json
 
       - name: Install pinned Rust CI tools (checksum-verified)
         # Prebuilt nextest (the `cargo ci-test` runner), cargo-deny (the
@@ -239,11 +243,11 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-1.96.0-${{ hashFiles('Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-1.99.0-${{ hashFiles('Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-1.96.0-
+            ${{ runner.os }}-cargo-1.99.0-
 
-      - name: Rust checks (fmt, clippy, dylint, test)
+      - name: Rust checks (fmt, clippy, source lint, test)
         run: bun run rust:check
 
       - name: Hawk visibility lint
@@ -262,10 +266,12 @@ jobs:
       - name: Fuzz targets compile (anti-bitrot)
         # The fuzz crate is its own workspace, so it is not covered by the
         # `--workspace` build above and can silently stop compiling when the
-        # core public API changes. A compile-check (no nightly / cargo-fuzz /
-        # sanitizer needed) keeps the targets honest; actual fuzzing runs
-        # locally or on demand (see fuzz/README.md).
+        # core public API changes. Stable compilation and smoke execution keep
+        # the target and its invariants exercised without instrumentation.
         run: cargo check --manifest-path fuzz/Cargo.toml --bins
+
+      - name: Stable fuzz target smoke run
+        run: cargo run --manifest-path fuzz/Cargo.toml --locked --bin validate_id -- -runs=1000 -seed=20261011 -max_len=768
 
   build:
     name: Bindings and packages
@@ -279,13 +285,13 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
       - name: Install the WebAssembly build toolchain
         run: |
-          rustup target add wasm32-unknown-unknown --toolchain 1.96.0
+          rustup target add wasm32-unknown-unknown --toolchain 1.99.0
           cargo install wasm-bindgen-cli --version 0.2.128 --locked
       - run: bun run typecheck
       - run: bun run build
@@ -300,7 +306,7 @@ jobs:
       - name: Build the Python abi3 wheel
         uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
-          rust-toolchain: "1.96.0"
+          rust-toolchain: "1.99.0"
           args: >-
             --release
             --locked
@@ -331,8 +337,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "22.21.1"
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+          node-version-file: .node-version
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
