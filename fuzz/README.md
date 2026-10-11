@@ -1,6 +1,6 @@
 # Fuzzing the stdnum core
 
-Fuzz target code for the boundary-sensitive part of
+Coverage-guided fuzz targets for the boundary-sensitive part of
 `stella-stdnum-core`: the public `validate_id` entry point. Every jurisdiction
 validator takes untrusted strings and does offset / codepoint math, so a
 regression there is exactly the class of bug that examples miss (see the
@@ -14,6 +14,7 @@ its target dependencies never touch the default build.
 ## Requirements
 
 - The repository Rust 1.99.0 toolchain.
+- `cargo-fuzz`: `cargo install cargo-fuzz --version 0.13.2 --locked`
 
 ## Targets
 
@@ -23,18 +24,29 @@ its target dependencies never touch the default build.
 
 ## Running
 
-Compile and smoke-run the target on the pinned stable toolchain:
+From this directory, run coverage-guided fuzzing on the pinned stable toolchain
+with sanitizers disabled:
 
 ```sh
-cargo check --manifest-path fuzz/Cargo.toml --bins
-cargo run --manifest-path fuzz/Cargo.toml --locked --bin validate_id -- -runs=1000 -seed=20261011 -max_len=768
+cargo fuzz run validate_id --sanitizer none -- -max_total_time=30
+
+# Longer campaign:
+cargo fuzz run validate_id --sanitizer none -- -max_total_time=600
 ```
 
-The smoke run exercises invariants without sanitizer or coverage
-instrumentation. Generated robustness tests in
-`crates/stdnum-core/tests/robustness.rs` provide deterministic regression
-coverage. Coverage-guided cargo-fuzz execution requires compiler features
-unavailable on stable Rust.
+Stable code-generation options retain coverage instrumentation. CI smoke-runs
+the target with `--sanitizer none` and a bounded run count.
+
+List targets with `cargo fuzz list`. Crashes land in
+`artifacts/validate_id/`; reproduce with:
+
+```sh
+cargo fuzz run validate_id --sanitizer none artifacts/validate_id/<crash-file>
+```
+
+Discovered corpus lives in `corpus/validate_id/`. Both directories are
+git-ignored; commit a minimized reproducer as a regression case in
+`crates/stdnum-core/tests/robustness.rs` instead of the raw corpus.
 
 ## Adding a target
 

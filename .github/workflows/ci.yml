@@ -267,11 +267,15 @@ jobs:
         # The fuzz crate is its own workspace, so it is not covered by the
         # `--workspace` build above and can silently stop compiling when the
         # core public API changes. Stable compilation and smoke execution keep
-        # the target and its invariants exercised without instrumentation.
+        # the target and its invariants exercised with stable coverage instrumentation.
         run: cargo check --manifest-path fuzz/Cargo.toml --bins
 
-      - name: Stable fuzz target smoke run
-        run: cargo run --manifest-path fuzz/Cargo.toml --locked --bin validate_id -- -runs=1000 -seed=20261011 -max_len=768
+      - name: Install stable fuzz runner
+        run: cargo install cargo-fuzz --version 0.13.2 --locked
+
+      - name: Stable coverage-guided fuzz smoke run
+        working-directory: fuzz
+        run: cargo fuzz run validate_id --sanitizer none -- -runs=1000 -seed=20261011 -max_len=768
 
   build:
     name: Bindings and packages
