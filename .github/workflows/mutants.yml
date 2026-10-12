@@ -2,13 +2,11 @@ name: Mutants
 
 # Mutation testing measures whether the test suite actually kills injected bugs
 # in the validation core, rather than just executing the code. It is slow (each
-# surviving mutant re-runs the tests), so it runs weekly and on demand.
+# surviving mutant re-runs the tests), so it runs only on demand.
 # Exploratory: surviving mutants are reported as an artifact, never a merge
 # gate. Tune the scope/timeout after observing the first runs.
 
 on:
-  schedule:
-    - cron: "0 4 * * 1" # Mondays 04:00 UTC
   workflow_dispatch: {}
 
 permissions:
@@ -54,7 +52,7 @@ jobs:
         # Scoped to the validation core (lib.rs). The fast unit cases
         # (validates_known_good_values / rejects_known_bad_values) are the real
         # mutant killers; the nextest filter drops the slow property tests so a
-        # weekly run stays within budget. Widen scope via sharding once real
+        # manual run stays within budget. Widen scope via sharding once real
         # timings are known.
         continue-on-error: true
         run: |
