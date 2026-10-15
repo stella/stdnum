@@ -204,7 +204,7 @@ jobs:
           rustup toolchain install 1.96.0 --profile minimal
           rustup target add wasm32-unknown-unknown --toolchain 1.96.0
           rustup default 1.96.0
-          cargo install wasm-bindgen-cli --version 0.2.128 --locked
+          cargo install wasm-bindgen-cli --version 0.2.129 --locked
 
       - name: Build portable packages
         run: |
@@ -334,7 +334,7 @@ jobs:
       id-token: write # Required only for PyPI trusted publishing.
     steps:
       - name: Prepare exact Python wheel set
-        uses: stella/.github/.github/actions/pypi-publish-hardened@636b7841096c8f0cc5a1572077b78768ef8fea42
+        uses: stella/.github/.github/actions/pypi-publish-hardened@5764ab66e4df84cfd2e642c7d7e4678261e668f8
         with:
           expected-version: ${{ needs.verify.outputs.version }}
           project-name: stella-stdnum
@@ -347,7 +347,7 @@ jobs:
           packages-dir: dist
           skip-existing: true
       - name: Verify published PyPI files
-        uses: stella/.github/.github/actions/pypi-publish-hardened/verify@636b7841096c8f0cc5a1572077b78768ef8fea42
+        uses: stella/.github/.github/actions/pypi-publish-hardened/verify@5764ab66e4df84cfd2e642c7d7e4678261e668f8
         with:
           expected-version: ${{ needs.verify.outputs.version }}
           project-name: stella-stdnum
@@ -357,7 +357,7 @@ jobs:
     needs:
       [verify, pack-native, pack-portable, publish-pypi]
     if: github.ref == 'refs/heads/main' && (needs.verify.outputs.publish == 'true')
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@636b7841096c8f0cc5a1572077b78768ef8fea42
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@5764ab66e4df84cfd2e642c7d7e4678261e668f8
     with:
       package-files: |
         packages/stdnum/package.json
