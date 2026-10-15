@@ -54,7 +54,7 @@
     "hooks:uninstall": "lefthook uninstall"
   },
   "devDependencies": {
-    "@brazilian-utils/brazilian-utils": "^2.4.0",
+    "@brazilian-utils/brazilian-utils": "^2.5.0",
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
     "@stll/oxlint-config": "0.10.0",
