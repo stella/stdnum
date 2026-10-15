@@ -31,9 +31,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
 name = "luhn"
-version = "1.0.1"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4d10b831402a3b10e018c8bc7f0ec3344a67d0725919cbaf393accb9baf8700b"
+checksum = "01ba64f60de40bd13cfbc2c4be4f11cb9a72ecdc1073dbb3ab144991b14ac6ed"
 dependencies = [
  "digits_iterator",
 ]
