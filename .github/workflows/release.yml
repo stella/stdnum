@@ -84,8 +84,8 @@ jobs:
 
       - name: Install Rust toolchain
         run: |
-          rustup toolchain install 1.96.0 --profile minimal --component rustfmt,clippy
-          rustup default 1.96.0
+          rustup toolchain install 1.99.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.99.0
 
       - name: Verify versions and generated sources
         run: |
@@ -146,8 +146,8 @@ jobs:
 
       - name: Install Rust toolchain
         run: |
-          rustup toolchain install 1.96.0 --profile minimal
-          rustup default 1.96.0
+          rustup toolchain install 1.99.0 --profile minimal
+          rustup default 1.99.0
 
       - name: Build native addon
         run: node scripts/build-native-node.mjs
@@ -201,9 +201,9 @@ jobs:
 
       - name: Install Rust and wasm-bindgen
         run: |
-          rustup toolchain install 1.96.0 --profile minimal
-          rustup target add wasm32-unknown-unknown --toolchain 1.96.0
-          rustup default 1.96.0
+          rustup toolchain install 1.99.0 --profile minimal
+          rustup target add wasm32-unknown-unknown --toolchain 1.99.0
+          rustup default 1.99.0
           cargo install wasm-bindgen-cli --version 0.2.129 --locked
 
       - name: Build portable packages
@@ -311,7 +311,7 @@ jobs:
         with:
           target: ${{ matrix.target }}
           manylinux: ${{ matrix.manylinux || 'auto' }}
-          rust-toolchain: "1.96.0"
+          rust-toolchain: "1.99.0"
           args: >-
             --release
             --locked
