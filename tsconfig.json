@@ -1,9 +1,5 @@
 {
   "extends": "@stll/typescript-config/library.json",
-  "compilerOptions": {
-    "types": ["node", "bun-types"],
-    "noEmit": true
-  },
   "include": ["oxlint.config.ts"],
   "exclude": ["node_modules"]
 }
