@@ -67,12 +67,44 @@ updates:
           - version-update:semver-major
           - version-update:semver-minor
           - version-update:semver-patch
+  - package-ecosystem: bundler
+    directory: /scripts/oracle
+    schedule:
+      interval: weekly
+      day: saturday
+      time: "07:00"
+      timezone: Europe/Prague
+    cooldown:
+      default-days: 5
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
   - package-ecosystem: cargo
     directories:
       - /
       - /crates/stdnum-wasm-size-fixture
       - /fuzz
       - /scripts/rust-oracle
+    schedule:
+      interval: weekly
+      day: saturday
+      time: "07:00"
+      timezone: Europe/Prague
+    cooldown:
+      default-days: 5
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+  - package-ecosystem: composer
+    directory: /scripts/oracle
     schedule:
       interval: weekly
       day: saturday
