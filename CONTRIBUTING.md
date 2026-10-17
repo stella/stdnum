@@ -74,4 +74,4 @@ For security vulnerabilities, see
 
 ## TypeScript tooling
 
-Type checking uses `bun check --no-pretty --all --project=tsconfig.json` in the root and each package. CI also runs `bun run check:typecheck-parity` for all three projects. Editors continue to use the TypeScript language service because Bun has no language server; `typescript` also remains required for declaration generation through tsdown.
+Type checking uses `bun check --no-pretty --all --project=tsconfig.json` in the root and each package. The dispatch-only Typecheck proofs workflow runs `bun run check:typecheck-parity` for all three projects. Editors continue to use the TypeScript language service because Bun has no language server; `typescript` also remains required for declaration generation through tsdown.
