@@ -12,6 +12,7 @@
 
 import { describe, expect, test } from "bun:test";
 import { readFile } from "node:fs/promises";
+import { runInNewContext } from "node:vm";
 
 import type { NativeStdnumBinding } from "../native";
 import {
@@ -154,4 +155,56 @@ describe("index.cjs static loader", () => {
       expect(source).toContain(`require("${packageName}")`);
     }
   });
+});
+
+test("CommonJS loader selects glibc only from a runtime report header", async () => {
+  const source = await readFile(
+    new URL("../../index.cjs", import.meta.url),
+    "utf8",
+  );
+  for (const report of [
+    "report.json",
+    {},
+    { header: null },
+    { header: {} },
+    { header: { glibcVersionRuntime: 2 } },
+  ]) {
+    const exports = {
+      loadNativeBinding: (): unknown => undefined,
+    };
+    runInNewContext(source, {
+      exports,
+      process: {
+        platform: "linux",
+        arch: "x64",
+        report: { getReport: () => report },
+      },
+      require: requireNothing,
+    });
+    expect(exports.loadNativeBinding).toThrow(
+      "No native stdnum binding is published for linux-x64",
+    );
+  }
+  const exports = {
+    loadNativeBinding: (): unknown => undefined,
+  };
+  const binding = {};
+  runInNewContext(source, {
+    exports,
+    process: {
+      platform: "linux",
+      arch: "x64",
+      report: {
+        getReport: () => ({
+          header: { glibcVersionRuntime: "2.39" },
+        }),
+      },
+    },
+    require: (specifier: string) => {
+      if (specifier === "@stll/stdnum-linux-x64-gnu")
+        return binding;
+      return requireNothing(specifier);
+    },
+  });
+  expect(exports.loadNativeBinding()).toBe(binding);
 });

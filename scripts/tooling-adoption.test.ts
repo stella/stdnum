@@ -31,16 +31,20 @@ test("uses shared library defaults and the complete portable safety pack", () =>
   }
   const tsconfig = JSON.parse(read("tsconfig.json"));
   expect(tsconfig.extends).toBe(
-    "@stll/typescript-config/library.json",
+    "@stll/typescript-config/node.json",
   );
   expect(tsconfig.compilerOptions).toBeUndefined();
   for (const workspace of ["stdnum", "stdnum-wasm"]) {
-    const config = JSON.parse(
+    const workspaceConfig = JSON.parse(
       read(`packages/${workspace}/tsconfig.json`),
     );
-    expect(Object.keys(config.compilerOptions)).toEqual([
-      "paths",
-    ]);
+    expect(
+      Object.keys(workspaceConfig.compilerOptions),
+    ).toEqual(
+      workspace === "stdnum"
+        ? ["paths", "types"]
+        : ["paths"],
+    );
   }
 });
 
@@ -85,4 +89,31 @@ test("keeps third-party quarantine and exact first-party tooling exemptions", ()
         name.startsWith("@stll/") && !name.includes("*"),
     ),
   ).toBe(true);
+});
+
+test("updates each Ruby and PHP oracle dependency root", () => {
+  const dependabot = read(".github/dependabot.yml");
+  for (const [ecosystem, manifest] of [
+    ["bundler", "Gemfile"],
+    ["composer", "composer.json"],
+  ]) {
+    const roots = [
+      ...new Bun.Glob(`**/${manifest}`).scanSync({
+        onlyFiles: true,
+      }),
+    ]
+      .filter((path) => !path.startsWith("node_modules/"))
+      .map(
+        (path) => `/${path.slice(0, -manifest.length - 1)}`,
+      );
+    expect(roots.length).toBeGreaterThan(0);
+    const entry = dependabot
+      .split(`  - package-ecosystem: ${ecosystem}\n`)
+      .at(1)
+      ?.split("  - package-ecosystem:")
+      .at(0);
+    expect(entry).toBeDefined();
+    for (const root of roots)
+      expect(entry).toContain(`directory: ${root}\n`);
+  }
 });

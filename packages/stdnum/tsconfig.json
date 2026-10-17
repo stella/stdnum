@@ -3,7 +3,9 @@
   "compilerOptions": {
     "paths": {
       "#stdnum-runtime": ["./src/runtime.ts"]
-    }
+    },
+    "types": ["bun-types"]
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "files": []
 }
