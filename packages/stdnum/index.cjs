@@ -11,10 +11,19 @@
 // (guarded by test).
 
 // Mirrors detectLibc in src/native-node.ts; only glibc builds are published.
-const isGlibc = () =>
-  typeof process.report.getReport().header
-    .glibcVersionRuntime === "string";
+const isGlibc = () => {
+  const report = process.report.getReport();
+  return (
+    typeof report !== "string" &&
+    "header" in report &&
+    typeof report.header === "object" &&
+    report.header !== null &&
+    "glibcVersionRuntime" in report.header &&
+    typeof report.header.glibcVersionRuntime === "string"
+  );
+};
 
+/** @param {string} packageName @param {unknown} cause */
 const platformLoadError = (packageName, cause) =>
   new Error(
     `${packageName}: ${cause instanceof Error ? cause.message : String(cause)}`,
@@ -108,6 +117,7 @@ exports.loadNativeBinding = () => {
   try {
     return requirePlatformPackage();
   } catch (error) {
+    /** @param {unknown} cause */
     const describe = (cause) =>
       cause instanceof Error
         ? cause.message
