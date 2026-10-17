@@ -56,3 +56,20 @@ test("replaces compiler-private Dylint with the pinned stable source checker", (
   );
   expect(cargoConfig).not.toContain("ci-dylint");
 });
+
+test("keeps the Hawk install pin aligned with its authorized toolchain", () => {
+  const configuration = JSON.parse(
+    readFileSync("stll-toolchain.json", "utf8"),
+  );
+  const installPins = [
+    ...workflow.matchAll(
+      /rustup toolchain install (\d+\.\d+\.\d+) --profile minimal/g,
+    ),
+  ].map((match) => match[1]);
+  for (const { pin } of configuration.rustExceptions) {
+    expect(installPins).toContain(pin);
+    expect(workflow).toContain(
+      `HAWK_RUST_TOOLCHAIN: "${pin}"`,
+    );
+  }
+});
