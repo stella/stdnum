@@ -226,7 +226,7 @@ jobs:
         # snapshot-hygiene gate, `cargo ci-snapshot`); avoids a from-source
         # compile on every CI run. taiki-e/install-action verifies release
         # checksums, unlike a raw `curl | tar`.
-        uses: taiki-e/install-action@94c31af3204a9f15ab40b35ad084410b905bbc73 # v2.87.17
+        uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
         with:
           tool: nextest@0.9.140,cargo-deny@0.20.2,cargo-insta@1.48.0
 
@@ -285,7 +285,7 @@ jobs:
       - name: Install the WebAssembly build toolchain
         run: |
           rustup target add wasm32-unknown-unknown --toolchain 1.96.0
-          cargo install wasm-bindgen-cli --version 0.2.128 --locked
+          cargo install wasm-bindgen-cli --version 0.2.129 --locked
       - run: bun run typecheck
       - run: bun run build
       - run: bun run performance
