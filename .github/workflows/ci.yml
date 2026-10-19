@@ -17,6 +17,8 @@ on:
         ready_for_review,
         labeled,
       ]
+  merge_group:
+    types: [checks_requested]
   workflow_dispatch:
 
 concurrency:
@@ -338,3 +340,50 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run smoke:pack
+
+  ci-result:
+    if: always()
+    needs:
+      [
+        trust-check,
+        changeset,
+        lint,
+        version-sync,
+        test,
+        oracle,
+        rust,
+        build,
+        pack,
+      ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Require every selected validation job
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          TRUST_RESULT: ${{ needs.trust-check.result }}
+          CHANGESET_RESULT: ${{ needs.changeset.result }}
+          LINT_RESULT: ${{ needs.lint.result }}
+          VERSION_SYNC_RESULT: ${{ needs.version-sync.result }}
+          TEST_RESULT: ${{ needs.test.result }}
+          ORACLE_RESULT: ${{ needs.oracle.result }}
+          RUST_RESULT: ${{ needs.rust.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          PACK_RESULT: ${{ needs.pack.result }}
+        run: |
+          test "$LINT_RESULT" = success
+          test "$VERSION_SYNC_RESULT" = success
+          test "$TEST_RESULT" = success
+          test "$ORACLE_RESULT" = success
+          test "$RUST_RESULT" = success
+          test "$BUILD_RESULT" = success
+          test "$PACK_RESULT" = success
+          if [ "$EVENT_NAME" = pull_request ]; then
+            test "$TRUST_RESULT" = success
+            test "$CHANGESET_RESULT" = success
+          else
+            # These validations apply only to pull requests.
+            case "$TRUST_RESULT" in success|skipped) ;; *) exit 1 ;; esac
+            case "$CHANGESET_RESULT" in success|skipped) ;; *) exit 1 ;; esac
+          fi
