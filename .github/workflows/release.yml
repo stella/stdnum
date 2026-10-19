@@ -328,7 +328,7 @@ jobs:
     name: Publish stella-stdnum to PyPI
     needs: [verify, build-wheels]
     if: github.ref == 'refs/heads/main' && (needs.verify.outputs.publish == 'true')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       id-token: write # Required only for PyPI trusted publishing.
