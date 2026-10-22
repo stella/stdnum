@@ -23,7 +23,7 @@ test("uses committed history and shared detector to select workspace parity", ()
   expect(lint).toContain("bun run test:tooling");
   expect(lint).toContain("bun run check:toolchain");
   expect(lint).toContain("bun run lint");
-  expect(lint).toContain("bun run format:check");
+  expect(lint).toContain("bun fmt --check");
 });
 
 test("replaces compiler-private Dylint with the pinned stable source checker", () => {
