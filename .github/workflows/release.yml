@@ -334,7 +334,7 @@ jobs:
       id-token: write # Required only for PyPI trusted publishing.
     steps:
       - name: Prepare exact Python wheel set
-        uses: stella/.github/.github/actions/pypi-publish-hardened@5764ab66e4df84cfd2e642c7d7e4678261e668f8
+        uses: stella/.github/.github/actions/pypi-publish-hardened@a98150379a0659f9ff603970a06dbdee56f7c4cb
         with:
           expected-version: ${{ needs.verify.outputs.version }}
           project-name: stella-stdnum
