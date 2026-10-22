@@ -78,5 +78,6 @@
     "validate-polish": "^2.1.40",
     "vite": "8.3.4"
   },
-  "packageManager": "bun@1.4.3"
+  "packageManager": "bun@1.4.3",
+  "trustedDependencies": []
 }

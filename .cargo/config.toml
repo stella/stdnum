@@ -1,3 +1,6 @@
+[registry]
+global-min-publish-age = "5 days"
+
 # Use sparse index for faster resolution.
 [registries.crates-io]
 protocol = "sparse"
