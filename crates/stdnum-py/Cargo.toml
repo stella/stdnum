@@ -18,7 +18,7 @@ default = []
 extension-module = ["pyo3/extension-module"]
 
 [dependencies]
-pyo3 = { version = "0.29", features = ["abi3-py311"] }
+pyo3 = { version = "0.30", features = ["abi3-py311"] }
 stella-stdnum-core = { path = "../stdnum-core" }
 
 [build-dependencies]
