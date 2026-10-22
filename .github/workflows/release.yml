@@ -356,7 +356,7 @@ jobs:
     name: Finalize release
     needs: [verify, pack-native, pack-portable, publish-pypi]
     if: github.ref == 'refs/heads/main' && (needs.verify.outputs.publish == 'true')
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@5764ab66e4df84cfd2e642c7d7e4678261e668f8
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@a98150379a0659f9ff603970a06dbdee56f7c4cb
     with:
       package-files: |
         packages/stdnum/package.json
