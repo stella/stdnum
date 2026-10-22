@@ -71,14 +71,12 @@ type Discovered = {
 type OracleMode = "gate" | "survey";
 
 const isValidator = (v: unknown): v is Validator =>
-  Boolean(
-    v &&
-    typeof v === "object" &&
-    "validate" in v &&
-    "compact" in v &&
-    "format" in v &&
-    "entityType" in v,
-  );
+  typeof v === "object" &&
+  v !== null &&
+  "validate" in v &&
+  "compact" in v &&
+  "format" in v &&
+  "entityType" in v;
 
 const discover = (): Discovered[] => {
   const result: Discovered[] = [];
@@ -90,7 +88,7 @@ const discover = (): Discovered[] => {
         entityType: mod.entityType,
         validator: mod,
       });
-    } else if (mod && typeof mod === "object") {
+    } else if (typeof mod === "object") {
       for (const [k, v] of Object.entries(mod as Record<string, unknown>)) {
         if (isValidator(v)) {
           result.push({

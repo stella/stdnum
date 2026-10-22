@@ -35,7 +35,7 @@ const measure = (targets) => {
     for (let index = 0; index < iterations; index += 1) {
       if (
         targets[index % targets.length].validate(values[index % values.length])
-          .valid
+          .valid === true
       ) {
         valid += 1;
       }

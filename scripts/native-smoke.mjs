@@ -15,9 +15,11 @@ const registry = JSON.parse(
   readFileSync(join(root, "packages/stdnum/registry.json"), "utf8"),
 );
 
+/** @type {string[]} */
 const expectedIds = registry.validators
   .map((entry) => entry.id)
   .sort((left, right) => left.localeCompare(right));
+/** @type {string[]} */
 const actualIds = [...binding.validatorIds()].sort((left, right) =>
   left.localeCompare(right),
 );
@@ -25,7 +27,7 @@ if (JSON.stringify(actualIds) !== JSON.stringify(expectedIds)) {
   const missing = expectedIds.filter((id) => !actualIds.includes(id));
   const unexpected = actualIds.filter((id) => !expectedIds.includes(id));
   throw new Error(
-    `Registry ID drift: missing=${missing.join(",") || "none"}; unexpected=${unexpected.join(",") || "none"}`,
+    `Registry ID drift: missing=${missing.length > 0 ? missing.join(",") : "none"}; unexpected=${unexpected.length > 0 ? unexpected.join(",") : "none"}`,
   );
 }
 

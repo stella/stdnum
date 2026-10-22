@@ -241,7 +241,7 @@ function assertBrowserBundle(directory) {
     "node:process",
   ];
   for (const path of walk(directory)) {
-    if (!path.endsWith(".js")) continue;
+    if (typeof path !== "string" || !path.endsWith(".js")) continue;
     const source = readFileSync(path, "utf8");
     for (const marker of forbidden) {
       if (source.includes(marker))

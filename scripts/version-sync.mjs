@@ -89,7 +89,8 @@ const parseArgs = () => {
 const expectedVersion = (args) => {
   const tag = args.get("tag");
   const version =
-    args.get("version") ?? (tag ? tag.replace(/^v/, "") : readVersion());
+    args.get("version") ??
+    (typeof tag === "string" ? tag.replace(/^v/, "") : readVersion());
   if (!VERSION_PATTERN.test(version)) {
     throw new Error(
       `Expected 1.2.3, 1.2.3-rc.1, 1.2.3-beta.1, or 1.2.3-alpha.1; got '${version}'`,

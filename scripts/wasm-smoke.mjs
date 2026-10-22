@@ -77,14 +77,14 @@ for (const fixture of fixtures.fixtures) {
     throw new Error(`${fixture.id}: WASM format parity failed`);
   }
 }
-if (!binding.validate("be.nn", "01010100126").valid) {
+if (binding.validate("be.nn", "01010100126").valid !== true) {
   throw new Error("WASM date-sensitive validation did not use the host clock");
 }
 const publicPackage = await import(
   join(root, "packages/stdnum-wasm/dist/index.js")
 );
 const publicResult = await publicPackage.validate("cz.ico", "25596641");
-if (!publicResult.valid) {
+if (publicResult.valid !== true) {
   throw new Error("Published WASM adapter failed its public API smoke test");
 }
 

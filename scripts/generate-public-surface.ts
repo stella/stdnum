@@ -778,10 +778,7 @@ const writeGenerated = async (registry: Registry): Promise<void> => {
       GENERATED_ROOT,
       join(PACKAGE_ROOT, "package.json"),
       TYPES_PATH,
-      PYTHON_STUB_PATH,
-      PYTHON_INIT_PATH,
-      PYTHON_INIT_STUB_PATH,
-      PYTHON_TYPES_PATH,
+      // bun fmt has no Python formatter; the Python stubs are written final.
       REGISTRY_PATH,
       README_PATH,
     ],

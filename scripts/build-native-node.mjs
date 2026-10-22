@@ -49,7 +49,13 @@ function sidecarDirectory(platform, arch, libc) {
 
 function detectLibc() {
   if (process.platform !== "linux") return undefined;
-  return process.report?.getReport?.().header?.glibcVersionRuntime
+  const report = process.report.getReport();
+  return typeof report === "object" &&
+    "header" in report &&
+    typeof report.header === "object" &&
+    report.header !== null &&
+    "glibcVersionRuntime" in report.header &&
+    typeof report.header.glibcVersionRuntime === "string"
     ? "gnu"
     : "musl";
 }
