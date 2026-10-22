@@ -21,7 +21,5 @@ export const validateBech32 = (
   value: string,
 ):
   | { valid: true }
-  | {
-      valid: false;
-      code: "format" | "checksum" | "component";
-    } => getBinding().validateBech32(value);
+  | { valid: false; code: "format" | "checksum" | "component" } =>
+  getBinding().validateBech32(value);

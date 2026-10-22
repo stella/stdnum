@@ -355,7 +355,7 @@ mod tests {
       return Ok(());
     };
     assert_eq!(error.code, "INVALID_FORMAT");
-    assert!(!error.message.is_empty());
+    assert_ne!(error.message, "");
     Ok(())
   }
 
