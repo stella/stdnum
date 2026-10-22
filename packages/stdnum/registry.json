@@ -16,12 +16,7 @@
       "lengths": [],
       "localName": "Número de Registre Tributari",
       "name": "Andorra Tax Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ad",
       "parseKind": null,
       "scope": "country",
@@ -47,12 +42,7 @@
       "lengths": [15],
       "localName": "رقم الهوية",
       "name": "Emirates ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ae",
       "parseKind": null,
       "scope": "country",
@@ -73,12 +63,7 @@
       "lengths": [10],
       "localName": "Tax Identification Number",
       "name": "Anguilla Tax Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ai",
       "parseKind": null,
       "scope": "country",
@@ -99,12 +84,7 @@
       "lengths": [],
       "localName": "Numri i Identifikimit për Personin e Tatueshëm",
       "name": "Albanian Tax Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "al",
       "parseKind": null,
       "scope": "country",
@@ -125,12 +105,7 @@
       "lengths": [8],
       "localName": "Հարկ վճարողի հաշվառման համար",
       "name": "Armenian Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "am",
       "parseKind": null,
       "scope": "country",
@@ -151,12 +126,7 @@
       "lengths": [22],
       "localName": "Clave Bancaria Uniforme",
       "name": "Argentine Bank Account Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ar",
       "parseKind": null,
       "scope": "country",
@@ -165,11 +135,7 @@
     },
     {
       "abbreviation": "CUIT",
-      "aliases": [
-        "CUIT",
-        "CUIL",
-        "Clave Única de Identificación Tributaria"
-      ],
+      "aliases": ["CUIT", "CUIL", "Clave Única de Identificación Tributaria"],
       "canGenerate": true,
       "candidatePattern": "\\d{2}-?\\d{8}-?\\d",
       "country": "AR",
@@ -181,12 +147,7 @@
       "lengths": [11],
       "localName": "Clave Única de Identificación Tributaria",
       "name": "Argentine Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ar",
       "parseKind": null,
       "scope": "country",
@@ -211,12 +172,7 @@
       "lengths": [7, 8],
       "localName": "Documento Nacional de Identidad",
       "name": "Argentine Identity Card",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ar",
       "parseKind": null,
       "scope": "country",
@@ -237,12 +193,7 @@
       "lengths": [],
       "localName": "Firmenbuchnummer",
       "name": "Austrian Company Register Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "at",
       "parseKind": null,
       "scope": "country",
@@ -263,12 +214,7 @@
       "lengths": [],
       "localName": "Abgabenkontonummer",
       "name": "Austrian Tax Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "at",
       "parseKind": null,
       "scope": "country",
@@ -277,11 +223,7 @@
     },
     {
       "abbreviation": "UID",
-      "aliases": [
-        "UID",
-        "Umsatzsteuer-Identifikationsnummer",
-        "ATU"
-      ],
+      "aliases": ["UID", "Umsatzsteuer-Identifikationsnummer", "ATU"],
       "canGenerate": true,
       "candidatePattern": "ATU\\d{8}",
       "country": "AT",
@@ -293,12 +235,7 @@
       "lengths": [],
       "localName": "Umsatzsteuer-Identifikationsnummer",
       "name": "Austrian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "at",
       "parseKind": null,
       "scope": "country",
@@ -324,12 +261,7 @@
       "lengths": [10],
       "localName": "Versicherungsnummer",
       "name": "Austrian Social Insurance Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "at",
       "parseKind": null,
       "scope": "country",
@@ -350,12 +282,7 @@
       "lengths": [],
       "localName": "Australian Business Number",
       "name": "Australian Business Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "au",
       "parseKind": null,
       "scope": "country",
@@ -376,12 +303,7 @@
       "lengths": [],
       "localName": "Australian Company Number",
       "name": "Australian Company Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "au",
       "parseKind": null,
       "scope": "country",
@@ -402,12 +324,7 @@
       "lengths": [],
       "localName": "Tax File Number",
       "name": "Tax File Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "au",
       "parseKind": null,
       "scope": "country",
@@ -428,12 +345,7 @@
       "lengths": [10],
       "localName": "Vergi Ödəyicisinin Eyniləşdirmə Nömrəsi",
       "name": "Azerbaijani Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "az",
       "parseKind": null,
       "scope": "country",
@@ -454,13 +366,7 @@
       "lengths": [13],
       "localName": "Jedinstveni matični broj građana",
       "name": "Bosnian Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "ba",
       "parseKind": "person",
       "scope": "country",
@@ -469,11 +375,7 @@
     },
     {
       "abbreviation": "NID",
-      "aliases": [
-        "NID",
-        "জাতীয় পরিচয়পত্র",
-        "National ID Card"
-      ],
+      "aliases": ["NID", "জাতীয় পরিচয়পত্র", "National ID Card"],
       "canGenerate": true,
       "candidatePattern": "\\d{10,17}",
       "country": "BD",
@@ -490,12 +392,7 @@
       "lengths": [10, 13, 17],
       "localName": "জাতীয় পরিচয়পত্র",
       "name": "National Identity Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "bd",
       "parseKind": null,
       "scope": "country",
@@ -516,12 +413,7 @@
       "lengths": [],
       "localName": "BIS-nummer",
       "name": "Belgian BIS Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "be",
       "parseKind": null,
       "scope": "country",
@@ -530,11 +422,7 @@
     },
     {
       "abbreviation": "NN",
-      "aliases": [
-        "rijksregisternummer",
-        "numéro national",
-        "NN"
-      ],
+      "aliases": ["rijksregisternummer", "numéro national", "NN"],
       "canGenerate": true,
       "candidatePattern": "\\d{2}\\.?\\d{2}\\.?\\d{2}-?\\d{3}\\.?\\d{2}",
       "country": "BE",
@@ -546,13 +434,7 @@
       "lengths": [],
       "localName": "Numéro national",
       "name": "Belgian National Number",
-      "namedExports": [
-        "checksum",
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["checksum", "compact", "format", "generate", "validate"],
       "namespaceExport": "be",
       "parseKind": null,
       "scope": "country",
@@ -561,12 +443,7 @@
     },
     {
       "abbreviation": "BTW",
-      "aliases": [
-        "BTW",
-        "TVA",
-        "numéro d'entreprise",
-        "ondernemingsnummer"
-      ],
+      "aliases": ["BTW", "TVA", "numéro d'entreprise", "ondernemingsnummer"],
       "canGenerate": true,
       "candidatePattern": "BE0?\\d{9,10}",
       "country": "BE",
@@ -578,12 +455,7 @@
       "lengths": [],
       "localName": "BTW-identificatienummer",
       "name": "Belgian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "be",
       "parseKind": null,
       "scope": "country",
@@ -604,13 +476,7 @@
       "lengths": [],
       "localName": "Единен граждански номер",
       "name": "Bulgarian Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "bg",
       "parseKind": "person",
       "scope": "country",
@@ -631,12 +497,7 @@
       "lengths": [],
       "localName": "Личен номер на чужденец",
       "name": "Bulgarian Foreigner Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "bg",
       "parseKind": null,
       "scope": "country",
@@ -657,12 +518,7 @@
       "lengths": [9, 10],
       "localName": "ИН по ДДС",
       "name": "Bulgarian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "bg",
       "parseKind": null,
       "scope": "country",
@@ -683,12 +539,7 @@
       "lengths": [9],
       "localName": "الرقم السكاني",
       "name": "Central Population Registration Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "bh",
       "parseKind": null,
       "scope": "country",
@@ -709,12 +560,7 @@
       "lengths": [],
       "localName": "Business Identifier Code",
       "name": "Business Identifier Code",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": null,
       "parseKind": null,
       "scope": "global",
@@ -723,10 +569,7 @@
     },
     {
       "abbreviation": "CNPJ",
-      "aliases": [
-        "CNPJ",
-        "Cadastro Nacional da Pessoa Jurídica"
-      ],
+      "aliases": ["CNPJ", "Cadastro Nacional da Pessoa Jurídica"],
       "canGenerate": true,
       "candidatePattern": "\\d{2}\\.?\\d{3}\\.?\\d{3}/?\\d{4}-?\\d{2}",
       "country": "BR",
@@ -738,12 +581,7 @@
       "lengths": [],
       "localName": "Cadastro Nacional da Pessoa Jurídica",
       "name": "Brazilian CNPJ",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "br",
       "parseKind": null,
       "scope": "country",
@@ -764,12 +602,7 @@
       "lengths": [],
       "localName": "Cadastro de Pessoas Físicas",
       "name": "Brazilian CPF",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "br",
       "parseKind": null,
       "scope": "country",
@@ -790,12 +623,7 @@
       "lengths": [],
       "localName": "Учётный номер плательщика",
       "name": "Belarus Tax Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "by",
       "parseKind": null,
       "scope": "country",
@@ -816,12 +644,7 @@
       "lengths": [6, 8],
       "localName": "Tax Identification Number",
       "name": "Belize Tax Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "bz",
       "parseKind": null,
       "scope": "country",
@@ -830,11 +653,7 @@
     },
     {
       "abbreviation": "BN",
-      "aliases": [
-        "BN",
-        "Business Number",
-        "numéro d'entreprise"
-      ],
+      "aliases": ["BN", "Business Number", "numéro d'entreprise"],
       "canGenerate": true,
       "candidatePattern": "\\d{9}\\s?[A-Z]{2}\\s?\\d{4}",
       "country": "CA",
@@ -846,12 +665,7 @@
       "lengths": [],
       "localName": "Business Number",
       "name": "Business Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ca",
       "parseKind": null,
       "scope": "country",
@@ -872,12 +686,7 @@
       "lengths": [],
       "localName": "Social Insurance Number",
       "name": "Social Insurance Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ca",
       "parseKind": null,
       "scope": "country",
@@ -898,12 +707,7 @@
       "lengths": [],
       "localName": "AHV-Versichertennummer",
       "name": "Swiss Social Security Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ch",
       "parseKind": null,
       "scope": "country",
@@ -912,11 +716,7 @@
     },
     {
       "abbreviation": "UID",
-      "aliases": [
-        "Unternehmens-Identifikationsnummer",
-        "UID",
-        "IDE"
-      ],
+      "aliases": ["Unternehmens-Identifikationsnummer", "UID", "IDE"],
       "canGenerate": true,
       "candidatePattern": "CHE-?\\d{3}\\.?\\d{3}\\.?\\d{3}",
       "country": "CH",
@@ -928,12 +728,7 @@
       "lengths": [],
       "localName": "Unternehmens-Identifikationsnummer",
       "name": "Swiss Business ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ch",
       "parseKind": null,
       "scope": "country",
@@ -954,12 +749,7 @@
       "lengths": [],
       "localName": "Mehrwertsteuernummer",
       "name": "Swiss VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ch",
       "parseKind": null,
       "scope": "country",
@@ -980,12 +770,7 @@
       "lengths": [8, 9],
       "localName": "Rol Único Tributario",
       "name": "Chilean Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "cl",
       "parseKind": null,
       "scope": "country",
@@ -1000,22 +785,13 @@
       "country": "CN",
       "description": "18-character national ID encoding area, birth date, gender, and check digit",
       "entityType": "person",
-      "examples": [
-        "11010519491231002X",
-        "440524188001010014"
-      ],
+      "examples": ["11010519491231002X", "440524188001010014"],
       "exportName": "ric",
       "id": "cn.ric",
       "lengths": [15, 18],
       "localName": "居民身份证号码",
       "name": "Chinese Resident Identity Card",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "cn",
       "parseKind": "person",
       "scope": "country",
@@ -1036,12 +812,7 @@
       "lengths": [18],
       "localName": "统一社会信用代码",
       "name": "Unified Social Credit Code",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "cn",
       "parseKind": null,
       "scope": "country",
@@ -1050,10 +821,7 @@
     },
     {
       "abbreviation": "NIT",
-      "aliases": [
-        "NIT",
-        "Número de Identificación Tributaria"
-      ],
+      "aliases": ["NIT", "Número de Identificación Tributaria"],
       "canGenerate": true,
       "candidatePattern": "\\d{9,10}-?\\d",
       "country": "CO",
@@ -1065,12 +833,7 @@
       "lengths": [8, 9, 10, 11, 12, 13, 14, 15, 16],
       "localName": "Número de Identificación Tributaria",
       "name": "Número de Identificación Tributaria",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "co",
       "parseKind": null,
       "scope": "country",
@@ -1091,12 +854,7 @@
       "lengths": [10],
       "localName": "Cédula de Persona Física",
       "name": "Costa Rican Physical Person ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "cr",
       "parseKind": null,
       "scope": "country",
@@ -1122,12 +880,7 @@
       "lengths": [],
       "localName": "Credit Card Number",
       "name": "Credit Card Number",
-      "namedExports": [
-        "compact",
-        "detectNetwork",
-        "format",
-        "validate"
-      ],
+      "namedExports": ["compact", "detectNetwork", "format", "validate"],
       "namespaceExport": null,
       "parseKind": null,
       "scope": "global",
@@ -1155,12 +908,7 @@
       "lengths": [],
       "localName": "Bitcoin Base58Check Address",
       "name": "Bitcoin Base58Check Address",
-      "namedExports": [
-        "compact",
-        "decodeBase58",
-        "format",
-        "validate"
-      ],
+      "namedExports": ["compact", "decodeBase58", "format", "validate"],
       "namespaceExport": "crypto",
       "parseKind": null,
       "scope": "global",
@@ -1205,19 +953,13 @@
     },
     {
       "abbreviation": "ETH",
-      "aliases": [
-        "Ethereum address",
-        "EVM address",
-        "crypto wallet"
-      ],
+      "aliases": ["Ethereum address", "EVM address", "crypto wallet"],
       "canGenerate": false,
       "candidatePattern": "0x[0-9A-Fa-f]{40}",
       "country": null,
       "description": null,
       "entityType": "any",
-      "examples": [
-        "0xde709f2102306220921060314715629080e2fb77"
-      ],
+      "examples": ["0xde709f2102306220921060314715629080e2fb77"],
       "exportName": "eth",
       "id": "crypto.eth",
       "lengths": [42],
@@ -1237,11 +979,7 @@
     },
     {
       "abbreviation": "crypto",
-      "aliases": [
-        "crypto address",
-        "wallet address",
-        "cryptocurrency wallet"
-      ],
+      "aliases": ["crypto address", "wallet address", "cryptocurrency wallet"],
       "canGenerate": false,
       "candidatePattern": "(?:0x[0-9A-Fa-f]{40}|[13][1-9A-HJ-NP-Za-km-z]{25,34}|bc1[ac-hj-np-z02-9]{11,71}|BC1[AC-HJ-NP-Z02-9]{11,71})",
       "country": null,
@@ -1266,11 +1004,7 @@
     },
     {
       "abbreviation": "NI",
-      "aliases": [
-        "NI",
-        "número de identidad",
-        "carnet de identidad"
-      ],
+      "aliases": ["NI", "número de identidad", "carnet de identidad"],
       "canGenerate": true,
       "candidatePattern": "\\d{11}",
       "country": "CU",
@@ -1282,13 +1016,7 @@
       "lengths": [11],
       "localName": "Número de Identidad",
       "name": "Cuban Identity Card Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "cu",
       "parseKind": "person",
       "scope": "country",
@@ -1309,12 +1037,7 @@
       "lengths": [],
       "localName": "Αριθμός Εγγραφής Φ.Π.Α.",
       "name": "Cypriot VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "cy",
       "parseKind": null,
       "scope": "country",
@@ -1323,11 +1046,7 @@
     },
     {
       "abbreviation": "Číslo účtu",
-      "aliases": [
-        "číslo účtu",
-        "bankovní účet",
-        "bankovní spojení"
-      ],
+      "aliases": ["číslo účtu", "bankovní účet", "bankovní spojení"],
       "canGenerate": false,
       "candidatePattern": "(?:\\d{1,6}-)?\\d{2,10}/\\d{4}",
       "country": "CZ",
@@ -1360,12 +1079,7 @@
       "lengths": [8, 9, 10],
       "localName": "Daňové identifikační číslo",
       "name": "Czech VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "cz",
       "parseKind": null,
       "scope": "country",
@@ -1386,12 +1100,7 @@
       "lengths": [8],
       "localName": "Identifikační číslo osoby",
       "name": "Czech Company ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "cz",
       "parseKind": null,
       "scope": "country",
@@ -1412,13 +1121,7 @@
       "lengths": [9, 10],
       "localName": "Rodné číslo",
       "name": "Czech Birth Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "cz",
       "parseKind": "person",
       "scope": "country",
@@ -1427,12 +1130,7 @@
     },
     {
       "abbreviation": "HReg",
-      "aliases": [
-        "Handelsregisternummer",
-        "Handelsregister",
-        "HRB",
-        "HRA"
-      ],
+      "aliases": ["Handelsregisternummer", "Handelsregister", "HRB", "HRA"],
       "canGenerate": true,
       "candidatePattern": "(?:HRA|HRB|GnR|PR|VR)\\s*\\d{1,7}",
       "country": "DE",
@@ -1444,12 +1142,7 @@
       "lengths": [],
       "localName": "Handelsregisternummer",
       "name": "German Company Register Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "de",
       "parseKind": null,
       "scope": "country",
@@ -1458,11 +1151,7 @@
     },
     {
       "abbreviation": "IdNr",
-      "aliases": [
-        "Steuerliche Identifikationsnummer",
-        "IdNr",
-        "Steuer-ID"
-      ],
+      "aliases": ["Steuerliche Identifikationsnummer", "IdNr", "Steuer-ID"],
       "canGenerate": true,
       "candidatePattern": "\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}",
       "country": "DE",
@@ -1474,12 +1163,7 @@
       "lengths": [],
       "localName": "Steuerliche Identifikationsnummer",
       "name": "German Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "de",
       "parseKind": null,
       "scope": "country",
@@ -1500,12 +1184,7 @@
       "lengths": [10, 11, 13],
       "localName": "Steuernummer",
       "name": "German Tax Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "de",
       "parseKind": null,
       "scope": "country",
@@ -1514,11 +1193,7 @@
     },
     {
       "abbreviation": "SVNR",
-      "aliases": [
-        "Sozialversicherungsnummer",
-        "SVNR",
-        "Versicherungsnummer"
-      ],
+      "aliases": ["Sozialversicherungsnummer", "SVNR", "Versicherungsnummer"],
       "canGenerate": true,
       "candidatePattern": "\\d{2}\\s?\\d{6}\\s?[A-Z]\\s?\\d{3}",
       "country": "DE",
@@ -1530,12 +1205,7 @@
       "lengths": [12],
       "localName": "Sozialversicherungsnummer",
       "name": "German Social Insurance Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "de",
       "parseKind": null,
       "scope": "country",
@@ -1544,11 +1214,7 @@
     },
     {
       "abbreviation": "USt-IdNr.",
-      "aliases": [
-        "USt-IdNr",
-        "Umsatzsteuer-Identifikationsnummer",
-        "VAT DE"
-      ],
+      "aliases": ["USt-IdNr", "Umsatzsteuer-Identifikationsnummer", "VAT DE"],
       "canGenerate": true,
       "candidatePattern": "DE\\d{9}",
       "country": "DE",
@@ -1560,12 +1226,7 @@
       "lengths": [9],
       "localName": "Umsatzsteuer-Identifikationsnummer",
       "name": "German VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "de",
       "parseKind": null,
       "scope": "country",
@@ -1586,13 +1247,7 @@
       "lengths": [10],
       "localName": "Det Centrale Personregister",
       "name": "Danish Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "dk",
       "parseKind": "person",
       "scope": "country",
@@ -1613,12 +1268,7 @@
       "lengths": [],
       "localName": "CVR-nummer",
       "name": "Danish Business Register Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "dk",
       "parseKind": null,
       "scope": "country",
@@ -1639,12 +1289,7 @@
       "lengths": [8],
       "localName": "Momsregistreringsnummer",
       "name": "Danish VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "dk",
       "parseKind": null,
       "scope": "country",
@@ -1653,10 +1298,7 @@
     },
     {
       "abbreviation": "RNC",
-      "aliases": [
-        "RNC",
-        "Registro Nacional del Contribuyente"
-      ],
+      "aliases": ["RNC", "Registro Nacional del Contribuyente"],
       "canGenerate": true,
       "candidatePattern": "\\d{9}",
       "country": "DO",
@@ -1668,12 +1310,7 @@
       "lengths": [9, 11],
       "localName": "Registro Nacional del Contribuyente",
       "name": "Dominican Republic Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "do_",
       "parseKind": null,
       "scope": "country",
@@ -1682,10 +1319,7 @@
     },
     {
       "abbreviation": "RUC",
-      "aliases": [
-        "RUC",
-        "Registro Único de Contribuyentes"
-      ],
+      "aliases": ["RUC", "Registro Único de Contribuyentes"],
       "canGenerate": true,
       "candidatePattern": "\\d{13}",
       "country": "EC",
@@ -1697,12 +1331,7 @@
       "lengths": [13],
       "localName": "Registro Único de Contribuyentes",
       "name": "Registro Único de Contribuyentes",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ec",
       "parseKind": null,
       "scope": "country",
@@ -1751,12 +1380,7 @@
       "lengths": [],
       "localName": "Registrikood",
       "name": "Estonian Company Registration Code",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ee",
       "parseKind": null,
       "scope": "country",
@@ -1777,12 +1401,7 @@
       "lengths": [],
       "localName": "Käibemaksukohustuslase number",
       "name": "Estonian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ee",
       "parseKind": null,
       "scope": "country",
@@ -1803,12 +1422,7 @@
       "lengths": [9],
       "localName": "الرقم الضريبي",
       "name": "Egyptian Tax Registration Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "eg",
       "parseKind": null,
       "scope": "country",
@@ -1829,12 +1443,7 @@
       "lengths": [],
       "localName": "Código de Identificación Fiscal",
       "name": "Spanish Company Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "es",
       "parseKind": null,
       "scope": "country",
@@ -1843,11 +1452,7 @@
     },
     {
       "abbreviation": "DNI",
-      "aliases": [
-        "D.N.I.",
-        "DNI",
-        "documento nacional de identidad"
-      ],
+      "aliases": ["D.N.I.", "DNI", "documento nacional de identidad"],
       "canGenerate": true,
       "candidatePattern": "\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[A-Z]",
       "country": "ES",
@@ -1874,11 +1479,7 @@
     },
     {
       "abbreviation": "NIE",
-      "aliases": [
-        "N.I.E.",
-        "NIE",
-        "número de identidad de extranjero"
-      ],
+      "aliases": ["N.I.E.", "NIE", "número de identidad de extranjero"],
       "canGenerate": true,
       "candidatePattern": "[XYZ]-?\\d{7}-?[A-Z]",
       "country": "ES",
@@ -1890,12 +1491,7 @@
       "lengths": [],
       "localName": "Número de Identidad de Extranjero",
       "name": "Spanish Foreigner ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "es",
       "parseKind": null,
       "scope": "country",
@@ -1916,12 +1512,7 @@
       "lengths": [12],
       "localName": "Número de la Seguridad Social",
       "name": "Spanish Social Security Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "es",
       "parseKind": null,
       "scope": "country",
@@ -1930,11 +1521,7 @@
     },
     {
       "abbreviation": "NIF",
-      "aliases": [
-        "NIF",
-        "CIF",
-        "número de identificación fiscal"
-      ],
+      "aliases": ["NIF", "CIF", "número de identificación fiscal"],
       "canGenerate": true,
       "candidatePattern": "ES[A-Z]\\d{7}[A-Z\\d]",
       "country": "ES",
@@ -1973,12 +1560,7 @@
       "lengths": [],
       "localName": "EU VAT Number",
       "name": "EU VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "eu",
       "parseKind": null,
       "scope": "global",
@@ -1987,11 +1569,7 @@
     },
     {
       "abbreviation": "HETU",
-      "aliases": [
-        "henkilötunnus",
-        "HETU",
-        "sosiaaliturvatunnus"
-      ],
+      "aliases": ["henkilötunnus", "HETU", "sosiaaliturvatunnus"],
       "canGenerate": true,
       "candidatePattern": "\\d{6}[-+A]\\d{3}[\\dA-Z]",
       "country": "FI",
@@ -2003,13 +1581,7 @@
       "lengths": [11],
       "localName": "Henkilötunnus",
       "name": "Finnish Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "fi",
       "parseKind": "person",
       "scope": "country",
@@ -2030,12 +1602,7 @@
       "lengths": [8],
       "localName": "Arvonlisäveronumero",
       "name": "Finnish VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "fi",
       "parseKind": null,
       "scope": "country",
@@ -2056,12 +1623,7 @@
       "lengths": [],
       "localName": "Y-tunnus",
       "name": "Finnish Business ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "fi",
       "parseKind": null,
       "scope": "country",
@@ -2070,11 +1632,7 @@
     },
     {
       "abbreviation": "NIF",
-      "aliases": [
-        "numéro fiscal",
-        "NIF",
-        "numéro d'identification fiscale"
-      ],
+      "aliases": ["numéro fiscal", "NIF", "numéro d'identification fiscale"],
       "canGenerate": true,
       "candidatePattern": "\\d{13}",
       "country": "FR",
@@ -2086,12 +1644,7 @@
       "lengths": [],
       "localName": "Numéro d'Identification Fiscale",
       "name": "French Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "fr",
       "parseKind": null,
       "scope": "country",
@@ -2100,12 +1653,7 @@
     },
     {
       "abbreviation": "NIR",
-      "aliases": [
-        "NIR",
-        "numéro de sécurité sociale",
-        "numéro SS",
-        "sécu"
-      ],
+      "aliases": ["NIR", "numéro de sécurité sociale", "numéro SS", "sécu"],
       "canGenerate": true,
       "candidatePattern": "[12]\\s?\\d{2}\\s?\\d{2}\\s?\\d{2}\\s?\\d{3}\\s?\\d{3}\\s?\\d{2}",
       "country": "FR",
@@ -2117,13 +1665,7 @@
       "lengths": [15],
       "localName": "Numero d'Inscription au Repertoire",
       "name": "French Social Security Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "fr",
       "parseKind": "person",
       "scope": "country",
@@ -2144,12 +1686,7 @@
       "lengths": [],
       "localName": "Système d'Identification du Répertoire des Entreprises",
       "name": "French Company ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "fr",
       "parseKind": null,
       "scope": "country",
@@ -2170,12 +1707,7 @@
       "lengths": [],
       "localName": "Système d'Identification du Répertoire des Établissements",
       "name": "French Establishment ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "fr",
       "parseKind": null,
       "scope": "country",
@@ -2184,11 +1716,7 @@
     },
     {
       "abbreviation": "TVA",
-      "aliases": [
-        "numéro de TVA",
-        "TVA intracommunautaire",
-        "FR VAT"
-      ],
+      "aliases": ["numéro de TVA", "TVA intracommunautaire", "FR VAT"],
       "canGenerate": true,
       "candidatePattern": "FR[A-Z0-9]{2}\\d{9}",
       "country": "FR",
@@ -2200,12 +1728,7 @@
       "lengths": [],
       "localName": "Numéro de TVA intracommunautaire",
       "name": "French VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "fr",
       "parseKind": null,
       "scope": "country",
@@ -2214,10 +1737,7 @@
     },
     {
       "abbreviation": "NHS",
-      "aliases": [
-        "NHS number",
-        "National Health Service number"
-      ],
+      "aliases": ["NHS number", "National Health Service number"],
       "canGenerate": false,
       "candidatePattern": "\\d{3}\\s?\\d{3}\\s?\\d{4}",
       "country": "GB",
@@ -2229,12 +1749,7 @@
       "lengths": [10],
       "localName": "NHS number",
       "name": "UK NHS Number",
-      "namedExports": [
-        "calcCheckDigit",
-        "compact",
-        "format",
-        "validate"
-      ],
+      "namedExports": ["calcCheckDigit", "compact", "format", "validate"],
       "namespaceExport": "gb",
       "parseKind": null,
       "scope": "country",
@@ -2243,11 +1758,7 @@
     },
     {
       "abbreviation": "NINO",
-      "aliases": [
-        "National Insurance number",
-        "NINO",
-        "NI number"
-      ],
+      "aliases": ["National Insurance number", "NINO", "NI number"],
       "canGenerate": true,
       "candidatePattern": "[A-Z]{2}\\d{6}[A-Z]",
       "country": "GB",
@@ -2259,12 +1770,7 @@
       "lengths": [9],
       "localName": "National Insurance Number",
       "name": "UK National Insurance Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "gb",
       "parseKind": null,
       "scope": "country",
@@ -2273,10 +1779,7 @@
     },
     {
       "abbreviation": "SEDOL",
-      "aliases": [
-        "SEDOL",
-        "Stock Exchange Daily Official List"
-      ],
+      "aliases": ["SEDOL", "Stock Exchange Daily Official List"],
       "canGenerate": true,
       "candidatePattern": "[B-DF-HJ-NP-TV-Z0-9]{6}\\d",
       "country": "GB",
@@ -2315,12 +1818,7 @@
       "lengths": [],
       "localName": "Unique Taxpayer Reference",
       "name": "UK Unique Taxpayer Reference",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "gb",
       "parseKind": null,
       "scope": "country",
@@ -2341,12 +1839,7 @@
       "lengths": [],
       "localName": "VAT Registration Number",
       "name": "UK VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "gb",
       "parseKind": null,
       "scope": "country",
@@ -2367,12 +1860,7 @@
       "lengths": [9, 11],
       "localName": "პირადი ნომერი",
       "name": "Georgian Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ge",
       "parseKind": null,
       "scope": "country",
@@ -2393,12 +1881,7 @@
       "lengths": [11],
       "localName": "Tax Identification Number",
       "name": "Ghanaian Tax Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "gh",
       "parseKind": null,
       "scope": "country",
@@ -2407,11 +1890,7 @@
     },
     {
       "abbreviation": "ΑΜΚΑ",
-      "aliases": [
-        "ΑΜΚΑ",
-        "Αριθμός Μητρώου Κοινωνικής Ασφάλισης",
-        "AMKA"
-      ],
+      "aliases": ["ΑΜΚΑ", "Αριθμός Μητρώου Κοινωνικής Ασφάλισης", "AMKA"],
       "canGenerate": true,
       "candidatePattern": "\\d{11}",
       "country": "GR",
@@ -2423,12 +1902,7 @@
       "lengths": [],
       "localName": "Αριθμός Μητρώου Κοινωνικής Ασφάλισης",
       "name": "Greek Social Security Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "gr",
       "parseKind": null,
       "scope": "country",
@@ -2437,11 +1911,7 @@
     },
     {
       "abbreviation": "ΑΦΜ",
-      "aliases": [
-        "ΑΦΜ",
-        "Αριθμός Φορολογικού Μητρώου",
-        "AFM"
-      ],
+      "aliases": ["ΑΦΜ", "Αριθμός Φορολογικού Μητρώου", "AFM"],
       "canGenerate": true,
       "candidatePattern": "EL\\d{9}",
       "country": "GR",
@@ -2453,12 +1923,7 @@
       "lengths": [],
       "localName": "Αριθμός Φορολογικού Μητρώου",
       "name": "Greek VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "gr",
       "parseKind": null,
       "scope": "country",
@@ -2479,12 +1944,7 @@
       "lengths": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       "localName": "Número de Identificación Tributaria",
       "name": "Tax Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "gt",
       "parseKind": null,
       "scope": "country",
@@ -2505,12 +1965,7 @@
       "lengths": [8, 9],
       "localName": "Hong Kong Identity Card Number",
       "name": "Hong Kong Identity Card Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "hk",
       "parseKind": null,
       "scope": "country",
@@ -2531,12 +1986,7 @@
       "lengths": [],
       "localName": "Osobni identifikacijski broj",
       "name": "Croatian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "hr",
       "parseKind": null,
       "scope": "country",
@@ -2557,12 +2007,7 @@
       "lengths": [8],
       "localName": "Adószám",
       "name": "Hungarian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "hu",
       "parseKind": null,
       "scope": "country",
@@ -2577,21 +2022,13 @@
       "country": null,
       "description": "International bank account number per ISO 13616",
       "entityType": "any",
-      "examples": [
-        "GB29NWBK60161331926819",
-        "DE89370400440532013000"
-      ],
+      "examples": ["GB29NWBK60161331926819", "DE89370400440532013000"],
       "exportName": "iban",
       "id": "iban",
       "lengths": [],
       "localName": "IBAN",
       "name": "IBAN",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": null,
       "parseKind": null,
       "scope": "global",
@@ -2612,12 +2049,7 @@
       "lengths": [15, 16],
       "localName": "Nomor Pokok Wajib Pajak",
       "name": "Indonesian Taxpayer Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "id",
       "parseKind": null,
       "scope": "country",
@@ -2638,12 +2070,7 @@
       "lengths": [],
       "localName": "Personal Public Service Number",
       "name": "Irish Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ie",
       "parseKind": null,
       "scope": "country",
@@ -2664,12 +2091,7 @@
       "lengths": [],
       "localName": "Value Added Tax Number",
       "name": "Irish VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ie",
       "parseKind": null,
       "scope": "country",
@@ -2678,11 +2100,7 @@
     },
     {
       "abbreviation": "ת.ז.",
-      "aliases": [
-        "תעודת זהות",
-        "Teudat Zehut",
-        "ID number"
-      ],
+      "aliases": ["תעודת זהות", "Teudat Zehut", "ID number"],
       "canGenerate": true,
       "candidatePattern": "\\d{9}",
       "country": "IL",
@@ -2694,12 +2112,7 @@
       "lengths": [9],
       "localName": "מספר זהות",
       "name": "Israeli Identity Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "il",
       "parseKind": null,
       "scope": "country",
@@ -2720,12 +2133,7 @@
       "lengths": [12],
       "localName": "Aadhaar",
       "name": "Indian Unique Identity Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "in_",
       "parseKind": null,
       "scope": "country",
@@ -2746,12 +2154,7 @@
       "lengths": [15],
       "localName": "Goods and Services Tax Identification Number",
       "name": "Indian Goods and Services Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "in_",
       "parseKind": null,
       "scope": "country",
@@ -2772,12 +2175,7 @@
       "lengths": [10],
       "localName": "Permanent Account Number",
       "name": "Indian Permanent Account Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "in_",
       "parseKind": null,
       "scope": "country",
@@ -2798,12 +2196,7 @@
       "lengths": [12],
       "localName": "البطاقة الوطنية الموحدة",
       "name": "Iraqi National ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "iq",
       "parseKind": null,
       "scope": "country",
@@ -2824,12 +2217,7 @@
       "lengths": [10],
       "localName": "کد ملی",
       "name": "Iranian National ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ir",
       "parseKind": null,
       "scope": "country",
@@ -2850,12 +2238,7 @@
       "lengths": [],
       "localName": "Kennitala",
       "name": "Icelandic ID Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "is_",
       "parseKind": null,
       "scope": "country",
@@ -2876,12 +2259,7 @@
       "lengths": [],
       "localName": "Virðisaukaskattur",
       "name": "Icelandic VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "is_",
       "parseKind": null,
       "scope": "country",
@@ -2890,10 +2268,7 @@
     },
     {
       "abbreviation": "ISIN",
-      "aliases": [
-        "ISIN",
-        "International Securities Identification Number"
-      ],
+      "aliases": ["ISIN", "International Securities Identification Number"],
       "canGenerate": true,
       "candidatePattern": "[A-Z]{2}[A-Z0-9]{9}\\d",
       "country": null,
@@ -2905,12 +2280,7 @@
       "lengths": [],
       "localName": "International Securities Identification Number",
       "name": "International Securities Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": null,
       "parseKind": null,
       "scope": "global",
@@ -2919,13 +2289,7 @@
     },
     {
       "abbreviation": "CF",
-      "aliases": [
-        "codice fiscale",
-        "C.F.",
-        "CF",
-        "cod. fisc.",
-        "fiscal code"
-      ],
+      "aliases": ["codice fiscale", "C.F.", "CF", "cod. fisc.", "fiscal code"],
       "canGenerate": true,
       "candidatePattern": "[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]",
       "country": "IT",
@@ -2937,13 +2301,7 @@
       "lengths": [11, 16],
       "localName": "Codice Fiscale",
       "name": "Italian Tax Code",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "it",
       "parseKind": "person",
       "scope": "country",
@@ -2952,12 +2310,7 @@
     },
     {
       "abbreviation": "P.IVA",
-      "aliases": [
-        "partita IVA",
-        "P.IVA",
-        "P. IVA",
-        "VAT IT"
-      ],
+      "aliases": ["partita IVA", "P.IVA", "P. IVA", "VAT IT"],
       "canGenerate": true,
       "candidatePattern": "IT\\d{11}",
       "country": "IT",
@@ -2969,12 +2322,7 @@
       "lengths": [],
       "localName": "Partita IVA",
       "name": "Italian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "it",
       "parseKind": null,
       "scope": "country",
@@ -2995,12 +2343,7 @@
       "lengths": [13],
       "localName": "法人番号",
       "name": "Japanese Corporate Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "jp",
       "parseKind": null,
       "scope": "country",
@@ -3021,12 +2364,7 @@
       "lengths": [12],
       "localName": "マイナンバー",
       "name": "Japanese Individual Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "jp",
       "parseKind": null,
       "scope": "country",
@@ -3047,12 +2385,7 @@
       "lengths": [10],
       "localName": "사업자등록번호",
       "name": "Korean Business Registration Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "kr",
       "parseKind": null,
       "scope": "country",
@@ -3061,11 +2394,7 @@
     },
     {
       "abbreviation": "RRN",
-      "aliases": [
-        "RRN",
-        "주민등록번호",
-        "Resident Registration Number"
-      ],
+      "aliases": ["RRN", "주민등록번호", "Resident Registration Number"],
       "canGenerate": true,
       "candidatePattern": "\\d{6}[\\s-]?\\d{7}",
       "country": "KR",
@@ -3077,13 +2406,7 @@
       "lengths": [13],
       "localName": "주민등록번호",
       "name": "Korean Resident Registration Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "kr",
       "parseKind": "person",
       "scope": "country",
@@ -3104,13 +2427,7 @@
       "lengths": [12],
       "localName": "الرقم المدني",
       "name": "Civil Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "kw",
       "parseKind": "birthDate",
       "scope": "country",
@@ -3119,11 +2436,7 @@
     },
     {
       "abbreviation": "IIN",
-      "aliases": [
-        "ИИН",
-        "IIN",
-        "индивидуальный идентификационный номер"
-      ],
+      "aliases": ["ИИН", "IIN", "индивидуальный идентификационный номер"],
       "canGenerate": true,
       "candidatePattern": "\\d{12}",
       "country": "KZ",
@@ -3135,13 +2448,7 @@
       "lengths": [12],
       "localName": "Жеке сәйкестендіру нөмірі",
       "name": "Kazakhstan Individual ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "kz",
       "parseKind": "person",
       "scope": "country",
@@ -3162,12 +2469,7 @@
       "lengths": [],
       "localName": "Legal Entity Identifier",
       "name": "Legal Entity Identifier",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": null,
       "parseKind": null,
       "scope": "global",
@@ -3188,12 +2490,7 @@
       "lengths": [4, 5, 6, 7, 8, 9, 10, 11, 12],
       "localName": "Personenidentifikationsnummer",
       "name": "Liechtenstein Person Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "li",
       "parseKind": null,
       "scope": "country",
@@ -3214,13 +2511,7 @@
       "lengths": [10, 12],
       "localName": "ජාතික හැඳුනුම්පත",
       "name": "National Identity Card",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "lk",
       "parseKind": "person",
       "scope": "country",
@@ -3241,12 +2532,7 @@
       "lengths": [],
       "localName": "Asmens kodas",
       "name": "Lithuanian Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "lt",
       "parseKind": null,
       "scope": "country",
@@ -3267,12 +2553,7 @@
       "lengths": [9, 12],
       "localName": "PVM mokėtojo kodas",
       "name": "Lithuanian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "lt",
       "parseKind": null,
       "scope": "country",
@@ -3293,12 +2574,7 @@
       "lengths": [8],
       "localName": "Numéro de TVA",
       "name": "Luxembourg VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "lu",
       "parseKind": null,
       "scope": "country",
@@ -3319,12 +2595,7 @@
       "lengths": [],
       "localName": "Luhn",
       "name": "Luhn",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": null,
       "parseKind": null,
       "scope": "global",
@@ -3345,12 +2616,7 @@
       "lengths": [],
       "localName": "PVN reģistrācijas numurs",
       "name": "Latvian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "lv",
       "parseKind": null,
       "scope": "country",
@@ -3359,10 +2625,7 @@
     },
     {
       "abbreviation": "ICE",
-      "aliases": [
-        "ICE",
-        "Identifiant Commun de l'Entreprise"
-      ],
+      "aliases": ["ICE", "Identifiant Commun de l'Entreprise"],
       "canGenerate": true,
       "candidatePattern": "\\d{15}",
       "country": "MA",
@@ -3374,12 +2637,7 @@
       "lengths": [15],
       "localName": "Identifiant Commun de l'Entreprise",
       "name": "Moroccan Company Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ma",
       "parseKind": null,
       "scope": "country",
@@ -3400,12 +2658,7 @@
       "lengths": [],
       "localName": "Numéro de TVA",
       "name": "Monacan VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "mc",
       "parseKind": null,
       "scope": "country",
@@ -3447,12 +2700,7 @@
       "lengths": [8],
       "localName": "Poreski identifikacioni broj",
       "name": "Montenegrin Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "me",
       "parseKind": null,
       "scope": "country",
@@ -3473,12 +2721,7 @@
       "lengths": [13],
       "localName": "Edinstven danocen broj",
       "name": "North Macedonian Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "mk",
       "parseKind": null,
       "scope": "country",
@@ -3499,12 +2742,7 @@
       "lengths": [8],
       "localName": "VAT Registration Number",
       "name": "Maltese VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "mt",
       "parseKind": null,
       "scope": "country",
@@ -3525,12 +2763,7 @@
       "lengths": [8, 9],
       "localName": "Business Registration Number",
       "name": "Mauritius Business Registration Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "mu",
       "parseKind": null,
       "scope": "country",
@@ -3551,12 +2784,7 @@
       "lengths": [18],
       "localName": "Clave Bancaria Estandarizada",
       "name": "Mexican Bank Account",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "mx",
       "parseKind": null,
       "scope": "country",
@@ -3565,10 +2793,7 @@
     },
     {
       "abbreviation": "CURP",
-      "aliases": [
-        "CURP",
-        "Clave Única de Registro de Población"
-      ],
+      "aliases": ["CURP", "Clave Única de Registro de Población"],
       "canGenerate": true,
       "candidatePattern": "[A-Z]{4}\\d{6}[HM][A-Z]{5}[A-Z\\d]\\d",
       "country": "MX",
@@ -3580,13 +2805,7 @@
       "lengths": [18],
       "localName": "Clave Única de Registro de Población",
       "name": "Mexican Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "mx",
       "parseKind": "person",
       "scope": "country",
@@ -3595,10 +2814,7 @@
     },
     {
       "abbreviation": "RFC",
-      "aliases": [
-        "RFC",
-        "Registro Federal de Contribuyentes"
-      ],
+      "aliases": ["RFC", "Registro Federal de Contribuyentes"],
       "canGenerate": true,
       "candidatePattern": "[A-ZÑ&]{3,4}\\d{6}[A-Z\\d]{3}",
       "country": "MX",
@@ -3610,12 +2826,7 @@
       "lengths": [12, 13],
       "localName": "Registro Federal de Contribuyentes",
       "name": "Mexican Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "mx",
       "parseKind": null,
       "scope": "country",
@@ -3636,13 +2847,7 @@
       "lengths": [12],
       "localName": "Nombor Kad Pengenalan",
       "name": "Malaysian National Registration Identity Card Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "my",
       "parseKind": "person",
       "scope": "country",
@@ -3663,12 +2868,7 @@
       "lengths": [11],
       "localName": "National Identification Number",
       "name": "National Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ng",
       "parseKind": null,
       "scope": "country",
@@ -3689,12 +2889,7 @@
       "lengths": [14],
       "localName": "Registro Único de Contribuyente",
       "name": "Tax Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ni",
       "parseKind": null,
       "scope": "country",
@@ -3703,11 +2898,7 @@
     },
     {
       "abbreviation": "BSN",
-      "aliases": [
-        "burgerservicenummer",
-        "BSN",
-        "sofinummer"
-      ],
+      "aliases": ["burgerservicenummer", "BSN", "sofinummer"],
       "canGenerate": true,
       "candidatePattern": "\\d{9}",
       "country": "NL",
@@ -3719,12 +2910,7 @@
       "lengths": [],
       "localName": "Burgerservicenummer",
       "name": "Dutch Citizen Service Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "nl",
       "parseKind": null,
       "scope": "country",
@@ -3745,12 +2931,7 @@
       "lengths": [],
       "localName": "KvK-nummer",
       "name": "Dutch Chamber of Commerce Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "nl",
       "parseKind": null,
       "scope": "country",
@@ -3771,12 +2952,7 @@
       "lengths": [],
       "localName": "BTW-identificatienummer",
       "name": "Dutch VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "nl",
       "parseKind": null,
       "scope": "country",
@@ -3797,13 +2973,7 @@
       "lengths": [],
       "localName": "Fødselsnummer",
       "name": "Norwegian Birth Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "no",
       "parseKind": "person",
       "scope": "country",
@@ -3824,12 +2994,7 @@
       "lengths": [],
       "localName": "Merverdiavgift",
       "name": "Norwegian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "no",
       "parseKind": null,
       "scope": "country",
@@ -3850,12 +3015,7 @@
       "lengths": [],
       "localName": "Organisasjonsnummer",
       "name": "Norwegian Organization Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "no",
       "parseKind": null,
       "scope": "country",
@@ -3876,12 +3036,7 @@
       "lengths": [8, 9],
       "localName": "IRD Number",
       "name": "IRD Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "nz",
       "parseKind": null,
       "scope": "country",
@@ -3896,21 +3051,13 @@
       "country": "PA",
       "description": "Tax identifier issued by Panama's DGI",
       "entityType": "any",
-      "examples": [
-        "1-184-921 DV49",
-        "2588017-1-831938 DV20"
-      ],
+      "examples": ["1-184-921 DV49", "2588017-1-831938 DV20"],
       "exportName": "ruc",
       "id": "pa.ruc",
       "lengths": [],
       "localName": "Registro Único de Contribuyente",
       "name": "Tax Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "pa",
       "parseKind": null,
       "scope": "country",
@@ -3931,12 +3078,7 @@
       "lengths": [11],
       "localName": "Registro Único de Contribuyentes",
       "name": "Peruvian Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "pe",
       "parseKind": null,
       "scope": "country",
@@ -3957,12 +3099,7 @@
       "lengths": [12],
       "localName": "PhilSys Card Number",
       "name": "Philippine Identification System Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ph",
       "parseKind": null,
       "scope": "country",
@@ -3983,12 +3120,7 @@
       "lengths": [13],
       "localName": "Computerized National Identity Card",
       "name": "Computerized National Identity Card",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "pk",
       "parseKind": null,
       "scope": "country",
@@ -4009,12 +3141,7 @@
       "lengths": [],
       "localName": "Numer Identyfikacji Podatkowej",
       "name": "Polish VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "pl",
       "parseKind": null,
       "scope": "country",
@@ -4035,13 +3162,7 @@
       "lengths": [],
       "localName": "Powszechny Elektroniczny System Ewidencji Ludności",
       "name": "Polish National ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "pl",
       "parseKind": "person",
       "scope": "country",
@@ -4062,12 +3183,7 @@
       "lengths": [],
       "localName": "Rejestr Gospodarki Narodowej",
       "name": "Polish Business Register Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "pl",
       "parseKind": null,
       "scope": "country",
@@ -4076,11 +3192,7 @@
     },
     {
       "abbreviation": "CC",
-      "aliases": [
-        "cartão de cidadão",
-        "CC",
-        "número de identificação civil"
-      ],
+      "aliases": ["cartão de cidadão", "CC", "número de identificação civil"],
       "canGenerate": true,
       "candidatePattern": "\\d{8}\\s?\\d\\s?[A-Z]{2}\\d",
       "country": "PT",
@@ -4092,12 +3204,7 @@
       "lengths": [12],
       "localName": "Cartão de Cidadão",
       "name": "Portuguese Identity Card",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "pt",
       "parseKind": null,
       "scope": "country",
@@ -4106,11 +3213,7 @@
     },
     {
       "abbreviation": "NIF",
-      "aliases": [
-        "NIF",
-        "número de identificação fiscal",
-        "contribuinte"
-      ],
+      "aliases": ["NIF", "número de identificação fiscal", "contribuinte"],
       "canGenerate": true,
       "candidatePattern": "PT\\d{9}",
       "country": "PT",
@@ -4122,12 +3225,7 @@
       "lengths": [9],
       "localName": "Número de Identificação Fiscal",
       "name": "Portuguese VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "pt",
       "parseKind": null,
       "scope": "country",
@@ -4148,13 +3246,7 @@
       "lengths": [13],
       "localName": "Cod Numeric Personal",
       "name": "Romanian Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "ro",
       "parseKind": "person",
       "scope": "country",
@@ -4163,12 +3255,7 @@
     },
     {
       "abbreviation": "CIF",
-      "aliases": [
-        "CUI",
-        "CIF",
-        "cod de identificare fiscală",
-        "cod fiscal"
-      ],
+      "aliases": ["CUI", "CIF", "cod de identificare fiscală", "cod fiscal"],
       "canGenerate": true,
       "candidatePattern": "RO\\d{2,10}",
       "country": "RO",
@@ -4180,12 +3267,7 @@
       "lengths": [2, 3, 4, 5, 6, 7, 8, 9, 10],
       "localName": "Cod de Identificare Fiscală",
       "name": "Romanian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ro",
       "parseKind": null,
       "scope": "country",
@@ -4206,12 +3288,7 @@
       "lengths": [9],
       "localName": "Poreski identifikacioni broj",
       "name": "Serbian Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "rs",
       "parseKind": null,
       "scope": "country",
@@ -4232,12 +3309,7 @@
       "lengths": [10, 12],
       "localName": "Идентификационный номер налогоплательщика",
       "name": "Russian Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ru",
       "parseKind": null,
       "scope": "country",
@@ -4246,11 +3318,7 @@
     },
     {
       "abbreviation": "Orgnr",
-      "aliases": [
-        "organisationsnummer",
-        "org.nr",
-        "org nr"
-      ],
+      "aliases": ["organisationsnummer", "org.nr", "org nr"],
       "canGenerate": true,
       "candidatePattern": "\\d{6}-\\d{4}",
       "country": "SE",
@@ -4262,12 +3330,7 @@
       "lengths": [],
       "localName": "Organisationsnummer",
       "name": "Swedish Organization Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "se",
       "parseKind": null,
       "scope": "country",
@@ -4293,13 +3356,7 @@
       "lengths": [],
       "localName": "Personnummer",
       "name": "Swedish Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "se",
       "parseKind": "person",
       "scope": "country",
@@ -4325,12 +3382,7 @@
       "lengths": [12],
       "localName": "Momsregistreringsnummer",
       "name": "Swedish VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "se",
       "parseKind": null,
       "scope": "country",
@@ -4351,12 +3403,7 @@
       "lengths": [9, 10],
       "localName": "Unique Entity Number",
       "name": "Singapore Unique Entity Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "sg",
       "parseKind": null,
       "scope": "country",
@@ -4377,13 +3424,7 @@
       "lengths": [],
       "localName": "Enotna matična številka občana",
       "name": "Slovenian Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "si",
       "parseKind": "person",
       "scope": "country",
@@ -4392,10 +3433,7 @@
     },
     {
       "abbreviation": "DDV",
-      "aliases": [
-        "DDV",
-        "identifikacijska številka za DDV"
-      ],
+      "aliases": ["DDV", "identifikacijska številka za DDV"],
       "canGenerate": true,
       "candidatePattern": "SI\\d{8}",
       "country": "SI",
@@ -4407,12 +3445,7 @@
       "lengths": [8],
       "localName": "Davčna številka",
       "name": "Slovenian VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "si",
       "parseKind": null,
       "scope": "country",
@@ -4433,12 +3466,7 @@
       "lengths": [],
       "localName": "Identifikačné číslo pre daň z pridanej hodnoty",
       "name": "Slovak VAT Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "sk",
       "parseKind": null,
       "scope": "country",
@@ -4459,12 +3487,7 @@
       "lengths": [],
       "localName": "Identifikačné číslo organizácie",
       "name": "Slovak Company ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "sk",
       "parseKind": null,
       "scope": "country",
@@ -4485,13 +3508,7 @@
       "lengths": [9, 10],
       "localName": "Rodné číslo",
       "name": "Slovak Birth Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "sk",
       "parseKind": "person",
       "scope": "country",
@@ -4512,12 +3529,7 @@
       "lengths": [13],
       "localName": "เลขประจำตัวผู้เสียภาษี",
       "name": "Thai Tax Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "th",
       "parseKind": null,
       "scope": "country",
@@ -4538,12 +3550,7 @@
       "lengths": [],
       "localName": "T.C. Kimlik Numarası",
       "name": "Turkish Personal ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "tr",
       "parseKind": null,
       "scope": "country",
@@ -4564,12 +3571,7 @@
       "lengths": [],
       "localName": "Vergi Kimlik Numarası",
       "name": "Turkish Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "tr",
       "parseKind": null,
       "scope": "country",
@@ -4590,12 +3592,7 @@
       "lengths": [8],
       "localName": "統一編號",
       "name": "Unified Business Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "tw",
       "parseKind": null,
       "scope": "country",
@@ -4616,12 +3613,7 @@
       "lengths": [8],
       "localName": "ЄДРПОУ",
       "name": "Ukrainian Company Register Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ua",
       "parseKind": null,
       "scope": "country",
@@ -4630,11 +3622,7 @@
     },
     {
       "abbreviation": "EIN",
-      "aliases": [
-        "EIN",
-        "Employer Identification Number",
-        "Federal Tax ID"
-      ],
+      "aliases": ["EIN", "Employer Identification Number", "Federal Tax ID"],
       "canGenerate": true,
       "candidatePattern": "\\d{2}-?\\d{7}",
       "country": "US",
@@ -4646,12 +3634,7 @@
       "lengths": [],
       "localName": "Employer Identification Number",
       "name": "Employer Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "us",
       "parseKind": null,
       "scope": "country",
@@ -4660,10 +3643,7 @@
     },
     {
       "abbreviation": "ITIN",
-      "aliases": [
-        "ITIN",
-        "Individual Taxpayer Identification Number"
-      ],
+      "aliases": ["ITIN", "Individual Taxpayer Identification Number"],
       "canGenerate": true,
       "candidatePattern": "9\\d{2}[\\s-]?\\d{2}[\\s-]?\\d{4}",
       "country": "US",
@@ -4675,12 +3655,7 @@
       "lengths": [9],
       "localName": "Individual Taxpayer Identification Number",
       "name": "Individual Taxpayer Identification Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "us",
       "parseKind": null,
       "scope": "country",
@@ -4707,12 +3682,7 @@
       "lengths": [9],
       "localName": "Routing Transit Number",
       "name": "Routing Transit Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "us",
       "parseKind": null,
       "scope": "country",
@@ -4733,12 +3703,7 @@
       "lengths": [],
       "localName": "Social Security Number",
       "name": "Social Security Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "us",
       "parseKind": null,
       "scope": "country",
@@ -4759,12 +3724,7 @@
       "lengths": [12],
       "localName": "Registro Único Tributario",
       "name": "Uruguayan Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "uy",
       "parseKind": null,
       "scope": "country",
@@ -4785,12 +3745,7 @@
       "lengths": [10],
       "localName": "Registro de Información Fiscal",
       "name": "Venezuelan Tax ID",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "ve",
       "parseKind": null,
       "scope": "country",
@@ -4811,12 +3766,7 @@
       "lengths": [10, 13],
       "localName": "Mã số thuế",
       "name": "Vietnamese Tax Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "validate"],
       "namespaceExport": "vn",
       "parseKind": null,
       "scope": "country",
@@ -4837,13 +3787,7 @@
       "lengths": [13],
       "localName": "South African Identity Number",
       "name": "South African Identity Number",
-      "namedExports": [
-        "compact",
-        "format",
-        "generate",
-        "parse",
-        "validate"
-      ],
+      "namedExports": ["compact", "format", "generate", "parse", "validate"],
       "namespaceExport": "za",
       "parseKind": "person",
       "scope": "country",

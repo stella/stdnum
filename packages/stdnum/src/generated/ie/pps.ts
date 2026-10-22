@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const pps: CountryValidator<"IE"> = createValidator(
-  "ie.pps",
-  94,
-);
+const pps: CountryValidator<"IE"> = createValidator("ie.pps", 94);
 
 export default pps;
 export const compact = pps.compact;
@@ -16,7 +13,5 @@ export const validate = pps.validate;
 export const generate = (): string =>
   pps.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ie.pps cannot generate values",
-    );
+    throw new Error("Validator ie.pps cannot generate values");
   })();

@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const rut: CountryValidator<"CL"> = createValidator(
-  "cl.rut",
-  35,
-);
+const rut: CountryValidator<"CL"> = createValidator("cl.rut", 35);
 
 export default rut;
 export const compact = rut.compact;
@@ -16,7 +13,5 @@ export const validate = rut.validate;
 export const generate = (): string =>
   rut.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator cl.rut cannot generate values",
-    );
+    throw new Error("Validator cl.rut cannot generate values");
   })();

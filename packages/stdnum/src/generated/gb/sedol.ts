@@ -2,15 +2,9 @@
 
 import type { CountryValidator } from "../../types";
 
-import {
-  createValidator,
-  getBinding,
-} from "#stdnum-runtime";
+import { createValidator, getBinding } from "#stdnum-runtime";
 
-const sedol: CountryValidator<"GB"> = createValidator(
-  "gb.sedol",
-  81,
-);
+const sedol: CountryValidator<"GB"> = createValidator("gb.sedol", 81);
 
 export default sedol;
 export const compact = sedol.compact;
@@ -19,9 +13,7 @@ export const validate = sedol.validate;
 export const generate = (): string =>
   sedol.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator gb.sedol cannot generate values",
-    );
+    throw new Error("Validator gb.sedol cannot generate values");
   })();
 export const calcCheckDigit = (value: string): string =>
   getBinding().gbSedolCalcCheckDigit(value);

@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const npwp: CountryValidator<"ID"> = createValidator(
-  "id.npwp",
-  93,
-);
+const npwp: CountryValidator<"ID"> = createValidator("id.npwp", 93);
 
 export default npwp;
 export const compact = npwp.compact;
@@ -16,7 +13,5 @@ export const validate = npwp.validate;
 export const generate = (): string =>
   npwp.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator id.npwp cannot generate values",
-    );
+    throw new Error("Validator id.npwp cannot generate values");
   })();

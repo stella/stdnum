@@ -1,9 +1,4 @@
-import {
-  afterEach,
-  describe,
-  expect,
-  test,
-} from "bun:test";
+import { afterEach, describe, expect, test } from "bun:test";
 
 import businessid, {
   compact,
@@ -11,10 +6,7 @@ import businessid, {
   generate,
   validate,
 } from "../generated/at/businessid";
-import {
-  asNativeBinding,
-  type NativeStdnumBinding,
-} from "../native";
+import { asNativeBinding, type NativeStdnumBinding } from "../native";
 import { setBinding } from "../runtime";
 
 const fakeBinding = new Proxy(
@@ -25,8 +17,7 @@ const fakeBinding = new Proxy(
         return (_id: string | number, value: string) =>
           value.replaceAll(" ", "").toLowerCase();
       if (key === "format" || key === "formatIndex")
-        return (_id: string | number, value: string) =>
-          `FN ${value}`;
+        return (_id: string | number, value: string) => `FN ${value}`;
       if (key === "validate" || key === "validateIndex")
         return (_id: string | number, value: string) =>
           value === "invalid"
@@ -39,20 +30,14 @@ const fakeBinding = new Proxy(
               }
             : {
                 valid: true,
-                compact: value
-                  .replaceAll(" ", "")
-                  .toLowerCase(),
+                compact: value.replaceAll(" ", "").toLowerCase(),
               };
       if (key === "isValidCanonicalIndex")
         return (_index: number, value: string) =>
           value !== "invalid" && !value.includes(" ");
-      if (key === "supportsCanonicalValidationIndex")
-        return () => true;
+      if (key === "supportsCanonicalValidationIndex") return () => true;
       if (key === "validateManyIndex")
-        return (
-          _index: number,
-          values: readonly string[],
-        ) =>
+        return (_index: number, values: readonly string[]) =>
           values.map((value) =>
             value === "invalid"
               ? {
@@ -64,20 +49,12 @@ const fakeBinding = new Proxy(
                 }
               : {
                   valid: true,
-                  compact: value
-                    .replaceAll(" ", "")
-                    .toLowerCase(),
+                  compact: value.replaceAll(" ", "").toLowerCase(),
                 },
           );
       if (key === "areAllCanonicalValidIndex")
-        return (
-          _index: number,
-          values: readonly string[],
-        ) =>
-          values.every(
-            (value) =>
-              value !== "invalid" && !value.includes(" "),
-          );
+        return (_index: number, values: readonly string[]) =>
+          values.every((value) => value !== "invalid" && !value.includes(" "));
       if (key === "validateFastIndex")
         return (_index: number, value: string) => {
           if (value === "invalid")
@@ -87,10 +64,8 @@ const fakeBinding = new Proxy(
             };
           return value.includes(" ") ? 2 : 1;
         };
-      if (key === "generate" || key === "generateIndex")
-        return () => "122119m";
-      if (key === "parse" || key === "parseIndex")
-        return () => null;
+      if (key === "generate" || key === "generateIndex") return () => "122119m";
+      if (key === "parse" || key === "parseIndex") return () => null;
       return () => [];
     },
   },
@@ -119,9 +94,7 @@ describe("generated native adapter", () => {
         message: "invalid fixture",
       },
     });
-    expect(
-      businessid.validateMany(["122119m", "12 2119M"]),
-    ).toEqual([
+    expect(businessid.validateMany(["122119m", "12 2119M"])).toEqual([
       { valid: true, compact: "122119m" },
       { valid: true, compact: "122119m" },
     ]);

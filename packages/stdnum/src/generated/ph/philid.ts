@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const philid: CountryValidator<"PH"> = createValidator(
-  "ph.philid",
-  143,
-);
+const philid: CountryValidator<"PH"> = createValidator("ph.philid", 143);
 
 export default philid;
 export const compact = philid.compact;
@@ -16,7 +13,5 @@ export const validate = philid.validate;
 export const generate = (): string =>
   philid.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ph.philid cannot generate values",
-    );
+    throw new Error("Validator ph.philid cannot generate values");
   })();

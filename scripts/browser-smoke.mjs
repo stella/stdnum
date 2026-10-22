@@ -4,8 +4,8 @@ import {
   constants,
   createReadStream,
   existsSync,
-  mkdtempSync,
   mkdirSync,
+  mkdtempSync,
   readdirSync,
   readFileSync,
   rmSync,
@@ -17,12 +17,8 @@ import { dirname, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build, createLogger } from "vite";
 
-const root = dirname(
-  dirname(fileURLToPath(import.meta.url)),
-);
-const temporaryRoot = mkdtempSync(
-  join(root, ".stdnum-browser-smoke-"),
-);
+const root = dirname(dirname(fileURLToPath(import.meta.url)));
+const temporaryRoot = mkdtempSync(join(root, ".stdnum-browser-smoke-"));
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
@@ -32,19 +28,10 @@ const mimeTypes = {
 try {
   const tarballRoot = join(temporaryRoot, "tarballs");
   mkdirSync(tarballRoot);
-  const mainPack = pack(
-    join(root, "packages/stdnum"),
-    tarballRoot,
-  );
-  const wasmPack = pack(
-    join(root, "packages/stdnum-wasm"),
-    tarballRoot,
-  );
+  const mainPack = pack(join(root, "packages/stdnum"), tarballRoot);
+  const wasmPack = pack(join(root, "packages/stdnum-wasm"), tarballRoot);
 
-  const dependencyRoot = join(
-    temporaryRoot,
-    "transitive-dependency",
-  );
+  const dependencyRoot = join(temporaryRoot, "transitive-dependency");
   mkdirSync(dependencyRoot);
   writeFileSync(
     join(dependencyRoot, "package.json"),
@@ -160,14 +147,10 @@ try {
   const outputRoot = join(consumerRoot, "dist");
   assertBrowserBundle(outputRoot);
   const server = createServer((request, response) => {
-    const requestPath = new URL(
-      request.url ?? "/",
-      "http://127.0.0.1",
-    ).pathname;
+    const requestPath = new URL(request.url ?? "/", "http://127.0.0.1")
+      .pathname;
     const relativePath =
-      requestPath === "/"
-        ? "index.html"
-        : requestPath.slice(1);
+      requestPath === "/" ? "index.html" : requestPath.slice(1);
     const path = join(outputRoot, relativePath);
     if (!existsSync(path) || !statSync(path).isFile()) {
       response.writeHead(404).end();
@@ -175,8 +158,7 @@ try {
     }
     response.setHeader(
       "Content-Type",
-      mimeTypes[extname(path)] ??
-        "application/octet-stream",
+      mimeTypes[extname(path)] ?? "application/octet-stream",
     );
     createReadStream(path).pipe(response);
   });
@@ -187,21 +169,13 @@ try {
   try {
     const address = server.address();
     if (address === null || typeof address === "string")
-      throw new Error(
-        "Browser smoke server has no TCP address",
-      );
-    const html = await runChrome(
-      `http://127.0.0.1:${address.port}/`,
-    );
+      throw new Error("Browser smoke server has no TCP address");
+    const html = await runChrome(`http://127.0.0.1:${address.port}/`);
     if (!html.includes('data-result="pass"'))
       throw new Error(
         `Browser validator did not execute successfully:\n${html}`,
       );
-    if (
-      !html.includes(
-        'data-preinit="StdnumNotInitializedError"',
-      )
-    )
+    if (!html.includes('data-preinit="StdnumNotInitializedError"'))
       throw new Error(
         `Browser validator did not report the typed pre-initialization error:\n${html}`,
       );
@@ -229,11 +203,7 @@ function compatibilityLogger() {
   const warn = logger.warn.bind(logger);
   const warnOnce = logger.warnOnce.bind(logger);
   const rejectTopLevelAwait = (message) => {
-    if (
-      /top[- ]level await|TOLERATED_TRANSFORM/iu.test(
-        message,
-      )
-    )
+    if (/top[- ]level await|TOLERATED_TRANSFORM/iu.test(message))
       throw new Error(
         `ES2019 browser bundle used unsupported syntax:\n${message}`,
       );
@@ -253,21 +223,13 @@ function pack(directory, destination) {
   const packed = JSON.parse(
     execFileSync(
       "npm",
-      [
-        "pack",
-        "--json",
-        "--ignore-scripts",
-        "--pack-destination",
-        destination,
-      ],
+      ["pack", "--json", "--ignore-scripts", "--pack-destination", destination],
       { cwd: directory, encoding: "utf8" },
     ),
   );
   const result = packed[0];
   if (result === undefined)
-    throw new Error(
-      `npm pack returned no result for ${directory}`,
-    );
+    throw new Error(`npm pack returned no result for ${directory}`);
   return result;
 }
 
@@ -294,8 +256,7 @@ function walk(directory) {
   const paths = [];
   for (const name of readdirSync(directory)) {
     const path = join(directory, name);
-    if (statSync(path).isDirectory())
-      paths.push(...walk(path));
+    if (statSync(path).isDirectory()) paths.push(...walk(path));
     else paths.push(path);
   }
   return paths;
@@ -330,9 +291,7 @@ async function runChrome(url) {
     child.once("exit", resolve);
   });
   if (exitCode !== 0)
-    throw new Error(
-      `Chrome exited with code ${exitCode}:\n${stderr}`,
-    );
+    throw new Error(`Chrome exited with code ${exitCode}:\n${stderr}`);
   return stdout;
 }
 

@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const pan: CountryValidator<"IN"> = createValidator(
-  "in.pan",
-  99,
-);
+const pan: CountryValidator<"IN"> = createValidator("in.pan", 99);
 
 export default pan;
 export const compact = pan.compact;
@@ -16,7 +13,5 @@ export const validate = pan.validate;
 export const generate = (): string =>
   pan.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator in.pan cannot generate values",
-    );
+    throw new Error("Validator in.pan cannot generate values");
   })();

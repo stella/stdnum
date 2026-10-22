@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nipt: CountryValidator<"AL"> = createValidator(
-  "al.nipt",
-  3,
-);
+const nipt: CountryValidator<"AL"> = createValidator("al.nipt", 3);
 
 export default nipt;
 export const compact = nipt.compact;
@@ -16,7 +13,5 @@ export const validate = nipt.validate;
 export const generate = (): string =>
   nipt.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator al.nipt cannot generate values",
-    );
+    throw new Error("Validator al.nipt cannot generate values");
   })();

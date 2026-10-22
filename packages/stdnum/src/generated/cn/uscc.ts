@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const uscc: CountryValidator<"CN"> = createValidator(
-  "cn.uscc",
-  37,
-);
+const uscc: CountryValidator<"CN"> = createValidator("cn.uscc", 37);
 
 export default uscc;
 export const compact = uscc.compact;
@@ -16,7 +13,5 @@ export const validate = uscc.validate;
 export const generate = (): string =>
   uscc.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator cn.uscc cannot generate values",
-    );
+    throw new Error("Validator cn.uscc cannot generate values");
   })();

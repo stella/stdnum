@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nid: CountryValidator<"IQ"> = createValidator(
-  "iq.nid",
-  100,
-);
+const nid: CountryValidator<"IQ"> = createValidator("iq.nid", 100);
 
 export default nid;
 export const compact = nid.compact;
@@ -16,7 +13,5 @@ export const validate = nid.validate;
 export const generate = (): string =>
   nid.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator iq.nid cannot generate values",
-    );
+    throw new Error("Validator iq.nid cannot generate values");
   })();

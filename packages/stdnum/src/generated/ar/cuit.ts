@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const cuit: CountryValidator<"AR"> = createValidator(
-  "ar.cuit",
-  6,
-);
+const cuit: CountryValidator<"AR"> = createValidator("ar.cuit", 6);
 
 export default cuit;
 export const compact = cuit.compact;
@@ -16,7 +13,5 @@ export const validate = cuit.validate;
 export const generate = (): string =>
   cuit.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ar.cuit cannot generate values",
-    );
+    throw new Error("Validator ar.cuit cannot generate values");
   })();

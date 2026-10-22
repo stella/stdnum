@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const ssn: CountryValidator<"US"> = createValidator(
-  "us.ssn",
-  171,
-);
+const ssn: CountryValidator<"US"> = createValidator("us.ssn", 171);
 
 export default ssn;
 export const compact = ssn.compact;
@@ -16,7 +13,5 @@ export const validate = ssn.validate;
 export const generate = (): string =>
   ssn.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator us.ssn cannot generate values",
-    );
+    throw new Error("Validator us.ssn cannot generate values");
   })();

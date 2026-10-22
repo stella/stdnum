@@ -9,14 +9,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types:
-      [
-        opened,
-        synchronize,
-        reopened,
-        ready_for_review,
-        labeled,
-      ]
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
   workflow_dispatch:
 
 concurrency:
@@ -97,7 +90,7 @@ jobs:
       - run: bun run check:toolchain
       - run: bun run check:typecheck-parity
       - run: bun run lint
-      - run: bun run format:check
+      - run: bun fmt --check
 
   version-sync:
     name: Version sync

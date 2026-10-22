@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const tfn: CountryValidator<"AU"> = createValidator(
-  "au.tfn",
-  14,
-);
+const tfn: CountryValidator<"AU"> = createValidator("au.tfn", 14);
 
 export default tfn;
 export const compact = tfn.compact;
@@ -16,7 +13,5 @@ export const validate = tfn.validate;
 export const generate = (): string =>
   tfn.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator au.tfn cannot generate values",
-    );
+    throw new Error("Validator au.tfn cannot generate values");
   })();

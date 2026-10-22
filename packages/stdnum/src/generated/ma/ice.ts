@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const ice: CountryValidator<"MA"> = createValidator(
-  "ma.ice",
-  121,
-);
+const ice: CountryValidator<"MA"> = createValidator("ma.ice", 121);
 
 export default ice;
 export const compact = ice.compact;
@@ -16,7 +13,5 @@ export const validate = ice.validate;
 export const generate = (): string =>
   ice.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ma.ice cannot generate values",
-    );
+    throw new Error("Validator ma.ice cannot generate values");
   })();

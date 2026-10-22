@@ -1,12 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 
-const workflow = readFileSync(
-  ".github/workflows/release.yml",
-  "utf8",
-);
-const byName = (left: string, right: string) =>
-  left.localeCompare(right);
+const workflow = readFileSync(".github/workflows/release.yml", "utf8");
+const byName = (left: string, right: string) => left.localeCompare(right);
 
 const parseJobs = (source: string) => {
   const marker = source.match(/^jobs:\n/m);
@@ -14,11 +10,7 @@ const parseJobs = (source: string) => {
   const jobsSource = source.slice(
     (marker?.index ?? 0) + (marker?.[0].length ?? 0),
   );
-  const matches = [
-    ...jobsSource.matchAll(
-      /^  ([A-Za-z_][A-Za-z0-9_-]*):\n/gm,
-    ),
-  ];
+  const matches = [...jobsSource.matchAll(/^  ([A-Za-z_][A-Za-z0-9_-]*):\n/gm)];
   return Object.fromEntries(
     matches.map((match, index) => [
       match[1],
@@ -50,17 +42,14 @@ describe("release workflow semantics", () => {
       readFileSync(".changeset/config.json", "utf8"),
     ).fixed.at(0);
     const finalizedPackages = packageFiles.map(
-      (packageFile) =>
-        JSON.parse(readFileSync(packageFile, "utf8")).name,
+      (packageFile) => JSON.parse(readFileSync(packageFile, "utf8")).name,
     );
     expect(finalizedPackages.toSorted(byName)).toEqual(
       configuredPackages.toSorted(byName),
     );
 
     const nativePackageFiles = [
-      ...jobs["pack-native"].matchAll(
-        /^          - package: (.+)$/gm,
-      ),
+      ...jobs["pack-native"].matchAll(/^          - package: (.+)$/gm),
     ].map((match) => `packages/${match[1]}/package.json`);
     expect(
       [
@@ -72,12 +61,8 @@ describe("release workflow semantics", () => {
   });
 
   test("caller binds finalization to its exact artifact set and credentials", () => {
-    expect(jobs["github-release"]).toContain(
-      "artifact-pattern: npm-tarball-*",
-    );
-    expect(jobs["github-release"]).toContain(
-      "publish-to-npm: true",
-    );
+    expect(jobs["github-release"]).toContain("artifact-pattern: npm-tarball-*");
+    expect(jobs["github-release"]).toContain("publish-to-npm: true");
     const forwardedSecrets = [
       ...jobs["github-release"].matchAll(
         /^      ([A-Z][A-Z0-9_]+):\s+\$\{\{ secrets\.\1 \}\}$/gm,
@@ -90,20 +75,14 @@ describe("release workflow semantics", () => {
   });
 
   test("manual publishing and the root tarball fail closed", () => {
-    expect(jobs.verify).toContain(
-      "github.ref != 'refs/heads/main'",
-    );
-    expect(jobs["pack-portable"]).toContain(
-      'pack.name !== "@stll/stdnum"',
-    );
+    expect(jobs.verify).toContain("github.ref != 'refs/heads/main'");
+    expect(jobs["pack-portable"]).toContain('pack.name !== "@stll/stdnum"');
     expect(jobs["pack-portable"]).toContain(
       "pack.version !== process.env.EXPECTED_VERSION",
     );
     expect(jobs["pack-portable"]).toContain(
       'tar -xOf "$tarball" package/package.json',
     );
-    expect(jobs["pack-portable"]).toContain(
-      'manifest.name !== "@stll/stdnum"',
-    );
+    expect(jobs["pack-portable"]).toContain('manifest.name !== "@stll/stdnum"');
   });
 });

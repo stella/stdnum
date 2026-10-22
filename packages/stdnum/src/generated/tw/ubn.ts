@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const ubn: CountryValidator<"TW"> = createValidator(
-  "tw.ubn",
-  166,
-);
+const ubn: CountryValidator<"TW"> = createValidator("tw.ubn", 166);
 
 export default ubn;
 export const compact = ubn.compact;
@@ -16,7 +13,5 @@ export const validate = ubn.validate;
 export const generate = (): string =>
   ubn.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator tw.ubn cannot generate values",
-    );
+    throw new Error("Validator tw.ubn cannot generate values");
   })();

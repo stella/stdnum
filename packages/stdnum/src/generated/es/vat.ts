@@ -2,15 +2,9 @@
 
 import type { CountryValidator } from "../../types";
 
-import {
-  createValidator,
-  getBinding,
-} from "#stdnum-runtime";
+import { createValidator, getBinding } from "#stdnum-runtime";
 
-const vat: CountryValidator<"ES"> = createValidator(
-  "es.vat",
-  69,
-);
+const vat: CountryValidator<"ES"> = createValidator("es.vat", 69);
 
 export default vat;
 export const compact = vat.compact;
@@ -19,9 +13,7 @@ export const validate = vat.validate;
 export const generate = (): string =>
   vat.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator es.vat cannot generate values",
-    );
+    throw new Error("Validator es.vat cannot generate values");
   })();
 export const cifChecksum = (digits: string): number =>
   getBinding().esVatCifChecksum(digits);

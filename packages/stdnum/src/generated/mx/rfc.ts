@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const rfc: CountryValidator<"MX"> = createValidator(
-  "mx.rfc",
-  130,
-);
+const rfc: CountryValidator<"MX"> = createValidator("mx.rfc", 130);
 
 export default rfc;
 export const compact = rfc.compact;
@@ -16,7 +13,5 @@ export const validate = rfc.validate;
 export const generate = (): string =>
   rfc.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator mx.rfc cannot generate values",
-    );
+    throw new Error("Validator mx.rfc cannot generate values");
   })();

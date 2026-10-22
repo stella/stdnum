@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nss: CountryValidator<"ES"> = createValidator(
-  "es.nss",
-  68,
-);
+const nss: CountryValidator<"ES"> = createValidator("es.nss", 68);
 
 export default nss;
 export const compact = nss.compact;
@@ -16,7 +13,5 @@ export const validate = nss.validate;
 export const generate = (): string =>
   nss.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator es.nss cannot generate values",
-    );
+    throw new Error("Validator es.nss cannot generate values");
   })();

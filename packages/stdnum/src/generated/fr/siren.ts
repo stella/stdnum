@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const siren: CountryValidator<"FR"> = createValidator(
-  "fr.siren",
-  76,
-);
+const siren: CountryValidator<"FR"> = createValidator("fr.siren", 76);
 
 export default siren;
 export const compact = siren.compact;
@@ -16,7 +13,5 @@ export const validate = siren.validate;
 export const generate = (): string =>
   siren.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator fr.siren cannot generate values",
-    );
+    throw new Error("Validator fr.siren cannot generate values");
   })();

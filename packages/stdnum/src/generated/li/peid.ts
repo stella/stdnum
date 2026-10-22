@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const peid: CountryValidator<"LI"> = createValidator(
-  "li.peid",
-  114,
-);
+const peid: CountryValidator<"LI"> = createValidator("li.peid", 114);
 
 export default peid;
 export const compact = peid.compact;
@@ -16,7 +13,5 @@ export const validate = peid.validate;
 export const generate = (): string =>
   peid.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator li.peid cannot generate values",
-    );
+    throw new Error("Validator li.peid cannot generate values");
   })();

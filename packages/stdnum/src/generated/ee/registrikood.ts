@@ -4,8 +4,10 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const registrikood: CountryValidator<"EE"> =
-  createValidator("ee.registrikood", 62);
+const registrikood: CountryValidator<"EE"> = createValidator(
+  "ee.registrikood",
+  62,
+);
 
 export default registrikood;
 export const compact = registrikood.compact;
@@ -14,7 +16,5 @@ export const validate = registrikood.validate;
 export const generate = (): string =>
   registrikood.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ee.registrikood cannot generate values",
-    );
+    throw new Error("Validator ee.registrikood cannot generate values");
   })();

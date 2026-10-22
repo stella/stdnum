@@ -2,15 +2,9 @@
 
 import type { GlobalValidator } from "../../types";
 
-import {
-  createValidator,
-  getBinding,
-} from "#stdnum-runtime";
+import { createValidator, getBinding } from "#stdnum-runtime";
 
-const btcbech32: GlobalValidator = createValidator(
-  "crypto.btcbech32",
-  42,
-);
+const btcbech32: GlobalValidator = createValidator("crypto.btcbech32", 42);
 
 export default btcbech32;
 export const compact = btcbech32.compact;
@@ -20,11 +14,9 @@ export const convertBits = (
   values: readonly number[],
   fromBits: number,
   toBits: number,
-): number[] | null =>
-  getBinding().convertBits(values, fromBits, toBits);
-export const polymod = (
-  values: readonly number[],
-): number => getBinding().polymod(values);
+): number[] | null => getBinding().convertBits(values, fromBits, toBits);
+export const polymod = (values: readonly number[]): number =>
+  getBinding().polymod(values);
 export const validateBech32 = (
   value: string,
 ):

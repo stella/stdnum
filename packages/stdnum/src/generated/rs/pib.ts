@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const pib: CountryValidator<"RS"> = createValidator(
-  "rs.pib",
-  152,
-);
+const pib: CountryValidator<"RS"> = createValidator("rs.pib", 152);
 
 export default pib;
 export const compact = pib.compact;
@@ -16,7 +13,5 @@ export const validate = pib.validate;
 export const generate = (): string =>
   pib.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator rs.pib cannot generate values",
-    );
+    throw new Error("Validator rs.pib cannot generate values");
   })();

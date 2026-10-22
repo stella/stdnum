@@ -21,27 +21,19 @@ const PUBLISHED_PACKAGES = [
 const STANDALONE_CARGO_MANIFESTS = [
   "crates/stdnum-wasm-size-fixture/Cargo.toml",
 ];
-const repoPath = (...segments) =>
-  path.join(ROOT, ...segments);
+const repoPath = (...segments) => path.join(ROOT, ...segments);
 
-const readJson = (filePath) =>
-  JSON.parse(fs.readFileSync(filePath, "utf8"));
+const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf8"));
 
 const FIXED_DEPENDENCIES = new Set(
-  PUBLISHED_PACKAGES.map(
-    (packageFile) => readJson(repoPath(packageFile)).name,
-  ),
+  PUBLISHED_PACKAGES.map((packageFile) => readJson(repoPath(packageFile)).name),
 );
 
 const writeJson = (filePath, value) => {
-  fs.writeFileSync(
-    filePath,
-    `${JSON.stringify(value, null, 2)}\n`,
-  );
+  fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
 };
 
-const readVersion = () =>
-  fs.readFileSync(repoPath("VERSION"), "utf8").trim();
+const readVersion = () => fs.readFileSync(repoPath("VERSION"), "utf8").trim();
 
 const writeVersion = (version) => {
   fs.writeFileSync(repoPath("VERSION"), `${version}\n`);
@@ -67,11 +59,7 @@ const syncStandaloneCargoLocks = () => {
   for (const manifest of STANDALONE_CARGO_MANIFESTS) {
     execFileSync(
       "cargo",
-      [
-        "generate-lockfile",
-        "--manifest-path",
-        repoPath(manifest),
-      ],
+      ["generate-lockfile", "--manifest-path", repoPath(manifest)],
       { stdio: "inherit" },
     );
   }
@@ -101,8 +89,7 @@ const parseArgs = () => {
 const expectedVersion = (args) => {
   const tag = args.get("tag");
   const version =
-    args.get("version") ??
-    (tag ? tag.replace(/^v/, "") : readVersion());
+    args.get("version") ?? (tag ? tag.replace(/^v/, "") : readVersion());
   if (!VERSION_PATTERN.test(version)) {
     throw new Error(
       `Expected 1.2.3, 1.2.3-rc.1, 1.2.3-beta.1, or 1.2.3-alpha.1; got '${version}'`,
@@ -113,10 +100,7 @@ const expectedVersion = (args) => {
 
 const syncVersion = (version) => {
   const cargoManifestPath = repoPath("Cargo.toml");
-  const cargoManifest = fs.readFileSync(
-    cargoManifestPath,
-    "utf8",
-  );
+  const cargoManifest = fs.readFileSync(cargoManifestPath, "utf8");
   writeVersion(version);
   for (const packageFile of PUBLISHED_PACKAGES) {
     const packageJsonPath = repoPath(packageFile);
@@ -149,19 +133,14 @@ const syncVersion = (version) => {
 
 const checkVersion = (version) => {
   const cargoManifestPath = repoPath("Cargo.toml");
-  const cargoManifest = fs.readFileSync(
-    cargoManifestPath,
-    "utf8",
-  );
+  const cargoManifest = fs.readFileSync(cargoManifestPath, "utf8");
   const cargoVersion = cargoManifest.match(
     /\[workspace\.package\][\s\S]*?\nversion = "([^"]+)"\n/,
   )?.[1];
   const mismatches = [];
 
   if (readVersion() !== version) {
-    mismatches.push(
-      `${repoPath("VERSION")}: expected ${version}`,
-    );
+    mismatches.push(`${repoPath("VERSION")}: expected ${version}`);
   }
   for (const packageFile of PUBLISHED_PACKAGES) {
     const packageJsonPath = repoPath(packageFile);
@@ -178,10 +157,9 @@ const checkVersion = (version) => {
     ]) {
       const dependencies = manifest[dependencyField];
       if (dependencies == null) continue;
-      for (const [
-        dependency,
-        dependencyVersion,
-      ] of Object.entries(dependencies)) {
+      for (const [dependency, dependencyVersion] of Object.entries(
+        dependencies,
+      )) {
         if (
           FIXED_DEPENDENCIES.has(dependency) &&
           dependencyVersion !== version

@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const dni: CountryValidator<"ES"> = createValidator(
-  "es.dni",
-  66,
-);
+const dni: CountryValidator<"ES"> = createValidator("es.dni", 66);
 
 export default dni;
 export const compact = dni.compact;
@@ -16,8 +13,6 @@ export const validate = dni.validate;
 export const generate = (): string =>
   dni.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator es.dni cannot generate values",
-    );
+    throw new Error("Validator es.dni cannot generate values");
   })();
 export const CHECK_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE";

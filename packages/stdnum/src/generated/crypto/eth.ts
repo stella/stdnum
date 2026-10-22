@@ -2,20 +2,13 @@
 
 import type { GlobalValidator } from "../../types";
 
-import {
-  createValidator,
-  getBinding,
-} from "#stdnum-runtime";
+import { createValidator, getBinding } from "#stdnum-runtime";
 
-const eth: GlobalValidator = createValidator(
-  "crypto.eth",
-  43,
-);
+const eth: GlobalValidator = createValidator("crypto.eth", 43);
 
 export default eth;
 export const compact = eth.compact;
 export const format = eth.format;
 export const validate = eth.validate;
-export const hasValidEip55Checksum = (
-  value: string,
-): boolean => getBinding().hasValidEip55Checksum(value);
+export const hasValidEip55Checksum = (value: string): boolean =>
+  getBinding().hasValidEip55Checksum(value);

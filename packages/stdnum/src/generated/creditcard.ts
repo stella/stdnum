@@ -2,15 +2,9 @@
 
 import type { GlobalValidator } from "../types";
 
-import {
-  createValidator,
-  getBinding,
-} from "#stdnum-runtime";
+import { createValidator, getBinding } from "#stdnum-runtime";
 
-const creditcard: GlobalValidator = createValidator(
-  "creditcard",
-  40,
-);
+const creditcard: GlobalValidator = createValidator("creditcard", 40);
 
 export default creditcard;
 export const compact = creditcard.compact;
@@ -25,6 +19,5 @@ export type CardNetwork =
   | "jcb"
   | "unionpay"
   | "maestro";
-export const detectNetwork = (
-  value: string,
-): CardNetwork | null => getBinding().detectNetwork(value);
+export const detectNetwork = (value: string): CardNetwork | null =>
+  getBinding().detectNetwork(value);

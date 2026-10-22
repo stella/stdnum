@@ -12,8 +12,7 @@
 
 // Mirrors detectLibc in src/native-node.ts; only glibc builds are published.
 const isGlibc = () =>
-  typeof process.report.getReport().header
-    .glibcVersionRuntime === "string";
+  typeof process.report.getReport().header.glibcVersionRuntime === "string";
 
 const platformLoadError = (packageName, cause) =>
   new Error(
@@ -21,71 +20,39 @@ const platformLoadError = (packageName, cause) =>
   );
 
 const requirePlatformPackage = () => {
-  if (
-    process.platform === "darwin" &&
-    process.arch === "arm64"
-  ) {
+  if (process.platform === "darwin" && process.arch === "arm64") {
     try {
       return require("@stll/stdnum-darwin-arm64");
     } catch (cause) {
-      throw platformLoadError(
-        "@stll/stdnum-darwin-arm64",
-        cause,
-      );
+      throw platformLoadError("@stll/stdnum-darwin-arm64", cause);
     }
   }
-  if (
-    process.platform === "darwin" &&
-    process.arch === "x64"
-  ) {
+  if (process.platform === "darwin" && process.arch === "x64") {
     try {
       return require("@stll/stdnum-darwin-x64");
     } catch (cause) {
-      throw platformLoadError(
-        "@stll/stdnum-darwin-x64",
-        cause,
-      );
+      throw platformLoadError("@stll/stdnum-darwin-x64", cause);
     }
   }
-  if (
-    process.platform === "linux" &&
-    process.arch === "arm64" &&
-    isGlibc()
-  ) {
+  if (process.platform === "linux" && process.arch === "arm64" && isGlibc()) {
     try {
       return require("@stll/stdnum-linux-arm64-gnu");
     } catch (cause) {
-      throw platformLoadError(
-        "@stll/stdnum-linux-arm64-gnu",
-        cause,
-      );
+      throw platformLoadError("@stll/stdnum-linux-arm64-gnu", cause);
     }
   }
-  if (
-    process.platform === "linux" &&
-    process.arch === "x64" &&
-    isGlibc()
-  ) {
+  if (process.platform === "linux" && process.arch === "x64" && isGlibc()) {
     try {
       return require("@stll/stdnum-linux-x64-gnu");
     } catch (cause) {
-      throw platformLoadError(
-        "@stll/stdnum-linux-x64-gnu",
-        cause,
-      );
+      throw platformLoadError("@stll/stdnum-linux-x64-gnu", cause);
     }
   }
-  if (
-    process.platform === "win32" &&
-    process.arch === "x64"
-  ) {
+  if (process.platform === "win32" && process.arch === "x64") {
     try {
       return require("@stll/stdnum-win32-x64-msvc");
     } catch (cause) {
-      throw platformLoadError(
-        "@stll/stdnum-win32-x64-msvc",
-        cause,
-      );
+      throw platformLoadError("@stll/stdnum-win32-x64-msvc", cause);
     }
   }
   throw new Error(
@@ -109,9 +76,7 @@ exports.loadNativeBinding = () => {
     return requirePlatformPackage();
   } catch (error) {
     const describe = (cause) =>
-      cause instanceof Error
-        ? cause.message
-        : String(cause);
+      cause instanceof Error ? cause.message : String(cause);
     throw new Error(
       `./stella_stdnum_napi.node: ${describe(sidecarError)}\n` +
         `platform package: ${describe(error)}`,

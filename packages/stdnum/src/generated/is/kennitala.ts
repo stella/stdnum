@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const kennitala: CountryValidator<"IS"> = createValidator(
-  "is.kennitala",
-  102,
-);
+const kennitala: CountryValidator<"IS"> = createValidator("is.kennitala", 102);
 
 export default kennitala;
 export const compact = kennitala.compact;
@@ -16,7 +13,5 @@ export const validate = kennitala.validate;
 export const generate = (): string =>
   kennitala.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator is.kennitala cannot generate values",
-    );
+    throw new Error("Validator is.kennitala cannot generate values");
   })();

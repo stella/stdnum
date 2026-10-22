@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const eid: CountryValidator<"AE"> = createValidator(
-  "ae.eid",
-  1,
-);
+const eid: CountryValidator<"AE"> = createValidator("ae.eid", 1);
 
 export default eid;
 export const compact = eid.compact;
@@ -16,7 +13,5 @@ export const validate = eid.validate;
 export const generate = (): string =>
   eid.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ae.eid cannot generate values",
-    );
+    throw new Error("Validator ae.eid cannot generate values");
   })();

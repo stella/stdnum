@@ -47,10 +47,7 @@ describe("loadNativeStdnumBinding", () => {
         requireModule: requireNothing,
       });
     } catch (error) {
-      message =
-        error instanceof Error
-          ? error.message
-          : String(error);
+      message = error instanceof Error ? error.message : String(error);
     }
 
     expect(message).toContain("IS a build target");
@@ -73,15 +70,10 @@ describe("loadNativeStdnumBinding", () => {
         requireModule: requireNothing,
       });
     } catch (error) {
-      message =
-        error instanceof Error
-          ? error.message
-          : String(error);
+      message = error instanceof Error ? error.message : String(error);
     }
 
-    expect(message).toContain(
-      "not among the build targets",
-    );
+    expect(message).toContain("not among the build targets");
     expect(message).toContain("linux-x64-musl");
   });
 
@@ -97,15 +89,11 @@ describe("loadNativeStdnumBinding", () => {
       arch: "x64",
       libc: "gnu",
       env: {
-        STELLA_STDNUM_NATIVE_LIBRARY_PATH:
-          "/tmp/custom.node",
+        STELLA_STDNUM_NATIVE_LIBRARY_PATH: "/tmp/custom.node",
       },
       requireModule: (specifier) => {
-        if (specifier === "/tmp/custom.node")
-          return binding;
-        throw new Error(
-          `Cannot find module '${specifier}'`,
-        );
+        if (specifier === "/tmp/custom.node") return binding;
+        throw new Error(`Cannot find module '${specifier}'`);
       },
     });
 
@@ -127,9 +115,7 @@ describe("injected requireModule", () => {
       requireModule: (specifier) => {
         if (specifier === "../index.cjs")
           return { loadNativeBinding: () => binding };
-        throw new Error(
-          `Cannot find module '${specifier}'`,
-        );
+        throw new Error(`Cannot find module '${specifier}'`);
       },
     });
 
@@ -145,12 +131,7 @@ describe("index.cjs static loader", () => {
       new URL("../../index.cjs", import.meta.url),
       "utf8",
     );
-    for (const [
-      ,
-      ,
-      ,
-      packageName,
-    ] of NATIVE_BINDING_TARGETS) {
+    for (const [, , , packageName] of NATIVE_BINDING_TARGETS) {
       expect(source).toContain(`require("${packageName}")`);
     }
   });

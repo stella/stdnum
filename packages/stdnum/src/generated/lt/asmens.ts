@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const asmens: CountryValidator<"LT"> = createValidator(
-  "lt.asmens",
-  116,
-);
+const asmens: CountryValidator<"LT"> = createValidator("lt.asmens", 116);
 
 export default asmens;
 export const compact = asmens.compact;
@@ -16,7 +13,5 @@ export const validate = asmens.validate;
 export const generate = (): string =>
   asmens.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator lt.asmens cannot generate values",
-    );
+    throw new Error("Validator lt.asmens cannot generate values");
   })();

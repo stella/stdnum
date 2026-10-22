@@ -2,10 +2,7 @@ import { createRequire } from "node:module";
 import process from "node:process";
 
 import { loadNativeBinding } from "../index.cjs";
-import {
-  asNativeBinding,
-  type NativeStdnumBinding,
-} from "./native";
+import { asNativeBinding, type NativeStdnumBinding } from "./native";
 
 export type NativeLibc = "gnu" | "musl";
 export type LoadNativeBindingOptions = {
@@ -17,21 +14,11 @@ export type LoadNativeBindingOptions = {
 };
 
 export const NATIVE_BINDING_TARGETS = [
-  [
-    "darwin",
-    "arm64",
-    undefined,
-    "@stll/stdnum-darwin-arm64",
-  ],
+  ["darwin", "arm64", undefined, "@stll/stdnum-darwin-arm64"],
   ["darwin", "x64", undefined, "@stll/stdnum-darwin-x64"],
   ["linux", "arm64", "gnu", "@stll/stdnum-linux-arm64-gnu"],
   ["linux", "x64", "gnu", "@stll/stdnum-linux-x64-gnu"],
-  [
-    "win32",
-    "x64",
-    undefined,
-    "@stll/stdnum-win32-x64-msvc",
-  ],
+  ["win32", "x64", undefined, "@stll/stdnum-win32-x64-msvc"],
 ] as const;
 
 export const loadNativeStdnumBinding = (
@@ -40,8 +27,7 @@ export const loadNativeStdnumBinding = (
   const platform = options.platform ?? process.platform;
   const arch = options.arch ?? process.arch;
   const libc = options.libc ?? detectLibc(platform);
-  const requireModule =
-    options.requireModule ?? createRequire(import.meta.url);
+  const requireModule = options.requireModule ?? createRequire(import.meta.url);
   const match = NATIVE_BINDING_TARGETS.find(
     ([targetPlatform, targetArch, targetLibc]) =>
       targetPlatform === platform &&
@@ -61,10 +47,7 @@ export const loadNativeStdnumBinding = (
     process.env["STELLA_STDNUM_NATIVE_LIBRARY_PATH"];
   const candidates: Array<[string, () => unknown]> = [];
   if (libraryPath !== undefined) {
-    candidates.push([
-      libraryPath,
-      () => requireModule(libraryPath),
-    ]);
+    candidates.push([libraryPath, () => requireModule(libraryPath)]);
   }
   if (useStaticLoader) {
     candidates.push(["../index.cjs", loadNativeBinding]);
@@ -76,17 +59,12 @@ export const loadNativeStdnumBinding = (
         "../index.cjs",
         () => {
           const loaded = requireModule("../index.cjs");
-          return isLoaderModule(loaded)
-            ? loaded.loadNativeBinding()
-            : loaded;
+          return isLoaderModule(loaded) ? loaded.loadNativeBinding() : loaded;
         },
       ]);
     }
     if (match !== undefined) {
-      candidates.push([
-        match[3],
-        () => requireModule(match[3]),
-      ]);
+      candidates.push([match[3], () => requireModule(match[3])]);
     }
   }
   const errors: string[] = [];
@@ -103,11 +81,9 @@ export const loadNativeStdnumBinding = (
       );
     }
   }
-  const current = [platform, arch, libc]
-    .filter(Boolean)
-    .join("-");
-  const supported = NATIVE_BINDING_TARGETS.map(
-    ([p, a, l]) => [p, a, l].filter(Boolean).join("-"),
+  const current = [platform, arch, libc].filter(Boolean).join("-");
+  const supported = NATIVE_BINDING_TARGETS.map(([p, a, l]) =>
+    [p, a, l].filter(Boolean).join("-"),
   ).join(", ");
 
   // Distinguish "we do not build for this platform" from "we do, but the
@@ -154,16 +130,12 @@ const isHostTarget = ({
   arch === process.arch &&
   (platform !== "linux" || libc === detectLibc(platform));
 
-const detectLibc = (
-  platform: string,
-): NativeLibc | undefined => {
+const detectLibc = (platform: string): NativeLibc | undefined => {
   if (platform !== "linux") return undefined;
   const { header } = process.report.getReport() as {
     header: { glibcVersionRuntime?: unknown };
   };
-  return typeof header.glibcVersionRuntime === "string"
-    ? "gnu"
-    : "musl";
+  return typeof header.glibcVersionRuntime === "string" ? "gnu" : "musl";
 };
 
 export * from "./native";

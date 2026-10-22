@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const amka: CountryValidator<"GR"> = createValidator(
-  "gr.amka",
-  86,
-);
+const amka: CountryValidator<"GR"> = createValidator("gr.amka", 86);
 
 export default amka;
 export const compact = amka.compact;
@@ -16,7 +13,5 @@ export const validate = amka.validate;
 export const generate = (): string =>
   amka.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator gr.amka cannot generate values",
-    );
+    throw new Error("Validator gr.amka cannot generate values");
   })();

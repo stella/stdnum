@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nif: CountryValidator<"FR"> = createValidator(
-  "fr.nif",
-  74,
-);
+const nif: CountryValidator<"FR"> = createValidator("fr.nif", 74);
 
 export default nif;
 export const compact = nif.compact;
@@ -16,7 +13,5 @@ export const validate = nif.validate;
 export const generate = (): string =>
   nif.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator fr.nif cannot generate values",
-    );
+    throw new Error("Validator fr.nif cannot generate values");
   })();

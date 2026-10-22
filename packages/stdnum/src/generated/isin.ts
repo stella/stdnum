@@ -13,7 +13,5 @@ export const validate = isin.validate;
 export const generate = (): string =>
   isin.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator isin cannot generate values",
-    );
+    throw new Error("Validator isin cannot generate values");
   })();

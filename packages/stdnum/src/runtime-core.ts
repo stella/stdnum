@@ -1,13 +1,6 @@
 import { registryMetadata } from "./generated/metadata";
-import type {
-  NativeParsedIdentifier,
-  NativeStdnumBinding,
-} from "./native";
-import type {
-  ParsedIdentifier,
-  ValidateResult,
-  Validator,
-} from "./types";
+import type { NativeParsedIdentifier, NativeStdnumBinding } from "./native";
+import type { ParsedIdentifier, ValidateResult, Validator } from "./types";
 
 let bindingOverride: NativeStdnumBinding | undefined;
 let nativeBinding: NativeStdnumBinding | undefined;
@@ -25,18 +18,14 @@ export class StdnumNotInitializedError extends Error {
   }
 }
 
-export const setBindingLoader = (
-  loader: () => NativeStdnumBinding,
-): void => {
+export const setBindingLoader = (loader: () => NativeStdnumBinding): void => {
   bindingLoader = loader;
   nativeBinding = undefined;
   bindingGeneration += 1;
   for (const reset of resetValidationBindings) reset();
 };
 
-export const setBinding = (
-  binding: NativeStdnumBinding | undefined,
-): void => {
+export const setBinding = (binding: NativeStdnumBinding | undefined): void => {
   bindingOverride = binding;
   bindingGeneration += 1;
   for (const reset of resetValidationBindings) reset();
@@ -45,14 +34,11 @@ export const setBinding = (
 export const getBinding = (): NativeStdnumBinding => {
   if (bindingOverride !== undefined) return bindingOverride;
   nativeBinding ??= bindingLoader?.();
-  if (nativeBinding === undefined)
-    throw new StdnumNotInitializedError();
+  if (nativeBinding === undefined) throw new StdnumNotInitializedError();
   return nativeBinding;
 };
 
-export const createValidator = <
-  TValidator extends Validator,
->(
+export const createValidator = <TValidator extends Validator>(
   id: string,
   index: number,
 ): TValidator => {
@@ -66,11 +52,7 @@ export const createValidator = <
       cachedOperations === undefined ||
       cachedGeneration !== bindingGeneration
     ) {
-      cachedOperations = bindOperations(
-        getBinding(),
-        id,
-        index,
-      );
+      cachedOperations = bindOperations(getBinding(), id, index);
       cachedGeneration = bindingGeneration;
     }
     return cachedOperations;
@@ -90,13 +72,9 @@ export const createValidator = <
     entityType: metadata.entityType,
     sourceUrl: metadata.sourceUrl ?? undefined,
     lengths:
-      metadata.lengths.at(0) === undefined
-        ? undefined
-        : metadata.lengths,
+      metadata.lengths.at(0) === undefined ? undefined : metadata.lengths,
     examples:
-      metadata.examples.at(0) === undefined
-        ? undefined
-        : metadata.examples,
+      metadata.examples.at(0) === undefined ? undefined : metadata.examples,
     compact: (value: string) => operations().compact(value),
     format: (value: string) => operations().format(value),
     validate: lazyValidate,
@@ -106,24 +84,19 @@ export const createValidator = <
   resetValidationBindings.push(() => {
     validator["validate"] = lazyValidate;
   });
-  if (metadata.country !== null)
-    validator["country"] = metadata.country;
+  if (metadata.country !== null) validator["country"] = metadata.country;
   if (metadata.description !== null)
     validator["description"] = metadata.description;
   if (metadata.canGenerate) {
     validator["generate"] = (): string => {
       const value = operations().generate();
       if (value === null)
-        throw new Error(
-          `Validator ${id} cannot generate values`,
-        );
+        throw new Error(`Validator ${id} cannot generate values`);
       return value;
     };
   }
   if (metadata.parseKind !== null) {
-    validator["parse"] = (
-      value: string,
-    ): ParsedIdentifier | null =>
+    validator["parse"] = (value: string): ParsedIdentifier | null =>
       fromNativeParsed(operations().parse(value));
   }
   return validator as TValidator;
@@ -133,15 +106,9 @@ type ValidatorOperations = {
   compact(this: void, value: string): string;
   format(this: void, value: string): string;
   generate(this: void): string | null;
-  parse(
-    this: void,
-    value: string,
-  ): NativeParsedIdentifier | null;
+  parse(this: void, value: string): NativeParsedIdentifier | null;
   validate(this: void, value: string): ValidateResult;
-  validateMany(
-    this: void,
-    values: readonly string[],
-  ): ValidateResult[];
+  validateMany(this: void, values: readonly string[]): ValidateResult[];
 };
 
 const bindOperations = (
@@ -155,14 +122,11 @@ const bindOperations = (
   const parseIndex = binding.parseIndex;
   const validateFastIndex = binding.validateFastIndex;
   const validateManyIndex = binding.validateManyIndex;
-  const areAllCanonicalValidIndex =
-    binding.areAllCanonicalValidIndex;
-  const isValidCanonicalIndex =
-    binding.isValidCanonicalIndex;
+  const areAllCanonicalValidIndex = binding.areAllCanonicalValidIndex;
+  const isValidCanonicalIndex = binding.isValidCanonicalIndex;
   const supportsCanonicalValidation =
     isValidCanonicalIndex !== undefined &&
-    binding.supportsCanonicalValidationIndex?.(index) ===
-      true;
+    binding.supportsCanonicalValidationIndex?.(index) === true;
   const compact =
     compactIndex === undefined
       ? (value: string) => binding.compact(id, value)
@@ -179,44 +143,36 @@ const bindOperations = (
             );
     }
     if (validateFastIndex === undefined) {
-      return (value) =>
-        publicResult(binding.validate(id, value));
+      return (value) => publicResult(binding.validate(id, value));
     }
     return (value) => {
       const result = validateFastIndex(index, value);
-      if (typeof result !== "number")
-        return { valid: false, error: result };
+      if (typeof result !== "number") return { valid: false, error: result };
       return {
         valid: true,
         compact: result === 1 ? value : compact(value),
       };
     };
   };
-  const validateMany =
-    (): ValidatorOperations["validateMany"] => {
-      if (validateManyIndex === undefined) {
-        return (values) =>
-          values.map((value) =>
-            publicResult(binding.validate(id, value)),
-          );
-      }
-      if (
-        supportsCanonicalValidation &&
-        areAllCanonicalValidIndex !== undefined
-      ) {
-        return (values) =>
-          areAllCanonicalValidIndex(index, values)
-            ? values.map((normalizedValue) => ({
-                valid: true,
-                compact: normalizedValue,
-              }))
-            : validateManyIndex(index, values).map(
-                publicResult,
-              );
-      }
+  const validateMany = (): ValidatorOperations["validateMany"] => {
+    if (validateManyIndex === undefined) {
       return (values) =>
-        validateManyIndex(index, values).map(publicResult);
-    };
+        values.map((value) => publicResult(binding.validate(id, value)));
+    }
+    if (
+      supportsCanonicalValidation &&
+      areAllCanonicalValidIndex !== undefined
+    ) {
+      return (values) =>
+        areAllCanonicalValidIndex(index, values)
+          ? values.map((normalizedValue) => ({
+              valid: true,
+              compact: normalizedValue,
+            }))
+          : validateManyIndex(index, values).map(publicResult);
+    }
+    return (values) => validateManyIndex(index, values).map(publicResult);
+  };
   return {
     compact,
     format:
@@ -243,8 +199,7 @@ const publicResult = (
     ? { valid: true, compact: result.compact }
     : { valid: false, error: result.error };
 
-const optional = <T>(value: T | null): T | undefined =>
-  value ?? undefined;
+const optional = <T>(value: T | null): T | undefined => value ?? undefined;
 
 const fromNativeParsed = (
   parsed: NativeParsedIdentifier | null,
@@ -255,8 +210,7 @@ const fromNativeParsed = (
     parsed.birthMonth - 1,
     parsed.birthDay,
   );
-  return parsed.gender === "male" ||
-    parsed.gender === "female"
+  return parsed.gender === "male" || parsed.gender === "female"
     ? { birthDate, gender: parsed.gender }
     : { birthDate };
 };

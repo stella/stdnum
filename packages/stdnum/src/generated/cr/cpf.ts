@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const cpf: CountryValidator<"CR"> = createValidator(
-  "cr.cpf",
-  39,
-);
+const cpf: CountryValidator<"CR"> = createValidator("cr.cpf", 39);
 
 export default cpf;
 export const compact = cpf.compact;
@@ -16,7 +13,5 @@ export const validate = cpf.validate;
 export const generate = (): string =>
   cpf.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator cr.cpf cannot generate values",
-    );
+    throw new Error("Validator cr.cpf cannot generate values");
   })();
