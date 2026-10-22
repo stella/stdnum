@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const idno: CountryValidator<"MD"> = createValidator(
-  "md.idno",
-  123,
-);
+const idno: CountryValidator<"MD"> = createValidator("md.idno", 123);
 
 export default idno;
 export const compact = idno.compact;

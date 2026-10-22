@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const ico: CountryValidator<"CZ"> = createValidator(
-  "cz.ico",
-  49,
-);
+const ico: CountryValidator<"CZ"> = createValidator("cz.ico", 49);
 
 export default ico;
 export const compact = ico.compact;
@@ -16,7 +13,5 @@ export const validate = ico.validate;
 export const generate = (): string =>
   ico.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator cz.ico cannot generate values",
-    );
+    throw new Error("Validator cz.ico cannot generate values");
   })();

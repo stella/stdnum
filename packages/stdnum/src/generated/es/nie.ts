@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nie: CountryValidator<"ES"> = createValidator(
-  "es.nie",
-  67,
-);
+const nie: CountryValidator<"ES"> = createValidator("es.nie", 67);
 
 export default nie;
 export const compact = nie.compact;
@@ -16,7 +13,5 @@ export const validate = nie.validate;
 export const generate = (): string =>
   nie.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator es.nie cannot generate values",
-    );
+    throw new Error("Validator es.nie cannot generate values");
   })();

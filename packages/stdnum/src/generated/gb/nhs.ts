@@ -2,20 +2,13 @@
 
 import type { CountryValidator } from "../../types";
 
-import {
-  createValidator,
-  getBinding,
-} from "#stdnum-runtime";
+import { createValidator, getBinding } from "#stdnum-runtime";
 
-const nhs: CountryValidator<"GB"> = createValidator(
-  "gb.nhs",
-  79,
-);
+const nhs: CountryValidator<"GB"> = createValidator("gb.nhs", 79);
 
 export default nhs;
 export const compact = nhs.compact;
 export const format = nhs.format;
 export const validate = nhs.validate;
-export const calcCheckDigit = (
-  value: string,
-): number | null => getBinding().gbNhsCalcCheckDigit(value);
+export const calcCheckDigit = (value: string): number | null =>
+  getBinding().gbNhsCalcCheckDigit(value);

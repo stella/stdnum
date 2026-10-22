@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const regon: CountryValidator<"PL"> = createValidator(
-  "pl.regon",
-  147,
-);
+const regon: CountryValidator<"PL"> = createValidator("pl.regon", 147);
 
 export default regon;
 export const compact = regon.compact;
@@ -16,7 +13,5 @@ export const validate = regon.validate;
 export const generate = (): string =>
   regon.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator pl.regon cannot generate values",
-    );
+    throw new Error("Validator pl.regon cannot generate values");
   })();

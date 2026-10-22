@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const ytunnus: CountryValidator<"FI"> = createValidator(
-  "fi.ytunnus",
-  73,
-);
+const ytunnus: CountryValidator<"FI"> = createValidator("fi.ytunnus", 73);
 
 export default ytunnus;
 export const compact = ytunnus.compact;
@@ -16,7 +13,5 @@ export const validate = ytunnus.validate;
 export const generate = (): string =>
   ytunnus.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator fi.ytunnus cannot generate values",
-    );
+    throw new Error("Validator fi.ytunnus cannot generate values");
   })();

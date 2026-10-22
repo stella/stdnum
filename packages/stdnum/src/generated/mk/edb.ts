@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const edb: CountryValidator<"MK"> = createValidator(
-  "mk.edb",
-  125,
-);
+const edb: CountryValidator<"MK"> = createValidator("mk.edb", 125);
 
 export default edb;
 export const compact = edb.compact;
@@ -16,7 +13,5 @@ export const validate = edb.validate;
 export const generate = (): string =>
   edb.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator mk.edb cannot generate values",
-    );
+    throw new Error("Validator mk.edb cannot generate values");
   })();

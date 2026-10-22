@@ -17,17 +17,14 @@
  *   bun run oracle:survey
  */
 
-import {
-  isValidCnpj,
-  isValidCpf,
-} from "@brazilian-utils/brazilian-utils";
+import { isValidCnpj, isValidCpf } from "@brazilian-utils/brazilian-utils";
 import fc from "fast-check";
 import IBAN from "iban";
 import { isValidIBAN } from "ibantools";
 import {
-  checkVAT,
   belgium,
   bulgaria,
+  checkVAT,
   croatia,
   denmark,
   estonia,
@@ -40,13 +37,13 @@ import {
   lithuania,
   luxembourg,
   malta,
+  norway,
   poland,
   portugal,
   romania,
   slovenia,
   sweden,
   switzerland,
-  norway,
 } from "jsvat";
 import { execSync } from "node:child_process";
 import { unlinkSync, writeFileSync } from "node:fs";
@@ -74,14 +71,12 @@ type Discovered = {
 type OracleMode = "gate" | "survey";
 
 const isValidator = (v: unknown): v is Validator =>
-  Boolean(
-    v &&
-    typeof v === "object" &&
-    "validate" in v &&
-    "compact" in v &&
-    "format" in v &&
-    "entityType" in v,
-  );
+  typeof v === "object" &&
+  v !== null &&
+  "validate" in v &&
+  "compact" in v &&
+  "format" in v &&
+  "entityType" in v;
 
 const discover = (): Discovered[] => {
   const result: Discovered[] = [];
@@ -93,10 +88,8 @@ const discover = (): Discovered[] => {
         entityType: mod.entityType,
         validator: mod,
       });
-    } else if (mod && typeof mod === "object") {
-      for (const [k, v] of Object.entries(
-        mod as Record<string, unknown>,
-      )) {
+    } else if (typeof mod === "object") {
+      for (const [k, v] of Object.entries(mod as Record<string, unknown>)) {
         if (isValidator(v)) {
           result.push({
             key: `${ns}.${k}`,
@@ -126,8 +119,7 @@ const digs = (n: number): fc.Arbitrary<string> => {
     fc.constant("0".repeat(n)),
     fc.constant("9".repeat(n)),
   ];
-  for (let d = 1; d < 9; d++)
-    edges.push(fc.constant(String(d).repeat(n)));
+  for (let d = 1; d < 9; d++) edges.push(fc.constant(String(d).repeat(n)));
   if (n > 1) edges.push(rawDigs(n - 1));
   edges.push(rawDigs(n + 1));
   return fc.oneof(
@@ -144,11 +136,7 @@ const digsRange = (a: number, b: number) =>
 
 const datePrefix = (order: "ymd" | "dmy"): string[] => {
   const now = new Date();
-  const [y, m, d] = [
-    now.getFullYear(),
-    now.getMonth() + 1,
-    now.getDate(),
-  ];
+  const [y, m, d] = [now.getFullYear(), now.getMonth() + 1, now.getDate()];
   const p2 = (n: number) => String(n).padStart(2, "0");
   const dates: [number, number, number][] = [
     [y, m, d],
@@ -165,10 +153,7 @@ const datePrefix = (order: "ymd" | "dmy"): string[] => {
   );
 };
 
-const dateDigs = (
-  len: number,
-  order: "ymd" | "dmy" = "dmy",
-) => {
+const dateDigs = (len: number, order: "ymd" | "dmy" = "dmy") => {
   const pfxs = datePrefix(order);
   const sLen = len - 6;
   if (sLen < 0) return digs(len);
@@ -184,20 +169,15 @@ const dateDigs = (
 const alnumStr = (min: number, max: number) =>
   fc
     .array(
-      fc.constantFrom(
-        ..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
-      ),
+      fc.constantFrom(..."0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")),
       { minLength: min, maxLength: max },
     )
     .map((c: string[]) => c.join(""));
 
-const letters = (chars: string) =>
-  fc.constantFrom(...chars.split(""));
+const letters = (chars: string) => fc.constantFrom(...chars.split(""));
 
-const p2 = (n: number): string =>
-  String(n).padStart(2, "0");
-const p3 = (n: number): string =>
-  String(n).padStart(3, "0");
+const p2 = (n: number): string => String(n).padStart(2, "0");
+const p3 = (n: number): string => String(n).padStart(3, "0");
 
 const isValidDateParts = (
   year: number,
@@ -219,85 +199,72 @@ const validDateParts = (minYear: number, maxYear: number) =>
       month: fc.integer({ min: 1, max: 12 }),
       day: fc.integer({ min: 1, max: 31 }),
     })
-    .filter(({ year, month, day }) =>
-      isValidDateParts(year, month, day),
-    );
+    .filter(({ year, month, day }) => isValidDateParts(year, month, day));
 
 const rcShape = (length: 9 | 10): fc.Arbitrary<string> =>
   (length === 9
-    ? validDateParts(1900, 1953).chain(
-        ({ year, month, day }) =>
-          fc
-            .tuple(
-              fc.constantFrom(month, month + 50),
-              fc.integer({ min: 0, max: 999 }),
-            )
-            .map(([rawMonth, serial]) => {
-              const yy = p2(year % 100);
-              return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}`;
-            }),
+    ? validDateParts(1900, 1953).chain(({ year, month, day }) =>
+        fc
+          .tuple(
+            fc.constantFrom(month, month + 50),
+            fc.integer({ min: 0, max: 999 }),
+          )
+          .map(([rawMonth, serial]) => {
+            const yy = p2(year % 100);
+            return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}`;
+          }),
       )
-    : validDateParts(1954, 2053).chain(
-        ({ year, month, day }) =>
-          fc
-            .tuple(
-              fc.constantFrom(
-                month,
-                month + 20,
-                month + 50,
-                month + 70,
-              ),
-              fc.integer({ min: 0, max: 999 }),
-              fc.integer({ min: 0, max: 9 }),
-            )
-            .map(([rawMonth, serial, check]) => {
-              const yy = p2(year % 100);
-              return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}${check}`;
-            }),
+    : validDateParts(1954, 2053).chain(({ year, month, day }) =>
+        fc
+          .tuple(
+            fc.constantFrom(month, month + 20, month + 50, month + 70),
+            fc.integer({ min: 0, max: 999 }),
+            fc.integer({ min: 0, max: 9 }),
+          )
+          .map(([rawMonth, serial, check]) => {
+            const yy = p2(year % 100);
+            return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}${check}`;
+          }),
       )) as fc.Arbitrary<string>;
 
-const bgEgnShape = validDateParts(1800, 2099).chain(
-  ({ year, month, day }) =>
-    digs(4).map((rest) => {
-      let encodedMonth = month;
-      if (year < 1900) encodedMonth += 20;
-      else if (year >= 2000) encodedMonth += 40;
-      return `${p2(year % 100)}${p2(encodedMonth)}${p2(day)}${rest}`;
+const bgEgnShape = validDateParts(1800, 2099).chain(({ year, month, day }) =>
+  digs(4).map((rest) => {
+    let encodedMonth = month;
+    if (year < 1900) encodedMonth += 20;
+    else if (year >= 2000) encodedMonth += 40;
+    return `${p2(year % 100)}${p2(encodedMonth)}${p2(day)}${rest}`;
+  }),
+);
+
+const eeIkShape = validDateParts(1800, 2099).chain(({ year, month, day }) => {
+  let genderDigits = [3, 4] as const;
+  if (year < 1900) {
+    genderDigits = [1, 2] as const;
+  } else if (year >= 2000) {
+    genderDigits = [5, 6] as const;
+  }
+
+  return fc
+    .tuple(
+      fc.constantFrom(...genderDigits),
+      fc.integer({ min: 0, max: 999 }),
+      fc.integer({ min: 0, max: 9 }),
+    )
+    .map(([genderDigit, serial, check]) => {
+      return `${genderDigit}${p2(year % 100)}${p2(month)}${p2(day)}${p3(serial)}${check}`;
+    });
+});
+
+const siEmsoShape = validDateParts(1900, 2099).chain(({ year, month, day }) =>
+  fc
+    .tuple(
+      fc.integer({ min: 50, max: 59 }),
+      fc.integer({ min: 0, max: 999 }),
+      fc.integer({ min: 0, max: 9 }),
+    )
+    .map(([register, serial, check]) => {
+      return `${p2(day)}${p2(month)}${p3(year % 1000)}${p2(register)}${p3(serial)}${check}`;
     }),
-);
-
-const eeIkShape = validDateParts(1800, 2099).chain(
-  ({ year, month, day }) => {
-    let genderDigits = [3, 4] as const;
-    if (year < 1900) {
-      genderDigits = [1, 2] as const;
-    } else if (year >= 2000) {
-      genderDigits = [5, 6] as const;
-    }
-
-    return fc
-      .tuple(
-        fc.constantFrom(...genderDigits),
-        fc.integer({ min: 0, max: 999 }),
-        fc.integer({ min: 0, max: 9 }),
-      )
-      .map(([genderDigit, serial, check]) => {
-        return `${genderDigit}${p2(year % 100)}${p2(month)}${p2(day)}${p3(serial)}${check}`;
-      });
-  },
-);
-
-const siEmsoShape = validDateParts(1900, 2099).chain(
-  ({ year, month, day }) =>
-    fc
-      .tuple(
-        fc.integer({ min: 50, max: 59 }),
-        fc.integer({ min: 0, max: 999 }),
-        fc.integer({ min: 0, max: 9 }),
-      )
-      .map(([register, serial, check]) => {
-        return `${p2(day)}${p2(month)}${p3(year % 1000)}${p2(register)}${p3(serial)}${check}`;
-      }),
 );
 
 const lvVatShape = fc.oneof(
@@ -306,38 +273,25 @@ const lvVatShape = fc.oneof(
     .map(([prefix, rest]) => `${prefix}${rest}`),
   validDateParts(1800, 2099).chain(({ year, month, day }) =>
     fc
-      .tuple(
-        fc.constantFrom(0, 1, 2),
-        fc.integer({ min: 0, max: 9999 }),
-      )
+      .tuple(fc.constantFrom(0, 1, 2), fc.integer({ min: 0, max: 9999 }))
       .map(([century, rest]) => {
         return `${p2(day)}${p2(month)}${p2(year % 100)}${century}${String(rest).padStart(4, "0")}`;
       }),
   ),
   fc
-    .tuple(
-      fc.constantFrom("3"),
-      fc.integer({ min: 2, max: 9 }),
-      digs(9),
-    )
-    .map(
-      ([first, second, rest]) => `${first}${second}${rest}`,
-    ),
+    .tuple(fc.constantFrom("3"), fc.integer({ min: 2, max: 9 }), digs(9))
+    .map(([first, second, rest]) => `${first}${second}${rest}`),
 );
 
 const cyVatShape = fc
   .oneof(
-    fc
-      .integer({ min: 60_000_000, max: 99_999_999 })
-      .map((n) => String(n)),
+    fc.integer({ min: 60_000_000, max: 99_999_999 }).map((n) => String(n)),
     fc
       .integer({ min: 0, max: 99_999_999 })
       .map((n) => String(n).padStart(8, "0"))
       .filter((digits) => !digits.startsWith("12")),
   )
-  .chain((digits) =>
-    letters(L).map((letter) => `${digits}${letter}`),
-  );
+  .chain((digits) => letters(L).map((letter) => `${digits}${letter}`));
 
 // ─── Custom arb overrides ───────────────────
 // Where inferArb (lengths-based) is insufficient.
@@ -370,12 +324,7 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
   "ch.vat": digs(9).map((d) => `CHE${d}`),
   "ch.ssn": digs(10).map((d) => `756${d}`),
   "gb.nino": fc
-    .tuple(
-      letters(L),
-      letters(L),
-      digs(6),
-      fc.constantFrom("A", "B", "C", "D"),
-    )
+    .tuple(letters(L), letters(L), digs(6), fc.constantFrom("A", "B", "C", "D"))
     .map(([a, b, d, s]) => `${a}${b}${d}${s}`),
   // gb.vat's `validate` also accepts letter-prefixed
   // GD/HA government and health-authority variants, but
@@ -402,41 +351,24 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
     .tuple(fc.integer({ min: 1, max: 9 }), digs(8))
     .map(([f, r]) => `${String(f)}${r}`),
   "tr.tckimlik": fc
-    .tuple(
-      fc.integer({ min: 1, max: 9 }).map(String),
-      digs(10),
-    )
+    .tuple(fc.integer({ min: 1, max: 9 }).map(String), digs(10))
     .map(([f, r]) => `${f}${r}`),
   "fr.nir": fc
     .tuple(fc.constantFrom("1", "2"), digs(12), digs(2))
     .map(([g, body, ck]) => `${g}${body}${ck}`),
-  "fr.tva": fc
-    .tuple(digs(2), digs(9))
-    .map(([p, s]) => `${p}${s}`),
+  "fr.tva": fc.tuple(digs(2), digs(9)).map(([p, s]) => `${p}${s}`),
   "cy.vat": cyVatShape,
-  "ie.vat": fc
-    .tuple(digs(7), letters(IE_LETTERS))
-    .map(([d, l]) => `${d}${l}`),
+  "ie.vat": fc.tuple(digs(7), letters(IE_LETTERS)).map(([d, l]) => `${d}${l}`),
   "ie.pps": fc.oneof(
+    fc.tuple(digs(7), letters(IE_LETTERS)).map(([d, l]) => `${d}${l}`),
     fc
-      .tuple(digs(7), letters(IE_LETTERS))
-      .map(([d, l]) => `${d}${l}`),
-    fc
-      .tuple(
-        digs(7),
-        letters(IE_LETTERS),
-        fc.constantFrom("A", "B", "H"),
-      )
+      .tuple(digs(7), letters(IE_LETTERS), fc.constantFrom("A", "B", "H"))
       .map(([d, l1, l2]) => `${d}${l1}${l2}`),
   ),
   "lv.vat": lvVatShape,
-  "nl.vat": fc
-    .tuple(digs(9), digs(2))
-    .map(([d, s]) => `${d}B${s}`),
+  "nl.vat": fc.tuple(digs(9), digs(2)).map(([d, s]) => `${d}B${s}`),
   "es.vat": fc.oneof(
-    fc
-      .tuple(digs(8), letters(ES_LETTERS))
-      .map(([d, l]) => `${d}${l}`),
+    fc.tuple(digs(8), letters(ES_LETTERS)).map(([d, l]) => `${d}${l}`),
     fc
       .tuple(letters(CIF_PFX), digs(7), letters(CIF_CHK))
       .map(([p, d, c]) => `${p}${d}${c}`),
@@ -446,22 +378,13 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
     .tuple(rawDigs(8), letters(ES_LETTERS))
     .map(([d, l]) => `${d}${l}`),
   "es.nie": fc
-    .tuple(
-      fc.constantFrom("X", "Y", "Z"),
-      digs(7),
-      letters(ES_LETTERS),
-    )
+    .tuple(fc.constantFrom("X", "Y", "Z"), digs(7), letters(ES_LETTERS))
     .map(([p, d, l]) => `${p}${d}${l}`),
   "es.cif": fc
     .tuple(letters(CIF_PFX), digs(7), letters(CIF_CHK))
     .map(([p, d, c]) => `${p}${d}${c}`),
   "fi.hetu": fc
-    .tuple(
-      digs(6),
-      fc.constantFrom(...HETU_SEP),
-      digs(3),
-      letters(HETU_CHK),
-    )
+    .tuple(digs(6), fc.constantFrom(...HETU_SEP), digs(3), letters(HETU_CHK))
     .map(([d, s, c, x]) => `${d}${s}${c}${x}`),
   "it.codiceFiscale": fc
     .tuple(alnumStr(15, 15), letters(L))
@@ -477,9 +400,7 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
       .array(
         fc.oneof(
           fc.integer({ min: 0, max: 9 }).map(String),
-          fc
-            .integer({ min: 65, max: 90 })
-            .map((c) => String.fromCharCode(c)),
+          fc.integer({ min: 65, max: 90 }).map((c) => String.fromCharCode(c)),
         ),
         { minLength: 14, maxLength: 14 },
       )
@@ -488,30 +409,14 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
   "ca.bn": fc.oneof(
     digs(9),
     fc
-      .tuple(
-        digs(9),
-        fc.constantFrom("RC", "RM", "RP", "RT"),
-        digs(4),
-      )
+      .tuple(digs(9), fc.constantFrom("RC", "RM", "RP", "RT"), digs(4))
       .map(([r, p, f]) => `${r}${p}${f}`),
   ),
   "gh.tin": fc
     .tuple(
       fc.constantFrom("P", "C", "G", "Q", "V"),
       digs(7),
-      fc.constantFrom(
-        "0",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "X",
-      ),
+      fc.constantFrom("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "X"),
     )
     .map(([p, d, c]) => `${p}00${d}${c}`),
   // Indian PAN: 5 letters + 4 digits + 1 letter.
@@ -531,77 +436,72 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
   // letters + 3 consonants + 1 alphanumeric + 1 digit.
   // The 2nd letter must be a vowel (or X) per the
   // canonical regex; chars 14-16 must be consonants.
-  "mx.curp": validDateParts(1900, 2099).chain(
-    ({ year, month, day }) =>
-      fc
-        .tuple(
-          letters(L),
-          letters("AEIOUX"),
-          letters(L),
-          letters(L),
-          fc.constantFrom("H", "M"),
-          fc
-            .array(letters(L), {
-              minLength: 2,
-              maxLength: 2,
-            })
-            .map((c) => c.join("")),
-          fc
-            .array(letters("BCDFGHJKLMNPQRSTVWXYZ"), {
-              minLength: 3,
-              maxLength: 3,
-            })
-            .map((c) => c.join("")),
-          alnumStr(1, 1),
-          digs(1),
-        )
-        .map(([a, b, c, d2, g, st, cs, alpha, dg]) => {
-          const yy = p2(year % 100);
-          const mm = p2(month);
-          const dd = p2(day);
-          return `${a}${b}${c}${d2}${yy}${mm}${dd}${g}${st}${cs}${alpha}${dg}`;
-        }),
+  "mx.curp": validDateParts(1900, 2099).chain(({ year, month, day }) =>
+    fc
+      .tuple(
+        letters(L),
+        letters("AEIOUX"),
+        letters(L),
+        letters(L),
+        fc.constantFrom("H", "M"),
+        fc
+          .array(letters(L), {
+            minLength: 2,
+            maxLength: 2,
+          })
+          .map((c) => c.join("")),
+        fc
+          .array(letters("BCDFGHJKLMNPQRSTVWXYZ"), {
+            minLength: 3,
+            maxLength: 3,
+          })
+          .map((c) => c.join("")),
+        alnumStr(1, 1),
+        digs(1),
+      )
+      .map(([a, b, c, d2, g, st, cs, alpha, dg]) => {
+        const yy = p2(year % 100);
+        const mm = p2(month);
+        const dd = p2(day);
+        return `${a}${b}${c}${d2}${yy}${mm}${dd}${g}${st}${cs}${alpha}${dg}`;
+      }),
   ),
   // Mexican RFC: persona física = 4 letters + YYMMDD
   // + 3 alphanumeric (13 chars); persona moral = 3
   // letters + YYMMDD + 3 alphanumeric (12 chars).
-  "mx.rfc": validDateParts(1900, 2099).chain(
-    ({ year, month, day }) => {
-      const yy = p2(year % 100);
-      const mm = p2(month);
-      const dd = p2(day);
-      const date = `${yy}${mm}${dd}`;
-      return fc.oneof(
-        fc
-          .tuple(
-            fc
-              .array(letters(L), {
-                minLength: 4,
-                maxLength: 4,
-              })
-              .map((c) => c.join("")),
-            alnumStr(3, 3),
-          )
-          .map(([n, c]) => `${n}${date}${c}`),
-        fc
-          .tuple(
-            fc
-              .array(letters(L), {
-                minLength: 3,
-                maxLength: 3,
-              })
-              .map((c) => c.join("")),
-            alnumStr(3, 3),
-          )
-          .map(([n, c]) => `${n}${date}${c}`),
-      );
-    },
-  ),
+  "mx.rfc": validDateParts(1900, 2099).chain(({ year, month, day }) => {
+    const yy = p2(year % 100);
+    const mm = p2(month);
+    const dd = p2(day);
+    const date = `${yy}${mm}${dd}`;
+    return fc.oneof(
+      fc
+        .tuple(
+          fc
+            .array(letters(L), {
+              minLength: 4,
+              maxLength: 4,
+            })
+            .map((c) => c.join("")),
+          alnumStr(3, 3),
+        )
+        .map(([n, c]) => `${n}${date}${c}`),
+      fc
+        .tuple(
+          fc
+            .array(letters(L), {
+              minLength: 3,
+              maxLength: 3,
+            })
+            .map((c) => c.join("")),
+          alnumStr(3, 3),
+        )
+        .map(([n, c]) => `${n}${date}${c}`),
+    );
+  }),
   "za.idnr": dateDigs(13, "ymd"),
   "mu.brn": fc.oneof(
-    fc
-      .tuple(fc.constantFrom("C", "F"), digs(8))
-      .map(([p, d]) => `${p}${d}`),
+    fc.tuple(fc.constantFrom("C", "F"), digs(8)).map(([p, d]) => `${p}${d}`),
     fc
       .tuple(fc.constantFrom("0", "1", "2", "3"), digs(7))
       .map(([p, d]) => `${p}${d}`),
@@ -645,9 +545,7 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
       fc.integer({ min: 0, max: 9 }).map(String),
     )
     .map(([cc, id, ck]) => `${cc}${id}${ck}`),
-  lei: fc
-    .tuple(alnumStr(18, 18), digs(2))
-    .map(([p, c]) => `${p}${c}`),
+  lei: fc.tuple(alnumStr(18, 18), digs(2)).map(([p, c]) => `${p}${c}`),
   bic: fc
     .tuple(
       fc
@@ -665,9 +563,7 @@ const CUSTOM_ARB: Record<string, fc.Arbitrary<string>> = {
 // (e.g. ro.vat at 2-10 digits) should declare
 // `lengths` explicitly so this fallback does not
 // silently under-probe the range.
-const lengthsFromExamples = (
-  v: Validator,
-): number[] | null => {
+const lengthsFromExamples = (v: Validator): number[] | null => {
   const examples = v.examples ?? [];
   if (examples.length === 0) return null;
   const seen = new Set<number>();
@@ -694,16 +590,13 @@ const inferArb = (v: Validator): fc.Arbitrary<string> => {
   return digs(10);
 };
 
-const arbFor = (key: string, v: Validator) =>
-  CUSTOM_ARB[key] ?? inferArb(v);
+const arbFor = (key: string, v: Validator) => CUSTOM_ARB[key] ?? inferArb(v);
 
 // ─── Subprocess bridges ─────────────────────
 
 const PYTHON = ".venv/bin/python3";
-const RUST_BIN =
-  "scripts/rust-oracle/target/release/stdnum-oracle";
-const BUNDLER =
-  "BUNDLE_GEMFILE=scripts/oracle/Gemfile bundle exec";
+const RUST_BIN = "scripts/rust-oracle/target/release/stdnum-oracle";
+const BUNDLER = "BUNDLE_GEMFILE=scripts/oracle/Gemfile bundle exec";
 
 const probe = (cmd: string): boolean => {
   try {
@@ -714,14 +607,10 @@ const probe = (cmd: string): boolean => {
   }
 };
 
-const hasPython = () =>
-  probe(`${PYTHON} -c "import stdnum"`);
+const hasPython = () => probe(`${PYTHON} -c "import stdnum"`);
 const hasPythonModule = (module: string) =>
-  probe(
-    `${PYTHON} -c "from stdnum.${module} import is_valid"`,
-  );
-const hasIdnumbers = () =>
-  probe(`${PYTHON} -c "import idnumbers"`);
+  probe(`${PYTHON} -c "from stdnum.${module} import is_valid"`);
+const hasIdnumbers = () => probe(`${PYTHON} -c "import idnumbers"`);
 const hasIdnumbersClass = (path: string) => {
   const separator = path.indexOf(".");
   const module = path.slice(0, separator);
@@ -738,22 +627,13 @@ const hasLocalflavor = () =>
       ` import localflavor"`,
   );
 const hasRust = () => probe(`test -f ${RUST_BIN}`);
-const hasRubyValvat = () =>
-  probe(`${BUNDLER} ruby -e "require 'valvat'"`);
+const hasRubyValvat = () => probe(`${BUNDLER} ruby -e "require 'valvat'"`);
 const hasRubySsn = () =>
-  probe(
-    `${BUNDLER} ruby -e ` +
-      `"require 'social_security_number'"`,
-  );
+  probe(`${BUNDLER} ruby -e ` + `"require 'social_security_number'"`);
 const hasPhp = () =>
-  probe(
-    `php -r "require 'scripts/oracle/vendor/autoload.php';"`,
-  );
+  probe(`php -r "require 'scripts/oracle/vendor/autoload.php';"`);
 
-type SubBatch = (
-  arg: string,
-  vals: readonly string[],
-) => boolean[];
+type SubBatch = (arg: string, vals: readonly string[]) => boolean[];
 
 const pyBatch: SubBatch = (mod, vals) => {
   const json = JSON.stringify(vals);
@@ -806,10 +686,7 @@ for v in vals:
         print("1")
     except (ValidationError, Exception):
         print("0")`;
-  const tmp = join(
-    tmpdir(),
-    `_stdnum_localflavor_${String(process.pid)}.py`,
-  );
+  const tmp = join(tmpdir(), `_stdnum_localflavor_${String(process.pid)}.py`);
   writeFileSync(tmp, s);
   try {
     return execSync(`${PYTHON} ${tmp}`, {
@@ -862,10 +739,7 @@ const rubyScript = (
     .map((l) => l === "1");
 };
 
-const valvatBatch = (
-  pfx: string,
-  vals: readonly string[],
-) =>
+const valvatBatch = (pfx: string, vals: readonly string[]) =>
   rubyScript(
     "valvat",
     `vals.each do |v|\n  vat = Valvat.new("${pfx}" + v)\n  puts vat.valid_checksum? ? "1" : "0"\nend`,
@@ -879,10 +753,7 @@ const ssnBatch = (cc: string, vals: readonly string[]) =>
     vals,
   );
 
-const phpBatch = (
-  cc: string,
-  vals: readonly string[],
-): boolean[] => {
+const phpBatch = (cc: string, vals: readonly string[]): boolean[] => {
   const json = JSON.stringify(vals);
   writeFileSync(
     "/tmp/_stdnum_oracle.php",
@@ -943,10 +814,10 @@ const PY_SKIP = new Set([
 ]);
 
 // jsvat: key → [jsvat config, VAT prefix]
-const jc = (
-  cfg: typeof belgium,
-  pfx: string,
-): [typeof belgium, string] => [cfg, pfx];
+const jc = (cfg: typeof belgium, pfx: string): [typeof belgium, string] => [
+  cfg,
+  pfx,
+];
 
 const JSVAT: Record<string, [typeof belgium, string]> = {
   "be.vat": jc(belgium, "BE"),
@@ -979,10 +850,7 @@ const JSVAT: Record<string, [typeof belgium, string]> = {
   "se.vat": jc(sweden, "SE"),
 };
 // jsvat special wrappers (CH/NO VAT suffixes)
-const JSVAT_SPECIAL: Record<
-  string,
-  [typeof belgium, (v: string) => string]
-> = {
+const JSVAT_SPECIAL: Record<string, [typeof belgium, (v: string) => string]> = {
   "ch.uid": [switzerland, (v) => `${v}MWST`],
   "no.orgnr": [norway, (v) => `NO${v}MVA`],
 };
@@ -1064,14 +932,9 @@ const LOCALFLAVOR: Record<string, string> = {
 // Some localflavor fields require punctuated input
 // (e.g., CASocialInsuranceNumberField rejects bare
 // digits). Apply a per-key shape before sending.
-const LOCALFLAVOR_FORMAT: Record<
-  string,
-  (v: string) => string
-> = {
+const LOCALFLAVOR_FORMAT: Record<string, (v: string) => string> = {
   "ca.sin": (v) =>
-    v.length === 9
-      ? `${v.slice(0, 3)}-${v.slice(3, 6)}-${v.slice(6)}`
-      : v,
+    v.length === 9 ? `${v.slice(0, 3)}-${v.slice(3, 6)}-${v.slice(6)}` : v,
 };
 
 // valvat (Ruby): key → VAT prefix
@@ -1149,21 +1012,16 @@ type OracleEntry = {
 };
 
 const MODE = (() => {
-  const arg = process.argv.find((v) =>
-    v.startsWith("--mode="),
-  );
+  const arg = process.argv.find((v) => v.startsWith("--mode="));
   const value =
-    arg?.slice("--mode=".length) ??
-    process.env.ORACLE_MODE ??
-    "gate";
+    arg?.slice("--mode=".length) ?? process.env.ORACLE_MODE ?? "gate";
   return value === "survey" ? "survey" : "gate";
 })();
 
 const BASE_SEED = Number(process.env.ORACLE_SEED ?? "1337");
 
 const shouldFailOnDisagreements =
-  MODE === "gate" ||
-  process.env.ORACLE_FAIL_ON_DISAGREEMENTS === "1";
+  MODE === "gate" || process.env.ORACLE_FAIL_ON_DISAGREEMENTS === "1";
 
 const SURVEY_ONLY_SOURCES = new Set([
   "valvat",
@@ -1278,12 +1136,8 @@ const SURVEY_ONLY_ENTRIES = new Set([
   "python-stdnum:in_.pan",
 ]);
 
-const tierFor = (
-  source: string,
-  key: string,
-): OracleMode =>
-  SURVEY_ONLY_SOURCES.has(source) ||
-  SURVEY_ONLY_ENTRIES.has(`${source}:${key}`)
+const tierFor = (source: string, key: string): OracleMode =>
+  SURVEY_ONLY_SOURCES.has(source) || SURVEY_ONLY_ENTRIES.has(`${source}:${key}`)
     ? "survey"
     : "gate";
 
@@ -1317,11 +1171,8 @@ const buildOracles = (): OracleEntry[] => {
       if (PY_SKIP.has(d.key)) continue;
       const mod = PY_REMAP[d.key] ?? d.key;
       if (!hasPythonModule(mod)) continue;
-      safe(
-        `${d.key} (vs python-stdnum)`,
-        "python-stdnum",
-        d.key,
-        (v) => pyBatch(mod, v),
+      safe(`${d.key} (vs python-stdnum)`, "python-stdnum", d.key, (v) =>
+        pyBatch(mod, v),
       );
     }
   }
@@ -1340,34 +1191,22 @@ const buildOracles = (): OracleEntry[] => {
   if (hasLocalflavor()) {
     for (const [key, path] of Object.entries(LOCALFLAVOR)) {
       const shape = LOCALFLAVOR_FORMAT[key];
-      safe(
-        `${key} (vs localflavor)`,
-        "localflavor",
-        key,
-        (v) =>
-          localflavorBatch(path, shape ? v.map(shape) : v),
+      safe(`${key} (vs localflavor)`, "localflavor", key, (v) =>
+        localflavorBatch(path, shape ? v.map(shape) : v),
       );
     }
   }
 
   // brazilian-utils (always available)
-  safe(
-    "br.cpf (vs brazilian-utils)",
-    "brazilian-utils",
-    "br.cpf",
-    (v) => v.map(isValidCpf),
+  safe("br.cpf (vs brazilian-utils)", "brazilian-utils", "br.cpf", (v) =>
+    v.map(isValidCpf),
   );
-  safe(
-    "br.cnpj (vs brazilian-utils)",
-    "brazilian-utils",
-    "br.cnpj",
-    (v) => v.map((x) => isValidCnpj(x, { version: 2 })),
+  safe("br.cnpj (vs brazilian-utils)", "brazilian-utils", "br.cnpj", (v) =>
+    v.map((x) => isValidCnpj(x, { version: 2 })),
   );
 
   // rut.js (always available)
-  safe("cl.rut (vs rut.js)", "rut.js", "cl.rut", (v) =>
-    v.map(validateRut),
-  );
+  safe("cl.rut (vs rut.js)", "rut.js", "cl.rut", (v) => v.map(validateRut));
 
   // jsvat (always available)
   for (const [key, [cfg, pfx]] of Object.entries(JSVAT))
@@ -1376,19 +1215,15 @@ const buildOracles = (): OracleEntry[] => {
       source: "jsvat",
       key,
       tier: tierFor("jsvat", key),
-      validate: (v) =>
-        v.map((x) => checkVAT(`${pfx}${x}`, [cfg]).isValid),
+      validate: (v) => v.map((x) => checkVAT(`${pfx}${x}`, [cfg]).isValid),
     });
-  for (const [key, [cfg, wrap]] of Object.entries(
-    JSVAT_SPECIAL,
-  ))
+  for (const [key, [cfg, wrap]] of Object.entries(JSVAT_SPECIAL))
     e.push({
       name: `${key} (vs jsvat)`,
       source: "jsvat",
       key,
       tier: tierFor("jsvat", key),
-      validate: (v) =>
-        v.map((x) => checkVAT(wrap(x), [cfg]).isValid),
+      validate: (v) => v.map((x) => checkVAT(wrap(x), [cfg]).isValid),
     });
 
   // stdnum-js
@@ -1398,8 +1233,7 @@ const buildOracles = (): OracleEntry[] => {
       source: "stdnum-js",
       key,
       tier: tierFor("stdnum-js", key),
-      validate: (v) =>
-        v.map((x) => stdnumPerson(cc, x).isValid),
+      validate: (v) => v.map((x) => stdnumPerson(cc, x).isValid),
     });
   for (const [key, cc] of Object.entries(STDNUM_ENTITY))
     e.push({
@@ -1407,8 +1241,7 @@ const buildOracles = (): OracleEntry[] => {
       source: "stdnum-js",
       key,
       tier: tierFor("stdnum-js", key),
-      validate: (v) =>
-        v.map((x) => stdnumEntity(cc, x).isValid),
+      validate: (v) => v.map((x) => stdnumEntity(cc, x).isValid),
     });
   for (const [key, cc] of Object.entries(STDNUM_MIXED))
     e.push({
@@ -1418,9 +1251,7 @@ const buildOracles = (): OracleEntry[] => {
       tier: tierFor("stdnum-js", key),
       validate: (v) =>
         v.map(
-          (x) =>
-            stdnumPerson(cc, x).isValid ||
-            stdnumEntity(cc, x).isValid,
+          (x) => stdnumPerson(cc, x).isValid || stdnumEntity(cc, x).isValid,
         ),
     });
 
@@ -1447,42 +1278,30 @@ const buildOracles = (): OracleEntry[] => {
     source: "iban.js",
     key: "iban",
     tier: tierFor("iban.js", "iban"),
-    validate: (v) =>
-      v.map((x) => IBAN.isValid(x) as boolean),
+    validate: (v) => v.map((x) => IBAN.isValid(x) as boolean),
   });
 
   // valvat (Ruby)
   if (hasRubyValvat()) {
     for (const [key, pfx] of Object.entries(VALVAT))
-      safe(`${key} (vs valvat)`, "valvat", key, (v) =>
-        valvatBatch(pfx, v),
-      );
+      safe(`${key} (vs valvat)`, "valvat", key, (v) => valvatBatch(pfx, v));
   }
 
   // loophp/tin (PHP)
   if (hasPhp()) {
     for (const [key, cc] of Object.entries(PHP_TIN))
-      safe(
-        `${key} (vs loophp/tin)`,
-        "loophp/tin",
-        key,
-        (v) => phpBatch(cc, v),
-      );
+      safe(`${key} (vs loophp/tin)`, "loophp/tin", key, (v) => phpBatch(cc, v));
   }
 
   // social_security_number (Ruby)
   if (hasRubySsn()) {
     for (const [key, cc] of Object.entries(RUBY_SSN))
-      safe(`${key} (vs ruby-ssn)`, "ruby-ssn", key, (v) =>
-        ssnBatch(cc, v),
-      );
+      safe(`${key} (vs ruby-ssn)`, "ruby-ssn", key, (v) => ssnBatch(cc, v));
   }
 
   // Rust
   if (hasRust()) {
-    safe("iban (vs rust)", "rust", "iban", (v) =>
-      rustBatch("iban", v),
-    );
+    safe("iban (vs rust)", "rust", "iban", (v) => rustBatch("iban", v));
   }
 
   return e;
@@ -1490,19 +1309,14 @@ const buildOracles = (): OracleEntry[] => {
 
 // ─── Mutant testing ─────────────────────────
 
-const mutateAt = (
-  value: string,
-  index: number,
-): string[] => {
+const mutateAt = (value: string, index: number): string[] => {
   const out: string[] = [];
   const ch = value[index];
   if (ch === undefined || ch < "0" || ch > "9") return out;
   for (let d = 0; d <= 9; d++) {
     const r = String(d);
     if (r === ch) continue;
-    out.push(
-      value.slice(0, index) + r + value.slice(index + 1),
-    );
+    out.push(value.slice(0, index) + r + value.slice(index + 1));
   }
   return out;
 };
@@ -1545,9 +1359,7 @@ const inferCheckDigitPositionsForExample = (
   return candidates;
 };
 
-const inferCheckDigitPositions = (
-  v: Validator,
-): number[] => {
+const inferCheckDigitPositions = (v: Validator): number[] => {
   const examples = (v.examples ?? [])
     .map((example) => v.compact(example))
     .filter((example) => v.validate(example).valid)
@@ -1556,16 +1368,11 @@ const inferCheckDigitPositions = (
 
   let intersection: number[] | null = null;
   for (const example of examples) {
-    const candidates = inferCheckDigitPositionsForExample(
-      v,
-      example,
-    );
+    const candidates = inferCheckDigitPositionsForExample(v, example);
     intersection =
       intersection === null
         ? candidates
-        : intersection.filter((i) =>
-            candidates.includes(i),
-          );
+        : intersection.filter((i) => candidates.includes(i));
   }
 
   return intersection ?? [];
@@ -1613,9 +1420,7 @@ const run = () => {
   );
   let total = 0;
   let failures = 0;
-  const gateCount = allOracles.filter(
-    (entry) => entry.tier === "gate",
-  ).length;
+  const gateCount = allOracles.filter((entry) => entry.tier === "gate").length;
   const surveyOnlyCount = allOracles.length - gateCount;
 
   console.log(
@@ -1634,9 +1439,7 @@ const run = () => {
   }
 
   for (const [source, entries] of bySource) {
-    console.log(
-      `\n${source}: ${String(NUM)} samples per format\n`,
-    );
+    console.log(`\n${source}: ${String(NUM)} samples per format\n`);
     for (const entry of entries) {
       const d = byKey.get(entry.key);
       if (!d) continue;
@@ -1645,9 +1448,7 @@ const run = () => {
         numRuns: NUM,
         seed: seedFor(`oracle:${entry.name}`),
       });
-      const ts = vals.map(
-        (v) => d.validator.validate(v).valid,
-      );
+      const ts = vals.map((v) => d.validator.validate(v).valid);
       const oracle = entry.validate(vals);
       if (oracle === null) {
         console.log(`  SKIP ${entry.name}`);
@@ -1664,9 +1465,7 @@ const run = () => {
   if (MODE === "survey") {
     console.log(`\nCheck-digit mutation testing\n`);
     for (const d of validators) {
-      const checkDigitPositions = inferCheckDigitPositions(
-        d.validator,
-      );
+      const checkDigitPositions = inferCheckDigitPositions(d.validator);
       if (checkDigitPositions.length !== 1) continue;
       const [checkDigitPosition] = checkDigitPositions;
       const arb = arbFor(d.key, d.validator);
@@ -1679,9 +1478,7 @@ const run = () => {
         return result.valid ? [result.compact] : [];
       });
       if (valid.length === 0) {
-        console.log(
-          `  SKIP ${d.key}: no valid values found`,
-        );
+        console.log(`  SKIP ${d.key}: no valid values found`);
         continue;
       }
       const toTest = valid.slice(0, 50);
@@ -1693,9 +1490,7 @@ const run = () => {
           if (d.validator.validate(m).valid) {
             esc++;
             if (escEx.length < 3)
-              escEx.push(
-                `    "${v}" -> "${m}" (still valid)`,
-              );
+              escEx.push(`    "${v}" -> "${m}" (still valid)`);
           }
         }
       }
@@ -1705,8 +1500,7 @@ const run = () => {
         `  ${icon} ${d.key}: ${String(esc)} escapes` +
           ` (${String(toTest.length)} seeds,` +
           ` ${String(
-            toTest.length *
-              mutateAt(first, checkDigitPosition).length,
+            toTest.length * mutateAt(first, checkDigitPosition).length,
           )} mutants)`,
       );
       for (const ex of escEx) console.log(ex);
@@ -1715,18 +1509,14 @@ const run = () => {
   }
 
   console.log(
-    `\n${String(total)} oracle total,` +
-      ` ${String(failures)} disagreements`,
+    `\n${String(total)} oracle total,` + ` ${String(failures)} disagreements`,
   );
   if (MODE === "survey") {
     console.log(
-      `${String(mutTotal)} mutant total,` +
-        ` ${String(mutEsc)} escapes`,
+      `${String(mutTotal)} mutant total,` + ` ${String(mutEsc)} escapes`,
     );
   }
-  process.exit(
-    shouldFailOnDisagreements && failures > 0 ? 1 : 0,
-  );
+  process.exit(shouldFailOnDisagreements && failures > 0 ? 1 : 0);
 };
 
 run();

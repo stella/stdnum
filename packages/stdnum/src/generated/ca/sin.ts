@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const sin: CountryValidator<"CA"> = createValidator(
-  "ca.sin",
-  31,
-);
+const sin: CountryValidator<"CA"> = createValidator("ca.sin", 31);
 
 export default sin;
 export const compact = sin.compact;
@@ -16,7 +13,5 @@ export const validate = sin.validate;
 export const generate = (): string =>
   sin.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ca.sin cannot generate values",
-    );
+    throw new Error("Validator ca.sin cannot generate values");
   })();

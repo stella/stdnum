@@ -338,7 +338,6 @@ oxlint + oxfmt. Suppress a rule only with the rule name and a reason:
 
 - `bun install`
 - `bun run lint`
-- `bun run format:check`
 - `bun run typecheck` (Bun checks the root and both package tsconfigs)
 - `bun run check:typecheck-parity`
 - `bun test`

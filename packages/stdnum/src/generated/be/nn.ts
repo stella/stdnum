@@ -2,15 +2,9 @@
 
 import type { CountryValidator } from "../../types";
 
-import {
-  createValidator,
-  getBinding,
-} from "#stdnum-runtime";
+import { createValidator, getBinding } from "#stdnum-runtime";
 
-const nn: CountryValidator<"BE"> = createValidator(
-  "be.nn",
-  19,
-);
+const nn: CountryValidator<"BE"> = createValidator("be.nn", 19);
 
 export default nn;
 export const compact = nn.compact;
@@ -19,9 +13,7 @@ export const validate = nn.validate;
 export const generate = (): string =>
   nn.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator be.nn cannot generate values",
-    );
+    throw new Error("Validator be.nn cannot generate values");
   })();
 export const checksum = (value: string): number | null =>
   getBinding().beNnChecksum(value);

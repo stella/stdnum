@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nrt: CountryValidator<"AD"> = createValidator(
-  "ad.nrt",
-  0,
-);
+const nrt: CountryValidator<"AD"> = createValidator("ad.nrt", 0);
 
 export default nrt;
 export const compact = nrt.compact;
@@ -16,7 +13,5 @@ export const validate = nrt.validate;
 export const generate = (): string =>
   nrt.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ad.nrt cannot generate values",
-    );
+    throw new Error("Validator ad.nrt cannot generate values");
   })();

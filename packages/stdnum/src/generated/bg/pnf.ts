@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const pnf: CountryValidator<"BG"> = createValidator(
-  "bg.pnf",
-  22,
-);
+const pnf: CountryValidator<"BG"> = createValidator("bg.pnf", 22);
 
 export default pnf;
 export const compact = pnf.compact;
@@ -16,7 +13,5 @@ export const validate = pnf.validate;
 export const generate = (): string =>
   pnf.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator bg.pnf cannot generate values",
-    );
+    throw new Error("Validator bg.pnf cannot generate values");
   })();

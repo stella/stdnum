@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const aadhaar: CountryValidator<"IN"> = createValidator(
-  "in.aadhaar",
-  97,
-);
+const aadhaar: CountryValidator<"IN"> = createValidator("in.aadhaar", 97);
 
 export default aadhaar;
 export const compact = aadhaar.compact;
@@ -16,7 +13,5 @@ export const validate = aadhaar.validate;
 export const generate = (): string =>
   aadhaar.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator in.aadhaar cannot generate values",
-    );
+    throw new Error("Validator in.aadhaar cannot generate values");
   })();

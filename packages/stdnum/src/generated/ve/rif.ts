@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const rif: CountryValidator<"VE"> = createValidator(
-  "ve.rif",
-  173,
-);
+const rif: CountryValidator<"VE"> = createValidator("ve.rif", 173);
 
 export default rif;
 export const compact = rif.compact;
@@ -16,7 +13,5 @@ export const validate = rif.validate;
 export const generate = (): string =>
   rif.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ve.rif cannot generate values",
-    );
+    throw new Error("Validator ve.rif cannot generate values");
   })();

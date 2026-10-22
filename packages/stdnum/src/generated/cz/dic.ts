@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const dic: CountryValidator<"CZ"> = createValidator(
-  "cz.dic",
-  48,
-);
+const dic: CountryValidator<"CZ"> = createValidator("cz.dic", 48);
 
 export default dic;
 export const compact = dic.compact;
@@ -16,7 +13,5 @@ export const validate = dic.validate;
 export const generate = (): string =>
   dic.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator cz.dic cannot generate values",
-    );
+    throw new Error("Validator cz.dic cannot generate values");
   })();

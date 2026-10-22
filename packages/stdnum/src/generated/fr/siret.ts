@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const siret: CountryValidator<"FR"> = createValidator(
-  "fr.siret",
-  77,
-);
+const siret: CountryValidator<"FR"> = createValidator("fr.siret", 77);
 
 export default siret;
 export const compact = siret.compact;
@@ -16,7 +13,5 @@ export const validate = siret.validate;
 export const generate = (): string =>
   siret.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator fr.siret cannot generate values",
-    );
+    throw new Error("Validator fr.siret cannot generate values");
   })();

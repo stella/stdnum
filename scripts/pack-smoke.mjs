@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
 import {
   existsSync,
-  mkdtempSync,
   mkdirSync,
+  mkdtempSync,
   readFileSync,
   rmSync,
   writeFileSync,
@@ -11,25 +11,17 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = dirname(
-  dirname(fileURLToPath(import.meta.url)),
-);
+const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const packageRoot = join(root, "packages/stdnum");
 const manifest = JSON.parse(
   readFileSync(join(packageRoot, "package.json"), "utf8"),
 );
-const validatorExports = Object.keys(
-  manifest.exports,
-).filter(
+const validatorExports = Object.keys(manifest.exports).filter(
   (key) =>
     /^\.\/[a-z0-9]+(?:\/[a-z0-9]+)?$/u.test(key) &&
-    ![
-      "./catalog",
-      "./browser",
-      "./native",
-      "./patterns",
-      "./types",
-    ].includes(key),
+    !["./catalog", "./browser", "./native", "./patterns", "./types"].includes(
+      key,
+    ),
 );
 if (validatorExports.length !== 176) {
   throw new Error(
@@ -40,9 +32,7 @@ for (const value of Object.values(manifest.exports)) {
   if (typeof value === "string") continue;
   for (const target of Object.values(value)) {
     if (!existsSync(join(packageRoot, target))) {
-      throw new Error(
-        `Missing built export target: ${target}`,
-      );
+      throw new Error(`Missing built export target: ${target}`);
     }
   }
 }
@@ -53,14 +43,8 @@ if (sidecar === null) {
     `No packaged native sidecar for ${process.platform}-${process.arch}`,
   );
 }
-const sidecarRoot = join(
-  root,
-  "packages",
-  sidecar.directory,
-);
-const temporaryRoot = mkdtempSync(
-  join(tmpdir(), "stdnum-pack-smoke-"),
-);
+const sidecarRoot = join(root, "packages", sidecar.directory);
+const temporaryRoot = mkdtempSync(join(tmpdir(), "stdnum-pack-smoke-"));
 
 try {
   const tarballRoot = join(temporaryRoot, "tarballs");
@@ -77,10 +61,7 @@ try {
     "index.cjs",
     "registry.json",
   ]);
-  assertPackFiles(sidecarPack, [
-    "index.cjs",
-    "stella_stdnum_napi.node",
-  ]);
+  assertPackFiles(sidecarPack, ["index.cjs", "stella_stdnum_napi.node"]);
 
   const consumerRoot = join(temporaryRoot, "consumer");
   mkdirSync(consumerRoot);
@@ -141,79 +122,52 @@ function pack(directory, destination) {
   const packed = JSON.parse(
     execFileSync(
       "npm",
-      [
-        "pack",
-        "--json",
-        "--ignore-scripts",
-        "--pack-destination",
-        destination,
-      ],
+      ["pack", "--json", "--ignore-scripts", "--pack-destination", destination],
       { cwd: directory, encoding: "utf8" },
     ),
   );
   const result = packed[0];
   if (result === undefined) {
-    throw new Error(
-      `npm pack returned no result for ${directory}`,
-    );
+    throw new Error(`npm pack returned no result for ${directory}`);
   }
   return result;
 }
 
 function assertPackFiles(packResult, required) {
-  const files = new Set(
-    packResult.files.map((entry) => entry.path),
-  );
+  const files = new Set(packResult.files.map((entry) => entry.path));
   for (const path of required) {
     if (!files.has(path)) {
-      throw new Error(
-        `${packResult.name} is missing ${path}`,
-      );
+      throw new Error(`${packResult.name} is missing ${path}`);
     }
   }
 }
 
 function hostSidecar() {
-  if (
-    process.platform === "darwin" &&
-    process.arch === "arm64"
-  ) {
+  if (process.platform === "darwin" && process.arch === "arm64") {
     return {
       directory: "stdnum-darwin-arm64",
       name: "@stll/stdnum-darwin-arm64",
     };
   }
-  if (
-    process.platform === "darwin" &&
-    process.arch === "x64"
-  ) {
+  if (process.platform === "darwin" && process.arch === "x64") {
     return {
       directory: "stdnum-darwin-x64",
       name: "@stll/stdnum-darwin-x64",
     };
   }
-  if (
-    process.platform === "linux" &&
-    process.arch === "arm64"
-  ) {
+  if (process.platform === "linux" && process.arch === "arm64") {
     return {
       directory: "stdnum-linux-arm64-gnu",
       name: "@stll/stdnum-linux-arm64-gnu",
     };
   }
-  if (
-    process.platform === "linux" &&
-    process.arch === "x64"
-  ) {
+  if (process.platform === "linux" && process.arch === "x64") {
     return {
       directory: "stdnum-linux-x64-gnu",
       name: "@stll/stdnum-linux-x64-gnu",
     };
   }
-  if (
-    process.platform === "win32" &&
-    process.arch === "x64"
-  ) {
+  if (process.platform === "win32" && process.arch === "x64") {
     return {
       directory: "stdnum-win32-x64-msvc",
       name: "@stll/stdnum-win32-x64-msvc",

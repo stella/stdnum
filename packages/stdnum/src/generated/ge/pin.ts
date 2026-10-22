@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const pin: CountryValidator<"GE"> = createValidator(
-  "ge.pin",
-  84,
-);
+const pin: CountryValidator<"GE"> = createValidator("ge.pin", 84);
 
 export default pin;
 export const compact = pin.compact;
@@ -16,7 +13,5 @@ export const validate = pin.validate;
 export const generate = (): string =>
   pin.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ge.pin cannot generate values",
-    );
+    throw new Error("Validator ge.pin cannot generate values");
   })();

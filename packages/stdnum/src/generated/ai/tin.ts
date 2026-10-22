@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const tin: CountryValidator<"AI"> = createValidator(
-  "ai.tin",
-  2,
-);
+const tin: CountryValidator<"AI"> = createValidator("ai.tin", 2);
 
 export default tin;
 export const compact = tin.compact;
@@ -16,7 +13,5 @@ export const validate = tin.validate;
 export const generate = (): string =>
   tin.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ai.tin cannot generate values",
-    );
+    throw new Error("Validator ai.tin cannot generate values");
   })();

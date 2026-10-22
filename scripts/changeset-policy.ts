@@ -1,5 +1,4 @@
-export const CHANGESET_RE =
-  /^\.changeset\/(?!README\.md$)[^/]+\.md$/;
+export const CHANGESET_RE = /^\.changeset\/(?!README\.md$)[^/]+\.md$/;
 
 export const RUNTIME_MANIFESTS = new Set([
   "packages/stdnum/package.json",
@@ -36,11 +35,7 @@ export const GENERATED_VERSION_METADATA = new Set([
   "crates/stdnum-wasm-size-fixture/Cargo.lock",
 ]);
 
-export const generatedVersionMetadataOnly = (
-  changedFiles: string[],
-): boolean =>
+export const generatedVersionMetadataOnly = (changedFiles: string[]): boolean =>
   changedFiles.every(
-    (file) =>
-      GENERATED_VERSION_METADATA.has(file) ||
-      CHANGESET_RE.test(file),
+    (file) => GENERATED_VERSION_METADATA.has(file) || CHANGESET_RE.test(file),
   );

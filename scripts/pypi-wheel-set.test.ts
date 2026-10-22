@@ -1,24 +1,16 @@
 import { expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 
-const workflow = readFileSync(
-  ".github/workflows/release.yml",
-  "utf8",
-);
-const byName = (left: string, right: string) =>
-  left.localeCompare(right);
+const workflow = readFileSync(".github/workflows/release.yml", "utf8");
+const byName = (left: string, right: string) => left.localeCompare(right);
 
 const expectedContract = {
-  "python-wheel-aarch64-apple-darwin": [
-    "macosx_11_0_arm64",
-  ],
+  "python-wheel-aarch64-apple-darwin": ["macosx_11_0_arm64"],
   "python-wheel-aarch64-unknown-linux-gnu": [
     "manylinux_2_17_aarch64",
     "manylinux2014_aarch64",
   ],
-  "python-wheel-x86_64-apple-darwin": [
-    "macosx_10_12_x86_64",
-  ],
+  "python-wheel-x86_64-apple-darwin": ["macosx_10_12_x86_64"],
   "python-wheel-x86_64-pc-windows-msvc": ["win_amd64"],
   "python-wheel-x86_64-unknown-linux-gnu": [
     "manylinux_2_17_x86_64",
@@ -42,30 +34,20 @@ const assertCallerContract = (source: string) => {
     ),
   ).toHaveLength(2);
   expect(
-    source.match(
-      /^          project-name: stella-stdnum$/gm,
-    ),
+    source.match(/^          project-name: stella-stdnum$/gm),
   ).toHaveLength(2);
-  expect(source).toMatch(
-    /^          distribution-name: stella_stdnum$/m,
-  );
+  expect(source).toMatch(/^          distribution-name: stella_stdnum$/m);
   expect(source).toMatch(/^          packages-dir: dist$/m);
-  expect(source).toMatch(
-    /^          skip-existing: true$/m,
-  );
+  expect(source).toMatch(/^          skip-existing: true$/m);
 
   const contract = source.match(
     /^          wheel-contract: >-\n            (\{.+\})$/m,
   );
   expect(contract).not.toBeNull();
-  expect(JSON.parse(contract?.[1] ?? "{}")).toEqual(
-    expectedContract,
-  );
+  expect(JSON.parse(contract?.[1] ?? "{}")).toEqual(expectedContract);
 
   const targets = [
-    ...source.matchAll(
-      /^          - target: ([a-z0-9_-]+)$/gm,
-    ),
+    ...source.matchAll(/^          - target: ([a-z0-9_-]+)$/gm),
   ].map((match) => `python-wheel-${match[1]}`);
   expect(targets.toSorted(byName)).toEqual(
     Object.keys(expectedContract).toSorted(byName),

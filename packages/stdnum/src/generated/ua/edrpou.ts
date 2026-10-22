@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const edrpou: CountryValidator<"UA"> = createValidator(
-  "ua.edrpou",
-  167,
-);
+const edrpou: CountryValidator<"UA"> = createValidator("ua.edrpou", 167);
 
 export default edrpou;
 export const compact = edrpou.compact;
@@ -16,7 +13,5 @@ export const validate = edrpou.validate;
 export const generate = (): string =>
   edrpou.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ua.edrpou cannot generate values",
-    );
+    throw new Error("Validator ua.edrpou cannot generate values");
   })();

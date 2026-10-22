@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const vnr: CountryValidator<"AT"> = createValidator(
-  "at.vnr",
-  11,
-);
+const vnr: CountryValidator<"AT"> = createValidator("at.vnr", 11);
 
 export default vnr;
 export const compact = vnr.compact;
@@ -16,7 +13,5 @@ export const validate = vnr.validate;
 export const generate = (): string =>
   vnr.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator at.vnr cannot generate values",
-    );
+    throw new Error("Validator at.vnr cannot generate values");
   })();

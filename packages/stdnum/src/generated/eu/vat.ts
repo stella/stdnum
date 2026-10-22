@@ -13,7 +13,5 @@ export const validate = vat.validate;
 export const generate = (): string =>
   vat.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator eu.vat cannot generate values",
-    );
+    throw new Error("Validator eu.vat cannot generate values");
   })();

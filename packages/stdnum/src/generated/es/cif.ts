@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const cif: CountryValidator<"ES"> = createValidator(
-  "es.cif",
-  65,
-);
+const cif: CountryValidator<"ES"> = createValidator("es.cif", 65);
 
 export default cif;
 export const compact = cif.compact;
@@ -16,7 +13,5 @@ export const validate = cif.validate;
 export const generate = (): string =>
   cif.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator es.cif cannot generate values",
-    );
+    throw new Error("Validator es.cif cannot generate values");
   })();

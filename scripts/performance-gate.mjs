@@ -1,14 +1,11 @@
 import { dirname, join } from "node:path";
 import { performance } from "node:perf_hooks";
-import { pathToFileURL, fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
-const root = dirname(
-  dirname(fileURLToPath(import.meta.url)),
-);
+const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const loadStarted = performance.now();
 const stdnum = await import(
-  pathToFileURL(join(root, "packages/stdnum/dist/index.js"))
-    .href
+  pathToFileURL(join(root, "packages/stdnum/dist/index.js")).href
 );
 const loadMilliseconds = performance.now() - loadStarted;
 
@@ -18,12 +15,7 @@ const values = [
   "52998224725",
   "123456789",
 ];
-const validators = [
-  stdnum.cz.ico,
-  stdnum.iban,
-  stdnum.br.cpf,
-  stdnum.us.ein,
-];
+const validators = [stdnum.cz.ico, stdnum.iban, stdnum.br.cpf, stdnum.us.ein];
 const controls = values.map(() => ({
   validate: (value) => ({
     valid: value.length > 0,
@@ -34,9 +26,7 @@ const iterations = 500_000;
 
 const measure = (targets) => {
   for (let index = 0; index < 25_000; index += 1) {
-    targets[index % targets.length].validate(
-      values[index % values.length],
-    );
+    targets[index % targets.length].validate(values[index % values.length]);
   }
   const samples = [];
   let valid = 0;
@@ -44,9 +34,8 @@ const measure = (targets) => {
     const started = performance.now();
     for (let index = 0; index < iterations; index += 1) {
       if (
-        targets[index % targets.length].validate(
-          values[index % values.length],
-        ).valid
+        targets[index % targets.length].validate(values[index % values.length])
+          .valid === true
       ) {
         valid += 1;
       }
@@ -55,27 +44,22 @@ const measure = (targets) => {
     samples.push((iterations * 1_000) / elapsed);
   }
   if (valid !== iterations * samples.length)
-    throw new Error(
-      "Performance workload returned an invalid result",
-    );
+    throw new Error("Performance workload returned an invalid result");
   samples.sort((left, right) => left - right);
   return samples[Math.floor(samples.length / 2)];
 };
 
 const controlThroughput = measure(controls);
 const validationThroughput = measure(validators);
-const normalizedThroughput =
-  validationThroughput / controlThroughput;
+const normalizedThroughput = validationThroughput / controlThroughput;
 const maximumLoadMilliseconds = 500;
 const minimumValidationsPerSecond = 150_000;
 const removedTypeScriptNormalizedThroughput = 0.016_154;
 const requiredSpeedupOverTypeScript = 1.25;
 const minimumNormalizedThroughput =
-  removedTypeScriptNormalizedThroughput *
-  requiredSpeedupOverTypeScript;
+  removedTypeScriptNormalizedThroughput * requiredSpeedupOverTypeScript;
 const speedupOverTypeScript =
-  normalizedThroughput /
-  removedTypeScriptNormalizedThroughput;
+  normalizedThroughput / removedTypeScriptNormalizedThroughput;
 if (loadMilliseconds > maximumLoadMilliseconds) {
   throw new Error(
     `Native cold load regressed: ${loadMilliseconds.toFixed(1)}ms > ${String(maximumLoadMilliseconds)}ms`,

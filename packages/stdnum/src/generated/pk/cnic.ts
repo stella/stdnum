@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const cnic: CountryValidator<"PK"> = createValidator(
-  "pk.cnic",
-  144,
-);
+const cnic: CountryValidator<"PK"> = createValidator("pk.cnic", 144);
 
 export default cnic;
 export const compact = cnic.compact;
@@ -16,7 +13,5 @@ export const validate = cnic.validate;
 export const generate = (): string =>
   cnic.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator pk.cnic cannot generate values",
-    );
+    throw new Error("Validator pk.cnic cannot generate values");
   })();

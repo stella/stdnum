@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const acn: CountryValidator<"AU"> = createValidator(
-  "au.acn",
-  13,
-);
+const acn: CountryValidator<"AU"> = createValidator("au.acn", 13);
 
 export default acn;
 export const compact = acn.compact;
@@ -16,7 +13,5 @@ export const validate = acn.validate;
 export const generate = (): string =>
   acn.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator au.acn cannot generate values",
-    );
+    throw new Error("Validator au.acn cannot generate values");
   })();

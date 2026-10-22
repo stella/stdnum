@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const cnpj: CountryValidator<"BR"> = createValidator(
-  "br.cnpj",
-  26,
-);
+const cnpj: CountryValidator<"BR"> = createValidator("br.cnpj", 26);
 
 export default cnpj;
 export const compact = cnpj.compact;
@@ -16,7 +13,5 @@ export const validate = cnpj.validate;
 export const generate = (): string =>
   cnpj.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator br.cnpj cannot generate values",
-    );
+    throw new Error("Validator br.cnpj cannot generate values");
   })();

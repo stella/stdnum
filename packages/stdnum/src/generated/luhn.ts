@@ -2,10 +2,7 @@
 
 import type { GlobalValidator } from "../types";
 
-import {
-  createValidator,
-  getBinding,
-} from "#stdnum-runtime";
+import { createValidator, getBinding } from "#stdnum-runtime";
 
 const luhn: GlobalValidator = createValidator("luhn", 119);
 

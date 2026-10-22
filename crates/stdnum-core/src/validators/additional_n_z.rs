@@ -747,9 +747,7 @@ fn luhn_ok(value: &str) -> bool {
 }
 
 fn valid_date(year: i32, month: u32, day: u32) -> bool {
-  u32::try_from(year)
-    .ok()
-    .is_some_and(|year| crate::valid_date(year, month, day))
+  u32::try_from(year).is_ok_and(|year| crate::valid_date(year, month, day))
 }
 
 fn basic_shape(

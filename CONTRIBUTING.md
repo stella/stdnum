@@ -21,7 +21,7 @@ bun run typecheck      # bun check for root and binding code
 bun run check:typecheck-parity # compare diagnostic coverage with TypeScript
 bun test               # test the TypeScript adapter
 bun run lint           # oxlint
-bun run format         # oxfmt
+bun fmt
 ```
 
 The AI command layout is:
@@ -60,7 +60,7 @@ thin adapters over the one Rust implementation.
 
 - One logical change per PR.
 - Include tests for all validators.
-- Run `bun run rust:check && bun run codegen:check && bun run typecheck && bun test && bun run lint && bun run format`
+- Run `bun run rust:check && bun run codegen:check && bun run typecheck && bun test && bun run lint && bun fmt`
   before submitting.
 - Use [Conventional Commits](https://www.conventionalcommits.org/):
   `feat:`, `fix:`, `chore:`, `docs:`.

@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nino: CountryValidator<"GB"> = createValidator(
-  "gb.nino",
-  80,
-);
+const nino: CountryValidator<"GB"> = createValidator("gb.nino", 80);
 
 export default nino;
 export const compact = nino.compact;
@@ -16,7 +13,5 @@ export const validate = nino.validate;
 export const generate = (): string =>
   nino.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator gb.nino cannot generate values",
-    );
+    throw new Error("Validator gb.nino cannot generate values");
   })();

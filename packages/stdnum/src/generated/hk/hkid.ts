@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const hkid: CountryValidator<"HK"> = createValidator(
-  "hk.hkid",
-  89,
-);
+const hkid: CountryValidator<"HK"> = createValidator("hk.hkid", 89);
 
 export default hkid;
 export const compact = hkid.compact;
@@ -16,7 +13,5 @@ export const validate = hkid.validate;
 export const generate = (): string =>
   hkid.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator hk.hkid cannot generate values",
-    );
+    throw new Error("Validator hk.hkid cannot generate values");
   })();

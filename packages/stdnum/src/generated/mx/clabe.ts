@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const clabe: CountryValidator<"MX"> = createValidator(
-  "mx.clabe",
-  128,
-);
+const clabe: CountryValidator<"MX"> = createValidator("mx.clabe", 128);
 
 export default clabe;
 export const compact = clabe.compact;
@@ -16,7 +13,5 @@ export const validate = clabe.validate;
 export const generate = (): string =>
   clabe.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator mx.clabe cannot generate values",
-    );
+    throw new Error("Validator mx.clabe cannot generate values");
   })();

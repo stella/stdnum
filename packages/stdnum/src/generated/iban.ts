@@ -13,7 +13,5 @@ export const validate = iban.validate;
 export const generate = (): string =>
   iban.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator iban cannot generate values",
-    );
+    throw new Error("Validator iban cannot generate values");
   })();

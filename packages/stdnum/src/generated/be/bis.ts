@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const bis: CountryValidator<"BE"> = createValidator(
-  "be.bis",
-  18,
-);
+const bis: CountryValidator<"BE"> = createValidator("be.bis", 18);
 
 export default bis;
 export const compact = bis.compact;
@@ -16,7 +13,5 @@ export const validate = bis.validate;
 export const generate = (): string =>
   bis.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator be.bis cannot generate values",
-    );
+    throw new Error("Validator be.bis cannot generate values");
   })();

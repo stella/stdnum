@@ -4,10 +4,7 @@ import type { GlobalValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const wallet: GlobalValidator = createValidator(
-  "crypto.wallet",
-  44,
-);
+const wallet: GlobalValidator = createValidator("crypto.wallet", 44);
 
 export default wallet;
 export const compact = wallet.compact;

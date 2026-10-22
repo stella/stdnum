@@ -10,12 +10,8 @@ const collect = (directory: string): string[] => {
   for (const entry of directoryEntries) {
     const { name } = entry;
     const path = join(directory, name);
-    if (entry.isDirectory() === true)
-      result.push(...collect(path));
-    else if (
-      entry.isFile() === true &&
-      name.endsWith(".ts") === true
-    )
+    if (entry.isDirectory() === true) result.push(...collect(path));
+    else if (entry.isFile() === true && name.endsWith(".ts") === true)
       result.push(path);
   }
   return result;
@@ -42,11 +38,7 @@ export default defineConfig({
     // index.cjs ships as-is: its literal `require` table is what lets
     // consumer bundlers resolve the platform addon; inlining it rewrites
     // those calls into a runtime helper they cannot see.
-    neverBundle: [
-      "#stdnum-runtime",
-      "@stll/stdnum-wasm",
-      /\/index\.cjs$/u,
-    ],
+    neverBundle: ["#stdnum-runtime", "@stll/stdnum-wasm", /\/index\.cjs$/u],
   },
   format: ["esm"],
   unbundle: true,

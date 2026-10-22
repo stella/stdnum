@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const vsk: CountryValidator<"IS"> = createValidator(
-  "is.vsk",
-  103,
-);
+const vsk: CountryValidator<"IS"> = createValidator("is.vsk", 103);
 
 export default vsk;
 export const compact = vsk.compact;
@@ -16,7 +13,5 @@ export const validate = vsk.validate;
 export const generate = (): string =>
   vsk.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator is.vsk cannot generate values",
-    );
+    throw new Error("Validator is.vsk cannot generate values");
   })();

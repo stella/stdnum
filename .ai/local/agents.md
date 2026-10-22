@@ -6,7 +6,6 @@
 
 - `bun install`
 - `bun run lint`
-- `bun run format:check`
 - `bun run typecheck` (Bun checks the root and both package tsconfigs)
 - `bun run check:typecheck-parity`
 - `bun test`

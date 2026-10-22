@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const utr: CountryValidator<"GB"> = createValidator(
-  "gb.utr",
-  82,
-);
+const utr: CountryValidator<"GB"> = createValidator("gb.utr", 82);
 
 export default utr;
 export const compact = utr.compact;
@@ -16,7 +13,5 @@ export const validate = utr.validate;
 export const generate = (): string =>
   utr.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator gb.utr cannot generate values",
-    );
+    throw new Error("Validator gb.utr cannot generate values");
   })();

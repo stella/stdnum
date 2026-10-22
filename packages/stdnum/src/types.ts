@@ -287,15 +287,12 @@ export type StdnumError = {
   message: string;
 };
 export type ValidateResult =
-  | { valid: true; compact: string }
-  | { valid: false; error: StdnumError };
+  { valid: true; compact: string } | { valid: false; error: StdnumError };
 export type ParsedBirthDate = { birthDate: Date };
 export type ParsedPersonId = ParsedBirthDate & {
   gender: "male" | "female";
 };
-export type ParsedIdentifier =
-  | ParsedBirthDate
-  | ParsedPersonId;
+export type ParsedIdentifier = ParsedBirthDate | ParsedPersonId;
 export type CardNetwork =
   | "visa"
   | "mastercard"
@@ -306,9 +303,7 @@ export type CardNetwork =
   | "unionpay"
   | "maestro";
 
-type ValidatorBase<
-  TParsed extends ParsedIdentifier | undefined = undefined,
-> = {
+type ValidatorBase<TParsed extends ParsedIdentifier | undefined = undefined> = {
   name: string;
   localName: string;
   abbreviation: string;
@@ -316,9 +311,7 @@ type ValidatorBase<
   compact: (value: string) => string;
   format: (value: string) => string;
   validate: (value: string) => ValidateResult;
-  validateMany: (
-    values: readonly string[],
-  ) => ValidateResult[];
+  validateMany: (values: readonly string[]) => ValidateResult[];
   description?: string;
   sourceUrl?: string;
   lengths?: readonly number[];
@@ -343,12 +336,9 @@ export type GlobalValidator<
 > = ValidatorBase<TParsed> & { scope: "global" };
 export type Validator<
   TParsed extends ParsedIdentifier | undefined = undefined,
-> =
-  | CountryValidator<CountryCode, TParsed>
-  | GlobalValidator<TParsed>;
+> = CountryValidator<CountryCode, TParsed> | GlobalValidator<TParsed>;
 export type ParsableValidator<
   TParsed extends ParsedIdentifier = ParsedIdentifier,
 > = Validator<TParsed>;
 export type ValidatorScope =
-  | { scope: "country"; country: CountryCode }
-  | { scope: "global" };
+  { scope: "country"; country: CountryCode } | { scope: "global" };

@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nit: CountryValidator<"GT"> = createValidator(
-  "gt.nit",
-  88,
-);
+const nit: CountryValidator<"GT"> = createValidator("gt.nit", 88);
 
 export default nit;
 export const compact = nit.compact;
@@ -16,7 +13,5 @@ export const validate = nit.validate;
 export const generate = (): string =>
   nit.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator gt.nit cannot generate values",
-    );
+    throw new Error("Validator gt.nit cannot generate values");
   })();

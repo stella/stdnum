@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const ird: CountryValidator<"NZ"> = createValidator(
-  "nz.ird",
-  140,
-);
+const ird: CountryValidator<"NZ"> = createValidator("nz.ird", 140);
 
 export default ird;
 export const compact = ird.compact;
@@ -16,7 +13,5 @@ export const validate = ird.validate;
 export const generate = (): string =>
   ird.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator nz.ird cannot generate values",
-    );
+    throw new Error("Validator nz.ird cannot generate values");
   })();

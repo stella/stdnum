@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const uid: CountryValidator<"CH"> = createValidator(
-  "ch.uid",
-  33,
-);
+const uid: CountryValidator<"CH"> = createValidator("ch.uid", 33);
 
 export default uid;
 export const compact = uid.compact;
@@ -16,7 +13,5 @@ export const validate = uid.validate;
 export const generate = (): string =>
   uid.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ch.uid cannot generate values",
-    );
+    throw new Error("Validator ch.uid cannot generate values");
   })();

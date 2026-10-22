@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const tckimlik: CountryValidator<"TR"> = createValidator(
-  "tr.tckimlik",
-  164,
-);
+const tckimlik: CountryValidator<"TR"> = createValidator("tr.tckimlik", 164);
 
 export default tckimlik;
 export const compact = tckimlik.compact;
@@ -16,7 +13,5 @@ export const validate = tckimlik.validate;
 export const generate = (): string =>
   tckimlik.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator tr.tckimlik cannot generate values",
-    );
+    throw new Error("Validator tr.tckimlik cannot generate values");
   })();

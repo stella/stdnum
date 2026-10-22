@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const ruc: CountryValidator<"EC"> = createValidator(
-  "ec.ruc",
-  60,
-);
+const ruc: CountryValidator<"EC"> = createValidator("ec.ruc", 60);
 
 export default ruc;
 export const compact = ruc.compact;
@@ -16,7 +13,5 @@ export const validate = ruc.validate;
 export const generate = (): string =>
   ruc.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ec.ruc cannot generate values",
-    );
+    throw new Error("Validator ec.ruc cannot generate values");
   })();

@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const cbu: CountryValidator<"AR"> = createValidator(
-  "ar.cbu",
-  5,
-);
+const cbu: CountryValidator<"AR"> = createValidator("ar.cbu", 5);
 
 export default cbu;
 export const compact = cbu.compact;
@@ -16,7 +13,5 @@ export const validate = cbu.validate;
 export const generate = (): string =>
   cbu.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ar.cbu cannot generate values",
-    );
+    throw new Error("Validator ar.cbu cannot generate values");
   })();

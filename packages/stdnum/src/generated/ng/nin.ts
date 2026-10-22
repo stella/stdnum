@@ -4,10 +4,7 @@ import type { CountryValidator } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nin: CountryValidator<"NG"> = createValidator(
-  "ng.nin",
-  132,
-);
+const nin: CountryValidator<"NG"> = createValidator("ng.nin", 132);
 
 export default nin;
 export const compact = nin.compact;
@@ -16,7 +13,5 @@ export const validate = nin.validate;
 export const generate = (): string =>
   nin.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ng.nin cannot generate values",
-    );
+    throw new Error("Validator ng.nin cannot generate values");
   })();
