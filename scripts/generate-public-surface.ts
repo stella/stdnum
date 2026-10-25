@@ -282,57 +282,98 @@ const writeReadme = async (registry: Registry): Promise<void> => {
   await writeFile(README_PATH, readme);
 };
 
+// The declared type of a validator's default export, plus the type names it
+// imports from types.ts.
+const validatorType = (
+  validator: RegistryValidator,
+): { name: string; imports: string[] } => {
+  const parsed =
+    validator.parseKind === null ? null : parseType(validator.parseKind);
+  if (validator.scope === "country") {
+    return {
+      name: `CountryValidator<${quote(validator.country)}${
+        parsed === null ? "" : `, ${parsed}`
+      }>`,
+      imports: ["CountryValidator", ...(parsed === null ? [] : [parsed])],
+    };
+  }
+  return {
+    name: `GlobalValidator${parsed === null ? "" : `<${parsed}>`}`,
+    imports: ["GlobalValidator", ...(parsed === null ? [] : [parsed])],
+  };
+};
+
+const sortedTypeImports = (names: Iterable<string>): string =>
+  [...new Set(names)]
+    .toSorted((left, right) => left.localeCompare(right))
+    .join(", ");
+
+// Explicit export types keep every module valid under isolatedDeclarations,
+// so declarations can be emitted without a type checker.
+const standardExportType = (
+  validator: RegistryValidator,
+  name: string,
+): { type: string; imports: string[] } => {
+  if (name === "compact" || name === "format")
+    return { type: "(value: string) => string", imports: [] };
+  if (name === "validate")
+    return {
+      type: "(value: string) => ValidateResult",
+      imports: ["ValidateResult"],
+    };
+  if (name === "parse" && validator.parseKind !== null) {
+    const parsed = parseType(validator.parseKind);
+    return {
+      type: `((value: string) => ParsedIdentifier | null) & ((value: string) => ${parsed} | null)`,
+      imports: ["ParsedIdentifier", parsed],
+    };
+  }
+  throw new Error(`${validator.id}: no declared type for export ${name}`);
+};
+
 const validatorModule = (
   validator: RegistryValidator,
   index: number,
 ): string => {
   const depth = validator.subpath.split("/").length;
   const relative = "../".repeat(depth);
-  const typeName =
-    validator.scope === "country"
-      ? `CountryValidator<${quote(validator.country)}${
-          validator.parseKind === null
-            ? ""
-            : `, ${parseType(validator.parseKind)}`
-        }>`
-      : `GlobalValidator${
-          validator.parseKind === null
-            ? ""
-            : `<${parseType(validator.parseKind)}>`
-        }`;
-  const imports =
-    validator.scope === "country" ? "CountryValidator" : "GlobalValidator";
-  const parsedImport =
-    validator.parseKind === null ? "" : `, ${parseType(validator.parseKind)}`;
+  const { name: typeName, imports: validatorImports } =
+    validatorType(validator);
   const named = new Set(validator.namedExports);
+  const typeImports = [...validatorImports];
+  const exportLines: string[] = [];
   const hasSpecialExports =
     validator.namedExports.some(
       (name) => !STANDARD_EXPORTS.has(name) && name !== "CHECK_LETTERS",
     ) || validator.id === "luhn";
-  const lines = [
-    generatedHeader.trimEnd(),
-    "",
-    `import { createValidator${hasSpecialExports ? ", getBinding" : ""} } from "#stdnum-runtime";`,
-    `import type { ${imports}${parsedImport} } from ${quote(`${relative}types`)};`,
-    "",
-    `const ${validator.exportName}: ${typeName} = createValidator(${quote(validator.id)}, ${String(index)});`,
-    "",
-    `export default ${validator.exportName};`,
-  ];
-
   for (const name of ["compact", "format", "validate", "generate", "parse"]) {
     if (named.has(name)) {
       if (name === "generate") {
-        lines.push(
+        exportLines.push(
           validator.id === "luhn"
             ? "export const generate = (length = 16): string => getBinding().luhnGenerate(length);"
             : `export const generate = (): string =>\n  ${validator.exportName}.generate?.() ??\n  (() => {\n    throw new Error(${quote(`Validator ${validator.id} cannot generate values`)});\n  })();`,
         );
       } else {
-        lines.push(`export const ${name} = ${validator.exportName}.${name};`);
+        const { type, imports } = standardExportType(validator, name);
+        typeImports.push(...imports);
+        exportLines.push(
+          `export const ${name}: ${type} = ${validator.exportName}.${name};`,
+        );
       }
     }
   }
+  const lines = [
+    generatedHeader.trimEnd(),
+    "",
+    `import { createValidator${hasSpecialExports ? ", getBinding" : ""} } from "#stdnum-runtime";`,
+    `import type { ${sortedTypeImports(typeImports)} } from ${quote(`${relative}types`)};`,
+    "",
+    `const ${validator.exportName}: ${typeName} = createValidator(${quote(validator.id)}, ${String(index)});`,
+    "",
+    `export default ${validator.exportName};`,
+    ...exportLines,
+  ];
   if (validator.id === "creditcard") {
     lines.push(
       'export type CardNetwork = "visa" | "mastercard" | "amex" | "discover" | "diners" | "jcb" | "unionpay" | "maestro";',
@@ -444,7 +485,13 @@ const registryModule = (registry: Registry): string => {
     (validator, index) =>
       `import v${index} from ${quote(`./${validator.subpath}`)};`,
   );
-  return `${generatedHeader}${imports.join("\n")}\n\nexport const allValidators = [${registry.validators
+  const types = registry.validators.map(validatorType);
+  const typeImport = `import type { ${sortedTypeImports(
+    types.flatMap((type) => type.imports),
+  )} } from "../types";`;
+  return `${generatedHeader}${typeImport}\n${imports.join("\n")}\n\nexport const allValidators: readonly [${types
+    .map((type) => type.name)
+    .join(", ")}] = [${registry.validators
     .map((_validator, index) => `v${index}`)
     .join(", ")}] as const;\n`;
 };

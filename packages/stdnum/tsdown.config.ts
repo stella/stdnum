@@ -42,7 +42,7 @@ export default defineConfig({
   },
   format: ["esm"],
   unbundle: true,
-  dts: true,
+  dts: { generator: "oxc" },
   clean: true,
   fixedExtension: false,
   target: "es2022",

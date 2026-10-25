@@ -91,16 +91,6 @@ jobs:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
       - run: bun run check:toolchain
-      - name: Detect shared toolchain changes
-        id: toolchain
-        env:
-          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || 'unavailable-toolchain-base' }}
-        run: |
-          result=$(bunx --no-install stll-toolchain-changed --since "$BASE_REF")
-          printf '%s\n' "$result"
-          printf 'changed=%s\n' "$(printf '%s' "$result" | jq -r '.changed')" >> "$GITHUB_OUTPUT"
-      - run: bun run check:typecheck-parity
-        if: steps.toolchain.outputs.changed == 'true'
       - run: bun run test:tooling
       - run: bun run lint
       - run: bun fmt --check

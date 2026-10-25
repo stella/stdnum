@@ -35,7 +35,6 @@
       "version": "2.3.2",
       "devDependencies": {
         "tsdown": "0.23.0",
-        "typescript": "7.0.2",
       },
       "optionalDependencies": {
         "@stll/stdnum-darwin-arm64": "2.3.2",
@@ -68,7 +67,6 @@
       "devDependencies": {
         "@stll/stdnum": "workspace:*",
         "tsdown": "0.23.0",
-        "typescript": "7.0.2",
       },
     },
     "packages/stdnum-win32-x64-msvc": {
@@ -76,6 +74,7 @@
       "version": "2.3.2",
     },
   },
+  "trustedDependencies": [],
   "packages": {
     "@brazilian-utils/brazilian-utils": ["@brazilian-utils/brazilian-utils@2.5.0", "", {}, "sha512-rWXbTGN+8irKr5fe6/mtZ/vc/qoDBGIR57RzuwGZ90uV4/SxG00ehPo77RYviOhSzenKbYbEMDMyd8GHjmF6sg=="],
 

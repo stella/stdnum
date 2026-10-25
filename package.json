@@ -12,7 +12,6 @@
     "build:ts": "bun run --cwd packages/stdnum build:js && bun run --cwd packages/stdnum-wasm build:js",
     "build:wasm": "bun run --cwd packages/stdnum-wasm build && bun run performance:wasm-size",
     "typecheck": "bun check --no-pretty --all --project=tsconfig.json && bun run --cwd packages/stdnum typecheck && bun run --cwd packages/stdnum-wasm typecheck",
-    "check:typecheck-parity": "bun test scripts/typecheck-policy.test.ts && stll-typecheck-parity && bun run --cwd packages/stdnum check:typecheck-parity && bun run --cwd packages/stdnum-wasm check:typecheck-parity",
     "test": "bun test packages/stdnum/src/__test__",
     "test:release-workflow": "bun test scripts/release-workflow.test.ts scripts/pypi-wheel-set.test.ts",
     "smoke:native": "node scripts/native-smoke.mjs",
@@ -50,7 +49,7 @@
     "hooks:install": "lefthook install",
     "hooks:uninstall": "lefthook uninstall",
     "cloud:setup": "stll-cloud-setup",
-    "test:tooling": "bun test scripts/tooling-adoption.test.ts scripts/tooling-workflow.test.ts",
+    "test:tooling": "bun test scripts/tooling-adoption.test.ts scripts/tooling-workflow.test.ts scripts/typecheck-policy.test.ts",
     "rust:source-lint": "cargo ci-stella-lint"
   },
   "devDependencies": {
