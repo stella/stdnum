@@ -73,4 +73,4 @@ For security vulnerabilities, see
 
 ## TypeScript tooling
 
-Type checking uses `bun check --no-pretty --all --project=tsconfig.json` in the root and each package. Editors continue to use the TypeScript language service because Bun has no language server. tsdown generates declaration files with its oxc isolated-declarations generator, so exported values need explicit types; `scripts/generate-public-surface.ts` writes them for the generated modules. The root `typescript` devDependency stays only for `stll-toolchain-check` from `@stll/oxlint-config`, which runs its `tsc` to list the type-aware lint projects; it is removed after the next `@stll/oxlint-config` release.
+Type checking uses `bun check --no-pretty --all --project=tsconfig.json` in the root and each package. Editors continue to use the TypeScript language service because Bun has no language server. tsdown generates declaration files with its oxc isolated-declarations generator, so exported values need explicit types; `scripts/generate-public-surface.ts` writes them for the generated modules.

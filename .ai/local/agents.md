@@ -51,4 +51,4 @@
 
 ### TypeScript Tooling
 
-Use `bun run typecheck` for type checking in every checked project. Editors keep the TypeScript language service because Bun has no language server. tsdown emits declarations with the oxc generator (`dts: { generator: "oxc" }`), so exported values need explicit types; the public-surface generator writes them for generated modules. The root `typescript` devDependency stays only for `stll-toolchain-check` from `@stll/oxlint-config`, which runs its `tsc` to list type-aware lint projects; remove it after the next `@stll/oxlint-config` release.
+Use `bun run typecheck` for type checking in every checked project. Editors keep the TypeScript language service because Bun has no language server. tsdown emits declarations with the oxc generator (`dts: { generator: "oxc" }`), so exported values need explicit types; the public-surface generator writes them for generated modules.
