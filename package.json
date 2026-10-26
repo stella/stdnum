@@ -72,9 +72,9 @@
     "oxlint-tsgolint": "7.0.2003",
     "rut.js": "^2.1.0",
     "stdnum": "^1.12.6",
-    "tsdown": "0.23.0",
+    "tsdown": "0.23.1",
     "validate-polish": "^2.1.40",
-    "vite": "8.3.4"
+    "vite": "8.3.5"
   },
   "packageManager": "bun@1.4.4",
   "trustedDependencies": []
