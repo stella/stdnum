@@ -4,7 +4,7 @@ export default defineConfig({
   entry: { index: "src/index.ts" },
   tsconfig: "tsconfig.build.json",
   format: ["esm"],
-  dts: true,
+  dts: { generator: "oxc" },
   clean: true,
   fixedExtension: false,
   target: "es2022",

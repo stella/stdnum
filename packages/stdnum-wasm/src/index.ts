@@ -1,5 +1,6 @@
 import {
   asNativeBinding,
+  type NativeParsedIdentifier,
   type NativeStdnumBinding,
   type NativeValidateResult,
   type ValidatorMetadata,
@@ -55,7 +56,10 @@ export const format = async (id: string, value: string): Promise<string> =>
   (await getBinding()).format(id, value);
 export const generate = async (id: string): Promise<string | null> =>
   (await getBinding()).generate(id);
-export const parse = async (id: string, value: string) =>
+export const parse = async (
+  id: string,
+  value: string,
+): Promise<NativeParsedIdentifier | null> =>
   (await getBinding()).parse(id, value);
 
 export type {

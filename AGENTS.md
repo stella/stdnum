@@ -339,7 +339,6 @@ oxlint + oxfmt. Suppress a rule only with the rule name and a reason:
 - `bun install`
 - `bun run lint`
 - `bun run typecheck` (Bun checks the root and both package tsconfigs)
-- `bun run check:typecheck-parity`
 - `bun test`
 - `bun run oracle`
 - `bun run codegen:check`
@@ -384,4 +383,4 @@ oxlint + oxfmt. Suppress a rule only with the rule name and a reason:
 
 ### TypeScript Tooling
 
-Use `bun run typecheck` for type checking and `bun run check:typecheck-parity` to verify diagnostic coverage against TypeScript for every checked project. Editors keep the TypeScript language service because Bun has no language server. Keep `typescript` for editor support and declaration generation through tsdown.
+Use `bun run typecheck` for type checking in every checked project. Editors keep the TypeScript language service because Bun has no language server. tsdown emits declarations with the oxc generator (`dts: { generator: "oxc" }`), so exported values need explicit types; the public-surface generator writes them for generated modules.

@@ -6,6 +6,8 @@ export type ValidatorPattern<TValidator extends Validator = Validator> = {
   regex: RegExp;
 };
 
+type RegisteredValidator = (typeof allValidators)[number];
+
 export const toRegex = (validator: Validator): RegExp => {
   if (validator.candidatePattern === undefined) {
     throw new Error(`${validator.name} does not define a candidate pattern`);
@@ -21,15 +23,20 @@ export const toPatterns = <TValidator extends Validator>(
       validator,
       regex: toRegex(validator),
     }));
-export const byCountry = <TCountry extends CountryCode>(country: TCountry) =>
+export const byCountry = <TCountry extends CountryCode>(
+  country: TCountry,
+): ValidatorPattern<CountryValidator<TCountry>>[] =>
   toPatterns(
     allValidators.filter(
       (validator) =>
         validator.scope === "country" && validator.country === country,
     ) as unknown as readonly CountryValidator<TCountry>[],
   );
-export const byEntityType = (entityType: Validator["entityType"]) =>
+export const byEntityType = (
+  entityType: Validator["entityType"],
+): ValidatorPattern<RegisteredValidator>[] =>
   toPatterns(
     allValidators.filter((validator) => validator.entityType === entityType),
   );
-export const allPatterns = () => toPatterns(allValidators);
+export const allPatterns = (): ValidatorPattern<RegisteredValidator>[] =>
+  toPatterns(allValidators);

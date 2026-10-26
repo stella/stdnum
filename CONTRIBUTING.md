@@ -18,7 +18,6 @@ bun install
 bun run rust:check     # lint and test the Rust implementation
 bun run codegen:check  # verify generated bindings, types, and README
 bun run typecheck      # bun check for root and binding code
-bun run check:typecheck-parity # compare diagnostic coverage with TypeScript
 bun test               # test the TypeScript adapter
 bun run lint           # oxlint
 bun fmt
@@ -74,4 +73,4 @@ For security vulnerabilities, see
 
 ## TypeScript tooling
 
-Type checking uses `bun check --no-pretty --all --project=tsconfig.json` in the root and each package. CI also runs `bun run check:typecheck-parity` for all three projects. Editors continue to use the TypeScript language service because Bun has no language server; `typescript` also remains required for declaration generation through tsdown.
+Type checking uses `bun check --no-pretty --all --project=tsconfig.json` in the root and each package. Editors continue to use the TypeScript language service because Bun has no language server. tsdown generates declaration files with its oxc isolated-declarations generator, so exported values need explicit types; `scripts/generate-public-surface.ts` writes them for the generated modules.
