@@ -334,7 +334,7 @@ jobs:
       id-token: write # Required only for PyPI trusted publishing.
     steps:
       - name: Prepare exact Python wheel set
-        uses: stella/.github/.github/actions/pypi-publish-hardened@38c67ddd7ca18eec2996f4c2e5b99e5cd80def08
+        uses: stella/.github/.github/actions/pypi-publish-hardened@ba5f7da76aededf6f22814de93c72a49843fcc8e
         with:
           expected-version: ${{ needs.verify.outputs.version }}
           project-name: stella-stdnum
@@ -347,7 +347,7 @@ jobs:
           packages-dir: dist
           skip-existing: true
       - name: Verify published PyPI files
-        uses: stella/.github/.github/actions/pypi-publish-hardened/verify@38c67ddd7ca18eec2996f4c2e5b99e5cd80def08
+        uses: stella/.github/.github/actions/pypi-publish-hardened/verify@ba5f7da76aededf6f22814de93c72a49843fcc8e
         with:
           expected-version: ${{ needs.verify.outputs.version }}
           project-name: stella-stdnum
@@ -356,7 +356,7 @@ jobs:
     name: Finalize release
     needs: [verify, pack-native, pack-portable, publish-pypi]
     if: github.ref == 'refs/heads/main' && (needs.verify.outputs.publish == 'true')
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@38c67ddd7ca18eec2996f4c2e5b99e5cd80def08
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@ba5f7da76aededf6f22814de93c72a49843fcc8e
     with:
       package-files: |
         packages/stdnum/package.json
