@@ -56,7 +56,7 @@
     "@brazilian-utils/brazilian-utils": "^2.5.0",
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
-    "@stll/oxlint-config": "3.2.0",
+    "@stll/oxlint-config": "3.2.1",
     "@stll/oxlint-plugin": "0.7.0",
     "@stll/typescript-config": "0.10.0",
     "@types/node": "^26.6.5",
