@@ -188,8 +188,8 @@ jobs:
 
       - name: Setup shared stable Rust
         run: |
-          rustup toolchain install 1.99.0 --profile minimal --component rustfmt,clippy
-          rustup default 1.99.0
+          rustup toolchain install 1.99.1 --profile minimal --component rustfmt,clippy
+          rustup default 1.99.1
       - name: Install shared stable source checker
         run: >-
           cargo install --git https://github.com/stella/tooling
@@ -232,9 +232,9 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-1.99.0-${{ hashFiles('Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-1.99.1-${{ hashFiles('Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-1.99.0-
+            ${{ runner.os }}-cargo-1.99.1-
 
       - name: Rust checks (fmt, clippy, source lint, test)
         run: bun run rust:check
@@ -278,7 +278,7 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Install the WebAssembly build toolchain
         run: |
-          rustup target add wasm32-unknown-unknown --toolchain 1.99.0
+          rustup target add wasm32-unknown-unknown --toolchain 1.99.1
           cargo install wasm-bindgen-cli --version 0.2.129 --locked
       - run: bun run typecheck
       - run: bun run build
@@ -293,7 +293,7 @@ jobs:
       - name: Build the Python abi3 wheel
         uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
-          rust-toolchain: "1.99.0"
+          rust-toolchain: "1.99.1"
           args: >-
             --release
             --locked
