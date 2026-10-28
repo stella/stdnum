@@ -1,6 +1,12 @@
 name: CLA Assistant
 
 on:
+  workflow_dispatch:
+    inputs:
+      pull_requests:
+        description: Pull request numbers separated by commas or spaces
+        type: string
+        required: true
   issue_comment:
     types: [created]
   pull_request_target: # zizmor: ignore[dangerous-triggers] delegates to pinned reusable CLA workflow; never check out PR code here
@@ -19,6 +25,7 @@ jobs:
     if: >-
       (
         github.event_name == 'pull_request_target'
+        || github.event_name == 'workflow_dispatch'
       ) || (
         github.event_name == 'issue_comment'
         && github.event.issue.pull_request
