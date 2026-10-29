@@ -85,4 +85,10 @@ describe("release workflow semantics", () => {
     );
     expect(jobs["pack-portable"]).toContain('manifest.name !== "@stll/stdnum"');
   });
+
+  test("PyPI publishing uses the release-policy runner", () => {
+    expect(jobs["publish-pypi"]).toContain(
+      "runs-on: ubuntu-latest",
+    );
+  });
 });

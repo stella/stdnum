@@ -22,7 +22,7 @@ permissions:
 jobs:
   trust-check:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       trusted: ${{ steps.check.outputs.trusted }}
     steps:
@@ -50,7 +50,7 @@ jobs:
       github.event_name == 'pull_request'
       && needs.trust-check.outputs.trusted == 'true'
     needs: [trust-check]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -78,7 +78,7 @@ jobs:
       && (github.event_name != 'pull_request'
           || needs.trust-check.outputs.trusted == 'true')
     needs: [trust-check]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -102,7 +102,7 @@ jobs:
       && (github.event_name != 'pull_request'
           || needs.trust-check.outputs.trusted == 'true')
     needs: [trust-check]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -119,7 +119,7 @@ jobs:
       && (github.event_name != 'pull_request'
           || needs.trust-check.outputs.trusted == 'true')
     needs: [trust-check]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -138,7 +138,7 @@ jobs:
       && (github.event_name != 'pull_request'
           || needs.trust-check.outputs.trusted == 'true')
     needs: [trust-check]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -173,7 +173,7 @@ jobs:
       && (github.event_name != 'pull_request'
           || needs.trust-check.outputs.trusted == 'true')
     needs: [trust-check]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -267,7 +267,7 @@ jobs:
       && (github.event_name != 'pull_request'
           || needs.trust-check.outputs.trusted == 'true')
     needs: [trust-check]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -317,7 +317,7 @@ jobs:
       && (github.event_name != 'pull_request'
           || needs.trust-check.outputs.trusted == 'true')
     needs: [trust-check]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
