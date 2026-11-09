@@ -965,6 +965,13 @@ fn validate_no_fodselsnummer(value: String) -> ValidationResult {
       "Norwegian birth number contains an invalid date",
     );
   }
+  let birth_date = (u32::try_from(year).unwrap_or(u32::MAX), month, day);
+  if birth_date > crate::current_date() {
+    return error(
+      "component",
+      "Norwegian birth number contains a birth date in the future",
+    );
+  }
   Ok(value)
 }
 
@@ -1758,6 +1765,10 @@ mod tests {
   fn personal_identifiers_preserve_parsed_fields() {
     let parsed = no_fodselsnummer::parse("15108695088");
     assert_eq!(parsed.map(|value| value.birth_date.year), Some(1986));
+
+    // Checksums and the individual-number century are valid; the birth date
+    // (2039-01-01) has not happened yet.
+    assert!(validate_no_fodselsnummer("01013950187".to_owned()).is_err());
 
     let south_african = za_idnr::parse("7503305044089");
     assert_eq!(
