@@ -193,7 +193,7 @@ jobs:
       - name: Install shared stable source checker
         run: >-
           cargo install --git https://github.com/stella/tooling
-          --rev 0ad75da354a5efff11626f59dcf8e07a0d0aea48
+          --rev 51a4412dfe02203c24a3495f14ec99405acb7527
           --locked stella_source_lint
 
       - name: Install pinned Hawk
