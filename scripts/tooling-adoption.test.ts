@@ -8,9 +8,12 @@ import {
 } from "@stll/oxlint-plugin";
 
 import config from "../oxlint.config";
+import { isRecord, isStringArray, jsonPath } from "./json-values";
 
 const read = (path: string) =>
   readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
+
+const readJson = (path: string): unknown => JSON.parse(read(path));
 
 test("uses shared library defaults and the complete portable safety pack", () => {
   expect(config).toEqual(
@@ -24,37 +27,50 @@ test("uses shared library defaults and the complete portable safety pack", () =>
       expect(override.rules?.[rule]).toBe(severity);
     }
   }
-  const tsconfig = JSON.parse(read("tsconfig.json"));
-  expect(tsconfig.extends).toBe("@stll/typescript-config/node.json");
-  expect(tsconfig.compilerOptions).toBeUndefined();
+  const tsconfig = readJson("tsconfig.json");
+  expect(jsonPath(tsconfig, "extends")).toBe(
+    "@stll/typescript-config/node.json",
+  );
+  expect(jsonPath(tsconfig, "compilerOptions")).toBeUndefined();
   for (const workspace of ["stdnum", "stdnum-wasm"]) {
-    const workspaceConfig = JSON.parse(
-      read(`packages/${workspace}/tsconfig.json`),
+    const compilerOptions = jsonPath(
+      readJson(`packages/${workspace}/tsconfig.json`),
+      "compilerOptions",
     );
-    expect(Object.keys(workspaceConfig.compilerOptions)).toEqual(
-      workspace === "stdnum" ? ["paths", "types"] : ["paths"],
-    );
+    expect(
+      Object.keys(isRecord(compilerOptions) ? compilerOptions : {}),
+    ).toEqual(workspace === "stdnum" ? ["paths", "types"] : ["paths"]);
   }
 });
 
 test("declares runtime-only generated cloud setup with Rust checks", () => {
-  const toolchain = JSON.parse(read("stll-toolchain.json"));
-  expect(toolchain.cloud.install).toBe("bun install --frozen-lockfile");
-  expect(toolchain.cloud.rust.components).toEqual(["clippy", "rustfmt"]);
-  expect(toolchain.cloud.rust.targets).toEqual(["wasm32-unknown-unknown"]);
+  const toolchain = readJson("stll-toolchain.json");
+  expect(jsonPath(toolchain, "cloud", "install")).toBe(
+    "bun install --frozen-lockfile",
+  );
+  expect(jsonPath(toolchain, "cloud", "rust", "components")).toEqual([
+    "clippy",
+    "rustfmt",
+  ]);
+  expect(jsonPath(toolchain, "cloud", "rust", "targets")).toEqual([
+    "wasm32-unknown-unknown",
+  ]);
   const script = read(".agents/cloud-setup.sh");
   expect(script).toContain("Generated");
   expect(script).toContain(read(".node-version").trim());
   expect(script).toContain("install --frozen-lockfile");
   expect(script).not.toContain(".env.cloud");
-  const settings = JSON.parse(read(".claude/settings.json"));
-  expect(settings.hooks.SessionStart).toHaveLength(1);
+  const settings = readJson(".claude/settings.json");
+  expect(jsonPath(settings, "hooks", "SessionStart")).toHaveLength(1);
 });
 
 test("keeps third-party quarantine and exact first-party tooling exemptions", () => {
-  const bunfig = Bun.TOML.parse(read("bunfig.toml"));
-  expect(bunfig.install.minimumReleaseAge).toBe(432_000);
-  const exceptions = bunfig.install.minimumReleaseAgeExcludes;
+  const bunfig: unknown = Bun.TOML.parse(read("bunfig.toml"));
+  expect(jsonPath(bunfig, "install", "minimumReleaseAge")).toBe(432_000);
+  const exceptions = jsonPath(bunfig, "install", "minimumReleaseAgeExcludes");
+  if (!isStringArray(exceptions)) {
+    throw new Error("bunfig.toml must list minimumReleaseAgeExcludes");
+  }
   for (const name of [
     "@stll/oxlint-config",
     "@stll/oxlint-plugin",
@@ -62,12 +78,10 @@ test("keeps third-party quarantine and exact first-party tooling exemptions", ()
   ]) {
     expect(exceptions).toContain(name);
   }
-  expect(exceptions.every((name: string) => !name.includes("*"))).toBe(true);
+  expect(exceptions.every((name) => !name.includes("*"))).toBe(true);
   // A third-party exclusion is temporary: it names when quarantine admits it.
   const lines = read("bunfig.toml").split("\n");
-  for (const name of exceptions.filter(
-    (entry: string) => !entry.startsWith("@stll/"),
-  ))
+  for (const name of exceptions.filter((entry) => !entry.startsWith("@stll/")))
     expect(
       lines.some(
         (line) =>

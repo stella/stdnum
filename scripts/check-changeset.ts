@@ -9,6 +9,7 @@ import {
   RUNTIME_CARGO_MANIFESTS,
   RUNTIME_MANIFESTS,
 } from "./changeset-policy";
+import { isRecord } from "./json-values";
 
 const BASE_REF = process.env.CHANGESET_BASE_REF ?? "origin/main";
 const RUNTIME_SOURCE_RE =
@@ -65,14 +66,15 @@ const manifestAffectsPublishedRuntime = async (
   const previous = await $`git show ${BASE_REF}:${file}`.nothrow().quiet();
   if (previous.exitCode !== 0) return true;
 
-  let before: Record<string, unknown>;
-  let after: Record<string, unknown>;
+  let before: unknown;
+  let after: unknown;
   try {
     before = JSON.parse(previous.stdout.toString());
     after = JSON.parse(readFileSync(file, "utf8"));
   } catch {
     return true;
   }
+  if (!isRecord(before) || !isRecord(after)) return true;
 
   // Development-only dependencies do not change the published package. All
   // other manifest fields remain release-significant.
