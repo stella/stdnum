@@ -220,9 +220,9 @@ jobs:
         # snapshot-hygiene gate, `cargo ci-snapshot`); avoids a from-source
         # compile on every CI run. taiki-e/install-action verifies release
         # checksums, unlike a raw `curl | tar`.
-        uses: taiki-e/install-action@682ce6c3c696a4cd5168a05f98e51aa02b877941 # v2.89.1
+        uses: taiki-e/install-action@b80e2bb2635f28eb98b9fce1e2f0887e1535c6b2 # v2.90.0
         with:
-          tool: nextest@0.9.140,cargo-deny@0.20.2,cargo-insta@1.48.0
+          tool: nextest@0.9.151,cargo-deny@0.20.2,cargo-insta@1.49.0
 
       - name: Cache Rust build
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
