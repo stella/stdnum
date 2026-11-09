@@ -279,7 +279,7 @@ jobs:
       - name: Install the WebAssembly build toolchain
         run: |
           rustup target add wasm32-unknown-unknown --toolchain 1.99.1
-          cargo install wasm-bindgen-cli --version 0.2.129 --locked
+          cargo install wasm-bindgen-cli --version 0.2.130 --locked
       - run: bun run typecheck
       - run: bun run build
       - run: bun run performance

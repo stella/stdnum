@@ -204,7 +204,7 @@ jobs:
           rustup toolchain install 1.99.1 --profile minimal
           rustup target add wasm32-unknown-unknown --toolchain 1.99.1
           rustup default 1.99.1
-          cargo install wasm-bindgen-cli --version 0.2.129 --locked
+          cargo install wasm-bindgen-cli --version 0.2.130 --locked
 
       - name: Build portable packages
         run: |
