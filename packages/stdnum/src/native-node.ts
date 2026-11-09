@@ -27,7 +27,10 @@ export const loadNativeStdnumBinding = (
   const platform = options.platform ?? process.platform;
   const arch = options.arch ?? process.arch;
   const libc = options.libc ?? detectLibc(platform);
-  const requireModule = options.requireModule ?? createRequire(import.meta.url);
+  // Node's require returns `any`; a loaded module is unknown until
+  // `asNativeBinding` or `isLoaderModule` narrows it.
+  const requireModule: (specifier: string) => unknown =
+    options.requireModule ?? createRequire(import.meta.url);
   const match = NATIVE_BINDING_TARGETS.find(
     ([targetPlatform, targetArch, targetLibc]) =>
       targetPlatform === platform &&
