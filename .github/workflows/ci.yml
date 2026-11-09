@@ -1,9 +1,9 @@
 name: CI
 
 env:
-  HAWK_RUST_TOOLCHAIN: "1.97.1"
-  HAWK_VERSION: "0.1.12"
-  HAWK_X86_64_UNKNOWN_LINUX_GNU_SHA256: "f9cafbbc5777b2b00c362619b8b62af942d2900a121acae2e73210a8ebffd857"
+  HAWK_RUST_TOOLCHAIN: "1.99.0"
+  HAWK_VERSION: "0.1.17"
+  HAWK_X86_64_UNKNOWN_LINUX_GNU_SHA256: "f5a76a43aa6be1e55e44f5eac13310193ba77729673799250065f1d201018016"
 
 on:
   push:
@@ -212,7 +212,7 @@ jobs:
           mkdir -p "$install_dir"
           tar -xzf "$archive" -C "$install_dir" --strip-components=1
           echo "$install_dir" >> "$GITHUB_PATH"
-          rustup toolchain install 1.97.1 --profile minimal
+          rustup toolchain install 1.99.0 --profile minimal
 
       - name: Install pinned Rust CI tools (checksum-verified)
         # Prebuilt nextest (the `cargo ci-test` runner), cargo-deny (the
