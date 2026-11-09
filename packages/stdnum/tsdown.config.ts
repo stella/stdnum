@@ -10,15 +10,16 @@ const collect = (directory: string): string[] => {
   for (const entry of directoryEntries) {
     const { name } = entry;
     const path = join(directory, name);
-    if (entry.isDirectory() === true) result.push(...collect(path));
-    else if (entry.isFile() === true && name.endsWith(".ts") === true)
-      result.push(path);
+    if (entry.isDirectory()) result.push(...collect(path));
+    else if (entry.isFile() && name.endsWith(".ts")) result.push(path);
   }
   return result;
 };
 
-const entries = Object.fromEntries([
-  ...collect("src/generated").map((path) => [
+// Entry name to source path; typed as pairs so `Object.fromEntries` keeps the
+// value type instead of widening to `any`.
+const entryPoints: Array<[string, string]> = [
+  ...collect("src/generated").map((path): [string, string] => [
     relative("src/generated", path).replace(/\.ts$/u, ""),
     path,
   ]),
@@ -30,7 +31,8 @@ const entries = Object.fromEntries([
   ["runtime", "src/runtime.ts"],
   ["runtime-browser", "src/runtime-browser.ts"],
   ["runtime-core", "src/runtime-core.ts"],
-]);
+];
+const entries = Object.fromEntries(entryPoints);
 
 export default defineConfig({
   entry: entries,

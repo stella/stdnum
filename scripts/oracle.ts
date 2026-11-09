@@ -83,8 +83,9 @@ const discover = (): Discovered[] => {
   for (const [ns, mod] of Object.entries(all)) {
     if (isValidator(mod)) {
       result.push({
+        // Top-level generated exports are the global validators; country
+        // validators live one level down in their country namespace.
         key: ns,
-        country: mod.country,
         entityType: mod.entityType,
         validator: mod,
       });
@@ -93,7 +94,7 @@ const discover = (): Discovered[] => {
         if (isValidator(v)) {
           result.push({
             key: `${ns}.${k}`,
-            country: v.country,
+            country: v.scope === "country" ? v.country : undefined,
             entityType: v.entityType,
             validator: v,
           });
@@ -202,7 +203,7 @@ const validDateParts = (minYear: number, maxYear: number) =>
     .filter(({ year, month, day }) => isValidDateParts(year, month, day));
 
 const rcShape = (length: 9 | 10): fc.Arbitrary<string> =>
-  (length === 9
+  length === 9
     ? validDateParts(1900, 1953).chain(({ year, month, day }) =>
         fc
           .tuple(
@@ -225,7 +226,7 @@ const rcShape = (length: 9 | 10): fc.Arbitrary<string> =>
             const yy = p2(year % 100);
             return `${yy}${p2(rawMonth)}${p2(day)}${p3(serial)}${check}`;
           }),
-      )) as fc.Arbitrary<string>;
+      );
 
 const bgEgnShape = validDateParts(1800, 2099).chain(({ year, month, day }) =>
   digs(4).map((rest) => {
@@ -629,7 +630,7 @@ const hasLocalflavor = () =>
 const hasRust = () => probe(`test -f ${RUST_BIN}`);
 const hasRubyValvat = () => probe(`${BUNDLER} ruby -e "require 'valvat'"`);
 const hasRubySsn = () =>
-  probe(`${BUNDLER} ruby -e ` + `"require 'social_security_number'"`);
+  probe(`${BUNDLER} ruby -e "require 'social_security_number'"`);
 const hasPhp = () =>
   probe(`php -r "require 'scripts/oracle/vendor/autoload.php';"`);
 
@@ -1278,7 +1279,7 @@ const buildOracles = (): OracleEntry[] => {
     source: "iban.js",
     key: "iban",
     tier: tierFor("iban.js", "iban"),
-    validate: (v) => v.map((x) => IBAN.isValid(x) as boolean),
+    validate: (v) => v.map((x) => IBAN.isValid(x)),
   });
 
   // valvat (Ruby)
@@ -1509,12 +1510,10 @@ const run = () => {
   }
 
   console.log(
-    `\n${String(total)} oracle total,` + ` ${String(failures)} disagreements`,
+    `\n${String(total)} oracle total, ${String(failures)} disagreements`,
   );
   if (MODE === "survey") {
-    console.log(
-      `${String(mutTotal)} mutant total,` + ` ${String(mutEsc)} escapes`,
-    );
+    console.log(`${String(mutTotal)} mutant total, ${String(mutEsc)} escapes`);
   }
   process.exit(shouldFailOnDisagreements && failures > 0 ? 1 : 0);
 };

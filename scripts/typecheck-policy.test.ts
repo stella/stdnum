@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 
 import rootPackage from "../package.json";
+import { jsonPath } from "./json-values";
 
 const bunTypecheck = "bun check --no-pretty --all --project=tsconfig.json";
 const packagePaths = rootPackage.workspaces.flatMap((pattern) => [
@@ -8,10 +9,10 @@ const packagePaths = rootPackage.workspaces.flatMap((pattern) => [
 ]);
 
 test("typecheck covers every workspace configuration", async () => {
-  const typecheckDirectories = [];
+  const typecheckDirectories: string[] = [];
   for (const path of packagePaths) {
-    const packageJson = await Bun.file(path).json();
-    const typecheck = packageJson.scripts?.typecheck;
+    const packageJson: unknown = await Bun.file(path).json();
+    const typecheck = jsonPath(packageJson, "scripts", "typecheck");
     if (typecheck === undefined) continue;
     expect(typecheck).toBe(bunTypecheck);
     typecheckDirectories.push(path.replace(/\/package\.json$/, ""));

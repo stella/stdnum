@@ -1,25 +1,15 @@
 import { expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 
+import { isRecord, readJsonRecord, readJsonRecordField } from "./json-values";
+
 const workflow = readFileSync(
   new URL("../.github/workflows/ci.yml", import.meta.url),
   "utf8",
 );
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const readJsonRecord = (path: string): Record<string, unknown> => {
-  const parsed: unknown = JSON.parse(readFileSync(path, "utf8"));
-  if (!isRecord(parsed)) throw new Error(`${path} must contain a JSON object`);
-  return parsed;
-};
-
-const readPackageScripts = (): Record<string, unknown> => {
-  const { scripts } = readJsonRecord("package.json");
-  if (!isRecord(scripts)) throw new Error("package.json must declare scripts");
-  return scripts;
-};
+const readPackageScripts = (): Record<string, unknown> =>
+  readJsonRecordField("package.json", "scripts");
 
 const readRustExceptionPins = (): string[] => {
   const { rustExceptions } = readJsonRecord("stll-toolchain.json");

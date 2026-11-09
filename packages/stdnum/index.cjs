@@ -91,6 +91,7 @@ exports.loadNativeBinding = () => {
     throw new Error(
       `./stella_stdnum_napi.node: ${describe(sidecarError)}\n` +
         `platform package: ${describe(error)}`,
+      { cause: error },
     );
   }
 };
