@@ -34,9 +34,9 @@ jobs:
       - name: Install pinned Rust tools (checksum-verified)
         # nextest is the test runner used by cargo-mutants. taiki-e/install-action
         # verifies release checksums, unlike a raw `curl | tar`.
-        uses: taiki-e/install-action@682ce6c3c696a4cd5168a05f98e51aa02b877941 # v2.89.1
+        uses: taiki-e/install-action@b80e2bb2635f28eb98b9fce1e2f0887e1535c6b2 # v2.90.0
         with:
-          tool: nextest@0.9.140,cargo-mutants@27.1.0
+          tool: nextest@0.9.151,cargo-mutants@27.1.0
 
       - name: Cache Rust build
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0

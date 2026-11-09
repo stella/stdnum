@@ -6,6 +6,34 @@ const workflow = readFileSync(
   "utf8",
 );
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readJsonRecord = (path: string): Record<string, unknown> => {
+  const parsed: unknown = JSON.parse(readFileSync(path, "utf8"));
+  if (!isRecord(parsed)) throw new Error(`${path} must contain a JSON object`);
+  return parsed;
+};
+
+const readPackageScripts = (): Record<string, unknown> => {
+  const { scripts } = readJsonRecord("package.json");
+  if (!isRecord(scripts)) throw new Error("package.json must declare scripts");
+  return scripts;
+};
+
+const readRustExceptionPins = (): string[] => {
+  const { rustExceptions } = readJsonRecord("stll-toolchain.json");
+  if (!Array.isArray(rustExceptions)) {
+    throw new Error("stll-toolchain.json must declare rustExceptions");
+  }
+  return rustExceptions.map((exception: unknown) => {
+    if (!isRecord(exception) || typeof exception["pin"] !== "string") {
+      throw new Error("every Rust exception must declare a pin");
+    }
+    return exception["pin"];
+  });
+};
+
 test("runs the shared tooling checks in the lint job", () => {
   const lint = workflow
     .split("  lint:\n")
@@ -20,29 +48,26 @@ test("runs the shared tooling checks in the lint job", () => {
 });
 
 test("replaces compiler-private Dylint with the pinned stable source checker", () => {
-  expect(workflow).toContain("--rev 0ad75da354a5efff11626f59dcf8e07a0d0aea48");
+  expect(workflow).toContain("--rev 51a4412dfe02203c24a3495f14ec99405acb7527");
   expect(workflow).toContain("--locked stella_source_lint");
   expect(workflow).not.toContain("cargo-dylint");
   expect(workflow).not.toContain("dylint-link");
   expect(workflow).not.toContain("nightly-2026-04-16");
-  const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
-  expect(packageJson.scripts["rust:source-lint"]).toBe("cargo ci-stella-lint");
-  expect(packageJson.scripts["rust:check"]).toContain(
-    "bun run rust:source-lint",
-  );
+  const scripts = readPackageScripts();
+  expect(scripts["rust:source-lint"]).toBe("cargo ci-stella-lint");
+  expect(scripts["rust:check"]).toContain("bun run rust:source-lint");
   const cargoConfig = readFileSync(".cargo/config.toml", "utf8");
   expect(cargoConfig).toContain('ci-stella-lint = "stella-lint ."');
   expect(cargoConfig).not.toContain("ci-dylint");
 });
 
 test("keeps the Hawk install pin aligned with its authorized toolchain", () => {
-  const configuration = JSON.parse(readFileSync("stll-toolchain.json", "utf8"));
   const installPins = [
     ...workflow.matchAll(
       /rustup toolchain install (\d+\.\d+\.\d+) --profile minimal/g,
     ),
   ].map((match) => match[1]);
-  for (const { pin } of configuration.rustExceptions) {
+  for (const pin of readRustExceptionPins()) {
     expect(installPins).toContain(pin);
     expect(workflow).toContain(`HAWK_RUST_TOOLCHAIN: "${pin}"`);
   }

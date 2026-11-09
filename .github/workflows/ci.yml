@@ -1,9 +1,9 @@
 name: CI
 
 env:
-  HAWK_RUST_TOOLCHAIN: "1.97.1"
-  HAWK_VERSION: "0.1.12"
-  HAWK_X86_64_UNKNOWN_LINUX_GNU_SHA256: "f9cafbbc5777b2b00c362619b8b62af942d2900a121acae2e73210a8ebffd857"
+  HAWK_RUST_TOOLCHAIN: "1.99.0"
+  HAWK_VERSION: "0.1.17"
+  HAWK_X86_64_UNKNOWN_LINUX_GNU_SHA256: "f5a76a43aa6be1e55e44f5eac13310193ba77729673799250065f1d201018016"
 
 on:
   push:
@@ -193,7 +193,7 @@ jobs:
       - name: Install shared stable source checker
         run: >-
           cargo install --git https://github.com/stella/tooling
-          --rev 0ad75da354a5efff11626f59dcf8e07a0d0aea48
+          --rev 51a4412dfe02203c24a3495f14ec99405acb7527
           --locked stella_source_lint
 
       - name: Install pinned Hawk
@@ -212,7 +212,7 @@ jobs:
           mkdir -p "$install_dir"
           tar -xzf "$archive" -C "$install_dir" --strip-components=1
           echo "$install_dir" >> "$GITHUB_PATH"
-          rustup toolchain install 1.97.1 --profile minimal
+          rustup toolchain install 1.99.0 --profile minimal
 
       - name: Install pinned Rust CI tools (checksum-verified)
         # Prebuilt nextest (the `cargo ci-test` runner), cargo-deny (the
@@ -220,9 +220,9 @@ jobs:
         # snapshot-hygiene gate, `cargo ci-snapshot`); avoids a from-source
         # compile on every CI run. taiki-e/install-action verifies release
         # checksums, unlike a raw `curl | tar`.
-        uses: taiki-e/install-action@682ce6c3c696a4cd5168a05f98e51aa02b877941 # v2.89.1
+        uses: taiki-e/install-action@b80e2bb2635f28eb98b9fce1e2f0887e1535c6b2 # v2.90.0
         with:
-          tool: nextest@0.9.140,cargo-deny@0.20.2,cargo-insta@1.48.0
+          tool: nextest@0.9.151,cargo-deny@0.20.2,cargo-insta@1.49.0
 
       - name: Cache Rust build
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
