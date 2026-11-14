@@ -2,4 +2,4 @@
 "@stll/stdnum": patch
 ---
 
-Refresh Rust dependencies and align generated WebAssembly bindings with wasm-bindgen 0.2.130 while preserving the public validation API.
+Refresh Rust supporting dependencies while preserving the public validation API and the established WebAssembly size profile.
