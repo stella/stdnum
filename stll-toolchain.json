@@ -5,13 +5,5 @@
       "components": ["clippy", "rustfmt"],
       "targets": ["wasm32-unknown-unknown"]
     }
-  },
-  "rustExceptions": [
-    {
-      "pin": "1.99.0",
-      "reason": "cargo-hawk compiler-private APIs require Rust 1.99.0; ordinary Rust checks use shared Rust 1.99.1.",
-      "tracking": "https://github.com/stella/tooling/issues/99",
-      "expires": "2026-11-11"
-    }
-  ]
+  }
 }
