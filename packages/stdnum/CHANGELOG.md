@@ -1,5 +1,27 @@
 # @stll/stdnum
 
+## 2.3.3
+
+### Patch Changes
+
+- [#238](https://github.com/stella/stdnum/pull/238) [`aa1c502`](https://github.com/stella/stdnum/commit/aa1c502d2e69d1ff875267b6fc94b132b91f11ef) Thanks [@jan-kubica](https://github.com/jan-kubica)! - License the npm and Python packages under Apache-2.0 and update the published license metadata.
+
+- [#308](https://github.com/stella/stdnum/pull/308) [`bdf5a5d`](https://github.com/stella/stdnum/commit/bdf5a5d224654584337ab535f99982007cc7db2c) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Refresh Rust supporting dependencies while preserving the public validation API and the established WebAssembly size profile.
+
+- [#250](https://github.com/stella/stdnum/pull/250) [`2bd7e1d`](https://github.com/stella/stdnum/commit/2bd7e1de10cde66853acd1e05d806f4ace6802e0) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Update the napi, pyo3, wasm-bindgen and thiserror crates.
+
+- [#302](https://github.com/stella/stdnum/pull/302) [`45e5f5c`](https://github.com/stella/stdnum/commit/45e5f5c1d5dd0127a8abf8ae40aea270229ef445) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Update the napi crates.
+
+- [#303](https://github.com/stella/stdnum/pull/303) [`cd64506`](https://github.com/stella/stdnum/commit/cd6450646f15fa92c79ca25e72e3dc4dca30ce1a) Thanks [@jan-kubica](https://github.com/jan-kubica)! - The native binding loader attaches the platform package failure as the `cause` of the error it throws, and treats a loaded module as unknown until the binding contract check accepts it.
+
+- [#302](https://github.com/stella/stdnum/pull/302) [`45e5f5c`](https://github.com/stella/stdnum/commit/45e5f5c1d5dd0127a8abf8ae40aea270229ef445) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Reject Norwegian birth numbers (fødselsnummer) whose birth date is in the future, as Danish CPR numbers already are.
+
+- [#288](https://github.com/stella/stdnum/pull/288) [`2c50e85`](https://github.com/stella/stdnum/commit/2c50e85e2ef9264f5d66b1874e224d801381f9ce) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Refresh the Rust property-test runtime to Proptest 1.12, adopting synchronized panic-hook initialization and persisted-failure reporting fixes while preserving existing generators and regression seeds.
+
+- [#287](https://github.com/stella/stdnum/pull/287) [`1d498dd`](https://github.com/stella/stdnum/commit/1d498ddfa0b1fe2762383a07b6fd138750217134) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Refresh the Python binding runtime to PyO3 0.30.1, adopting its default exclusion of implicit class extraction while preserving the Python 3.11 abi3 wheel floor.
+
+- [#285](https://github.com/stella/stdnum/pull/285) [`d7557e2`](https://github.com/stella/stdnum/commit/d7557e268e77b39bba58e29c0c4d233f13ddfc95) Thanks [@jan-kubica](https://github.com/jan-kubica)! - Refresh SHA-2, JSON fixtures and N-API generator/runtime patch dependencies without changing the public validation API.
+
 ## 2.3.2
 
 ### Patch Changes
