@@ -71,7 +71,7 @@
     "oxlint": "1.89.0",
     "oxlint-tsgolint": "7.0.2005",
     "rut.js": "^2.1.0",
-    "stdnum": "^1.12.6",
+    "stdnum": "^1.15.0",
     "tsdown": "0.23.5",
     "validate-polish": "^2.1.40",
     "vite": "8.3.5"
