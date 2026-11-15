@@ -13,7 +13,7 @@ jobs:
     if: github.repository == 'stella/stdnum'
     permissions:
       contents: read
-    uses: stella/.github/.github/workflows/quarantine-prune.yml@3e9057a176377ddfa34d7897025934d1feb7ce9f
+    uses: stella/.github/.github/workflows/quarantine-prune.yml@41fbea3b521bfc57b791003918de97f153d790a7
     secrets:
       CHANGELOG_APP_ID: ${{ secrets.CHANGELOG_APP_ID }}
       CHANGELOG_APP_PRIVATE_KEY: ${{ secrets.CHANGELOG_APP_PRIVATE_KEY }}

@@ -15,7 +15,7 @@ jobs:
     name: Reconcile
     permissions:
       contents: read
-    uses: stella/.github/.github/workflows/npm-release-reconcile.yml@3e9057a176377ddfa34d7897025934d1feb7ce9f
+    uses: stella/.github/.github/workflows/npm-release-reconcile.yml@41fbea3b521bfc57b791003918de97f153d790a7
     with:
       package-files: |
         packages/stdnum/package.json
