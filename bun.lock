@@ -73,6 +73,7 @@
       "version": "2.3.2",
     },
   },
+  "trustedDependencies": [],
   "packages": {
     "@brazilian-utils/brazilian-utils": ["@brazilian-utils/brazilian-utils@2.5.0", "", {}, "sha512-rWXbTGN+8irKr5fe6/mtZ/vc/qoDBGIR57RzuwGZ90uV4/SxG00ehPo77RYviOhSzenKbYbEMDMyd8GHjmF6sg=="],
 
@@ -454,7 +455,7 @@
 
     "rut.js": ["rut.js@2.1.0", "", {}, "sha512-v8tXUbqycX2frkeZBcCJgn2dbZE29S21bOF+tRmow58m2qEVz5lGLmNaJ9ahTRfj3WEfwl55mTZi8qqE91w81g=="],
 
-    "semver": ["semver@7.8.5", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA=="],
+    "semver": ["semver@7.8.6", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-9lpSSU4Mly3mrtruwLs1eLK6+gzbzqeBFwRNjIjE+9LuDpWdYctrQlQ3ej1Ilgi7gknpsTRnPoLP8DpCHqHIJw=="],
 
     "shell-quote": ["shell-quote@1.12.0", "", {}, "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q=="],
 
@@ -493,8 +494,6 @@
     "yaml": ["yaml@2.9.1", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-3NxN8+78OdzbT7C/WjGsyfPAtJaN3FNDsWxv7Y7mcDsT/oOmgW8BpyQQFFBnvZE3j9Y2Sdz1ULFLezL7Eb2yFw=="],
 
     "yuku": ["yuku@0.27.0", "", { "optionalDependencies": { "@yuku-toolchain/darwin-arm64": "0.27.0", "@yuku-toolchain/darwin-x64": "0.27.0", "@yuku-toolchain/linux-arm64": "0.27.0", "@yuku-toolchain/linux-x64": "0.27.0", "@yuku-toolchain/win32-arm64": "0.27.0", "@yuku-toolchain/win32-x64": "0.27.0" }, "peerDependencies": { "@yuku-toolchain/wasm": "0.27.0" }, "optionalPeers": ["@yuku-toolchain/wasm"] }, "sha512-YmSD4xYlESRi8egxzC4guegQdMhAcz1G9NUsMNrTABAIV9dQxoBzDC7ZyAG/dSG18o1Oxt4xDok2irvPy9FSJQ=="],
-
-    "@stll/oxlint-config/semver": ["semver@7.8.6", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-9lpSSU4Mly3mrtruwLs1eLK6+gzbzqeBFwRNjIjE+9LuDpWdYctrQlQ3ej1Ilgi7gknpsTRnPoLP8DpCHqHIJw=="],
 
     "vite/rolldown": ["rolldown@1.2.18", "", { "dependencies": { "@oxc-project/types": "=0.156.0", "@rolldown/pluginutils": "^1.0.0" }, "optionalDependencies": { "@rolldown/binding-android-arm-eabi": "1.2.18", "@rolldown/binding-android-arm64": "1.2.18", "@rolldown/binding-darwin-arm64": "1.2.18", "@rolldown/binding-darwin-x64": "1.2.18", "@rolldown/binding-freebsd-x64": "1.2.18", "@rolldown/binding-linux-arm-gnueabihf": "1.2.18", "@rolldown/binding-linux-arm64-gnu": "1.2.18", "@rolldown/binding-linux-arm64-musl": "1.2.18", "@rolldown/binding-linux-ppc64-gnu": "1.2.18", "@rolldown/binding-linux-s390x-gnu": "1.2.18", "@rolldown/binding-linux-x64-gnu": "1.2.18", "@rolldown/binding-linux-x64-musl": "1.2.18", "@rolldown/binding-openharmony-arm64": "1.2.18", "@rolldown/binding-win32-arm64-msvc": "1.2.18", "@rolldown/binding-win32-x64-msvc": "1.2.18" }, "bin": { "rolldown": "./bin/cli.mjs" } }, "sha512-C1uuT3UR60SShuCaPQFAAZyefJCWZlAKB02BV3BuPE2Rs4fevRQltEKoFO2tV5W9/eJhU5RieV6vJj3euulfNQ=="],
 
