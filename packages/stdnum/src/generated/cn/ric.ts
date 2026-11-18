@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const ric: CountryValidator<"CN", ParsedPersonId> =
-  createValidator("cn.ric", 36);
+const ric: CountryValidator<"CN", ParsedPersonId> = createValidator(
+  "cn.ric",
+  36,
+);
 
 export default ric;
-export const compact = ric.compact;
-export const format = ric.format;
-export const validate = ric.validate;
+export const compact: (value: string) => string = ric.compact;
+export const format: (value: string) => string = ric.format;
+export const validate: (value: string) => ValidateResult = ric.validate;
 export const generate = (): string =>
   ric.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator cn.ric cannot generate values",
-    );
+    throw new Error("Validator cn.ric cannot generate values");
   })();
-export const parse = ric.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = ric.parse;

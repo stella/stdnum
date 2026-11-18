@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const hetu: CountryValidator<"FI", ParsedPersonId> =
-  createValidator("fi.hetu", 71);
+const hetu: CountryValidator<"FI", ParsedPersonId> = createValidator(
+  "fi.hetu",
+  71,
+);
 
 export default hetu;
-export const compact = hetu.compact;
-export const format = hetu.format;
-export const validate = hetu.validate;
+export const compact: (value: string) => string = hetu.compact;
+export const format: (value: string) => string = hetu.format;
+export const validate: (value: string) => ValidateResult = hetu.validate;
 export const generate = (): string =>
   hetu.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator fi.hetu cannot generate values",
-    );
+    throw new Error("Validator fi.hetu cannot generate values");
   })();
-export const parse = hetu.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = hetu.parse;

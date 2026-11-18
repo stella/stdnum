@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const curp: CountryValidator<"MX", ParsedPersonId> =
-  createValidator("mx.curp", 129);
+const curp: CountryValidator<"MX", ParsedPersonId> = createValidator(
+  "mx.curp",
+  129,
+);
 
 export default curp;
-export const compact = curp.compact;
-export const format = curp.format;
-export const validate = curp.validate;
+export const compact: (value: string) => string = curp.compact;
+export const format: (value: string) => string = curp.format;
+export const validate: (value: string) => ValidateResult = curp.validate;
 export const generate = (): string =>
   curp.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator mx.curp cannot generate values",
-    );
+    throw new Error("Validator mx.curp cannot generate values");
   })();
-export const parse = curp.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = curp.parse;

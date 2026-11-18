@@ -63,7 +63,7 @@ fn vertical_slice_preserves_typed_errors() {
       assert!(result.is_err(), "{id} unexpectedly accepted {value}");
       if let Err(error) = result {
         assert_eq!(error.code(), expected_code);
-        assert!(!error.message().is_empty());
+        assert_ne!(error.message(), "");
       }
     }
   }

@@ -2,25 +2,27 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const fodselsnummer: CountryValidator<
-  "NO",
-  ParsedPersonId
-> = createValidator("no.fodselsnummer", 137);
+const fodselsnummer: CountryValidator<"NO", ParsedPersonId> = createValidator(
+  "no.fodselsnummer",
+  137,
+);
 
 export default fodselsnummer;
-export const compact = fodselsnummer.compact;
-export const format = fodselsnummer.format;
-export const validate = fodselsnummer.validate;
+export const compact: (value: string) => string = fodselsnummer.compact;
+export const format: (value: string) => string = fodselsnummer.format;
+export const validate: (value: string) => ValidateResult =
+  fodselsnummer.validate;
 export const generate = (): string =>
   fodselsnummer.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator no.fodselsnummer cannot generate values",
-    );
+    throw new Error("Validator no.fodselsnummer cannot generate values");
   })();
-export const parse = fodselsnummer.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = fodselsnummer.parse;

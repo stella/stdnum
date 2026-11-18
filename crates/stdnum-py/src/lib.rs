@@ -5,7 +5,7 @@ use stella_stdnum_core::{
 };
 
 /// A validation error returned as structured Python data.
-#[pyclass(frozen, get_all, skip_from_py_object, name = "ValidationError")]
+#[pyclass(frozen, get_all, name = "ValidationError")]
 #[derive(Clone)]
 struct PyValidationError {
   code: String,
@@ -355,7 +355,7 @@ mod tests {
       return Ok(());
     };
     assert_eq!(error.code, "INVALID_FORMAT");
-    assert!(!error.message.is_empty());
+    assert_ne!(error.message, "");
     Ok(())
   }
 

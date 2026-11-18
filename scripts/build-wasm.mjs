@@ -3,15 +3,8 @@ import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const repoRoot = dirname(
-  dirname(fileURLToPath(import.meta.url)),
-);
-const output = join(
-  repoRoot,
-  "packages",
-  "stdnum-wasm",
-  "native",
-);
+const repoRoot = dirname(dirname(fileURLToPath(import.meta.url)));
+const output = join(repoRoot, "packages", "stdnum-wasm", "native");
 mkdirSync(output, { recursive: true });
 
 execFileSync(

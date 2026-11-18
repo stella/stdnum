@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nir: CountryValidator<"FR", ParsedPersonId> =
-  createValidator("fr.nir", 75);
+const nir: CountryValidator<"FR", ParsedPersonId> = createValidator(
+  "fr.nir",
+  75,
+);
 
 export default nir;
-export const compact = nir.compact;
-export const format = nir.format;
-export const validate = nir.validate;
+export const compact: (value: string) => string = nir.compact;
+export const format: (value: string) => string = nir.format;
+export const validate: (value: string) => ValidateResult = nir.validate;
 export const generate = (): string =>
   nir.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator fr.nir cannot generate values",
-    );
+    throw new Error("Validator fr.nir cannot generate values");
   })();
-export const parse = nir.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = nir.parse;

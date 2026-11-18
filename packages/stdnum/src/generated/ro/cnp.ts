@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const cnp: CountryValidator<"RO", ParsedPersonId> =
-  createValidator("ro.cnp", 150);
+const cnp: CountryValidator<"RO", ParsedPersonId> = createValidator(
+  "ro.cnp",
+  150,
+);
 
 export default cnp;
-export const compact = cnp.compact;
-export const format = cnp.format;
-export const validate = cnp.validate;
+export const compact: (value: string) => string = cnp.compact;
+export const format: (value: string) => string = cnp.format;
+export const validate: (value: string) => ValidateResult = cnp.validate;
 export const generate = (): string =>
   cnp.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ro.cnp cannot generate values",
-    );
+    throw new Error("Validator ro.cnp cannot generate values");
   })();
-export const parse = cnp.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = cnp.parse;

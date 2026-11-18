@@ -1,9 +1,12 @@
 {
-  "extends": "@stll/typescript-config/library.json",
-  "compilerOptions": {
-    "types": ["node", "bun-types"],
-    "noEmit": true
-  },
-  "include": ["oxlint.config.ts"],
-  "exclude": ["node_modules"]
+  "extends": "@stll/typescript-config/node.json",
+  "include": [
+    "oxlint.config.ts",
+    "packages/*/index.cjs",
+    "packages/*/index.d.cts",
+    "packages/*/tsdown.config.ts",
+    "packages/native-modules.d.ts"
+  ],
+  "exclude": ["node_modules"],
+  "files": ["packages/stdnum/index.cjs"]
 }

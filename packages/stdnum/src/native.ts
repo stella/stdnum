@@ -1,8 +1,4 @@
-import type {
-  CardNetwork,
-  CountryCode,
-  ErrorCode,
-} from "./types";
+import type { CardNetwork, CountryCode, ErrorCode } from "./types";
 
 export type NativeValidationError = {
   code: ErrorCode;
@@ -64,34 +60,16 @@ export type NativeStdnumBinding = {
     index: number,
     value: string,
   ): number | NativeValidationError;
-  isValidCanonicalIndex?(
-    this: void,
-    index: number,
-    value: string,
-  ): boolean;
-  supportsCanonicalValidationIndex?(
-    this: void,
-    index: number,
-  ): boolean;
+  isValidCanonicalIndex?(this: void, index: number, value: string): boolean;
+  supportsCanonicalValidationIndex?(this: void, index: number): boolean;
   compact(id: string, value: string): string;
-  compactIndex?(
-    this: void,
-    index: number,
-    value: string,
-  ): string;
+  compactIndex?(this: void, index: number, value: string): string;
   format(id: string, value: string): string;
-  formatIndex?(
-    this: void,
-    index: number,
-    value: string,
-  ): string;
+  formatIndex?(this: void, index: number, value: string): string;
   generate(id: string): string | null;
   generateIndex?(this: void, index: number): string | null;
   luhnGenerate(length?: number): string;
-  parse(
-    id: string,
-    value: string,
-  ): NativeParsedIdentifier | null;
+  parse(id: string, value: string): NativeParsedIdentifier | null;
   parseIndex?(
     this: void,
     index: number,
@@ -119,20 +97,13 @@ export type NativeStdnumBinding = {
       };
 };
 
-const isObject = (
-  value: unknown,
-): value is Record<string, unknown> =>
-  (typeof value === "object" && value !== null) ||
-  typeof value === "function";
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  (typeof value === "object" && value !== null) || typeof value === "function";
 
-export const asNativeBinding = (
-  value: unknown,
-): NativeStdnumBinding | null => {
+export const asNativeBinding = (value: unknown): NativeStdnumBinding | null => {
   const direct = nativeBindingCandidate(value);
   if (direct !== null) return direct;
-  return isObject(value)
-    ? nativeBindingCandidate(value["default"])
-    : null;
+  return isObject(value) ? nativeBindingCandidate(value["default"]) : null;
 };
 
 const nativeBindingCandidate = (
@@ -149,9 +120,7 @@ const nativeBindingCandidate = (
     "generate",
     "parse",
   ];
-  return required.every(
-    (name) => typeof candidate[name] === "function",
-  )
+  return required.every((name) => typeof candidate[name] === "function")
     ? (candidate as NativeStdnumBinding)
     : null;
 };

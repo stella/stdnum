@@ -2,25 +2,27 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const codiceFiscale: CountryValidator<
-  "IT",
-  ParsedPersonId
-> = createValidator("it.codiceFiscale", 105);
+const codiceFiscale: CountryValidator<"IT", ParsedPersonId> = createValidator(
+  "it.codiceFiscale",
+  105,
+);
 
 export default codiceFiscale;
-export const compact = codiceFiscale.compact;
-export const format = codiceFiscale.format;
-export const validate = codiceFiscale.validate;
+export const compact: (value: string) => string = codiceFiscale.compact;
+export const format: (value: string) => string = codiceFiscale.format;
+export const validate: (value: string) => ValidateResult =
+  codiceFiscale.validate;
 export const generate = (): string =>
   codiceFiscale.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator it.codiceFiscale cannot generate values",
-    );
+    throw new Error("Validator it.codiceFiscale cannot generate values");
   })();
-export const parse = codiceFiscale.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = codiceFiscale.parse;

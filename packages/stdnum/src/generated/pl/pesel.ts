@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const pesel: CountryValidator<"PL", ParsedPersonId> =
-  createValidator("pl.pesel", 146);
+const pesel: CountryValidator<"PL", ParsedPersonId> = createValidator(
+  "pl.pesel",
+  146,
+);
 
 export default pesel;
-export const compact = pesel.compact;
-export const format = pesel.format;
-export const validate = pesel.validate;
+export const compact: (value: string) => string = pesel.compact;
+export const format: (value: string) => string = pesel.format;
+export const validate: (value: string) => ValidateResult = pesel.validate;
 export const generate = (): string =>
   pesel.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator pl.pesel cannot generate values",
-    );
+    throw new Error("Validator pl.pesel cannot generate values");
   })();
-export const parse = pesel.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = pesel.parse;

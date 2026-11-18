@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const nric: CountryValidator<"MY", ParsedPersonId> =
-  createValidator("my.nric", 131);
+const nric: CountryValidator<"MY", ParsedPersonId> = createValidator(
+  "my.nric",
+  131,
+);
 
 export default nric;
-export const compact = nric.compact;
-export const format = nric.format;
-export const validate = nric.validate;
+export const compact: (value: string) => string = nric.compact;
+export const format: (value: string) => string = nric.format;
+export const validate: (value: string) => ValidateResult = nric.validate;
 export const generate = (): string =>
   nric.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator my.nric cannot generate values",
-    );
+    throw new Error("Validator my.nric cannot generate values");
   })();
-export const parse = nric.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = nric.parse;

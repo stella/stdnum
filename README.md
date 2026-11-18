@@ -419,7 +419,7 @@ bun run codegen:check
 bun run typecheck
 bun test
 bun run lint     # oxlint
-bun run format   # oxfmt
+bun fmt
 ```
 
 ## License

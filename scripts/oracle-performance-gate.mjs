@@ -53,9 +53,7 @@ const measure = (run, value) => {
       "Oracle performance fixture unexpectedly failed validation",
     );
   }
-  return (
-    (iterations * 1_000) / (performance.now() - started)
-  );
+  return (iterations * 1_000) / (performance.now() - started);
 };
 
 const median = (values) => {
@@ -64,11 +62,7 @@ const median = (values) => {
 };
 
 for (const benchmark of cases) {
-  for (
-    let index = 0;
-    index < warmupIterations;
-    index += 1
-  ) {
+  for (let index = 0; index < warmupIterations; index += 1) {
     benchmark.rust(benchmark.value);
     benchmark.oracle(benchmark.value);
   }
@@ -77,12 +71,8 @@ for (const benchmark of cases) {
   const oracleRates = [];
   for (let sample = 0; sample < sampleCount; sample += 1) {
     const rustFirst = sample % 2 === 0;
-    const first = rustFirst
-      ? benchmark.rust
-      : benchmark.oracle;
-    const second = rustFirst
-      ? benchmark.oracle
-      : benchmark.rust;
+    const first = rustFirst ? benchmark.rust : benchmark.oracle;
+    const second = rustFirst ? benchmark.oracle : benchmark.rust;
     const firstRate = measure(first, benchmark.value);
     const secondRate = measure(second, benchmark.value);
     const rustRate = rustFirst ? firstRate : secondRate;

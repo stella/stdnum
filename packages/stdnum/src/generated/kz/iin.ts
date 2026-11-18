@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const iin: CountryValidator<"KZ", ParsedPersonId> =
-  createValidator("kz.iin", 112);
+const iin: CountryValidator<"KZ", ParsedPersonId> = createValidator(
+  "kz.iin",
+  112,
+);
 
 export default iin;
-export const compact = iin.compact;
-export const format = iin.format;
-export const validate = iin.validate;
+export const compact: (value: string) => string = iin.compact;
+export const format: (value: string) => string = iin.format;
+export const validate: (value: string) => ValidateResult = iin.validate;
 export const generate = (): string =>
   iin.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator kz.iin cannot generate values",
-    );
+    throw new Error("Validator kz.iin cannot generate values");
   })();
-export const parse = iin.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = iin.parse;

@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const jmbg: CountryValidator<"BA", ParsedPersonId> =
-  createValidator("ba.jmbg", 16);
+const jmbg: CountryValidator<"BA", ParsedPersonId> = createValidator(
+  "ba.jmbg",
+  16,
+);
 
 export default jmbg;
-export const compact = jmbg.compact;
-export const format = jmbg.format;
-export const validate = jmbg.validate;
+export const compact: (value: string) => string = jmbg.compact;
+export const format: (value: string) => string = jmbg.format;
+export const validate: (value: string) => ValidateResult = jmbg.validate;
 export const generate = (): string =>
   jmbg.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ba.jmbg cannot generate values",
-    );
+    throw new Error("Validator ba.jmbg cannot generate values");
   })();
-export const parse = jmbg.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = jmbg.parse;

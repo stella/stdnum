@@ -3,8 +3,4 @@ import { setBindingLoader } from "./runtime-core";
 
 setBindingLoader(loadNativeStdnumBinding);
 
-export {
-  createValidator,
-  getBinding,
-  setBinding,
-} from "./runtime-core";
+export { createValidator, getBinding, setBinding } from "./runtime-core";

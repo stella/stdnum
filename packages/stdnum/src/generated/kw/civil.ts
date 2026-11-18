@@ -3,22 +3,25 @@
 import type {
   CountryValidator,
   ParsedBirthDate,
+  ParsedIdentifier,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const civil: CountryValidator<"KW", ParsedBirthDate> =
-  createValidator("kw.civil", 111);
+const civil: CountryValidator<"KW", ParsedBirthDate> = createValidator(
+  "kw.civil",
+  111,
+);
 
 export default civil;
-export const compact = civil.compact;
-export const format = civil.format;
-export const validate = civil.validate;
+export const compact: (value: string) => string = civil.compact;
+export const format: (value: string) => string = civil.format;
+export const validate: (value: string) => ValidateResult = civil.validate;
 export const generate = (): string =>
   civil.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator kw.civil cannot generate values",
-    );
+    throw new Error("Validator kw.civil cannot generate values");
   })();
-export const parse = civil.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedBirthDate | null) = civil.parse;

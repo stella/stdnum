@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const emso: CountryValidator<"SI", ParsedPersonId> =
-  createValidator("si.emso", 158);
+const emso: CountryValidator<"SI", ParsedPersonId> = createValidator(
+  "si.emso",
+  158,
+);
 
 export default emso;
-export const compact = emso.compact;
-export const format = emso.format;
-export const validate = emso.validate;
+export const compact: (value: string) => string = emso.compact;
+export const format: (value: string) => string = emso.format;
+export const validate: (value: string) => ValidateResult = emso.validate;
 export const generate = (): string =>
   emso.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator si.emso cannot generate values",
-    );
+    throw new Error("Validator si.emso cannot generate values");
   })();
-export const parse = emso.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = emso.parse;

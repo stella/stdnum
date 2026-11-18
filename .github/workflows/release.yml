@@ -33,13 +33,13 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22.21.1"
+          node-version-file: .node-version
 
       - name: Require main for manual publishing
         if: >-
@@ -84,8 +84,8 @@ jobs:
 
       - name: Install Rust toolchain
         run: |
-          rustup toolchain install 1.96.0 --profile minimal --component rustfmt,clippy
-          rustup default 1.96.0
+          rustup toolchain install 1.99.1 --profile minimal --component rustfmt,clippy
+          rustup default 1.99.1
 
       - name: Verify versions and generated sources
         run: |
@@ -96,7 +96,7 @@ jobs:
         run: |
           bun run typecheck
           bun run lint
-          bun run format:check
+          bun fmt --check
           cargo test --workspace --locked
           bun test
 
@@ -133,21 +133,21 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22.21.1"
+          node-version-file: .node-version
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
       - name: Install Rust toolchain
         run: |
-          rustup toolchain install 1.96.0 --profile minimal
-          rustup default 1.96.0
+          rustup toolchain install 1.99.1 --profile minimal
+          rustup default 1.99.1
 
       - name: Build native addon
         run: node scripts/build-native-node.mjs
@@ -172,7 +172,7 @@ jobs:
           ' "$pack_json")"
           echo "tarball=$pack_dir/$filename" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: npm-tarball-${{ matrix.package }}
           path: ${{ steps.pack.outputs.tarball }}
@@ -188,22 +188,22 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22.21.1"
+          node-version-file: .node-version
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
       - name: Install Rust and wasm-bindgen
         run: |
-          rustup toolchain install 1.96.0 --profile minimal
-          rustup target add wasm32-unknown-unknown --toolchain 1.96.0
-          rustup default 1.96.0
+          rustup toolchain install 1.99.1 --profile minimal
+          rustup target add wasm32-unknown-unknown --toolchain 1.99.1
+          rustup default 1.99.1
           cargo install wasm-bindgen-cli --version 0.2.129 --locked
 
       - name: Build portable packages
@@ -268,13 +268,13 @@ jobs:
           ' "$pack_json")"
           echo "tarball=$pack_dir/$filename" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: npm-tarball-stdnum
           path: ${{ steps.main.outputs.tarball }}
           if-no-files-found: error
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: npm-tarball-stdnum-wasm
           path: ${{ steps.wasm.outputs.tarball }}
@@ -311,14 +311,14 @@ jobs:
         with:
           target: ${{ matrix.target }}
           manylinux: ${{ matrix.manylinux || 'auto' }}
-          rust-toolchain: "1.96.0"
+          rust-toolchain: "1.99.1"
           args: >-
             --release
             --locked
             --manifest-path crates/stdnum-py/Cargo.toml
             --out dist
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: python-wheel-${{ matrix.target }}
           path: dist/*.whl
@@ -334,7 +334,7 @@ jobs:
       id-token: write # Required only for PyPI trusted publishing.
     steps:
       - name: Prepare exact Python wheel set
-        uses: stella/.github/.github/actions/pypi-publish-hardened@5764ab66e4df84cfd2e642c7d7e4678261e668f8
+        uses: stella/.github/.github/actions/pypi-publish-hardened@65ca33c9cc40124def02795451571cb4207f69d0
         with:
           expected-version: ${{ needs.verify.outputs.version }}
           project-name: stella-stdnum
@@ -342,22 +342,21 @@ jobs:
           wheel-contract: >-
             {"python-wheel-x86_64-unknown-linux-gnu":["manylinux_2_17_x86_64","manylinux2014_x86_64"],"python-wheel-aarch64-unknown-linux-gnu":["manylinux_2_17_aarch64","manylinux2014_aarch64"],"python-wheel-x86_64-apple-darwin":["macosx_10_12_x86_64"],"python-wheel-aarch64-apple-darwin":["macosx_11_0_arm64"],"python-wheel-x86_64-pc-windows-msvc":["win_amd64"]}
       - name: Publish wheels to PyPI
-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
         with:
           packages-dir: dist
           skip-existing: true
       - name: Verify published PyPI files
-        uses: stella/.github/.github/actions/pypi-publish-hardened/verify@5764ab66e4df84cfd2e642c7d7e4678261e668f8
+        uses: stella/.github/.github/actions/pypi-publish-hardened/verify@65ca33c9cc40124def02795451571cb4207f69d0
         with:
           expected-version: ${{ needs.verify.outputs.version }}
           project-name: stella-stdnum
 
   github-release:
     name: Finalize release
-    needs:
-      [verify, pack-native, pack-portable, publish-pypi]
+    needs: [verify, pack-native, pack-portable, publish-pypi]
     if: github.ref == 'refs/heads/main' && (needs.verify.outputs.publish == 'true')
-    uses: stella/.github/.github/workflows/npm-version-finalize.yml@5764ab66e4df84cfd2e642c7d7e4678261e668f8
+    uses: stella/.github/.github/workflows/npm-version-finalize.yml@65ca33c9cc40124def02795451571cb4207f69d0
     with:
       package-files: |
         packages/stdnum/package.json

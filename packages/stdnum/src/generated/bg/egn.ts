@@ -2,23 +2,26 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
 import { createValidator } from "#stdnum-runtime";
 
-const egn: CountryValidator<"BG", ParsedPersonId> =
-  createValidator("bg.egn", 21);
+const egn: CountryValidator<"BG", ParsedPersonId> = createValidator(
+  "bg.egn",
+  21,
+);
 
 export default egn;
-export const compact = egn.compact;
-export const format = egn.format;
-export const validate = egn.validate;
+export const compact: (value: string) => string = egn.compact;
+export const format: (value: string) => string = egn.format;
+export const validate: (value: string) => ValidateResult = egn.validate;
 export const generate = (): string =>
   egn.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator bg.egn cannot generate values",
-    );
+    throw new Error("Validator bg.egn cannot generate values");
   })();
-export const parse = egn.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = egn.parse;

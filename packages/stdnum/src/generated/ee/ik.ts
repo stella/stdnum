@@ -2,28 +2,25 @@
 
 import type {
   CountryValidator,
+  ParsedIdentifier,
   ParsedPersonId,
+  ValidateResult,
 } from "../../types";
 
-import {
-  createValidator,
-  getBinding,
-} from "#stdnum-runtime";
+import { createValidator, getBinding } from "#stdnum-runtime";
 
-const ik: CountryValidator<"EE", ParsedPersonId> =
-  createValidator("ee.ik", 61);
+const ik: CountryValidator<"EE", ParsedPersonId> = createValidator("ee.ik", 61);
 
 export default ik;
-export const compact = ik.compact;
-export const format = ik.format;
-export const validate = ik.validate;
+export const compact: (value: string) => string = ik.compact;
+export const format: (value: string) => string = ik.format;
+export const validate: (value: string) => ValidateResult = ik.validate;
 export const generate = (): string =>
   ik.generate?.() ??
   (() => {
-    throw new Error(
-      "Validator ee.ik cannot generate values",
-    );
+    throw new Error("Validator ee.ik cannot generate values");
   })();
-export const parse = ik.parse;
+export const parse: ((value: string) => ParsedIdentifier | null) &
+  ((value: string) => ParsedPersonId | null) = ik.parse;
 export const twoPassCheck = (digits: string): number =>
   getBinding().eeIkTwoPassCheck(digits);

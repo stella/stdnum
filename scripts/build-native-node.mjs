@@ -3,9 +3,7 @@ import { copyFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const repoRoot = dirname(
-  dirname(fileURLToPath(import.meta.url)),
-);
+const repoRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const packageRoot = join(repoRoot, "packages", "stdnum");
 const sourceNames = {
   darwin: "libstella_stdnum_napi.dylib",
@@ -14,83 +12,50 @@ const sourceNames = {
 };
 const sourceName = sourceNames[process.platform];
 if (sourceName === undefined) {
-  throw new Error(
-    `Unsupported native build platform: ${process.platform}`,
-  );
+  throw new Error(`Unsupported native build platform: ${process.platform}`);
 }
 
 execFileSync(
   "cargo",
-  [
-    "build",
-    "-p",
-    "stella-stdnum-napi",
-    "--release",
-    "--locked",
-  ],
+  ["build", "-p", "stella-stdnum-napi", "--release", "--locked"],
   {
     cwd: repoRoot,
     stdio: "inherit",
   },
 );
-const source = join(
-  repoRoot,
-  "target",
-  "release",
-  sourceName,
-);
+const source = join(repoRoot, "target", "release", sourceName);
 if (!existsSync(source))
-  throw new Error(
-    `Native build output is missing: ${source}`,
-  );
+  throw new Error(`Native build output is missing: ${source}`);
 
-copyFileSync(
-  source,
-  join(packageRoot, "stella_stdnum_napi.node"),
-);
-const sidecar = sidecarDirectory(
-  process.platform,
-  process.arch,
-  detectLibc(),
-);
+copyFileSync(source, join(packageRoot, "stella_stdnum_napi.node"));
+const sidecar = sidecarDirectory(process.platform, process.arch, detectLibc());
 if (sidecar !== null) {
   copyFileSync(
     source,
-    join(
-      repoRoot,
-      "packages",
-      sidecar,
-      "stella_stdnum_napi.node",
-    ),
+    join(repoRoot, "packages", sidecar, "stella_stdnum_napi.node"),
   );
 }
 
 function sidecarDirectory(platform, arch, libc) {
-  if (platform === "darwin" && arch === "arm64")
-    return "stdnum-darwin-arm64";
-  if (platform === "darwin" && arch === "x64")
-    return "stdnum-darwin-x64";
-  if (
-    platform === "linux" &&
-    arch === "arm64" &&
-    libc === "gnu"
-  )
+  if (platform === "darwin" && arch === "arm64") return "stdnum-darwin-arm64";
+  if (platform === "darwin" && arch === "x64") return "stdnum-darwin-x64";
+  if (platform === "linux" && arch === "arm64" && libc === "gnu")
     return "stdnum-linux-arm64-gnu";
-  if (
-    platform === "linux" &&
-    arch === "x64" &&
-    libc === "gnu"
-  )
+  if (platform === "linux" && arch === "x64" && libc === "gnu")
     return "stdnum-linux-x64-gnu";
-  if (platform === "win32" && arch === "x64")
-    return "stdnum-win32-x64-msvc";
+  if (platform === "win32" && arch === "x64") return "stdnum-win32-x64-msvc";
   return null;
 }
 
 function detectLibc() {
   if (process.platform !== "linux") return undefined;
-  return process.report?.getReport?.().header
-    ?.glibcVersionRuntime
+  const report = process.report.getReport();
+  return typeof report === "object" &&
+    "header" in report &&
+    typeof report.header === "object" &&
+    report.header !== null &&
+    "glibcVersionRuntime" in report.header &&
+    typeof report.header.glibcVersionRuntime === "string"
     ? "gnu"
     : "musl";
 }
