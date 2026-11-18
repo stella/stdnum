@@ -1563,6 +1563,11 @@ fn validate_for(id: &str, value: &str) -> ValidationResult {
       "identifier contains an invalid component",
     ));
   }
+  if id == "ee.ik" && crate::ee_ik_birth_date_is_future(&compact) {
+    return Err(ValidationError::InvalidComponent(
+      "Estonian personal ID contains a birth date in the future",
+    ));
+  }
   if compact.is_empty()
     || !compact
       .chars()
