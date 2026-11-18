@@ -819,7 +819,7 @@ fn ee_ik_valid_on(value: &str, today: (u32, u32, u32)) -> bool {
 
 /// Whether `value` is a well-formed isikukood whose birth date comes after
 /// the current date.
-pub(crate) fn ee_ik_birth_date_is_future(value: &str) -> bool {
+fn ee_ik_birth_date_is_future(value: &str) -> bool {
   ee_ik_birth_date(value).is_some_and(|birth_date| birth_date > current_date())
 }
 
