@@ -23,7 +23,7 @@
         "oxlint": "1.93.0",
         "oxlint-tsgolint": "7.0.2006",
         "rut.js": "^2.1.0",
-        "stdnum": "^1.15.0",
+        "stdnum": "^1.16.0",
         "tsdown": "0.23.7",
         "validate-polish": "^2.1.40",
         "vite": "8.3.7",
@@ -465,7 +465,7 @@
 
     "source-map-js": ["source-map-js@1.2.2", "", {}, "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw=="],
 
-    "stdnum": ["stdnum@1.15.0", "", {}, "sha512-ke7nTSVB0B8XLTzLAnRzvOlfk69QCJYDhwK0Vv4/kYWH9dSDRW9yHIomPCVyCNd3agCzfnEguldaFwYqe4p9jA=="],
+    "stdnum": ["stdnum@1.16.0", "", {}, "sha512-Kdb2KqJT9Sxh6XORFGP0LHYGker7CG3isOroR3C2PwH0LPuYL/0LtexT2JI7oIelMv5OtOwiqLSo+u5tkLKKuA=="],
 
     "tinyexec": ["tinyexec@1.3.1", "", {}, "sha512-GCvB3aoys96IuDFBMcTB46JOR6mdMtAToqwiW8JlWhsoh1mhHi/xn9ss/Dg7N555GiJyEt2qzoG/NHCwM6h1EA=="],
 

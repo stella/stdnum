@@ -1058,6 +1058,9 @@ const SURVEY_ONLY_ENTRIES = new Set([
   "python-stdnum:br.cpf",
   "python-stdnum:cn.ric",
   "python-stdnum:cz.rc",
+  // python-stdnum accepts isikukood birth dates after
+  // the current date; we reject them, as stdnum-js does.
+  "python-stdnum:ee.ik",
   "python-stdnum:do_.rnc",
   "python-stdnum:id.npwp",
   "python-stdnum:lv.vat",
