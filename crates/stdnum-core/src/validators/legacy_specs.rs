@@ -1533,6 +1533,18 @@ fn validate_for(id: &str, value: &str) -> ValidationResult {
     }
   }
   let compact = compact_for(id, value);
+  if id == "ee.ik" {
+    // Decide acceptance and the error kind from one date reading.
+    if let Some(birth_date) = crate::ee_ik_birth_date(&compact) {
+      return if birth_date <= crate::current_date() {
+        Ok(compact)
+      } else {
+        Err(ValidationError::InvalidComponent(
+          "Estonian personal ID contains a birth date in the future",
+        ))
+      };
+    }
+  }
   if raw_is_valid(id, &compact) {
     return Ok(compact);
   }

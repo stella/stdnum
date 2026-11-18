@@ -808,32 +808,32 @@ fn validate_dk_vat(value: &str) -> bool {
 }
 
 fn validate_ee_ik(value: &str) -> bool {
+  ee_ik_valid_on(value, current_date())
+}
+
+/// Whether `value` is a valid isikukood on `today`: a person cannot be
+/// registered before their birth date.
+fn ee_ik_valid_on(value: &str, today: (u32, u32, u32)) -> bool {
+  ee_ik_birth_date(value).is_some_and(|birth_date| birth_date <= today)
+}
+
+/// Birth date of a structurally valid isikukood with a correct check digit.
+fn ee_ik_birth_date(value: &str) -> Option<(u32, u32, u32)> {
   let compact = compact_without(value, &[' ', '-']);
-  let Ok(digits) = <[u32; 11]>::try_from(decimal_digits_strict(&compact))
-  else {
-    return false;
-  };
-  let Some(gender_century) = digits.first().copied() else {
-    return false;
-  };
-  let century: u32 = match gender_century {
+  let digits = <[u32; 11]>::try_from(decimal_digits_strict(&compact)).ok()?;
+  let century: u32 = match digits.first().copied()? {
     1 | 2 => 1800,
     3 | 4 => 1900,
     5 | 6 => 2000,
-    _ => return false,
+    _ => return None,
   };
-  let Some(yy) = two_digit_number(&digits, 1) else {
-    return false;
-  };
-  let Some(month) = two_digit_number(&digits, 3) else {
-    return false;
-  };
-  let Some(day) = two_digit_number(&digits, 5) else {
-    return false;
-  };
-  valid_date(century.saturating_add(yy), month, day)
+  let year = century.saturating_add(two_digit_number(&digits, 1)?);
+  let month = two_digit_number(&digits, 3)?;
+  let day = two_digit_number(&digits, 5)?;
+  (valid_date(year, month, day)
     && two_pass_personal_check(digits.get(..10).unwrap_or(&[]))
-      == digits.get(10).copied()
+      == digits.get(10).copied())
+  .then_some((year, month, day))
 }
 
 fn validate_ee_vat(value: &str) -> bool {
@@ -2608,6 +2608,44 @@ mod tests {
       "crypto.wallet",
       "BTC wallet: 1BoatSLRHtKNngkdXEeobR76b53LETtpyT",
       Some("crypto-wallet-candidate")
+    ));
+  }
+
+  #[test]
+  fn estonian_personal_id_rejects_future_birth_dates() {
+    use super::ee_ik_valid_on;
+    use crate::{ValidationError, validators::ee::ik};
+
+    let today = (2026, 11, 18);
+    // Born today (century digit 6: 2000s) is valid, tomorrow is not.
+    assert!(ee_ik_valid_on("62611180000", today));
+    assert!(ee_ik_valid_on("52611180003", today));
+    assert!(!ee_ik_valid_on("62611190007", today));
+    assert!(!ee_ik_valid_on("52611190006", today));
+    assert!(ee_ik_valid_on("62611190007", (2026, 11, 19)));
+    // Later years of the current century are in the future.
+    assert!(!ee_ik_valid_on("62701010000", today));
+    assert!(!ee_ik_valid_on("69912310002", today));
+    // Earlier centuries are always in the past.
+    assert!(ee_ik_valid_on("19912310008", today));
+    assert!(ee_ik_valid_on("40001010005", today));
+    assert!(ee_ik_valid_on("36805280109", today));
+    assert!(ee_ik_valid_on("50002290002", today));
+    // A future date does not rescue a bad check digit.
+    assert!(!ee_ik_valid_on("19912310009", today));
+
+    // 2094-03-06 with a correct check digit.
+    assert_eq!(
+      ik::validate("59403068580"),
+      Err(ValidationError::InvalidComponent(
+        "Estonian personal ID contains a birth date in the future",
+      ))
+    );
+    assert!(!validate_named_id("ee.ik", "59403068580"));
+    assert_eq!(ik::validate("36805280109"), Ok("36805280109".to_owned()));
+    assert!(matches!(
+      ik::validate("59403068581"),
+      Err(ValidationError::InvalidChecksum(_))
     ));
   }
 
