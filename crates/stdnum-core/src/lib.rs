@@ -817,12 +817,6 @@ fn ee_ik_valid_on(value: &str, today: (u32, u32, u32)) -> bool {
   ee_ik_birth_date(value).is_some_and(|birth_date| birth_date <= today)
 }
 
-/// Whether `value` is a well-formed isikukood whose birth date comes after
-/// the current date.
-fn ee_ik_birth_date_is_future(value: &str) -> bool {
-  ee_ik_birth_date(value).is_some_and(|birth_date| birth_date > current_date())
-}
-
 /// Birth date of a structurally valid isikukood with a correct check digit.
 fn ee_ik_birth_date(value: &str) -> Option<(u32, u32, u32)> {
   let compact = compact_without(value, &[' ', '-']);
