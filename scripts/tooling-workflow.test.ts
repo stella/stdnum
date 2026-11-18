@@ -1,7 +1,9 @@
 import { expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 
-import { isRecord, readJsonRecord, readJsonRecordField } from "./json-values";
+import toolchain from "@stll/oxlint-config/toolchain.json";
+
+import { readJsonRecord, readJsonRecordField } from "./json-values";
 
 const workflow = readFileSync(
   new URL("../.github/workflows/ci.yml", import.meta.url),
@@ -10,19 +12,6 @@ const workflow = readFileSync(
 
 const readPackageScripts = (): Record<string, unknown> =>
   readJsonRecordField("package.json", "scripts");
-
-const readRustExceptionPins = (): string[] => {
-  const { rustExceptions } = readJsonRecord("stll-toolchain.json");
-  if (!Array.isArray(rustExceptions)) {
-    throw new Error("stll-toolchain.json must declare rustExceptions");
-  }
-  return rustExceptions.map((exception: unknown) => {
-    if (!isRecord(exception) || typeof exception["pin"] !== "string") {
-      throw new Error("every Rust exception must declare a pin");
-    }
-    return exception["pin"];
-  });
-};
 
 test("runs the shared tooling checks in the lint job", () => {
   const lint = workflow
@@ -51,14 +40,12 @@ test("replaces compiler-private Dylint with the pinned stable source checker", (
   expect(cargoConfig).not.toContain("ci-dylint");
 });
 
-test("keeps the Hawk install pin aligned with its authorized toolchain", () => {
-  const installPins = [
-    ...workflow.matchAll(
-      /rustup toolchain install (\d+\.\d+\.\d+) --profile minimal/g,
-    ),
-  ].map((match) => match[1]);
-  for (const pin of readRustExceptionPins()) {
-    expect(installPins).toContain(pin);
-    expect(workflow).toContain(`HAWK_RUST_TOOLCHAIN: "${pin}"`);
-  }
+test("keeps Hawk on the shared Rust toolchain", () => {
+  expect(workflow).toContain(`HAWK_RUST_TOOLCHAIN: "${toolchain.rust}"`);
+  expect(readPackageScripts()["rust:hawk"]).toContain(
+    `cargo +${toolchain.rust} hawk check`,
+  );
+  expect(
+    readJsonRecord("stll-toolchain.json")["rustExceptions"],
+  ).toBeUndefined();
 });
