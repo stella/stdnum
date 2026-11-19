@@ -19,6 +19,9 @@ validator-set = []
 stella-stdnum-core = { path = "../stdnum-core" }
 wasm-bindgen = "=0.2.129"
 
+[lints.cargo]
+unused_dependencies = "deny"
+
 # Keep this fixture independent so it exercises the explicit profile expected
 # from constrained WebAssembly consumers.
 [workspace]
