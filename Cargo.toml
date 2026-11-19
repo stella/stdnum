@@ -13,7 +13,7 @@ version = "2.3.2"
 edition = "2024"
 # Minimum supported Rust version; CI uses the shared stable toolchain.
 # Resolver "3" keeps dependency resolution MSRV-aware.
-rust-version = "1.96"
+rust-version = "1.100"
 license = "Apache-2.0"
 publish = false
 repository = "https://github.com/stella/stdnum"
@@ -32,6 +32,9 @@ unused_imports = "deny"
 unused_macros = "deny"
 unused_mut = "deny"
 unused_variables = "deny"
+
+[workspace.lints.cargo]
+unused_dependencies = "deny"
 
 [workspace.lints.rustdoc]
 broken_intra_doc_links = "deny"
