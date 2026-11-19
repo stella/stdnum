@@ -347,7 +347,7 @@ fn compact_for(id: &str, value: &str) -> String {
       }
       compact
     }
-    "cl.rut" => upper.strip_prefix("CL").unwrap_or(&upper).to_owned(),
+    "cl.rut" => upper.trim_prefix("CL").to_owned(),
     "gt.nit" => upper.trim_start_matches('0').to_owned(),
     "il.idnr" => format!("{compact:0>9}"),
     "eg.tn" | "iq.nid" | "ir.nid" => compact

@@ -13,7 +13,7 @@ a pull request.
 ## Development setup
 
 ```bash
-# Prerequisites: Bun and Rust 1.96
+# Prerequisites: Bun and Rust 1.100
 bun install
 bun run rust:check     # lint and test the Rust implementation
 bun run codegen:check  # verify generated bindings, types, and README

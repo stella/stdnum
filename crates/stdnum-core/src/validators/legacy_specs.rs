@@ -1340,7 +1340,7 @@ fn format_for(id: &str, value: &str) -> String {
       span(&v, 7, v.len())
     ),
     "no.mva" => {
-      let d = v.strip_suffix("MVA").unwrap_or(&v);
+      let d = v.trim_suffix("MVA");
       format!(
         "NO {} {} {} MVA",
         span(d, 0, 3),
