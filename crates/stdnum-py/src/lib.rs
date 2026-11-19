@@ -309,8 +309,8 @@ fn validate_named_id(validator: &str, value: &str) -> bool {
   stella_stdnum_core::validate_named_id(validator, value)
 }
 
-#[pymodule]
-fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
+#[pymodule(name = "_native")]
+fn native_module(module: &Bound<'_, PyModule>) -> PyResult<()> {
   module.add_class::<PyValidationError>()?;
   module.add_class::<PyValidationResult>()?;
   module.add_class::<PyParsedIdentifier>()?;
