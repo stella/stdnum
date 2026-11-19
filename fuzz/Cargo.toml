@@ -20,6 +20,9 @@ cargo-fuzz = true
 libfuzzer-sys = "0.4"
 stella-stdnum-core = { path = "../crates/stdnum-core" }
 
+[lints.cargo]
+unused_dependencies = "deny"
+
 # Detach from the parent workspace so `cargo build --workspace` at the repo root
 # never pulls in the fuzz targets or their nightly-only dependencies.
 [workspace]
