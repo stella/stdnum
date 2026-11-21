@@ -15,4 +15,4 @@ jobs:
     if: github.repository == 'stella/stdnum'
     permissions:
       contents: read
-    uses: stella/.github/.github/workflows/quarantine-policy.yml@65ca33c9cc40124def02795451571cb4207f69d0
+    uses: stella/.github/.github/workflows/quarantine-policy.yml@2664e46f02aea7164ba71bcdd485a686166993a4
